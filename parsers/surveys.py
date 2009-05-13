@@ -1,9 +1,9 @@
 import sys
 import os
 import types
-#sys.path.append('C:\\Expo\\expoweb')
-#from troggle import *
-#os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
+sys.path.append('C:\\Expo\\expoweb')
+from troggle import *
+os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
 import troggle.settings as settings
 import troggle.expo.models as models
 
@@ -74,7 +74,7 @@ def parseSurveyScans(year):
                 survey=models.Survey.objects.filter(wallet_number=surveyNumber, expedition_year=year)[0]
                
             scanObj = models.ScannedImage(
-                file=os.path.join(yearPath, surveyFolder, scan),
+                file=os.path.join(year.year, surveyFolder, scan),
                 contents=scanType,
                 number_in_wallet=scanNumber,
                 survey=survey

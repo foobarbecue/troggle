@@ -1,4 +1,5 @@
 import urllib
+import string
 from django.forms import ModelForm
 from django.db import models
 from django.contrib import admin
@@ -319,8 +320,9 @@ class ScannedImage(models.Model):
     #object_id = models.PositiveIntegerField()
     #location = generic.GenericForeignKey('content_type', 'object_id')
 
+    #This is an ugly hack to deal with the #s in our survey scan paths. The correct thing is to write a custom file storage backend which calls urlencode on the name for making file.url but not file.path.
     def correctURL(self):
-	return urllib.quote(self.file.url)
+	return string.replace(self.file.url,r'#',r'%23')
     
     def __str__(self):
         return get_scan_path(self,'')
