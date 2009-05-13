@@ -1,0 +1,10 @@
+div#nav {
+	width: 12em;
+	float: left;
+	width: 12em; 
+	background: #EBEBEB;
+	padding: 15px 0;
+	height:100%
+}
+	
+div#content { style="margin-left:13em"}
