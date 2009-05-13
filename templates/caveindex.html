@@ -8,14 +8,14 @@
 <h3>Notable caves</h3>
 <ul>
 {% for cave in notablecaves %}
-  <li> <a href="{{ cave.get_absolute_url }}">{{cave.official_name|wiki_to_html_short}} ({{cave.href}})</a> </li>
+  <li> <a href="{{ cave.get_absolute_url }}">{{cave.official_name|wiki_to_html_short}} ({{cave}})</a> </li>
 {% endfor %}
 </ul>
 
 <h3>All caves</h3>
 <ul>
 {% for cave in caves %}
-  <li> <a href="{{ cave.get_absolute_url }}">{{cave.official_name|wiki_to_html_short}} ({{cave.href}})</a> </li>
+  <li> <a href="{{ cave.get_absolute_url }}">{{cave.official_name|wiki_to_html_short}} ({{cave}})</a> </li>
 {% endfor %}
 </ul>
 

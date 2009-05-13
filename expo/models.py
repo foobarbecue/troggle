@@ -305,7 +305,7 @@ class Cave(models.Model):
             href = self.unofficial_number
         else:
             href = official_name.lower()
-        return settings.URL_ROOT + '/cave/' + self.href + '/'
+        return settings.URL_ROOT + '/cave/' + href + '/'
             
         
     def __unicode__(self):
