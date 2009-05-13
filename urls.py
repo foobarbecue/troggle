@@ -33,7 +33,9 @@ urlpatterns = patterns('',
         
     url(r'^statistics/?$', stats, name="stats"),
     
-    (r'^survey/?$', surveyindex),
+    url(r'^calendar/(?P<year>\d\d\d\d)?$', calendar, name="calendar"),
+    
+    url(r'^survey/?$', surveyindex, name="survey"),
     (r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey),
     
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),

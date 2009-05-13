@@ -3,26 +3,31 @@
 
 
 {% block title %}CUCC Virtual Survey Binder: {{ current_expedition }}{{ current_survey }}{%endblock%}
-{% block javascript %}
+{% block head %}
+
+<link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/nav.css" />
 
 <script language="javascript">
 	blankColor = "rgb(153, 153, 153)"
 	highlightedColor = "rgb(125, 125, 125)"
-	chosenColor = "rgb(102, 102, 102)"
+	chosenColor = "rgb(255, 255, 255)"
 	mnuItmLst=document.getElementsByClassName("menuBarItem")
 	function highlight(div){
 	for (var i = 0, divIter; divIter = mnuItmLst[i]; i++) {
-			if (divIter.style.backgroundColor!="rgb(102, 102, 102)"){
+			/*loop though all menuitems. blank them except for the chosen one*/
+			if (divIter.style.backgroundColor!=chosenColor){
 			divIter.style.backgroundColor=blankColor;
 			}
 		}
-		if (div.style.backgroundColor!="rgb(102, 102, 102)"){
-			div.style.backgroundColor="#B0B0B0";
+			/*highlight the mouseovered div unless it is the chosen one*/		
+		if (div.style.backgroundColor!=chosenColor){
+			div.style.backgroundColor=highlightedColor;
 		}
 	}
 	
 	function unhighlight(div){
-		if (div.style.backgroundColor!=blankColor){
+			/*highlight the mouseovered div unless it is the chosen one*/		
+		if (div.style.backgroundColor!=chosenColor){
 			div.style.backgroundColor=blankColor;
 		}
 	}
@@ -40,12 +45,11 @@
 	}
 	
 	function redirectSurvey(){
-		window.location = "{{ settings.URL_ROOT }}survey/" + document.getElementById("expeditionChooser").value + "%23" + document.getElementById("surveyChooser").value;
-		document.getElementById("progressTableContent").style.display='hidden'
+		window.location = "{% url survey %}" + '/' + document.getElementById("expeditionChooser").value + "%23" + document.getElementById("surveyChooser").value;
 	}
 	
 	function redirectYear(){
-		window.location = "{{ settings.URL_ROOT }}survey/" + document.getElementById("expeditionChooser").value + "%23"
+		window.location = "{% url survey %}" + '/' + document.getElementById("expeditionChooser").value + "%23";
 	}
 </script>
 {% endblock %}
@@ -61,27 +65,28 @@
 </div>
 
 {% block nav %}
-<div id="sidebar1">
+<div id="nav">
   <br />
-  <select id="expeditionChooser" onchange="redirectYear()">
+
+  <h3>Choose a year</h3>
+
+  <select id="expeditionChooser" class="centre" onChange="redirectYear()">
     
 	{% for expedition in expeditions.reverse %}   	
 	    
-    <option label="{{ expedition }}" value="{{ expedition }}"
-    		{% ifequal expedition current_expedition %}
-    			selected
-	        {% endifequal %}	>
+    <option label="{{ expedition }}" value="{{ expedition }}" {% ifequal expedition current_expedition %}selected{% endifequal %}>
     
-    {{ expedition }}
+	    {{ expedition }}
     
-    </option>
-    
-    
+    </option>   
     {% endfor %}
-
   
   </select>
-  <select id="surveyChooser" onchange="redirectSurvey()">
+  <br>
+
+   <h3>Choose a wallet number</h3>
+
+  <select id="surveyChooser" class="centre" onChange="redirectSurvey()">
     <option label="show all" value=""> {% for survey in current_expedition.survey_set.all %}
     <option label="{{ survey }}" value="{{ survey.wallet_number }}" 
     		{% ifequal survey current_survey %}
@@ -89,30 +94,33 @@
 	        {% endifequal %}	>
     {{ survey }} </option>
     
-    
     {% endfor %}
         
     <option label="add" value="add">
   </select>
   <div id="status">
-    <div id="notes" class="menuBarItem" onmouseover="highlight(this)" onmouseout="unhighlight(this)" onclick="choose(this)"> {% if notes %}&#10003;{% endif %}
+    <div id="notes" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)"> {% if notes %}&#10003;{% endif %}
       scanned notes </div>
-    <div id="survexFile" class="menuBarItem" onmouseover="highlight(this)" onmouseout="unhighlight(this)" onclick="choose(this)"> {% if current_survey.survex_file %}&#10003;{% endif %}
+    <div id="survexFile" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)"> {% if current_survey.survex_file %}&#10003;{% endif %}
       survex file </div>
-    <div id="printedCentreline" class="menuBarItem" onmouseover="highlight(this)" onmouseout="unhighlight(this)" onclick="choose(this)"> {% if current_survey.centreline_printed_on %}&#10003;{% endif %}
+    <div id="printedCentreline" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)"> {% if current_survey.centreline_printed_on %}&#10003;{% endif %}
       printed centreline </div>
-    <div id="scannedPassageSketch" class="menuBarItem" onmouseover="highlight(this)" onmouseout="unhighlight(this)" onclick="choose(this)"> {% if planSketches %}&#10003;{% endif %}
+    <div id="scannedPassageSketch" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)"> {% if planSketches %}&#10003;{% endif %}
       scanned passage sketch </div>
-    <div id="tunnelXMLfile" class="menuBarItem" onmouseover="highlight(this)" onmouseout="unhighlight(this)" onclick="choose(this)">tunnel xml file</div>
-    <div id="mainSketchIntegration" class="menuBarItem" onmouseover="highlight(this)" onmouseout="unhighlight(this)" onclick="choose(this)">add to main sketch</div>
+    <div id="tunnelXMLfile" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)">tunnel xml file</div>
+    <div id="mainSketchIntegration" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)">add to main sketch</div>
   </div>
  </div>
-  {% endblock %}
+</div>
+{% endblock %}
 
 {% block content %}
 <div id="mainContent">
-  <div id="progressTableContent" class="behind" style="display:block;">
-    <table>
+
+  <div id="progressTableContent" style="display:block; overflow:auto">
+  <h3>Survey progress table for {{ current_expedition }}</h3>
+  {% if current_expedition.survey_set.all %} <!-- if there are any surveys in the expedition, make the table -->
+    <table class="centre">
       <tr>
         <th> </th>
         {% for survey in current_expedition.survey_set.all %}
@@ -147,6 +155,9 @@
           {% endif %} </td>
         {% endfor %} </tr>
     </table>
+	{% else %}
+		<center>[ There are no surveys in the database for this year. ]</center>
+	{% endif %}
   </div>
   <div id="notesContent" class="behind">
     <h3>Scanned notes for {{ current_survey }}.</h3>

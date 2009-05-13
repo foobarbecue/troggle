@@ -1,10 +1,9 @@
 div#nav {
 	width: 12em;
 	float: left;
-	width: 12em; 
-	background: #EBEBEB;
+	background: rgb(153, 153, 153);
 	padding: 15px 0;
 	height:100%
 }
 	
-div#content { style="margin-left:13em"}
+div#content { margin-left:13em }
