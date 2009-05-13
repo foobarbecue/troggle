@@ -27,8 +27,9 @@ class Expedition(models.Model):
 class Person(models.Model):
     first_name  = models.CharField(max_length=100)
     last_name   = models.CharField(max_length=100)
-    is_vfho     = models.BooleanField()
+    is_vfho     = models.BooleanField(help_text="VFHO is the Vereines f&uuml;r H&ouml;hlenkunde in Obersteier, a nearby Austrian caving club.")    
     mug_shot    = models.CharField(max_length=100, blank=True,null=True)
+    blurb = models.TextField(blank=True,null=True)
     def __unicode__(self):
         return "%s %s" % (self.first_name, self.last_name)
 
@@ -52,7 +53,6 @@ class PersonExpedition(models.Model):
 
     def __unicode__(self):
         return "%s: (%s)" % (self.person, self.expedition)
-
 
 
 
@@ -157,10 +157,7 @@ class LogbookEntry(models.Model):
     author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip
     title   = models.CharField(max_length=200)
     cave = models.ForeignKey(Cave,blank=True,null=True)
-        # this will be a foreign key of the place the logbook is describing - JT
     place   = models.CharField(max_length=100,blank=True,null=True)  
-    # adding optional cave reference
-#    cave = models.ForeignKey(Cave,blank=True,null=True)
     text    = models.TextField()
 
         # several PersonTrips point in to this object
@@ -274,3 +271,24 @@ class QM(models.Model):
     def __str__(self):
 	QMnumber=str(self.found_by.cave)+'-'+str(self.found_by.date.year)+"-"+str(self.number)+self.grade
 	return str(QMnumber)
+	
+class Photo(models.Model): 
+    caption = models.CharField(max_length=1000,blank=True,null=True)
+    contains_person_trip = models.ManyToManyField(PersonTrip,blank=True,null=True)
+    contains_person = models.ManyToManyField(Person,blank=True,null=True)
+    file = models.ImageField(upload_to='photos',)
+    is_mugshot = models.BooleanField(default=False)
+    contains_cave = models.ForeignKey(Cave,blank=True,null=True)
+    contains_entrance = models.ForeignKey(Entrance, related_name="photo_file",blank=True,null=True)
+    nearest_survey_point = models.ForeignKey(SurveyStation,blank=True,null=True)
+    nearest_QM = models.ForeignKey(QM,blank=True,null=True)
+    
+    
+    lon_utm = models.FloatField(blank=True,null=True)
+    lat_utm = models.FloatField(blank=True,null=True)
+    #content_type = models.ForeignKey(ContentType)
+    #object_id = models.PositiveIntegerField()
+    #location = generic.GenericForeignKey('content_type', 'object_id')
+
+    def __str__(self):
+        return self.caption

@@ -45,10 +45,37 @@ def LoadPersons():
         pObject = models.Person(first_name = firstname,
                                 last_name = lastname,
                                 is_vfho = person[header["VfHO member"]],
-                                mug_shot = person[header["Mugshot"]])
-        pObject.save()
-        is_guest = person[header["Guest"]] == "1"  # this is really a per-expo catagory; not a permanent state
+				)
 
+        is_guest = person[header["Guest"]] == "1"  # this is really a per-expo catagory; not a permanent state
+        pObject.save()
+
+	#create mugshot Photo instance
+	mugShotPath = settings.EXPOWEB+"folk/"+person[header["Mugshot"]]
+	if mugShotPath[-3:]=='jpg': #if person just has an image, add it
+		mugShotObj = models.Photo(
+			caption="Mugshot for "+firstname+" "+lastname,
+			is_mugshot=True,
+			file=mugShotPath,
+			)
+		mugShotObj.save()
+		mugShotObj.contains_person.add(pObject)
+		mugShotObj.save()
+	elif mugShotPath[-3:]=='htm': #if person has an html page, find the image(s) and add it. Also, add the text from the html page to the "blurb" field in his model instance.
+		personPageOld=open(mugShotPath,'r').read()
+		pObject.blurb=re.search('<body>.*<hr',personPageOld,re.DOTALL).group() #this needs to be refined, take care of the HTML and make sure it doesn't match beyond the blurb
+		for photoFilename in re.findall('i/.*?jpg',personPageOld,re.DOTALL):
+			mugShotPath=settings.EXPOWEB+"folk/"+photoFilename
+		mugShotObj = models.Photo(
+			caption="Mugshot for "+firstname+" "+lastname,
+			is_mugshot=True,
+			file=mugShotPath,
+			)
+		mugShotObj.save()
+		mugShotObj.contains_person.add(pObject)
+		mugShotObj.save()
+        pObject.save()
+	
         for year, attended in zip(headers, person)[5:]:
             yo = models.Expedition.objects.filter(year = year)[0]
             if attended == "1" or attended == "-1":

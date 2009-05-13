@@ -2,7 +2,7 @@
 {% load wiki_markup %}
 
 {% block title %}Logbook {{logbookentry.id}}{% endblock %}
-
+{% block editLink %}<a href="{{settings.URL_ROOT}}admin/expo/logbookentry/{{logbookentry.id}}">edit </a>{% endblock %}
 {% block content %}
     <div class="logbookblock">
     <h2>{{logbookentry.title}} - {{logbookentry.date}}</h2>
@@ -11,6 +11,7 @@
     {% for persontrip in logbookentry.persontrip_set.all %}
         <li>
             <a href="/person/{{persontrip.personexpedition.person.id}}">{{persontrip.personexpedition}}</a>
+            <a href="{{settings.URL_ROOT}}admin/expo/logbookentry/{{logbookentry.id}}">edit </a>
             {% ifequal persontrip.personexpedition logbookentry.author %}
                 (author)
             {% endifequal %}

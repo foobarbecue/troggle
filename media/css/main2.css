@@ -2,11 +2,18 @@
 .centre				{ text-align: center; }
 .plus2pt			{ font-size: 160%; }
 
-body, td, center, ul, p, input 	{ color: #000; font-family: sans-serif; }
+body, td, center, ul, p, input 	{
+	color:  rgb(204, 204, 102);
+	font-family: sans-serif;
+}
+body {
+	background-color: #000;
+}
+
 a:link, a:visited		{ text-decoration: none; }
 div.centre img			{ vertical-align: middle; }
 
-h1				{ text-align: center; font-size: 210%;	line-height: 100%; }
+h1				{ text-align: center; font-size: 210%; opacity:0.7; filter:alpha(opacity=70);}
 h2				{ color: #009900; }
 h3				{ color: #2c105e; }
 h4				{ color: #0d664c; }
@@ -19,6 +26,23 @@ img.onleft, div.onleft		{ vertical-align: top; float: left;
 				margin-left: 8pt; }
 img.icon			{ vertical-align: middle; }
 img.aligntop			{ vertical-align: top; }
+blockquote {
+  font: Georgia, "Times New Roman", Times, serif;
+  font-weight:bold;
+  font-variant:small-caps;
+  width: 400px;
+  background: url(../close-quote.gif) no-repeat right bottom;
+  padding-left: 25px;
+  text-indent: -25px;
+  text-align: right;
+  vertical-align:bottom;
+  color:#CCCC66;
+}
+blockquote:first-letter {
+  background: url(../open-quote.gif) no-repeat left top;
+  padding-left: 40px;
+  font: italic 1.4em Georgia, "Times New Roman", Times, serif;
+}
 table.imgtable			{ margin-left: auto; margin-right: auto; }
 table.imgtable td		{ vertical-align: middle; text-align: center;
 				padding: 10px; }
@@ -38,6 +62,7 @@ table.trad td, table.trad th	{ margin: 0pt; border: 1px solid #aaa;
 html, body, div.contents {
 min-height: 100%;
 height: 100%;
+width:100%;
 }
 html>body, html>body div.contents {
 height: auto;
@@ -47,12 +72,12 @@ body {
 div.contents {
 position: absolute;
 top: 0;
-left: 0;
+right: 0;
 }
 div.footer {
 position: fixed;
 bottom: 2px;
-right: 2px;
+left: 2px;
 }
 div.main {
 margin-bottom: 3em;

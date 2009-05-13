@@ -8,29 +8,56 @@ import re
 
 QM.objects.all().delete()
 
-
-
-def parseSteinbrQMs():
-    try:
-	steinBr=Cave.objects.get(official_name="Steinbr&uuml;ckenh&ouml;hle")
-    except Cave.DoesNotExist:
-        print "Steinbruckenhoehle is not in the database. Please run parsers.cavetab first."
-	return
-	
+def parseCaveQMs(cave,pathToCSV):
+    if cave=='stein':
+        try:
+        	steinBr=Cave.objects.get(official_name="Steinbr&uuml;ckenh&ouml;hle")
+        except Cave.DoesNotExist:
+            print "Steinbruckenhoehle is not in the database. Please run parsers.cavetab first."
+            return
+    elif cave=='hauch':
+        try:
+        	hauchHl=Cave.objects.get(official_name="Hauchh&ouml;hle")
+        except Cave.DoesNotExist:
+            print "Steinbruckenhoehle is not in the database. Please run parsers.cavetab first."
+            return	
     
-    qmPath = settings.EXPOWEB+r"smkridge/204/qm.csv"
-    qmReader = csv.reader(open(qmPath,'r'),dialect="excel-tab")
+    qmPath = settings.EXPOWEB+pathToCSV
+    qmCSVContents = open(qmPath,'r')
+    dialect=csv.Sniffer().sniff(qmCSVContents.read())
+    qmCSVContents.seek(0,0)
+    qmReader = csv.reader(qmCSVContents,dialect=dialect)
     qmReader.next() # Skip header row
     for line in qmReader:
-        year=int(line[0][1:5])
+        try:
+            year=int(line[0][1:5])
+            #check if placeholder exists for given year, create it if not
+            if cave=='stein':
+                placeholder, hadToCreate = LogbookEntry.objects.get_or_create(date__year=year, text="placeholder for QMs in 204", defaults={"date": date(year, 1, 1),"cave":steinBr})
+            elif cave=='hauch':
+                placeholder, hadToCreate = LogbookEntry.objects.get_or_create(date__year=year, text="placeholder for QMs in 234", defaults={"date": date(year, 1, 1),"cave":hauchHl})            
+            if hadToCreate:
+                print cave+" placeholder logbook entry for " + str(year) + " added to database"
+            QMnum=re.match(r".*?-\d*?-X?(?P<numb>\d*)",line[0]).group("numb")
+            newQM = QM()
+            newQM.found_by=placeholder
+            newQM.number=QMnum
+            if line[1]=="Dig":
+                newQM.grade="D"
+            else:
+                newQM.grade=line[1]
+            newQM.area=line[2]
+            newQM.location_description=line[3]
+            newQM.nearest_station_description=line[4]
+            newQM.completion_description=line[5]
+            newQM.comment=line[6]
+            newQM.save()
+            print "QM "+str(newQM) + " added to database"
+        except KeyError:
+            continue
+#        except IndexError:
+#            print "Index error in " + str(line)
+#           continue
 
-	#check if placeholder exists for given year, create it if not
-	placeholder, hadToCreate = LogbookEntry.objects.get_or_create(date__year=year, text="placeholder for QMs in 204", defaults={"date": date(year, 1, 1),"cave":steinBr})
-        if hadToCreate:
-            print "204 placeholder logbook entry for " + str(year) + " added to database"
-        QMnum=re.match(r".*?-\d*?-X?(?P<numb>\d*)",line[0]).group("numb")
-	newQM = QM(found_by=placeholder,number=QMnum,grade=line[1],area=line[2],location_description=line[3],nearest_station_description=line[4],completion_description=line[5],comment=line[6])
-        newQM.save()
-	print "QM "+str(newQM) + " added to database"
-
-parseSteinbrQMs()
+parseCaveQMs(cave='stein',pathToCSV=r"smkridge/204/qm.csv")
+parseCaveQMs(cave='hauch',pathToCSV=r"smkridge/234/qm.csv")

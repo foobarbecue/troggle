@@ -8,7 +8,7 @@ class RoleInline(admin.TabularInline):
 class SurvexBlockAdmin(admin.ModelAdmin):
     inlines = (RoleInline,)
 
-
+admin.site.register(Photo)
 admin.site.register(Cave)
 admin.site.register(Area)
 admin.site.register(OtherCaveName)
@@ -24,3 +24,4 @@ admin.site.register(Role)
 admin.site.register(LogbookEntry)
 admin.site.register(PersonTrip)
 admin.site.register(QM)
+
