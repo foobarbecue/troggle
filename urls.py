@@ -8,13 +8,14 @@ admin.autodiscover()
 urlpatterns = patterns('',
     
     (r'^$', frontPage),
-    url(r'^cave/?$', caveindex, name="caveindex"),
+    url(r'^caveindex$', caveindex, name="caveindex"),
+    
     (r'^cave/(?P<cave_id>[^/]+)/?$', cave),
     (r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     (r'^cavesearch', caveSearch),
 
-    url(r'^survex/(?P<survex_file>.*)\.index$', index, name="survexindex"),
+    url(r'^survex/(.*?)\.index$', index, name="survexindex"),
     (r'^survex/(?P<survex_file>.*)\.svx$', svx),
     (r'^survex/(?P<survex_file>.*)\.3d$', threed),
     (r'^survex/(?P<survex_file>.*)\.log$', log),

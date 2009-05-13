@@ -29,7 +29,7 @@ def frontPage(request):
 
     #'randSent':randSent.randomLogbookSentence(),
     expeditions =  Expedition.objects.order_by("-year")
-    return render_to_response('index.html', {'expeditions':expeditions, 'settings':settings, "message":message})
+    return render_to_response('index.html', {'expeditions':expeditions, 'settings':settings, 'all':'all', "message":message})
     
 def calendar(request,year):
     week=['S','S','M','T','W','T','F']
