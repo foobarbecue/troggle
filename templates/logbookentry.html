@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+
+{% block title %}Logbook {{logbookentry.id}}{% endblock %}
+
+{% block content %}
+    <div class="logbookblock">
+    <h2>{{logbookentry.title}} - {{logbookentry.date}}</h2>
+    <h3>place (to be a link to cave shaped object): <u>{{logbookentry.place}}</u></h3>
+    <ul>
+    {% for persontrip in logbookentry.persontrip_set.all %}
+        <li>
+            <a href="/person/{{persontrip.personexpedition.person.id}}">{{persontrip.personexpedition}}</a>
+            {% ifequal persontrip.personexpedition logbookentry.author %}
+                (author)
+            {% endifequal %}
+            {% if persontrip.timeunderground %}
+                - T/U {{persontrip.timeunderground}}</p>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    <em>[wiki_to_html doesn't do paragraphs.  don't know where it is located]</em>
+    <div>{{logbookentry.text|wiki_to_html}}</div>
+    </div>
+{% endblock %}
