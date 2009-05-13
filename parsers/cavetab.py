@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+import sys
+sys.path.append('C:\\Expo\\expoweb\\troggle\\')
 import settings
 import expo.models as models
 import csv

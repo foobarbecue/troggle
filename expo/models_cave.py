@@ -1,4 +1,5 @@
 from django.db import models
+import models_logbooks
 
 class Area(models.Model):
     short_name = models.CharField(max_length=100)
@@ -47,7 +48,7 @@ class Cave(models.Model):
             if self.kat_area():
                 return self.kat_area() + u": " + self.kataster_number
             else:
-                return unicode(l) + u": " + self.kataster_number
+                return unicode("l") + u": " + self.kataster_number
         else:
             if self.kat_area():
                 return self.kat_area() + u": " + self.unofficial_number
@@ -151,3 +152,103 @@ class Entrance(models.Model):
         for f in self.FINDABLE_CHOICES:
             if f[0] == self.findability:
                 return f[1]
+
+class Expedition(models.Model):
+    year        = models.CharField(max_length=20, unique=True)
+    name        = models.CharField(max_length=100)
+    start_date  = models.DateField(blank=True,null=True)
+    end_date    = models.DateField(blank=True,null=True)
+
+    def __str__(self):
+        return self.year
+
+    def GetPersonExpedition(self, name):
+        if name == "Dour":
+            name = "Anthony Day"
+        personyears = PersonExpedition.objects.filter(expedition=self)
+        res = None
+        for personyear in personyears:
+            if name == "%s %s" % (personyear.person.first_name, personyear.person.last_name):
+                assert not res, "Ambiguous:" + name 
+                res = personyear
+            if name == "%s %s" % (personyear.person.first_name, personyear.person.last_name[0]):
+                assert not res, "Ambiguous:" + name 
+                res = personyear
+            if name == personyear.person.first_name:
+                assert not res, "Ambiguous:" + name 
+                res = personyear
+        return res
+
+class Person(models.Model):
+    first_name  = models.CharField(max_length=100)
+    last_name   = models.CharField(max_length=100)
+    is_guest    = models.BooleanField()
+    is_vfho     = models.BooleanField()
+    mug_shot    = models.CharField(max_length=100, blank=True,null=True)
+    def __str__(self):
+        return "%s %s" % (self.first_name, self.last_name)
+
+class PersonExpedition(models.Model):
+    expedition  = models.ForeignKey(Expedition)
+    person      = models.ForeignKey(Person)
+    from_date   = models.DateField(blank=True,null=True)
+    to_date     = models.DateField(blank=True,null=True)
+    nickname    = models.CharField(max_length=100,blank=True,null=True)
+    def __str__(self):
+        return "%s: (%s)" % (self.person, self.expedition)
+
+class LogbookEntry(models.Model):
+    date    = models.DateField()
+    author  = models.ForeignKey(PersonExpedition,blank=True,null=True) 
+    title   = models.CharField(max_length=100)
+
+        # this will be a foreign key
+    place   = models.CharField(max_length=100,blank=True,null=True)  
+    text    = models.TextField()
+
+    #cavers = models.ManyToManyField(PersonYear)
+    #tu = models.CharField(max_length=50)
+    def __str__(self):
+        return "%s: (%s)" % (self.date, self.title)
+
+class PersonTrip(models.Model):
+    personexpedition = models.ForeignKey(PersonExpedition)
+    place           = models.CharField(max_length=100)  # this will be a foreign key
+    date            = models.DateField()    
+    timeunderground = models.CharField(max_length=100)
+    logbookentry    = models.ForeignKey(LogbookEntry)
+
+    #is_author    = models.BooleanField()
+
+    def __str__(self):
+        return "%s %s (%s)" % (self.personexpedition, self.place, self.date)
+
+class QM(models.Model):
+    #based on qm.csv in trunk/expoweb/smkridge/204 which has the fields:
+    #"Number","Grade","Area","Description","Page reference","Nearest station","Completion description","Comment"
+    found_by = models.ForeignKey(PersonTrip, related_name='QMs_found',)
+    ticked_off_by = models.ForeignKey(PersonTrip, related_name='QMs_ticked_off',null=True,blank=True)
+    #the cave field is unneeded- go through trips
+    #cave = models.ForeignKey(Cave, edit_inline=models.TABULAR, num_in_admin=3)
+    number_in_year = models.IntegerField()
+    GRADE_CHOICES=(
+	('A', 'A: Large obvious lead'),
+	('B', 'B: Average lead'),
+	('C', 'C: Tight unpromising lead'),
+	('D', 'D: Dig'),
+	('X', 'X: Unclimbable aven')
+    )
+    grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    location_description = models.TextField(blank=True)
+    #should be a foreignkey to surveystation
+    nearest_station = models.CharField(max_length=400,blank=True)
+    completion_description = models.TextField(blank=True)
+    comment=models.TextField(blank=True)
+    #the below are unneeded- instead use the date fields of the QM's trips
+    #dateFound = models.DateField(blank=True)
+    #dateKilled = models.DateField(blank=True)
+    def __str__(self):
+	QMnumber=str(self.found_by.date.year)+"-"+str(self.number_in_year)+self.grade
+	return str(QMnumber)
+
+
