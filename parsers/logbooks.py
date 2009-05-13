@@ -12,6 +12,11 @@ import datetime
 import os
 
 
+# 
+# When we edit logbook entries, allow a "?" after any piece of data to say we've frigged it and
+# it can be checked up later from the hard-copy if necessary; or it's not possible to determin (name, trip place, etc)
+#
+
 #
 # the logbook loading section
 #
@@ -72,7 +77,7 @@ def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_
     lplace = place.lower()
     if lplace not in noncaveplaces:
         lbo.cave=GetCaveLookup().get(lplace)
-        print "pppp %s |%s|" % (lplace, str(lbo.cave))
+        #print "pppp %s |%s|" % (lplace, str(lbo.cave))
     
     lbo.save()
     #print "ttt", date, place
@@ -289,6 +294,7 @@ def SetDatesFromLogbookEntries(expedition):
         
         
 def LoadLogbookForExpedition(expedition):
+    print "deleting logbooks for", expedition
     expedition.logbookentry_set.all().delete()
     models.PersonTrip.objects.filter(person_expedition__expedition=expedition).delete()
     expowebbase = os.path.join(settings.EXPOWEB, "years")  

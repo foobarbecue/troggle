@@ -6,32 +6,38 @@
 {% block content %}
 
 <h2>The unfinished front page</h2>
-<b>Work down through an expedition page link</b>
-<p class="indent"><b>Remaining work:</b> 
-
-<p>(separate out the recent/notable people) vast front-page layout table of folks and caving trips and years; </p>
-<p>parse 1995-1976 logbooks; </p>
-<p>name matching and spelling in survex files; </p>
-<p>detect T/U on log entries; </p>
-<p>Improve logbook wikihtml text</p>
-<p>match caves to log entries; </p>
-<p>simplify the survex parsing code (if necessary); </p>
-<p>links between logbooks and survex blocks to cave things; </p>
-<p>where are the subcaves; </p>
-<p>mini-tree of survexblocks; </p>
-<p>connect sketches to caves to survey blocks and render thumbnailwise; </p>
-<p>all images to start appearing in pages; and so on</p>
-<p>tables of trips per year per person;</p> 
-
-<h3>{{message}}</h3>
 
 <ul>
     <li><b><a href="{% url personindex %}">List of People</a></b></li>
     <li><b><a href="{% url caveindex %}">List of Caves</a></b></li>
-    <li><a href="/statistics">Statistics of what's loaded in the database</a></li>
-    <li><a href="{% url survexindex all %}">Survex directory</a></li>
+    <li><a href="{% url jgtfile aaaa %}">JGT list of files</a> (temporary simple file list and tunnel use)</li>
     <li><a href="{% url survey %}">Survey files</a></li>
+    <li><a href="{% url survexindex all %}">Survex directory</a></li>
+    <li><a href="{% url expedition 2008 %}">Expedition 2008</a></li>
+    <li><a href="{% url expedition 2007 %}">Expedition 2007</a></li>
+    <li><a href="{% url expedition 1996 %}">Expedition 1996</a></li>
 </ul>
+
+<h2>Further work</h2>
+
+<p>surf through the tunnel sketches and images</p>
+<p>bugs with all.svx block (double dot)
+<p>name matching and spelling in survex files; </p>
+<p>render bitmap view of every survex block as a thumbnail</p>
+<p>upload tunnel images and tunnel sketches</p>
+<p>parse 1995-1976 logbooks; (esp top 161)</p>
+<p>where are the subcaves; </p>
+<p>cave section entrance match for logbook entries</p>
+<p>detect T/U on log entries; </p>
+<p>Improve logbook wikihtml text</p>
+<p>simplify the survex parsing code (if necessary); </p>
+<p>wiki survex stop linegap between comment lins</p>
+<p>links between logbooks and survex blocks to cave things; </p>
+<p>mini-tree of survexblocks; </p>
+<p>connect sketches to caves to survey blocks and render thumbnailwise; </p>
+<p>all images to start appearing in pages; and so on</p>
+
+<h3>{{message}}</h3>
 
 <form action="" method="GET">
   <input type="submit" name="reloadexpos" value="Reload Expos">

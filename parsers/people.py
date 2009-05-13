@@ -52,81 +52,74 @@ def LoadPersonsExpos():
     headers = personreader.next()
     header = dict(zip(headers, range(len(headers))))
     
+    # make expeditions
+    print "Loading expeditions"
     models.Expedition.objects.all().delete()
     years = headers[5:]
     years.append("2008")
     for year in years:
-        y = models.Expedition(year = year, name = "CUCC expo%s" % year)
-        y.save()
-    print "lll", years 
+        expedition = models.Expedition(year = year, name = "CUCC expo%s" % year)
+        expedition.save()
 
     
+    # make persons
+    print "Loading personexpeditions"
     models.Person.objects.all().delete()
     models.PersonExpedition.objects.all().delete()
     expoers2008 = """Edvin Deadman,Kathryn Hopkins,Djuke Veldhuis,Becka Lawson,Julian Todd,Natalie Uomini,Aaron Curtis,Tony Rooke,Ollie Stevens,Frank Tully,Martin Jahnke,Mark Shinwell,Jess Stirrups,Nial Peters,Serena Povia,Olly Madge,Steve Jones,Pete Harley,Eeva Makiranta,Keith Curtis""".split(",")
     expomissing = set(expoers2008)
 
-    for person in personreader:
-        name = person[header["Name"]]
+    for personline in personreader:
+        name = personline[header["Name"]]
         name = re.sub("<.*?>", "", name)
         mname = re.match("(\w+)(?:\s((?:van |ten )?\w+))?(?:\s\(([^)]*)\))?", name)
+        nickname = mname.group(3) or ""
 
-        if mname.group(3):
-            nickname = mname.group(3)
-        else:
-            nickname = ""
-
-        firstname, lastname = mname.group(1), mname.group(2) or ""
-
-        print firstname, lastname, "NNN", nickname
-        #assert lastname == person[header[""]], person
-
-        href = firstname.lower()
-        if lastname:
-            href += "_" + lastname.lower()
-        pObject = models.Person(first_name = firstname,
-                                last_name = lastname, href=href, 
-                                is_vfho = person[header["VfHO member"]],
-                )
-
-        is_guest = person[header["Guest"]] == "1"  # this is really a per-expo catagory; not a permanent state
-        pObject.save()
+        person = models.Person(first_name=mname.group(1), last_name=(mname.group(2) or ""))
+        person.is_vfho = personline[header["VfHO member"]]
+        person.Sethref()
+        #print "NNNN", person.href
+        is_guest = (personline[header["Guest"]] == "1")  # this is really a per-expo catagory; not a permanent state
+        person.save()
         #parseMugShotAndBlurb(firstname, lastname, person, header, pObject)
     
-        for year, attended in zip(headers, person)[5:]:
-            yo = models.Expedition.objects.filter(year = year)[0]
+        # make person expedition from table
+        for year, attended in zip(headers, personline)[5:]:
+            expedition = models.Expedition.objects.get(year=year)
             if attended == "1" or attended == "-1":
-                pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname=nickname, is_guest=is_guest)
-                pyo.save()
-
-            # error
-            elif (firstname, lastname) == ("Mike", "Richardson") and year == "2001":
-                print "Mike Richardson(2001) error"
-                pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname=nickname, is_guest=is_guest)
-                pyo.save()
+                personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname=nickname, is_guest=is_guest)
+                personexpedition.save()
 
 
     # this fills in those people for whom 2008 was their first expo
+    print "Loading personexpeditions 2008"
     for name in expomissing:
         firstname, lastname = name.split()
         is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
         print "2008:", name
         persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
         if not persons:
-            pObject = models.Person(first_name = firstname,
-                                    last_name = lastname,
-                                    is_vfho = False,
-                                    mug_shot = "")
-            pObject.href = firstname.lower()
-            if lastname:
-                pObject.href += "_" + lastname.lower()
-            pObject.save()
+            person = models.Person(first_name=firstname, last_name = lastname, is_vfho = False, mug_shot = "")
+            person.Sethref()
+            person.save()
         else:
-            pObject = persons[0]
-        yo = models.Expedition.objects.filter(year = "2008")[0]
-        pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname="", is_guest=is_guest)
-        pyo.save()
+            person = persons[0]
+        expedition = models.Expedition.objects.get(year="2008")
+        personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname="", is_guest=is_guest)
+        personexpedition.save()
 
+    # could rank according to surveying as well
+    print "Setting person notability"
+    for person in models.Person.objects.all():
+        person.notability = 0.0
+        for personexpedition in person.personexpedition_set.all():
+            if not personexpedition.is_guest:
+                person.notability += 1.0 / (2012 - int(personexpedition.expedition.year))
+        person.bisnotable = person.notability > 0.3 # I don't know how to filter by this
+        person.save()
+        
+        
+# used in other referencing parser functions
 # expedition name lookup cached for speed (it's a very big list)
 Gpersonexpeditionnamelookup = { }
 def GetPersonExpeditionNameLookup(expedition):
@@ -135,9 +128,10 @@ def GetPersonExpeditionNameLookup(expedition):
     if res:
         return res
     
-    res = {}
+    res = { }
     duplicates = set()
     
+    print "Calculating GetPersonExpeditionNameLookup for", expedition.year
     personexpeditions = models.PersonExpedition.objects.filter(expedition=expedition)
     for personexpedition in personexpeditions:
         possnames = [ ]

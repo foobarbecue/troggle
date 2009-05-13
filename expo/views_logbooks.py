@@ -11,13 +11,14 @@ import re
 
 def personindex(request):
     persons = Person.objects.all()
-    
     personss = [ ]
     ncols = 5
     nc = (len(persons) + ncols - 1) / ncols
     for i in range(ncols):
         personss.append(persons[i * nc: (i + 1) * nc])
-    return render_to_response('personindex.html', {'persons': persons, 'personss':personss, 'settings': settings})
+    
+    notablepersons = Person.objects.filter(bisnotable=True)
+    return render_to_response('personindex.html', {'persons': persons, 'personss':personss, 'notablepersons':notablepersons, 'settings': settings})
 
 def expedition(request, expeditionname):
     year = int(expeditionname)
@@ -42,11 +43,9 @@ def personexpedition(request, name, expeditionname):
     personexpedition = person.personexpedition_set.get(expedition=expedition)
     return render_to_response('personexpedition.html', {'personexpedition': personexpedition, 'settings': settings})
 
-
 def logbookentry(request, logbookentry_id):
     logbookentry = LogbookEntry.objects.filter(href = logbookentry_id)[0]
     return render_to_response('logbookentry.html', {'logbookentry': logbookentry, 'settings': settings})
-
 
 def logbookSearch(request, extra):
     query_string = ''

@@ -7,10 +7,12 @@
   <h3>All trips done in this cave</h3>
   <table>
   {% for logbookentry in cave.logbookentry_set.all %}
+  {% if logbookentry.title %}
     <tr>
       <td>{{logbookentry.date}}</td>
       <td><a href="{% url logbookentry logbookentry.href %}">{{logbookentry.title|safe}}</a></td>
     </tr>
+  {% endif %}
   {% endfor %}
   </table>
 </div>

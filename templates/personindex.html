@@ -5,6 +5,21 @@
 
 {% block content %}
 
+<h2>Notable expoers</h2>
+<table>
+<tr><th>Person</th><th>First</th><th>Last</th><th>Notability</th></tr>
+{% for person in notablepersons %}
+<tr>
+  <td><a href="{% url person person.href%}">{{person|wiki_to_html_short}}</a></td>
+  <td><a href="{% url personexpedition person.href person.Firstexpedition.expedition.year %}">{{person.Firstexpedition.expedition.year}}</a></td> 
+  <td><a href="{% url personexpedition person.href person.Lastexpedition.expedition.year %}">{{person.Lastexpedition.expedition.year}}</a></td> 
+  <td>{{person.notability}}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+<h2>All expoers</h2>
 <table>
 <tr>
 {% for persons in personss %}

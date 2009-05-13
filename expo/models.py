@@ -23,6 +23,7 @@ class Expedition(models.Model):
     class Meta:
         ordering = ('year',)
     
+    # lose these two functions (inelegant, and we may create a file with the dates that we can load from)
     def GuessDateFrom(self):
 	try:
 		return self.logbookentry_set.order_by('date')[0].date
@@ -59,13 +60,17 @@ class Person(models.Model):
     is_vfho     = models.BooleanField(help_text="VFHO is the Vereines f&uuml;r H&ouml;hlenkunde in Obersteier, a nearby Austrian caving club.")    
     mug_shot    = models.CharField(max_length=100, blank=True,null=True)
     blurb = models.TextField(blank=True,null=True)
+    
     href        = models.CharField(max_length=200)
+    orderref    = models.CharField(max_length=200)  # for alphabetic
+    notability  = models.FloatField()               # for listing the top 20 people
+    bisnotable  = models.BooleanField()
     user	= models.ForeignKey(User, unique=True, null=True, blank=True)
     
     class Meta:
 	    verbose_name_plural = "People"
     class Meta:
-        ordering = ('last_name', 'first_name')
+        ordering = ('orderref',)  # "Wookey" makes too complex for: ('last_name', 'first_name') 
     
     def __unicode__(self):
         if self.last_name:
@@ -78,6 +83,15 @@ class Person(models.Model):
     def Lastexpedition(self):
         return self.personexpedition_set.order_by('-expedition')[0]
     
+    def Sethref(self):
+        if self.last_name:
+            self.href = self.first_name.lower() + "_" + self.last_name.lower()
+            self.orderref = self.last_name + " " + self.first_name
+        else:
+            self.href = self.first_name.lower()
+            self.orderref = self.first_name
+        self.notability = 0.0  # set temporarily
+        
 
 class PersonExpedition(models.Model):
     expedition  = models.ForeignKey(Expedition)
@@ -94,7 +108,6 @@ class PersonExpedition(models.Model):
                 res[-1]['roles'] += ", " + str(personrole.role)
             else:
                 res.append({'date':personrole.survex_block.date, 'survexpath':personrole.survex_block.survexpath, 'roles':str(personrole.role)})
-        print res
         return res
 
     class Meta:
@@ -117,18 +130,8 @@ class PersonExpedition(models.Model):
 # needs converting dict into list            
         return sorted(res.items())
 
-    
-    # deprecated
-    def GetPossibleNameForms(self):
-        res = [ ]
-        if self.person.last_name:
-            res.append("%s %s" % (self.person.first_name, self.person.last_name))
-            res.append("%s %s" % (self.person.first_name, self.person.last_name[0]))
-        res.append(self.person.first_name)
-        if self.nickname:
-            res.append(self.nickname)
-        return res
-	    
+    # don't use tabs. 
+    # possibly not useful functions anyway
     def ListDays(self):
 	if self.date_from and self.date_to:
 		res=[]
@@ -156,13 +159,52 @@ class PersonExpedition(models.Model):
         return self.person.first_name
 
 	
-#class LogbookSentanceRating(models.Model):
-#    rating = models.IntegerField()
-#    person_trip = models.ForeignKey(PersonTrip)
-#    sentance_number = models.IntegerField()
+class LogbookEntry(models.Model):
+    date    = models.DateField()
+    expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
+    author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip
+    title   = models.CharField(max_length=200)
+    cave    = models.ForeignKey('Cave',blank=True,null=True)
+    place   = models.CharField(max_length=100,blank=True,null=True)  
+    text    = models.TextField()
+    href    = models.CharField(max_length=100)
     
-#    def __unicode__(self):
-#	    return person_trip
+    # turn these into functions
+    logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
+    logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
+    
+    class Meta:
+	   verbose_name_plural = "Logbook Entries"
+        # several PersonTrips point in to this object
+    class Meta:
+        ordering = ('-date',)
+    
+    def __unicode__(self):
+        return "%s: (%s)" % (self.date, self.title)
+
+
+class PersonTrip(models.Model):
+    person_expedition = models.ForeignKey(PersonExpedition)
+    
+        # this will be a foreign key of the place(s) the trip went through
+        # possibly a trip has a plurality of triplets pointing into it
+    place           = models.CharField(max_length=100)  
+    # should add cave thing here (copied from logbook maybe)
+    date            = models.DateField()    
+    time_underground = models.FloatField()  
+    logbook_entry    = models.ForeignKey(LogbookEntry)
+    is_logbook_entry_author = models.BooleanField()
+    
+    persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
+    persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
+
+    def __unicode__(self):
+        return "%s %s (%s)" % (self.person_expedition, self.place, self.date)
+
+
+#
+# move following classes into models_cave
+#
 
 class Area(models.Model):
     short_name = models.CharField(max_length=100)
@@ -266,46 +308,6 @@ class Cave(models.Model):
             res += "&ndash;" + prevR
         return res
 
-class LogbookEntry(models.Model):
-    date    = models.DateField()
-    expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
-    author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip
-    title   = models.CharField(max_length=200)
-    cave    = models.ForeignKey(Cave,blank=True,null=True)
-    place   = models.CharField(max_length=100,blank=True,null=True)  
-    text    = models.TextField()
-    href    = models.CharField(max_length=100)
-    
-    # turn these into functions
-    logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
-    logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
-    
-    class Meta:
-	   verbose_name_plural = "Logbook Entries"
-        # several PersonTrips point in to this object
-    class Meta:
-        ordering = ('-date',)
-    
-    def __unicode__(self):
-        return "%s: (%s)" % (self.date, self.title)
-
-class PersonTrip(models.Model):
-    person_expedition = models.ForeignKey(PersonExpedition)
-    
-        # this will be a foreign key of the place(s) the trip went through
-        # possibly a trip has a plurality of triplets pointing into it
-    place           = models.CharField(max_length=100)  
-    # should add cave thing here (copied from logbook maybe)
-    date            = models.DateField()    
-    time_underground = models.FloatField()  
-    logbook_entry    = models.ForeignKey(LogbookEntry)
-    is_logbook_entry_author = models.BooleanField()
-    
-    persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
-    persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
-
-    def __unicode__(self):
-        return "%s %s (%s)" % (self.person_expedition, self.place, self.date)
 
 
 class OtherCaveName(models.Model):

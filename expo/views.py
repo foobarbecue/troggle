@@ -1,4 +1,7 @@
-from views_caves import *
-from views_survex import *
-from views_logbooks import *
-from views_other import *
+# primary namespace
+import view_surveys
+import views_caves
+import views_survex
+import views_logbooks
+import views_other
+

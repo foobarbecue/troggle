@@ -18,7 +18,7 @@ def stats(request):
     statsDict['logbookEntryCount'] = int(LogbookEntry.objects.count())
     return render_to_response('statistics.html', statsDict)
 
-def frontPage(request):
+def frontpage(request):
     message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
     if "reloadexpos" in request.GET:
         message = LoadPersonsExpos()
