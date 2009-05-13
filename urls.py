@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-from django.conf import settings
+import troggle.settings as settings
 
 from expo.views import *  # flat import
 from expo.views_caves import *
@@ -77,5 +77,5 @@ urlpatterns = patterns('',
         {'document_root': settings.SURVEYS, 'show_indexes':True}),
 
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': settings.PHOTOS, 'show_indexes':True}),
+        {'document_root': settings.PHOTO_ROOT, 'show_indexes':True}),
 )
