@@ -4,6 +4,7 @@ class SurvexBlock(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     parent = models.ForeignKey('SurvexBlock', blank=True, null=True)
     text = models.TextField()
+    date = models.DateField(blank=True, null=True)
     notes_person = models.ManyToManyField('PersonTrip', related_name="notes", blank=True, null=True)
     pics_person = models.ManyToManyField('PersonTrip', related_name="pics", blank=True, null=True)
     tape_person = models.ManyToManyField('PersonTrip', related_name="tape", blank=True, null=True)
