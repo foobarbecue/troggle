@@ -29,7 +29,7 @@ urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
 
-    (r'^/troggle/site_media/(?P<path>.*)$', 'django.views.static.serve',
+    (r'^troggle/site_media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
 
 )
