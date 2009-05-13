@@ -213,7 +213,8 @@ def Parseloghtml01(year, expedition, txt):
 
         ltriptext = re.sub("</p>", "", triptext)
         ltriptext = re.sub("\s*?\n\s*", " ", ltriptext)
-        ltriptext = re.sub("<p>", "\n\n", ltriptext).strip()        ltriptext = re.sub("[^\s0-9a-zA-Z\-.,:;'!]", "NONASCII", ltriptext)
+        ltriptext = re.sub("<p>", "\n\n", ltriptext).strip()
+        #ltriptext = re.sub("[^\s0-9a-zA-Z\-.,:;'!]", "NONASCII", ltriptext)
 
         #print ldate, trippeople.strip()
             # could includ the tripid (url link for cross referencing)
