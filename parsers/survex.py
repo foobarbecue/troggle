@@ -74,9 +74,11 @@ def make_model(name, parent, iter_lines, sf, c, l):
                                                 survex_block = m,
                                                 role = models.Role.objects.get(name = roles[role])).save()
                           except AttributeError:
-                              print "Person not found: " + name + " in " + file_
+                              print ("Person not found: " + name + " in " + file_).encode('ascii', 'xmlcharrefreplace')
               except AssertionError, inst:
-                  print inst, ": ", file_year[0]
+                  print (unicode(inst) + ": " + unicode(file_year[0])).encode('ascii', 'xmlcharrefreplace')
+              except models.Expedition.DoesNotExist:
+                  print "Expo"+str(file_year[1]).encode('ascii', 'xmlcharrefreplace')
 
           m.end_file = survex_file
           m.end_char = count
@@ -112,7 +114,7 @@ def make_model(name, parent, iter_lines, sf, c, l):
           if h:
               team.append((survex_file, h.groups()))
           else:
-              print "Role not found: " +  line + " in: " + sf
+              print ("Role not found: " +  line + " in: " + sf).encode('ascii', 'xmlcharrefreplace')
     m.text = m.text + line
     saveEnd(survex_file, count)
 
