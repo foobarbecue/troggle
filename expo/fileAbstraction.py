@@ -21,7 +21,12 @@ def listdir(*path):
             #Ignore non-files and non-directories
         return l
     except:
-        return urllib.urlopen(settings.FILES + "listdir/" + reduce(urljoin, strippedpath))
+        if strippedpath:
+            c = reduce(urljoin, strippedpath)
+        else:
+            c = ""
+        print strippedpath, c
+        return urllib.urlopen(settings.FILES + "listdir/" + c)
 
 
 def readFile(*path):
