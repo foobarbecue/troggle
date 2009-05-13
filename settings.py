@@ -80,7 +80,7 @@ INSTALLED_APPS = (
     'django.contrib.redirects',
     #'photologue',
     #'troggle.reversion',
-    'django_evolution',
+    #'django_evolution',
     'troggle.registration',
     'troggle.profiles',
     'troggle.expo'
