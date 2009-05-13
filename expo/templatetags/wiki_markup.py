@@ -2,7 +2,7 @@ from django import template
 from django.utils.html import conditional_escape
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
-import settings
+import troggle.settings as settings
 import re
 
 register = template.Library()
