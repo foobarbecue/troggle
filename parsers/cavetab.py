@@ -4,11 +4,8 @@ import settings
 import expo.models as models
 import csv
 import time
-<<<<<<< .mine
+
 #import sqlite3
-=======
-# import sqlite3
->>>>>>> .r8038
 import re
 import os
 
@@ -65,13 +62,8 @@ caveReader = csv.reader(cavetab)
 caveReader.next() # Strip out column headers
 
 
-<<<<<<< .mine
-def save(x):   #There seems to be an intermitent problem with sqlite and Vista, uncomment the lines below and the "import sqlite3" above to fix it
-#    try:
-=======
 def save(x):   #There seems to be an intermitent problem with sqlite and Vista, uncomment the lines below, and the import sqlite3 statment above to fix it
 #    try:
->>>>>>> .r8038
         x.save()
 #    except sqlite3.OperationalError:
 #        print "Error"
