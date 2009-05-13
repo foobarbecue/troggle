@@ -4,7 +4,7 @@ import settings
 import expo.models as models
 import csv
 import time
-import sqlite3
+# import sqlite3
 import re
 import os
 
@@ -61,13 +61,13 @@ caveReader = csv.reader(cavetab)
 caveReader.next() # Strip out column headers
 
 
-def save(x):   #There seems to be an intermitent problem with sqlite and Vista, this should fix it
-    try:
+def save(x):   #There seems to be an intermitent problem with sqlite and Vista, uncomment the lines below, and the import sqlite3 statment above to fix it
+#    try:
         x.save()
-    except sqlite3.OperationalError:
-        print "Error"
-        time.sleep(1)
-        save(x)
+#    except sqlite3.OperationalError:
+#        print "Error"
+#        time.sleep(1)
+#        save(x)
 
 def html_to_wiki(text):
     if type(text) != str:
