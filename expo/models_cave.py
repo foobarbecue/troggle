@@ -29,7 +29,7 @@ class Cave(models.Model):
     area = models.ManyToManyField(Area, blank=True, null=True)
     kataster_code = models.CharField(max_length=20,blank=True,null=True)
     kataster_number = models.CharField(max_length=10,blank=True, null=True)
-    unofficial_number = models.CharField(max_length=30,blank=True, null=True)
+    unofficial_number = models.CharField(max_length=60,blank=True, null=True)
     entrances = models.ManyToManyField('Entrance', through='CaveAndEntrance')
     explorers = models.TextField(blank=True,null=True)
     underground_description = models.TextField(blank=True,null=True)
@@ -39,9 +39,9 @@ class Cave(models.Model):
     kataster_status = models.TextField(blank=True,null=True)
     underground_centre_line = models.TextField(blank=True,null=True)
     notes = models.TextField(blank=True,null=True)
-    length = models.CharField(max_length=40,blank=True,null=True)
-    depth = models.CharField(max_length=40,blank=True,null=True)
-    extent = models.CharField(max_length=40,blank=True,null=True)
+    length = models.CharField(max_length=100,blank=True,null=True)
+    depth = models.CharField(max_length=100,blank=True,null=True)
+    extent = models.CharField(max_length=100,blank=True,null=True)
     survex_file = models.CharField(max_length=100,blank=True,null=True)
     def __unicode__(self):
         if self.kataster_number:
@@ -101,7 +101,7 @@ class SurveyStation(models.Model):
         return unicode(self.name)
 
 class Entrance(models.Model):
-    name = models.CharField(max_length=60, blank=True,null=True)
+    name = models.CharField(max_length=100, blank=True,null=True)
     entrance_description = models.TextField(blank=True,null=True)
     explorers = models.TextField(blank=True,null=True)
     map_description = models.TextField(blank=True,null=True)
