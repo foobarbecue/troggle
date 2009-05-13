@@ -11,7 +11,10 @@ re_date = re.compile(r"^\s*\*date\s+(.*?)\s*$", re.IGNORECASE)
 
 def fileIterator(directory, filename):
     survex_file = os.path.join(directory, filename + ".svx")
-    f = open(os.path.join(settings.SURVEX_DATA, survex_file), "rb")
+    try:
+        f = open(os.path.join(settings.SURVEX_DATA, survex_file), "rb")
+    except:
+        f = open(os.path.join(settings.SURVEX_DATA, survex_file).lower(), "rb")
     char = 0
     for line in f.readlines():
         line = unicode(line, "latin1")
@@ -50,7 +53,7 @@ def make_model(name, parent, iter_lines, sf, c, l):
           assert (end.groups()[0]).lower() == (name).lower()
           return None
       elif date:
-          print date.groups()[0]
+          #print date.groups()[0]
           m.text = m.text + line
       else:
           m.text = m.text + line
