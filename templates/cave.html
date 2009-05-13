@@ -68,7 +68,7 @@
 {% if cave.get_QMs %}
 	<h2>Question marks</h2>
     <h3>Extant</h3>
-    <ul>
+    <ul id="cavelist">
     {% for QM in cave.get_QMs %}
         {% if QM.ticked_off_by %}
         {% else %}

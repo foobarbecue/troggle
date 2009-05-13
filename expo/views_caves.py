@@ -77,12 +77,12 @@ def caveSearch(request):
 
 def surveyindex(request):
     surveys=Survey.objects.all()
-    expeditions=Expedition.objects.all()
+    expeditions=Expedition.objects.order_by("-year")
     return render_response(request,'survey.html',locals())
 
 def survey(request,year,wallet_number):
     surveys=Survey.objects.all()
-    expeditions=Expedition.objects.all()
+    expeditions=Expedition.objects.order_by("-year")
     current_expedition=Expedition.objects.filter(year=year)[0]
     
     if wallet_number!='':

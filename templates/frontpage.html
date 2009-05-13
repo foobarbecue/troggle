@@ -7,7 +7,6 @@
 
 <div id="col2">
 Recent edits
-</ul>
 </div>
 
 <div id="col1">
@@ -35,6 +34,9 @@ Everyone is gearing up for the 2009 expedition; please see the link below for th
 Troggle is still under development, and there is <a href="{%url todo%}">much work to do</a>.
 </p>
 </div>
+{% endblock content %}
+
+{% block margins %}
 <img class="leftMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}eieshole.jpg">
 <img class="rightMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}goesser.jpg">
-{% endblock content %}
+{% endblock margins %}

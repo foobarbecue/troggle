@@ -14,13 +14,7 @@
 
 <h3>All caves</h3>
 
-	<form method="get">
-		<div>
-			<input type="text" value="" name="q" id="q" />
-		</div> 
-	</form>
-
-<ul id="posts">
+<ul class="searchable">
 {% for cave in caves %}
   <li> <a href="{{ cave.get_absolute_url }}">{{cave.official_name|wiki_to_html_short}} ({{cave}})</a> </li>
 {% endfor %}

@@ -1,9 +1,12 @@
 div#nav {
+	position:fixed;
 	width: 12em;
-	float: left;
 	background: rgb(153, 153, 153);
-	padding: 15px 0;
-	height:100%
+	margin-top: 0px;
+	margin-left: 120px;
+	border-top: thin black solid;
 }
-	
-div#content { margin-left:13em }
+
+div#content {
+	padding-left:240px;
+}

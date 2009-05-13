@@ -1,46 +1,74 @@
 
-  function showDiv(collapsed,expanded){
-        document.getElementById(collapsed).style.display = 'none';
-	document.getElementById(expanded).style.display = 'block';
-      }
-      
-  function hideDiv(collapsed,expanded){
-        document.getElementById(collapsed).style.display = 'block';
-	document.getElementById(expanded).style.display = 'none';
-      }
+$(document).ready(function() { 
 
-   function makeDivTransparent(div){
-	document.getElementById(div).style.backgroundColor = 'transparent';
-      }
+$('.searchable li').quicksearch({
+  position: 'before',
+  attached: 'ul.searchable',
+  labelText: '',
+  loaderText: '',
+  delay: 100
+})
+
+$('table.searchable tr').quicksearch({
+  position: 'before',
+  attached: 'table.searchable:first',
+});
+
+$(".toggleEyeCandy").click(function () {
+		  $(".leftMargin,.rightMargin").toggle("fade");
+		  $(".toggleEyeCandy").toggle();
+ });
+
+$(".nav").css('opacity','7')
+$(".footer").hide();
+$(".fadeIn").hide();
+setTimeout("$('.leftMargin.fadeIn').fadeIn(3000);",1000);
+setTimeout("$('.rightMargin.fadeIn').fadeIn(3000);",2000);
+
+
+/*$("#footerLinks").hover(
+		  function() {$(".footer").fadeIn("slow")},
+		  function() {$(".footer").fadeOut("slow")}		  
+);*/
+
+function linkHover(hoverLink,image){
+
+$(hoverLink).hover(
+		  function() {
+			  $(image).fadeIn("slow");
+			  $(hoverLink).css("background","gray");
+		  },
+		  function() {
+			  $(image).fadeOut("slow");
+			  $(hoverLink).css("background","black");
+		  }		  
+);
 
 
 
-hex=0 // Initial color value.
-leftPos=25
-year=1976
-currentDate= new Date()
-currentYear = currentDate.getFullYear()
-function fadeText(){ 
-if(hex<153) { //If color is not black yet
-	hex=hex+10; // increase color darkness
-	leftPos-=1;
-	document.getElementById("expoHeader").style.color="rgb("+0+","+hex+","+0+")";	
-//	document.getElementById("expoFinalDate").style.color="rgb("+0+","+hex+","+0+")";	
-	document.getElementById("expoHeader").style.left=leftPos;
-	setTimeout("fadeText()",50)
-	setTimeout("countUpYear()",1000)
+};
+
+linkHover("#expoWebsiteLink","#richardBanner");
+linkHover("#cuccLink","#timeMachine");
+linkHover("#surveyBinderLink","#surveyHover");
+linkHover("#troggle","#timeMachine");
+
+
+});
+
+function contentHeight(){
+setMaxHeight($(".rightMargin,#content,.leftMargin,#col2"),$("#content"));
+};
+
+function setMaxHeight(group, target) {
+	tallest = 0;
+	group.each(function() {
+		thisHeight = $(this).height();
+		if(thisHeight > tallest) {
+			tallest = thisHeight;
+		}
+	});
+	target.height(tallest);
 }
-else {
-	hex=0;
-	leftPos=25;
-}
-}
 
-function countUpYear(){
-	if (year<currentYear) {
-//		alert (year+''+currentYear)
-		year=year+1
-		document.getElementById("expoFinalDate").innerHTML="<h1>"+year+"</h1>"
-		setTimeout("countUpYear()",1000)
-	}
-}
+

@@ -3,64 +3,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main3.css" />
-<title>{% block title %}THE TITLE{% endblock %}</title>
+<title>{% block title %}Troggle{% endblock %}</title>
+<script src="{{ settings.MEDIA_URL }}js/jquery.js" type="text/javascript"></script>
+<script src="{{ settings.MEDIA_URL }}js/jquery.quicksearch.js" type="text/javascript"></script>
 <script src="{{ settings.MEDIA_URL }}js/base.js" type="text/javascript"></script>
-<script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
-<script src="http://ejohn.org/apps/livesearch/jquery.livesearch.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-$(document).ready(function() { 
-
-
-$(".toggleEyeCandy").click(function () {
-		  $(".leftMargin,.rightMargin").toggle("fade");
-		  $(".toggleEyeCandy").toggle();
- });
-
-$(".nav").css('opacity','7')
-$(".eyeCandy").hide();
-setTimeout("$('.leftMargin').fadeIn(3000);",2000);
-setTimeout("$('.rightMargin').fadeIn(3000);",4000);
-
-
-/*$("#footerLinks").hover(
-		  function() {$(".footer").fadeIn("slow")},
-		  function() {$(".footer").fadeOut("slow")}		  
-);*/
-$("#expoWebsiteLink").hover(
-		  function() {$("#richardBanner").fadeIn("slow")},
-		  function() {$("#richardBanner").fadeOut("slow")}		  
-);
-
-$("#cuccLink").hover(
-		  function() {
-
-			  $("#timeMachine").fadeIn("slow");
-  			  $(".rightMargin,.leftMargin").fadeTo("30","fast");
-			  },
-		  function() {$("#timeMachine").fadeOut("slow")}		  
-);
-
-
-});
-
-function contentHeight(){
-setMaxHeight($(".rightMargin,#content,.leftMargin,#col2"),$("#content"));
-};
-
-function setMaxHeight(group, target) {
-	tallest = 0;
-	group.each(function() {
-		thisHeight = $(this).height();
-		if(thisHeight > tallest) {
-			tallest = thisHeight;
-		}
-	});
-	target.height(tallest);
-}
-
-$('#q').liveUpdate('posts').focus();
-
 </script>
 
 {% block head %}{% endblock %}
@@ -71,8 +17,11 @@ $('#q').liveUpdate('posts').focus();
   <h1>CUCC Expeditions to Austria: 1976 - 2009</h1>
   <div id="editLinks"> {% block loginInfo %}
     {% if user.username %}
-    You are logged in as {{ user.username }} {% if user.person %}(<a href="{{ user.person.get_absolute_url }}">{{ user.person }}</a>){% endif %}.
-    | <a href="{{ settings.URL_ROOT }}/accounts/logout/">Log out</a> {% else %} <a href="{{ settings.URL_ROOT }}/accounts/register">Sign up</a> | <a href="{{ settings.URL_ROOT }}/accounts/login/">Log in</a> {% endif %}
+    You are logged in as {{ user.username }} 
+    	{% if user.person %}(<a href="{{ user.person.get_absolute_url }}">{{ user.person }}</a>)
+        	{% else %} <a href="{% url profiles_create_profile %}">sort your profile</a>
+        {% endif %}.
+    | <a href="{% url auth_logout %}">Log out</a> {% else %} <a href="{% url registration_register %}">Sign up</a> | <a href="{% url auth_login %}">Log in</a> {% endif %}
     {% endblock%}
     | <a href="{{ settings.URL_ROOT }}">Home</a> | <a class="toggleEyeCandy">Kill Eyecandy</a><a class="toggleEyeCandy" style="display: none;">Show Eyecandy</a>
     {% block editLink %}
@@ -101,9 +50,11 @@ $('#q').liveUpdate('posts').focus();
 
 <img id="richardBanner" class="footer eyeCandy" src="{{ settings.MEDIA_URL }}expoBanner.gif"/>
 <img id="timeMachine" class="footer eyeCandy" src="{{ settings.MEDIA_URL }}timemachine.gif"/>
-<img class="caversLink eyeCandy" src="{{ settings.MEDIA_URL }}expoBanner.gif"/>
-
-
+<img id="surveyHover" class="footer eyeCandy" src="{{ settings.MEDIA_URL }}surveyHover.gif"/>
+{% block margins %}
+<img class="leftMargin eyeCandy" src="{{ settings.MEDIA_URL }}eieshole.jpg">
+<img class="rightMargin eyeCandy" src="{{ settings.MEDIA_URL }}goesser.jpg">
+{% endblock margins %}
 
 
 <div id="footerLinks"> 
@@ -113,9 +64,9 @@ $('#q').liveUpdate('posts').focus();
     <a href="{% url frontpage %}">Troggle front page</a> | 
     <a href="{% url caveindex %}">Caves</a> | 
     <a id="caversLink" href="{% url personindex %}">Cavers</a> | 
-    <a href="{% url survey %}"> Survey binder</a> | 
+    <a id="surveyBinderLink" href="{% url survey %}"> Survey binder</a> | 
     <a href="{% url stats %}"> Statistics</a> | 
-    <a href="{% url calendar 2007 %}">Expedition calendar</a>
+    <a href="{% url calendar 2008 %}">Expedition calendar</a>
 </div> 
 
 </body>

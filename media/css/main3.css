@@ -16,7 +16,7 @@ table, caption, tbody, tfoot, thead, tr, th, td
 	}
 
 html, body {
-	height: 100%
+	height: 100%;
 }
 
 
@@ -207,10 +207,6 @@ td {
 }
 
 
-#nav {
-
-}
-
 .redtext{
 		 color:#F00;
 		 }
@@ -292,7 +288,9 @@ div#content {
 	margin-top: 50px;
 	margin-left: 120px;
 	margin-right: 120px;
-	padding: 5em;
+	padding-top: 10px;
+	padding-left: 5em;
+	padding-right: 5em;	
 	background:#CCC;
 }
 
@@ -361,6 +359,16 @@ h1 {
 	left:auto;
 }
 
+#surveyHover {
+	width:auto;
+	right:auto;
+	left:auto;
+}
+
 #col1 {
 	width:60%
+}
+
+#quicksearch {
+	margin-left:40px;
 }

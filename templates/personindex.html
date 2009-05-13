@@ -6,7 +6,7 @@
 {% block content %}
 
 <h2>Notable expoers</h2>
-<table>
+<table class="searchable">
 <tr><th>Person</th><th>First</th><th>Last</th><th>Notability</th></tr>
 {% for person in notablepersons %}
 <tr>
@@ -20,10 +20,11 @@
 
 
 <h2>All expoers</h2>
-<table>
+<table class="searchable">
 <tr>
 {% for persons in personss %}
 <td>
+
 <table>
 <tr><th>Person</th><th>First</th><th>Last</th></tr>
 {% for person in persons %}
