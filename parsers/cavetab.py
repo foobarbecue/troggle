@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 sys.path.append("/home/mjg/expoweb/troggle")
-import expo.models as models
-import settings as settings
+import troggle.expo.models as models
+from django.conf import settings
 import csv
 import time
 
@@ -177,7 +177,6 @@ def LoadCaveTab():
             addToArgs(Notes, "notes")
 
             newCave = models.Cave(**args)
-            newCave.Sethref()
             newCave.save()
     
             if line[Area]:

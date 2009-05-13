@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response
 from troggle.expo.models import Expedition, Person, PersonExpedition, PersonTrip, LogbookEntry
 import troggle.settings as settings
-
+from django.db import models
 from troggle.parsers.logbooks import LoadLogbookForExpedition
 from troggle.parsers.people import GetPersonExpeditionNameLookup
 from troggle.expo.forms import PersonForm
@@ -11,6 +11,8 @@ from troggle.alwaysUseRequestContext import render_response
 
 import search
 import re
+
+@models.permalink #this allows the nice get_absolute_url syntax we are using
 
 def personindex(request):
     persons = Person.objects.all()
@@ -35,6 +37,9 @@ def expedition(request, expeditionname):
     #message = str(GetPersonExpeditionNameLookup(expedition).keys())
     logbookentries = expedition.logbookentry_set.order_by('date')
     return render_response(request,'expedition.html', {'expedition': expedition, 'expedition_next':expedition_next, 'expedition_prev':expedition_prev, 'logbookentries':logbookentries, 'message':message, })
+
+    def get_absolute_url(self):
+        return ('expedition', (expedition.year))
 
 def person(request, first_name='', last_name=''):
     person = Person.objects.get(first_name = first_name, last_name = last_name)

@@ -56,7 +56,7 @@ def LoadPersonsExpos():
     print "Loading expeditions"
     models.Expedition.objects.all().delete()
     years = headers[5:]
-    years.append("2008")
+#    years.append("2008")
     for year in years:
         expedition = models.Expedition(year = year, name = "CUCC expo %s" % year)
         expedition.save()
@@ -77,7 +77,7 @@ def LoadPersonsExpos():
 
         person = models.Person(first_name=mname.group(1), last_name=(mname.group(2) or ""))
         person.is_vfho = personline[header["VfHO member"]]
-        person.Sethref()
+        #person.Sethref()
         #print "NNNN", person.href
         is_guest = (personline[header["Guest"]] == "1")  # this is really a per-expo catagory; not a permanent state
         person.save()
@@ -90,33 +90,33 @@ def LoadPersonsExpos():
                 personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname=nickname, is_guest=is_guest)
                 personexpedition.save()
 
-
+    # The below is no longer necessary because the 2008 expedition people have been added to surveys.csv. - AC 16 Feb 09
     # this fills in those people for whom 2008 was their first expo
-    print "Loading personexpeditions 2008"
-    for name in expomissing:
-        firstname, lastname = name.split()
-        is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
-        print "2008:", name
-        persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
-        if not persons:
-            person = models.Person(first_name=firstname, last_name = lastname, is_vfho = False, mug_shot = "")
-            person.Sethref()
-            person.save()
-        else:
-            person = persons[0]
-        expedition = models.Expedition.objects.get(year="2008")
-        personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname="", is_guest=is_guest)
-        personexpedition.save()
+#    print "Loading personexpeditions 2008"
+#    for name in expomissing:
+#        firstname, lastname = name.split()
+#        is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
+#        print "2008:", name
+#        persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
+#        if not persons:
+#            person = models.Person(first_name=firstname, last_name = lastname, is_vfho = False, mug_shot = "")
+#            #person.Sethref()
+#            person.save()
+#        else:
+#            person = persons[0]
+#        expedition = models.Expedition.objects.get(year="2008")
+#        personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname="", is_guest=is_guest)
+#        personexpedition.save()
 
     # could rank according to surveying as well
-    print "Setting person notability"
-    for person in models.Person.objects.all():
-        person.notability = 0.0
-        for personexpedition in person.personexpedition_set.all():
-            if not personexpedition.is_guest:
-                person.notability += 1.0 / (2012 - int(personexpedition.expedition.year))
-        person.bisnotable = person.notability > 0.3 # I don't know how to filter by this
-        person.save()
+#    print "Setting person notability"
+#    for person in models.Person.objects.all():
+#        person.notability = 0.0
+#        for personexpedition in person.personexpedition_set.all():
+#            if not personexpedition.is_guest:
+#                person.notability += 1.0 / (2012 - int(personexpedition.expedition.year))
+#        person.bisnotable = person.notability > 0.3 # I don't know how to filter by this
+#        person.save()
         
         
 # used in other referencing parser functions

@@ -42,7 +42,7 @@ for survey in surveyreader:
         #try and find the sketch_scan
         pass
     surveyobj.save()
-    print "added survey " + survey[header['Year']] + "#" + surveyobj.wallet_number
+    print "added survey " + survey[header['Year']] + "#" + surveyobj.wallet_number + "\r",
     
 # add survey scans
 def parseSurveyScans(year):
@@ -53,7 +53,7 @@ def parseSurveyScans(year):
             surveyNumber=re.match(r'\d\d\d\d#0*(\d+)',surveyFolder).groups()
             scanList=os.listdir(os.path.join(yearPath,surveyFolder))
         except AttributeError:
-            print surveyFolder + " ignored"
+            print surveyFolder + " ignored",
             continue
 
         for scan in scanList:
@@ -61,7 +61,7 @@ def parseSurveyScans(year):
                 scanChopped=re.match(r'(?i).*(notes|elev|plan|elevation|extend)(\d*)\.(png|jpg|jpeg)',scan).groups()
                 scanType,scanNumber,scanFormat=scanChopped
             except AttributeError:
-                print "Adding scans: " + scan + " ignored"
+                print "Adding scans: " + scan + " ignored \r",
                 continue
 	    if scanType == 'elev' or scanType == 'extend':
 		scanType = 'elevation'

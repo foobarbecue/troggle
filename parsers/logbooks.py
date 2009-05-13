@@ -20,7 +20,7 @@ import os
 #
 # the logbook loading section
 #
-def GetTripPersons(trippeople, expedition, logtime_underground):
+def GetTripPersons(trippeople, expedition, logtime_underground):    
     res = [ ]
     author = None
     for tripperson in re.split(",|\+|&amp;|&(?!\w+;)| and ", trippeople):
@@ -252,45 +252,50 @@ def SetDatesFromLogbookEntries(expedition):
         persontrips = personexpedition.persontrip_set.order_by('date')
         personexpedition.date_from = min([persontrip.date  for persontrip in persontrips] or [None])
         personexpedition.date_to = max([persontrip.date  for persontrip in persontrips] or [None])
+        personexpedition.dates_guessed = True
         personexpedition.save()
-    
-        lprevpersontrip = None
-        for persontrip in persontrips:
-            persontrip.persontrip_prev = lprevpersontrip
-            if lprevpersontrip:
-                lprevpersontrip.persontrip_next = persontrip
-                lprevpersontrip.save()
-            persontrip.persontrip_next = None
-            lprevpersontrip = persontrip
-            persontrip.save()
+
+# The below is all unnecessary, just use the built in get_previous_by_date and get_next_by_date
+#        lprevpersontrip = None
+#        for persontrip in persontrips:
+#            persontrip.persontrip_prev = lprevpersontrip
+#            if lprevpersontrip:
+#                lprevpersontrip.persontrip_next = persontrip
+#                lprevpersontrip.save()
+#            persontrip.persontrip_next = None
+#            lprevpersontrip = persontrip
+#            persontrip.save()
             
     # from trips rather than logbook entries, which may include events outside the expedition
     expedition.date_from = min([personexpedition.date_from  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_from] or [None])
     expedition.date_to = max([personexpedition.date_to  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_to] or [None])
+    expedition.dates_guessed = True
     expedition.save()
-    
-    # order by appearance in the logbook (done by id)
-    lprevlogbookentry = None
-    for logbookentry in expedition.logbookentry_set.order_by('id'):
-        logbookentry.logbookentry_prev = lprevlogbookentry
-        if lprevlogbookentry:
-            lprevlogbookentry.logbookentry_next = logbookentry
-            lprevlogbookentry.save()
-        logbookentry.logbookentry_next = None
-        logbookentry.save()
-        lprevlogbookentry = logbookentry
+
+# The below has been replaced with the methods get_next_by_id and get_previous_by_id
+#    # order by appearance in the logbook (done by id)
+#    lprevlogbookentry = None
+#    for logbookentry in expedition.logbookentry_set.order_by('id'):
+#        logbookentry.logbookentry_prev = lprevlogbookentry
+#        if lprevlogbookentry:
+#            lprevlogbookentry.logbookentry_next = logbookentry
+#            lprevlogbookentry.save()
+#        logbookentry.logbookentry_next = None
+#        logbookentry.save()
+#        lprevlogbookentry = logbookentry
         
-    # order by date for setting the references
-    lprevlogbookentry = None
-    for logbookentry in expedition.logbookentry_set.order_by('date'):
-        if lprevlogbookentry and lprevlogbookentry.date == logbookentry.date:
-            mcount = re.search("_(\d+)$", lprevlogbookentry.href)
-            mc = mcount and (int(mcount.group(1)) + 1) or 1
-            logbookentry.href = "%s_%d" % (logbookentry.date, mc)
-        else:
-            logbookentry.href = "%s" % logbookentry.date
-        logbookentry.save()
-        lprevlogbookentry = logbookentry
+# This combined date / number key is a weird way of doing things. Use the primary key instead. If we are going to use the date for looking up entries, we should set it up to allow multiple results.
+#    # order by date for setting the references
+#    lprevlogbookentry = None
+#    for logbookentry in expedition.logbookentry_set.order_by('date'):
+#        if lprevlogbookentry and lprevlogbookentry.date == logbookentry.date:
+#            mcount = re.search("_(\d+)$", lprevlogbookentry.href)
+#            mc = mcount and (int(mcount.group(1)) + 1) or 1
+#            logbookentry.href = "%s_%d" % (logbookentry.date, mc)
+#        else:
+#            logbookentry.href = "%s" % logbookentry.date
+#        logbookentry.save()
+#        lprevlogbookentry = logbookentry
         
         
 def LoadLogbookForExpedition(expedition):

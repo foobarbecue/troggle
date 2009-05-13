@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
 import os
-import troggle.settings as settings
+from django.conf import settings
 import datetime
 
 from models_survex import *
@@ -16,7 +16,8 @@ class Expedition(models.Model):
     name        = models.CharField(max_length=100)
     date_from  = models.DateField(blank=True,null=True)
     date_to    = models.DateField(blank=True,null=True)
-
+    dates_guessed = models.BooleanField(default=False)
+    
     def __unicode__(self):
         return self.year
 
@@ -67,8 +68,10 @@ class Person(models.Model):
     
     href        = models.CharField(max_length=200)
     orderref    = models.CharField(max_length=200)  # for alphabetic 
-    notability  = models.FloatField()               # for listing the top 20 people
-    bisnotable  = models.BooleanField()
+    
+    #the below have been removed and made methods. I'm not sure what the b in bisnotable stands for. - AC 16 Feb
+    #notability  = models.FloatField()               # for listing the top 20 people
+    #bisnotable  = models.BooleanField()
     user	= models.ForeignKey(User, unique=True, null=True, blank=True)
     def get_absolute_url(self):
         return settings.URL_ROOT + "/person/%s_%s/" % (self.first_name, self.last_name)
@@ -90,6 +93,16 @@ class Person(models.Model):
 #    def Lastexpedition(self):
 #        return self.personexpedition_set.order_by('-expedition')[0]
     
+    def notability(self):
+        notability = 0.0
+	for personexpedition in person.personexpedition_set.all():
+             if not personexpedition.is_guest:
+                notability += 1.0 / (2012 - int(self.personexpedition.expedition.year))
+        return notability
+
+    def bisnotable(self):
+        return self.notability > 0.3
+    
     def Sethref(self):
         if self.last_name:
             self.href = self.first_name.lower() + "_" + self.last_name.lower()
@@ -105,6 +118,7 @@ class PersonExpedition(models.Model):
     person      = models.ForeignKey(Person)
     date_from   = models.DateField(blank=True,null=True)
     date_to     = models.DateField(blank=True,null=True)
+    dates_guessed = models.BooleanField(default=False)
     is_guest    = models.BooleanField(default=False)  
     COMMITTEE_CHOICES = (
         ('leader','Expo leader'),
@@ -189,8 +203,8 @@ class LogbookEntry(models.Model):
     #href    = models.CharField(max_length=100)
     
     
-    #logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
-    #logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
+    logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
+    logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
 
     class Meta:
 	   verbose_name_plural = "Logbook Entries"
@@ -204,10 +218,14 @@ class LogbookEntry(models.Model):
     def __unicode__(self):
         return "%s: (%s)" % (self.date, self.title)
 
+    def get_next_by_id(self):
+        Logbook.objects.get(id=self.id+1)
 
+    def get_previous_by_id(self):
+        Logbook.objects.get(id=self.id-1)
 
 class PersonTrip(models.Model):
-    person_expedition = models.ForeignKey(PersonExpedition)
+    person_expedition = models.ForeignKey(PersonExpedition,null=True)
     
         # this will be a foreign key of the place(s) the trip went through
         # possibly a trip has a plurality of triplets pointing into it

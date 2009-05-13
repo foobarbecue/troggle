@@ -55,7 +55,7 @@ urlpatterns = patterns('',
     url(r'^calendar/(?P<year>\d\d\d\d)/?$', views_other.calendar, name="calendar"),
 
     url(r'^survey/?$', surveyindex, name="survey"),
-    (r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey),
+    url(r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey, name="survey"),
     
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),

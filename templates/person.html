@@ -3,8 +3,17 @@
 
 {% block title %}Person {{person|wiki_to_html_short}}{% endblock %}
 
-{% block content %}
+{% block contentheader %}
+<h2> {{person|wiki_to_html_short}} </h2>
+{% endblock %}
 
+{% block content %}
+{{person.blurb}}
+{% for pic in person.photo_set
+    <div class="figure">
+      <p> <img src="{{ person.correctURL }}" class="thumbnail" /> </p>
+    </div>
+    
 <p>{{person|wiki_to_html_short}} has been on expo in the following years:</p>
 <p>
 {% for personexpedition in person.personexpedition_set.all %}

@@ -52,7 +52,7 @@ def parseCaveQMs(cave,pathToCSV):
             newQM.completion_description=line[5]
             newQM.comment=line[6]
             newQM.save()
-            print "QM "+str(newQM) + " added to database"
+            print "QM "+str(newQM) + ' added to database\r',
         except KeyError:
             continue
 #        except IndexError:

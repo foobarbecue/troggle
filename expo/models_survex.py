@@ -1,5 +1,5 @@
 from django.db import models
-import troggle.settings as settings
+from django.conf import settings
 import os
 
 class SurvexBlock(models.Model):
