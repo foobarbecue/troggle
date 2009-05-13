@@ -62,15 +62,6 @@ cavetab = open(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"))
 caveReader = csv.reader(cavetab)
 caveReader.next() # Strip out column headers
 
-
-def save(x):   #There seems to be an intermitent problem with sqlite and Vista, uncomment the lines below, and the import sqlite3 statment above to fix it
-#    try:
-        x.save()
-#    except sqlite3.OperationalError:
-#        print "Error"
-#        time.sleep(1)
-#        save(x)
-
 def html_to_wiki(text):
     if type(text) != str:
         return text
@@ -151,7 +142,7 @@ def html_to_wiki(text):
 for katArea in ['1623', '1626']:
     if not models.Area.objects.filter(short_name = katArea):
         newArea = models.Area(short_name = katArea)
-        save(newArea)
+        newArea.save()
 area1626 = models.Area.objects.filter(short_name = '1626')[0]
 area1623 = models.Area.objects.filter(short_name = '1623')[0]
 
@@ -184,7 +175,7 @@ for line in caveReader :
         addToArgs(Notes, "notes")
 
         newCave = models.Cave(**args)
-        save(newCave)
+        newCave.save()
 
         if line[Area]:
             if line[Area] ==  "1626":
@@ -195,16 +186,16 @@ for line in caveReader :
                     newArea = area[0]
                 else:
                     newArea = models.Area(short_name = line[Area], parent = area1623)
-                    save(newArea)
+                    newArea.save()
                 newCave.area.add(newArea)
         else:
            newCave.area.add(area1623)
 
-        save(newCave)
+        newCave.save()
 
         if line[UnofficialName]:
             newUnofficialName = models.OtherCaveName(cave = newCave, name = line[UnofficialName])
-            save(newUnofficialName)
+            newUnofficialName.save()
     if line[MultipleEntrances] == '' or \
         line[MultipleEntrances] == 'entrance' or \
         line[MultipleEntrances] == 'last entrance':
@@ -249,7 +240,7 @@ for line in caveReader :
         def addToArgsSurveyStation(CSVname, modelName):
             if line[CSVname]:
                 surveyPoint = models.SurveyStation(name = line[CSVname])
-                save(surveyPoint)
+                surveyPoint.save()
                 args[modelName] = html_to_wiki(surveyPoint)
         addToArgsSurveyStation(TagPoint, 'tag_station')
         addToArgsSurveyStation(ExactEntrance, 'exact_station')
@@ -263,7 +254,7 @@ for line in caveReader :
             args['other_description'] = 'post selective availability GPS'
         addToArgs(Bearings, 'bearings')
         newEntrance = models.Entrance(**args)
-        save(newEntrance)
+        newEntrance.save()
 
         if line[Entrances]:
             entrance_letter = line[Entrances]
@@ -271,4 +262,4 @@ for line in caveReader :
             entrance_letter = ''
 
         newCaveAndEntrance = models.CaveAndEntrance(cave = newCave, entrance = newEntrance, entrance_letter = entrance_letter)
-        save(newCaveAndEntrance)
+        newCaveAndEntrance.save()
