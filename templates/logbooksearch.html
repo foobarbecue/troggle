@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% block title %}Logbook search results for "{{ query_string }}"{% endblock%}
+
+{% block content %}
+
+<h1> Troggle logbook search </h1>
+
+<p>Your search string, <b>{{ query_string }}</b>, 
+
+{% if found_entries %}
+	was found in the following <b>{{entry.count}}</b> logbook titles and / or entries:</p>
+	<ul>
+		{% for entry in found_entries %}
+			<li><a href="{{ settings.URL_ROOT }}logbookentry/{{ entry.pk }}">{{ entry|wiki_to_html_short  }} </a></li>
+		{% endfor %}
+	</ul>
+	{% else %}
+		was not found in any logbook titles and / or entries. Please try again.
+	{% endif %}
+{% endblock %}

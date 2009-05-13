@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% block title %}
+Cave search results for "{{ query_string }}"
+{% endblock%}
+
+{% block content %}
+
+<h1> Troggle cave search </h1>
+
+Your search string, <b>{{ query_string }}</b>, 
+
+{% if found_entries %}
+	was found in the following <b>{{found_entries.count}}</b> cave underground descriptions and / or official names:
+	<ul>
+		{% for cave in found_entries %}
+			<li><a href="{{ settings.URL_ROOT }}cave/{{ cave.kataster_number }}">{{ cave|wiki_to_html_short  }} : {{cave.official_name|wiki_to_html_short }}</a></li>
+		{% endfor %}
+	</ul>
+	{% else %}
+		was not found in any cave underground descriptions and / or official names. Please try again.
+	{% endif %}
+{% endblock %}
