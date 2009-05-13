@@ -212,7 +212,7 @@ class LogbookEntry(TroggleModel):
     cave    = models.ForeignKey('Cave',blank=True,null=True)
     place   = models.CharField(max_length=100,blank=True,null=True)  
     text    = models.TextField()
-    slug    = models.SlugField(max_length=100)
+    slug    = models.SlugField(max_length=50)
     #href    = models.CharField(max_length=100)
     
     
