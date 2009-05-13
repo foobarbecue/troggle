@@ -6,6 +6,7 @@ import csv
 import re
 import datetime
 import os
+import shutil
 
 #   Julian: the below code was causing errors and it seems like a duplication of the above. Hope I haven't broken anything by commenting it. -Aaron
 #
@@ -16,34 +17,39 @@ import os
 #            pyo = models.PersonExpedition(person = pObject, expedition = yo, is_guest=is_guest)
 #            pyo.save()
 
-def parseMugShotAndBlurb(firstname, lastname, person, header, pObject):
+
+
+def saveMugShot(mugShotPath, mugShotFilename, person):
+    if mugShotFilename.startswith(r'i/'): #if filename in cell has the directory attached (I think they all do), remove it
+        mugShotFilename=mugShotFilename[2:]
+    else:
+        mugShotFilename=mugShotFilename # just in case one doesn't
+
+    mugShotObj = models.Photo(
+        caption="Mugshot for "+person.first_name+" "+person.last_name,
+        is_mugshot=True,
+        file=mugShotFilename,
+        )
+    
+    shutil.copy(mugShotPath, mugShotObj.file.path) #Put a copy of the file in the right place. mugShotObj.file.path is determined by the django filesystemstorage specified in models.py
+    
+    mugShotObj.save()
+    mugShotObj.contains_person.add(person)
+    mugShotObj.save()	
+
+def parseMugShotAndBlurb(personline, header, person):
     #create mugshot Photo instance
-    mugShotPath = os.path.join(settings.EXPOWEB, "folk", person[header["Mugshot"]])
+    mugShotFilename=personline[header["Mugshot"]]
+    mugShotPath = os.path.join(settings.EXPOWEB, "folk", mugShotFilename)
     if mugShotPath[-3:]=='jpg': #if person just has an image, add it
-        mugShotObj = models.Photo(
-            caption="Mugshot for "+firstname+" "+lastname,
-            is_mugshot=True,
-            file=mugShotPath,
-            )
-        mugShotObj.save()
-        mugShotObj.contains_person.add(pObject)
-        mugShotObj.save()
+        saveMugShot(mugShotPath=mugShotPath, mugShotFilename=mugShotFilename, person=person)
     elif mugShotPath[-3:]=='htm': #if person has an html page, find the image(s) and add it. Also, add the text from the html page to the "blurb" field in his model instance.
         personPageOld=open(mugShotPath,'r').read()
-        pObject.blurb=re.search('<body>.*<hr',personPageOld,re.DOTALL).group() #this needs to be refined, take care of the HTML and make sure it doesn't match beyond the blurb
-        for photoFilename in re.findall('i/.*?jpg',personPageOld,re.DOTALL):
-            mugShotPath=settings.EXPOWEB+"folk/"+photoFilename
-        mugShotObj = models.Photo(
-            caption="Mugshot for "+firstname+" "+lastname,
-            is_mugshot=True,
-            file=mugShotPath,
-            )
-        mugShotObj.save()
-        mugShotObj.contains_person.add(pObject)
-        mugShotObj.save()
-    pObject.save()
-
-
+        person.blurb=re.search('<body>.*<hr',personPageOld,re.DOTALL).group() #this needs to be refined, take care of the HTML and make sure it doesn't match beyond the blurb
+        for mugShotFilename in re.findall('i/.*?jpg',personPageOld,re.DOTALL):
+            mugShotPath = os.path.join(settings.EXPOWEB, "folk", mugShotFilename)
+            saveMugShot(mugShotPath=mugShotPath, mugShotFilename=mugShotFilename, person=person)
+    person.save()
 
 def LoadPersonsExpos():
     
@@ -56,7 +62,7 @@ def LoadPersonsExpos():
     print "Loading expeditions"
     models.Expedition.objects.all().delete()
     years = headers[5:]
-#    years.append("2008")
+    
     for year in years:
         expedition = models.Expedition(year = year, name = "CUCC expo %s" % year)
         expedition.save()
@@ -81,7 +87,7 @@ def LoadPersonsExpos():
         #print "NNNN", person.href
         is_guest = (personline[header["Guest"]] == "1")  # this is really a per-expo catagory; not a permanent state
         person.save()
-        #parseMugShotAndBlurb(firstname, lastname, person, header, pObject)
+        parseMugShotAndBlurb(personline=personline, header=header, person=person)
     
         # make person expedition from table
         for year, attended in zip(headers, personline)[5:]:
@@ -90,33 +96,34 @@ def LoadPersonsExpos():
                 personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname=nickname, is_guest=is_guest)
                 personexpedition.save()
 
-    # The below is no longer necessary because the 2008 expedition people have been added to surveys.csv. - AC 16 Feb 09
-    # this fills in those people for whom 2008 was their first expo
-#    print "Loading personexpeditions 2008"
-#    for name in expomissing:
-#        firstname, lastname = name.split()
-#        is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
-#        print "2008:", name
-#        persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
-#        if not persons:
-#            person = models.Person(first_name=firstname, last_name = lastname, is_vfho = False, mug_shot = "")
-#            #person.Sethref()
-#            person.save()
-#        else:
-#            person = persons[0]
-#        expedition = models.Expedition.objects.get(year="2008")
-#        personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname="", is_guest=is_guest)
-#        personexpedition.save()
 
+    # this fills in those people for whom 2008 was their first expo
+    print "Loading personexpeditions 2008"
+    for name in expomissing:
+        firstname, lastname = name.split()
+        is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
+        print "2008:", name
+        persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
+        if not persons:
+            person = models.Person(first_name=firstname, last_name = lastname, is_vfho = False, mug_shot = "")
+            person.Sethref()
+            person.save()
+        else:
+            person = persons[0]
+        expedition = models.Expedition.objects.get(year="2008")
+        personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname="", is_guest=is_guest)
+        personexpedition.save()
+
+    #Notability is now a method of person. Makes no sense to store it in the database; it would need to be recalculated every time something changes. - AC 16 Feb 09
     # could rank according to surveying as well
-#    print "Setting person notability"
-#    for person in models.Person.objects.all():
-#        person.notability = 0.0
-#        for personexpedition in person.personexpedition_set.all():
-#            if not personexpedition.is_guest:
-#                person.notability += 1.0 / (2012 - int(personexpedition.expedition.year))
-#        person.bisnotable = person.notability > 0.3 # I don't know how to filter by this
-#        person.save()
+    #print "Setting person notability"
+    #for person in models.Person.objects.all():
+        #person.notability = 0.0
+        #for personexpedition in person.personexpedition_set.all():
+            #if not personexpedition.is_guest:
+                #person.notability += 1.0 / (2012 - int(personexpedition.expedition.year))
+        #person.bisnotable = person.notability > 0.3 # I don't know how to filter by this
+        #person.save()
         
         
 # used in other referencing parser functions

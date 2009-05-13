@@ -75,5 +75,6 @@ urlpatterns = patterns('',
     (r'^survey_scans/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.SURVEYS, 'show_indexes':True}),
 
-
+    (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': settings.PHOTOS, 'show_indexes':True}),
 )

@@ -8,17 +8,29 @@
 {% endblock %}
 
 {% block content %}
+{% if person.blurb %}
 {{person.blurb}}
-{% for pic in person.photo_set
+{% endif %}
+
+{% for pic in person.photo_set.all %}
+{% if pic.is_mugshot %}
     <div class="figure">
-      <p> <img src="{{ person.correctURL }}" class="thumbnail" /> </p>
+      <p> <img src="{{ pic.file.url }}" class="thumbnail" />
+      <p> {{ pic.caption }}
+      </p>
+      </p>
     </div>
-    
-<p>{{person|wiki_to_html_short}} has been on expo in the following years:</p>
-<p>
-{% for personexpedition in person.personexpedition_set.all %}
-  | <a href="{{ personexpedition.get_absolute_url }}">{{personexpedition.expedition.year}}</a>
+{% endif %}
 {% endfor %}
+<br class="clearfloat" />
+
+<h3>{{person|wiki_to_html_short}} has been on expo in the following years:</h3>
+<p>
+<ul>
+{% for personexpedition in person.personexpedition_set.all %}
+  <li> <a href="{{ personexpedition.get_absolute_url }}">{{personexpedition.expedition.year}}</a></li>
+{% endfor %}
+</ul>
 </p>
 
 

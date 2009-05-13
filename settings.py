@@ -1,5 +1,6 @@
 from localsettings import *
-# Django settings for troggle2 project.
+import os
+# Django settings for troggle project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -32,6 +33,11 @@ USE_I18N = True
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/troggle/media-admin/'
+PHOTOS = os.path.join(EXPOWEB, 'photos')
+MEDIA_URL = URL_ROOT+'/site_media/'
+SURVEYS_URL = URL_ROOT+'/survey_scans/'
+PHOTOS_URL  = URL_ROOT+'/photos/'
+SVX_URL = URL_ROOT+'/survex/'
 
 APPEND_SLASH = False
 SMART_APPEND_SLASH = True

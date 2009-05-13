@@ -451,12 +451,13 @@ class QM(models.Model):
     def __str__(self):
 	QMnumber=str(self.found_by.cave)+'-'+str(self.found_by.date.year)+"-"+str(self.number)+self.grade
 	return str(QMnumber)
-	
+
+photoFileStorage = FileSystemStorage(location=settings.EXPOWEB+'photos', base_url=settings.PHOTOS_URL)
 class Photo(models.Model): 
     caption = models.CharField(max_length=1000,blank=True,null=True)
     contains_person_trip = models.ManyToManyField(PersonTrip,blank=True,null=True)
     contains_person = models.ManyToManyField(Person,blank=True,null=True)
-    file = models.ImageField(upload_to='photos',)
+    file = models.ImageField(storage=photoFileStorage, upload_to='.',)
     is_mugshot = models.BooleanField(default=False)
     contains_cave = models.ForeignKey(Cave,blank=True,null=True)
     contains_entrance = models.ForeignKey(Entrance, related_name="photo_file",blank=True,null=True)
