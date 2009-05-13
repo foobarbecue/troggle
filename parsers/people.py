@@ -1,7 +1,7 @@
 #.-*- coding: utf-8 -*-
 
-import settings
-import expo.models as models
+import troggle.settings as settings
+import troggle.expo.models as models
 import csv
 import re
 import datetime
