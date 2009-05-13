@@ -28,10 +28,10 @@ class LogbookEntryForm(ModelForm):
 	for QM in LogbookEntry.instance.QMs_ticked_off.all():
             res.append(QM.wiki_link())
 	
-        res.append(r'</p><p style="float: left; "><b>People</b>')
-	for persontrip in LogbookEntry.instance.persontrip_set.all():
-            res.append(QM.wiki_link())
-	res.append(r'</p>')	
+#        res.append(r'</p><p style="float: left; "><b>People</b>')
+#	for persontrip in LogbookEntry.instance.persontrip_set.all():
+#            res.append(persontrip.wiki_link())
+#	res.append(r'</p>')
 	
 	return string.join(res, r'<br />')
 
