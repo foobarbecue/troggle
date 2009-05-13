@@ -16,11 +16,11 @@
 {% endif %}
 
 <p>
-  {% if logbookentry.logbookentry_prev %}
-    <a href="{% url logbookentry logbookentry.logbookentry_prev.href %}">{{logbookentry.logbookentry_prev.date}}</a>
+  {% if logbookentry.get_previous_by_date %}
+    <a href="{% url logbookentry logbookentry.get_previous_by_date.href %}">{{logbookentry.get_previous_by_date.date}}</a>
   {% endif %}
-  {% if logbookentry.logbookentry_next %}
-    <a href="{% url logbookentry logbookentry.logbookentry_next.href %}">{{logbookentry.logbookentry_next.date}}</a>
+  {% if logbookentry.get_next_by_date %}
+    <a href="{% url logbookentry logbookentry.get_next_by_date.href %}">{{logbookentry.get_next_by_date.date}}</a>
   {% endif %}
 </p>
 
@@ -43,13 +43,13 @@
   </td>
 
   <td>
-  {% if persontrip.persontrip_prev %}
-    <a href="{% url logbookentry persontrip.persontrip_prev.logbook_entry.href %}">{{persontrip.persontrip_prev.date}}</a>
+  {% if persontrip.get_previous_by_date %}
+    <a href="{% url logbookentry persontrip.get_previous_by_date.logbook_entry.href %}">{{persontrip.get_previous_by_date.date}}</a>
   {% endif %}
   </td>
   <td>
-  {% if persontrip.persontrip_next %}
-     <a href="{% url logbookentry persontrip.persontrip_next.logbook_entry.href %}">{{persontrip.persontrip_next.date}}</a>
+  {% if persontrip.get_next_by_date %}
+     <a href="{% url logbookentry persontrip.get_next_by_date.logbook_entry.href %}">{{persontrip.get_next_by_date.date}}</a>
   {% endif %}
   </td>
 </tr>

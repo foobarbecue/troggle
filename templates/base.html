@@ -24,7 +24,7 @@
   <hr/>
   <div id="editLink"> 
   	{% block loginInfo %}
-    	{% if user %}
+    	{% if user.username %}
 	    	You are logged in as {{ user.username }}. 
             | <a href="{{ settings.URL_ROOT }}/accounts/logout">Log out</a>
         {% else %}
