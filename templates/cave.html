@@ -4,7 +4,7 @@
 {% block content %}
 
 <div id="col2">
-  <h3>All trips done in this cave</h3>
+  <h3>All logbook entries regarding this cave ({{cave.logbookentry_set.count}})</h3>
   <table>
   {% for logbookentry in cave.logbookentry_set.all %}
   {% if logbookentry.title %}
@@ -63,5 +63,26 @@
 {% if cave.notes %}
     <h2>Notes</h2>
     {{ cave.notes|wiki_to_html }}
+{% endif %}
+
+{% if cave.get_QMs %}
+	<h2>Question marks</h2>
+    <h3>Extant</h3>
+    <ul>
+    {% for QM in cave.get_QMs %}
+        {% if QM.ticked_off_by %}
+        {% else %}
+        <li><a href="{{QM.get_absolute_url}}">{{QM}}</a></li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+    <h3>Ticked off</h3>
+    <ul>
+    {% for QM in cave.get_QMs %}
+        {% if QM.ticked_off_by %}
+        <li><a href="{{QM.get_absolute_url}}">{{QM}}</a></li>
+        {% endif %}
+    {% endfor %}
+    </ul>
 {% endif %}
 {% endblock %}

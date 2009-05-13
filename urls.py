@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     
     url(r'^survexblock/(.+)$',  views_caves.survexblock,    name="survexblock"),
     url(r'^cavehref/(.+)$',     views_caves.cavehref,       name="cave"),
-    
+
     url(r'^jgtfile/(.*)$',      view_surveys.jgtfile,       name="jgtfile"),
     url(r'^jgtuploadfile$',     view_surveys.jgtuploadfile, name="jgtuploadfile"),
         
@@ -41,7 +41,8 @@ urlpatterns = patterns('',
     url(r'^cavearea', caveArea, name="caveArea"),
 
     url(r'^survex/(.*?)\.index$', views_survex.index, name="survexindex"),
-    url(r'^cave/(?P<cave_id>[^/]+)/?$', views_caves.cavehref), # deprecated
+    url(r'^cave/(?P<cave_id>[^/]+)/?$', views_caves.cavehref),
+    url(r'^cave/(?P<cave_id>[^/]+)/(?P<year>\d\d\d\d)-(?P<qm_id>\d\d)?$', views_caves.qm),
     (r'^survex/(?P<survex_file>.*)\.svx$', svx),
     (r'^survex/(?P<survex_file>.*)\.3d$', threed),
     (r'^survex/(?P<survex_file>.*)\.log$', log),

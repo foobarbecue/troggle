@@ -5,6 +5,14 @@ from troggle.expo.forms import CaveForm
 import search
 from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
 
+def getCave(cave_id):
+    """Returns a cave object when given a cave name or number. It is used by views including cavehref, ent, and qm."""
+    try:
+        cave = Cave.objects.get(kataster_number=cave_id)
+    except Cave.DoesNotExist:
+        cave = Cave.objects.get(unofficial_number=cave_id)
+    return cave
+
 def caveindex(request):
     caves = Cave.objects.all()
     notablecavehrefs = [ "161", "204", "258", "76" ]  # could detect notability by trips and notability of people who have been down them
@@ -12,12 +20,12 @@ def caveindex(request):
     return render_response(request,'caveindex.html', {'caves': caves, 'notablecaves':notablecaves})
 
 def cavehref(request, cave_id='', offical_name=''):
-    try:
-        cave = Cave.objects.get(kataster_number=cave_id)
-    except Cave.DoesNotExist:
-        cave = Cave.objects.get(unofficial_number=cave_id)
-    return render_response(request,'cave.html', {'cave': cave,})
+    return render_response(request,'cave.html', {'cave': getCave(cave_id),})
 
+def qm(request,cave_id,qm_id,year):
+    year=int(year)
+    qm=getCave(cave_id).get_QMs().get(number=qm_id,found_by__date__year=year)
+    return render_response(request,'qm.html',{'qm':qm,})
 
 def ent(request, cave_id, ent_letter):
     cave = Cave.objects.filter(kataster_number = cave_id)[0]

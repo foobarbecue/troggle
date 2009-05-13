@@ -48,8 +48,12 @@ def parseCaveQMs(cave,pathToCSV):
                 newQM.grade=line[1]
             newQM.area=line[2]
             newQM.location_description=line[3]
-            newQM.nearest_station_description=line[4]
-            newQM.completion_description=line[5]
+            
+            newQM.completion_description=line[4]
+            newQM.nearest_station_description=line[5]
+            if newQM.completion_description:  # Troggle checks if QMs are completed by checking if they have a ticked_off_by trip. In the table, completion is indicated by the presence of a completion discription.
+                newQM.ticked_off_by=placeholder
+
             newQM.comment=line[6]
             newQM.save()
             print "QM "+str(newQM) + ' added to database\r',
