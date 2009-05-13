@@ -16,6 +16,7 @@ class Expedition(models.Model):
         res = None
         for personexpedition in personexpeditions:
             for possiblenameform in personexpedition.GetPossibleNameForms():
+                #print "nnn", possiblenameform
                 if name == possiblenameform:
                     assert not res, "Ambiguous: " + name
                     res = personexpedition
@@ -55,7 +56,7 @@ class PersonExpedition(models.Model):
 class LogbookEntry(models.Model):
     date    = models.DateField()
     author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip
-    title   = models.CharField(max_length=100)
+    title   = models.CharField(max_length=200)
 
         # this will be a foreign key of the place the logbook is describing
     place   = models.CharField(max_length=100,blank=True,null=True)  

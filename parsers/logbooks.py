@@ -30,36 +30,16 @@ def LoadPersons():
     for person in personreader:
         name = person[header["Name"]]
         name = re.sub("<.*?>", "", name)
-        lname = name.split()
-        mbrack = re.match("\((.*?)\)", lname[-1])
+        mname = re.match("(\w+)(?:\s((?:van |ten )?\w+))?(?:\s\(([^)]*)\))?", name)
 
-        if mbrack:
-            nickname = mbrack.group(1)
-            del lname[-1]
-        elif name == "Anthony Day":
-            nickname = "Dour"
-        elif name == "Duncan Collis":
-            nickname = "Dunks"
-        elif name == "Mike Richardson":
-            nickname = "Mike TA"
-        elif name == "Hilary Greaves":
-            nickname = "Hils"
-        elif name == "Andrew Atkinson":
-            nickname = "Andy A"
-        elif name == "Wookey":
-            nickname = "Wook"
+        if mname.group(3):
+            nickname = mname.group(3)
         else:
             nickname = ""
 
-        if len(lname) == 3:  # van something
-            firstname, lastname = lname[0], "%s %s" % (lname[1], lname[2])
-        elif len(lname) == 2:
-            firstname, lastname = lname[0], lname[1]
-        elif len(lname) == 1:
-            firstname, lastname = lname[0], ""
-        else:
-            assert False, lname
-        #print firstname, lastname
+        firstname, lastname = mname.group(1), mname.group(2) or ""
+
+        #print firstname, lastname, "NNN", nickname
         #assert lastname == person[header[""]], person
 
         pObject = models.Person(first_name = firstname,
@@ -76,7 +56,7 @@ def LoadPersons():
                 pyo.save()
 
             # error
-            elif name == "Mike Richardson" and year == "2001":
+            elif (firstname, lastname) == ("Mike", "Richardson") and year == "2001":
                 print "Mike Richardson(2001) error"
                 pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname=nickname, is_guest=is_guest)
                 pyo.save()
@@ -129,7 +109,7 @@ def GetTripPersons(trippeople, expedition):
 
 def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, tu):
     trippersons, author = GetTripPersons(trippeople, expedition)
-    lbo = models.LogbookEntry(date=date, place=place, title=title, text=text, author=author)
+    lbo = models.LogbookEntry(date=date, place=place, title=title[:50], text=text, author=author)
     lbo.save()
     print "ttt", date, place
     for tripperson in trippersons:
@@ -137,7 +117,21 @@ def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, tu):
                                 logbookentry=lbo, is_logbookentryauthor=(tripperson == author))
         pto.save()
 
-# 2007, 2008
+def ParseDate(tripdate, year):
+    mdatestandard = re.match("(\d\d\d\d)-(\d\d)-(\d\d)", tripdate)
+    mdategoof = re.match("(\d\d?)/0?(\d)/(20|19)?(\d\d)", tripdate)
+    if mdatestandard:
+        assert mdatestandard.group(1) == year, (tripdate, year)
+        year, month, day = int(mdatestandard.group(1)), int(mdatestandard.group(2)), int(mdatestandard.group(3))
+    elif mdategoof:
+        assert not mdategoof.group(3) or mdategoof.group(3) == year[:2]
+        yadd = int(year[:2]) * 100
+        day, month, year = int(mdategoof.group(1)), int(mdategoof.group(2)), int(mdategoof.group(4)) + yadd
+    else:
+        assert False, tripdate
+    return datetime.date(year, month, day)
+
+# 2007, 2008, 2006
 def Parselogwikitxt(year, expedition, txt):
     trippara = re.findall("===(.*?)===([\s\S]*?)(?====)", txt)
     for triphead, triptext in trippara:
@@ -145,7 +139,7 @@ def Parselogwikitxt(year, expedition, txt):
         assert len(tripheadp) == 3, (tripheadp, triptext)
         tripdate, tripplace, trippeople = tripheadp
         tripsplace = tripplace.split(" - ")
-        tripcave = tripsplace[0]
+        tripcave = tripsplace[0].strip()
 
         tul = re.findall("T/?U:?\s*(\d+(?:\.\d*)?|unknown)\s*(hrs|hours)?", triptext)
         if tul:
@@ -156,8 +150,7 @@ def Parselogwikitxt(year, expedition, txt):
             tu = ""
             #assert tripcave == "Journey", (triphead, triptext)
 
-        assert re.match("\d\d\d\d-\d\d-\d\d", tripdate), tripdate
-        ldate = datetime.date(int(tripdate[:4]), int(tripdate[5:7]), int(tripdate[8:10]))
+        ldate = ParseDate(tripdate.strip(), year)
         #print "\n", tripcave, "---   ppp", trippeople, len(triptext)
         EnterLogIntoDbase(date = ldate, place = tripcave, title = tripplace, text = triptext, trippeople=trippeople, expedition=expedition, tu=tu)
 
@@ -176,15 +169,7 @@ def Parseloghtmltxt(year, expedition, txt):
         assert s, trippara
 
         tripid, tripid1, tripdate, trippeople, triptitle, triptext, tu = s.groups()
-        mdatestandard = re.match("(\d\d\d\d)-(\d\d)-(\d\d)", tripdate)
-        mdategoof = re.match("(\d\d?)/0?(\d)/(?:20)?(\d\d)", tripdate)
-        if mdatestandard:
-            year, month, day = int(mdatestandard.group(1)), int(mdatestandard.group(2)), int(mdatestandard.group(3))
-        elif mdategoof:
-            day, month, year = int(mdategoof.group(1)), int(mdategoof.group(2)), int(mdategoof.group(3)) + 2000
-        else:
-            assert False, tripdate
-        ldate = datetime.date(year, month, day)
+        ldate = ParseDate(tripdate.strip(), year)
         #assert tripid[:-1] == "t" + tripdate, (tripid, tripdate)
         trippeople = re.sub("Ol(?!l)", "Olly", trippeople)        
         trippeople = re.sub("Wook(?!e)", "Wookey", trippeople)        
@@ -210,13 +195,11 @@ def Parseloghtml01(year, expedition, txt):
         tripid = mtripid and mtripid.group(1) or ""
         tripheader = re.sub("</?(?:[ab]|span)[^>]*>", "", tripheader)
 
-#        print [tripheader]
-#        continue
+        #print [tripheader]
+        #continue
 
         tripdate, triptitle, trippeople = tripheader.split("|")
-        mdatestandard = re.match("\s*(\d\d\d\d)-(\d\d)-(\d\d)", tripdate)
-        ldate = datetime.date(int(mdatestandard.group(1)), int(mdatestandard.group(2)), int(mdatestandard.group(3)))
-        mdatestandard = re.match("(\d\d\d\d)-(\d\d)-(\d\d)", tripdate)
+        ldate = ParseDate(tripdate.strip(), year)
 
         mtu = re.search('<p[^>]*>(T/?U.*)', triptext)
         if mtu:
@@ -232,7 +215,7 @@ def Parseloghtml01(year, expedition, txt):
         ltriptext = re.sub("\s*?\n\s*", " ", ltriptext)
         ltriptext = re.sub("<p>", "\n\n", ltriptext).strip()        ltriptext = re.sub("[^\s0-9a-zA-Z\-.,:;'!]", "NONASCII", ltriptext)
 
-        print ldate, trippeople.strip()
+        #print ldate, trippeople.strip()
             # could includ the tripid (url link for cross referencing)
         EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, tu=tu)
 
@@ -252,9 +235,8 @@ def Parseloghtml03(year, expedition, txt):
             print sheader
         #    continue
         tripdate, triptitle, trippeople = sheader
-        mdategoof = re.match("(\d\d?)/(\d)/(\d\d)", tripdate)
-        day, month, year = int(mdategoof.group(1)), int(mdategoof.group(2)), int(mdategoof.group(3)) + 2000
-        ldate = datetime.date(year, month, day)        triptitles = triptitle.split(" , ")
+        ldate = ParseDate(tripdate.strip(), year)
+        triptitles = triptitle.split(" , ")
         if len(triptitles) >= 2:
             tripcave = triptitles[0]
         else:
@@ -272,7 +254,7 @@ def LoadLogbooks():
     yearlinks = [ 
                     ("2008", "2008/logbook/2008logbook.txt", Parselogwikitxt), 
                     ("2007", "2007/logbook/2007logbook.txt", Parselogwikitxt), 
-#not done                    ("2006", "2006/logbook/logbook_06.txt"), 
+                    ("2006", "2006/logbook/logbook_06.txt", Parselogwikitxt), 
                     ("2005", "2005/logbook.html", Parseloghtmltxt), 
                     ("2004", "2004/logbook.html", Parseloghtmltxt), 
                     ("2003", "2003/logbook.html", Parseloghtml03), 
@@ -280,9 +262,8 @@ def LoadLogbooks():
                     ("2001", "2001/log.htm", Parseloghtml01), 
                     ("2000", "2000/log.htm", Parseloghtml01), 
                     ("1999", "1999/log.htm", Parseloghtml01), 
-
-#                    ("1998", "1998/log.htm", Parseloghtml01), 
-#                    ("1997", "1997/log.htm", Parseloghtml01), 
+                    ("1998", "1998/log.htm", Parseloghtml01), 
+                    ("1997", "1997/log.htm", Parseloghtml01), 
                 ]
 #    yearlinks = [ ("1997", "1997/log.htm", Parseloghtml01), ] #overwrite
 
