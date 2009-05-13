@@ -1,5 +1,5 @@
 import troggle.settings as settings
-import expo.models as models
+import troggle.expo.models as models
 
 from troggle.parsers.people import GetPersonExpeditionNameLookup
 
