@@ -10,7 +10,7 @@ def listdir(*path):
         root = os.path.join(settings.FILES, *strippedpath )
         l = ""
         #l = root + "\n"
-        #isdir = os.path.isdir(root)
+        isdir = os.path.isdir(root) #This seems to be required for os.path.isdir to work...
         #l += str(isdir) + "\n"
         for p in os.listdir(root):
             if os.path.isdir(os.path.join(root, p)):
