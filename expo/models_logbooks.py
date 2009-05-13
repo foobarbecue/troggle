@@ -8,18 +8,18 @@ class Expedition(models.Model):
     start_date  = models.DateField(blank=True,null=True)
     end_date    = models.DateField(blank=True,null=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.year
 
     def GetPersonExpedition(self, name):
-        personexpeditions = PersonExpedition.objects.filter(expedition=self)
+        person_expeditions = PersonExpedition.objects.filter(expedition=self)
         res = None
-        for personexpedition in personexpeditions:
-            for possiblenameform in personexpedition.GetPossibleNameForms():
-                #print "nnn", possiblenameform
-                if name == possiblenameform:
+        for person_expedition in person_expeditions:
+            for possible_name_from in person_expedition.GetPossibleNameForms():
+                #print "nnn", possiblenamefrom
+                if name == possible_name_from:
                     assert not res, "Ambiguous: " + name
-                    res = personexpedition
+                    res = person_expedition
         return res
 
 
@@ -28,7 +28,7 @@ class Person(models.Model):
     last_name   = models.CharField(max_length=100)
     is_vfho     = models.BooleanField()
     mug_shot    = models.CharField(max_length=100, blank=True,null=True)
-    def __str__(self):
+    def __unicode__(self):
         return "%s %s" % (self.first_name, self.last_name)
 
 class PersonExpedition(models.Model):
@@ -49,7 +49,7 @@ class PersonExpedition(models.Model):
             res.append(self.nickname)
         return res
 
-    def __str__(self):
+    def __unicode__(self):
         return "%s: (%s)" % (self.person, self.expedition)
 
 
@@ -64,22 +64,22 @@ class LogbookEntry(models.Model):
 
         # several PersonTrips point in to this object
     
-    def __str__(self):
+    def __unicode__(self):
         return "%s: (%s)" % (self.date, self.title)
 
 class PersonTrip(models.Model):
-    personexpedition = models.ForeignKey(PersonExpedition)
+    person_expedition = models.ForeignKey(PersonExpedition)
     
         # this will be a foreign key of the place(s) the trip went through
         # possibly a trip has a plurality of triplets pointing into it
     place           = models.CharField(max_length=100)  
     date            = models.DateField()    
-    timeunderground = models.CharField(max_length=100)
-    logbookentry    = models.ForeignKey(LogbookEntry)
-    is_logbookentryauthor = models.BooleanField()
+    time_underground = models.CharField(max_length=100)
+    logbook_entry    = models.ForeignKey(LogbookEntry)
+    is_logbook_entry_author = models.BooleanField()
 
-    def __str__(self):
-        return "%s %s (%s)" % (self.personexpedition, self.place, self.date)
+    def __unicode__(self):
+        return "%s %s (%s)" % (self.person_expedition, self.place, self.date)
 
 
 

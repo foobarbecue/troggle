@@ -113,8 +113,8 @@ def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, tu):
     lbo.save()
     print "ttt", date, place
     for tripperson in trippersons:
-        pto = models.PersonTrip(personexpedition = tripperson, place=place, date=date, timeunderground=(tu or ""), 
-                                logbookentry=lbo, is_logbookentryauthor=(tripperson == author))
+        pto = models.PersonTrip(person_expedition = tripperson, place=place, date=date, time_underground=(tu or ""),
+                                logbook_entry=lbo, is_logbook_entry_author=(tripperson == author))
         pto.save()
 
 def ParseDate(tripdate, year):
@@ -181,7 +181,8 @@ def Parseloghtmltxt(year, expedition, txt):
         #print "\n", tripcave, "---   ppp", trippeople, len(triptext)
         ltriptext = re.sub("</p>", "", triptext)
         ltriptext = re.sub("\s*?\n\s*", " ", ltriptext)
-        ltriptext = re.sub("<p>", "\n\n", ltriptext).strip()        EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, tu=tu)
+        ltriptext = re.sub("<p>", "\n\n", ltriptext).strip()
+        EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, tu=tu)
 
 
 # main parser for pre-2001.  simpler because the data has been hacked so much to fit it
@@ -278,6 +279,7 @@ def LoadLogbooks():
 
 # command line run through the loading stages
 # you can comment out these in turn to control what gets reloaded
-LoadExpos()LoadPersons()
+LoadExpos()
+LoadPersons()
 LoadLogbooks()
 
