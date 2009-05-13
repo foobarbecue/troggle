@@ -21,3 +21,4 @@ import parsers.cavetab
 import parsers.logbooks
 import parsers.QMs
 import parsers.survex
+import parsers.surveys
