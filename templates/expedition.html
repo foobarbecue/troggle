@@ -9,8 +9,8 @@
 <div id="col2">
 <table class="prevnextexpeditions">
 <tr>
-  <td>{% if expedition_prev %}&lt; &lt; <a href="{% url expedition expedition_prev.year %}">{{expedition_prev.year}}</a>{% endif %}</td>
-  <td>{% if expedition_next %}&gt; &gt; <a href="{% url expedition expedition_next.year %}">{{expedition_next.year}}</a>{% endif %}</td>
+  <td>{% if expedition_prev %}&lt; &lt; <a href="{{ expedition_prev.get_absolute_url }}">{{expedition_prev.year}}</a>{% endif %}</td>
+  <td>{% if expedition_next %}&gt; &gt; <a href="{{ expedition_next.get_absolute_url }}">{{expedition_next.year}}</a>{% endif %}</td>
 </tr>
 </ul>
 
@@ -18,7 +18,7 @@
 <tr><th>Caver</th><th>From</th><th>To</th></tr>
 {% for personexpedition in expedition.personexpedition_set.all %}
   <tr>
-    <td><a href="{% url personexpedition personexpedition.person.href personexpedition.expedition.year %}">{{personexpedition.person}}</a></td>
+    <td><a href="{{ personexpedition.get_absolute_url }}">{{personexpedition.person}}</a></td>
     <td>{{personexpedition.date_from}}</td>
     <td>{{personexpedition.date_to}}</td>
   </tr>
@@ -36,11 +36,11 @@
 {% for logbookentry in logbookentries %}
   <tr>
     <td>{{logbookentry.date}}</td>
-    <td><a href="{% url logbookentry logbookentry.href %}">{{logbookentry.title|safe}}</td>
-    <td><a href="{% url personexpedition logbookentry.author.person.href logbookentry.author.expedition.year %}">{{logbookentry.author.name}}</a></td>
+    <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.title|safe}}</td>
+    <td><a href="{{ logbookentry.author.get_absolute_url }}">{{logbookentry.author.name}}</a></td>
 
     {% if logbookentry.cave %}
-      <td><a href="{% url cave logbookentry.cave.href %}">{{logbookentry.place}}</a></td>
+      <td><a href="{{ logbookentry.cave.get_absolute_url }}">{{logbookentry.place}}</a></td>
     {% else %}
       <td>{{logbookentry.place}}</td>
     {% endif %}

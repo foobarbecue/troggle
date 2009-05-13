@@ -22,6 +22,10 @@ class Expedition(models.Model):
 
     class Meta:
         ordering = ('year',)
+        get_latest_by = 'date_from'
+    
+    def get_absolute_url(self):
+        return settings.URL_ROOT + "/expedition/%s" % self.year
     
     # lose these two functions (inelegant, and we may create a file with the dates that we can load from)
     def GuessDateFrom(self):
@@ -62,11 +66,13 @@ class Person(models.Model):
     blurb = models.TextField(blank=True,null=True)
     
     href        = models.CharField(max_length=200)
-    orderref    = models.CharField(max_length=200)  # for alphabetic
+    orderref    = models.CharField(max_length=200)  # for alphabetic 
     notability  = models.FloatField()               # for listing the top 20 people
     bisnotable  = models.BooleanField()
     user	= models.ForeignKey(User, unique=True, null=True, blank=True)
-    
+    def get_absolute_url(self):
+        return settings.URL_ROOT + "/person/%s_%s/" % (self.first_name, self.last_name)
+
     class Meta:
 	    verbose_name_plural = "People"
     class Meta:
@@ -76,12 +82,13 @@ class Person(models.Model):
         if self.last_name:
             return "%s %s" % (self.first_name, self.last_name)
         return self.first_name
-    
+
+# Below are no longer needed. Use {{ person.personexpedition_set.all.0.expedition }} for Firstexpedition, and {{ person.personexpedition_set.latest.expedition }} for Lastexpedition
     # these ought to be possible by piping through |min in the template, or getting the first of an ordered list
-    def Firstexpedition(self):
-        return self.personexpedition_set.order_by('expedition')[0]
-    def Lastexpedition(self):
-        return self.personexpedition_set.order_by('-expedition')[0]
+#    def Firstexpedition(self):
+#        return self.personexpedition_set.order_by('expedition')[0]
+#    def Lastexpedition(self):
+#        return self.personexpedition_set.order_by('-expedition')[0]
     
     def Sethref(self):
         if self.last_name:
@@ -99,6 +106,14 @@ class PersonExpedition(models.Model):
     date_from   = models.DateField(blank=True,null=True)
     date_to     = models.DateField(blank=True,null=True)
     is_guest    = models.BooleanField(default=False)  
+    COMMITTEE_CHOICES = (
+        ('leader','Expo leader'),
+        ('medical','Expo medical officer'),
+        ('treasurer','Expo treasurer'),
+        ('sponsorship','Expo sponsorship coordinator'),
+        ('research','Expo research coordinator'),
+        )
+    expo_committee_position = models.CharField(blank=True,null=True,choices=COMMITTEE_CHOICES,max_length=200)
     nickname    = models.CharField(max_length=100,blank=True,null=True)
     
     def GetPersonroles(self):
@@ -112,6 +127,7 @@ class PersonExpedition(models.Model):
 
     class Meta:
         ordering = ('expedition',)
+	get_latest_by = 'date_from'
     
     def GetPersonChronology(self):
         res = { }
@@ -130,8 +146,8 @@ class PersonExpedition(models.Model):
 # needs converting dict into list            
         return sorted(res.items())
 
-    # don't use tabs. 
-    # possibly not useful functions anyway
+    # possibly not useful functions anyway -JT
+        # if you can find a better way to make the expo calendar table, be my guest. It isn't possible to do this logic in a django template without writing custom tags.
     def ListDays(self):
 	if self.date_from and self.date_to:
 		res=[]
@@ -151,6 +167,7 @@ class PersonExpedition(models.Model):
     def __unicode__(self):
         return "%s: (%s)" % (self.person, self.expedition)
     
+    #why is the below a function in personexpedition, rather than in person? - AC 14 Feb 09
     def name(self):
         if self.nickname:
             return "%s (%s) %s" % (self.person.first_name, self.nickname, self.person.last_name)
@@ -158,6 +175,8 @@ class PersonExpedition(models.Model):
             return "%s %s" % (self.person.first_name, self.person.last_name)
         return self.person.first_name
 
+    def get_absolute_url(self):
+        return settings.URL_ROOT + '/personexpedition/' + str(self.person.first_name) + '_' + str(self.person.last_name) + '/' +self.expedition.year
 	
 class LogbookEntry(models.Model):
     date    = models.DateField()
@@ -167,20 +186,24 @@ class LogbookEntry(models.Model):
     cave    = models.ForeignKey('Cave',blank=True,null=True)
     place   = models.CharField(max_length=100,blank=True,null=True)  
     text    = models.TextField()
-    href    = models.CharField(max_length=100)
+    #href    = models.CharField(max_length=100)
     
-    # turn these into functions
-    logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
-    logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
     
+    #logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
+    #logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
+
     class Meta:
 	   verbose_name_plural = "Logbook Entries"
         # several PersonTrips point in to this object
     class Meta:
         ordering = ('-date',)
-    
+
+    def get_absolute_url(self):
+        return settings.URL_ROOT + "/logbookentry/" + str(self.pk)
+
     def __unicode__(self):
         return "%s: (%s)" % (self.date, self.title)
+
 
 
 class PersonTrip(models.Model):
@@ -252,13 +275,14 @@ class Cave(models.Model):
     
     href    = models.CharField(max_length=100)
     
-    def Sethref(self):
+    def get_absolute_url(self):
         if self.kataster_number:
-            self.href = self.kataster_number
+            href = self.kataster_number
         elif self.unofficial_number:
-            self.href = self.unofficial_number
+            href = self.unofficial_number
         else:
-            self.href = official_name.lower()
+            href = official_name.lower()
+        return settings.URL_ROOT + '/cave/' + self.href + '/'
             
         
     def __unicode__(self):

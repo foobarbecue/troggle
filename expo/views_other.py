@@ -1,4 +1,3 @@
-from django.shortcuts import render_to_response
 from troggle.expo.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition
 import troggle.settings as settings
 from django import forms
@@ -9,6 +8,7 @@ from troggle.parsers.survex import LoadAllSurvexBlocks
 import randSent
 
 from django.core.urlresolvers import reverse
+from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
 
 def stats(request):
     statsDict={}
@@ -16,7 +16,7 @@ def stats(request):
     statsDict['caveCount'] = int(Cave.objects.count())
     statsDict['personCount'] = int(Person.objects.count())
     statsDict['logbookEntryCount'] = int(LogbookEntry.objects.count())
-    return render_to_response('statistics.html', statsDict)
+    return render_response(request,'statistics.html', statsDict)
 
 def frontpage(request):
     message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
@@ -29,7 +29,7 @@ def frontpage(request):
 
     #'randSent':randSent.randomLogbookSentence(),
     expeditions =  Expedition.objects.order_by("-year")
-    return render_to_response('index.html', {'expeditions':expeditions, 'settings':settings, 'all':'all', "message":message})
+    return render_response(request,'index.html', {'expeditions':expeditions, 'all':'all', "message":message})
     
 def calendar(request,year):
     week=['S','S','M','T','W','T','F']
@@ -37,6 +37,4 @@ def calendar(request,year):
 	expedition=Expedition.objects.get(year=year)
 	PersonExpeditions=expedition.personexpedition_set.all()
 	
-	dictToPass=locals()
-	dictToPass.update({'settings':settings})
-    return render_to_response('calendar.html', dictToPass)
+    return render_response(request,'calendar.html', locals())

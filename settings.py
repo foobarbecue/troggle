@@ -46,7 +46,7 @@ TEMPLATE_LOADERS = (
 #   'django.template.loaders.eggs.load_template_source',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = ( "django.core.context_processors.auth", "troggle.context.settingsContext") 
+TEMPLATE_CONTEXT_PROCESSORS = ( "django.core.context_processors.auth", "expo.context.settings_context", ) 
 
 LOGIN_REDIRECT_URL = '/'
 

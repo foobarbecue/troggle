@@ -10,7 +10,7 @@
   {% if logbookentry.title %}
     <tr>
       <td>{{logbookentry.date}}</td>
-      <td><a href="{% url logbookentry logbookentry.href %}">{{logbookentry.title|safe}}</a></td>
+      <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.title|safe}}</a></td>
     </tr>
   {% endif %}
   {% endfor %}

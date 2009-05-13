@@ -8,7 +8,7 @@
 <p>{{person|wiki_to_html_short}} has been on expo in the following years:</p>
 <p>
 {% for personexpedition in person.personexpedition_set.all %}
-  | <a href="{% url personexpedition personexpedition.person.href personexpedition.expedition.year %}">{{personexpedition.expedition.year}}</a>
+  | <a href="{{ personexpedition.get_absolute_url }}">{{personexpedition.expedition.year}}</a>
 {% endfor %}
 </p>
 

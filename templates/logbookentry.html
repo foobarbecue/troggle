@@ -4,23 +4,24 @@
 {% block title %}Logbook {{logbookentry.id}}{% endblock %}
 
 {% block content %}
+
 <h2>{{logbookentry.title|safe}}</h2>
 
 <div id="col2">
-<p><a href="{% url expedition logbookentry.expedition.year %}">{{logbookentry.expedition.name}}</a></p>
+<p><a href="{{ logbookentry.expedition.get_absolute_url }}">{{logbookentry.expedition.name}}</a></p>
 
 {% if logbookentry.cave %}
-  <p>place: <a href="{% url cave logbookentry.cave.href %}">{{logbookentry.place}}</p>
+  <p>place: <a href="{{ logbookentry.cave.get_absolute_url }}">{{logbookentry.place}}</p>
 {% else %}
   <p>{{logbookentry.place}}</p>
 {% endif %}
 
 <p>
   {% if logbookentry.get_previous_by_date %}
-    <a href="{% url logbookentry logbookentry.get_previous_by_date.href %}">{{logbookentry.get_previous_by_date.date}}</a>
+    <a href="{{ logbookentry.get_previous_by_date.get_absolute_url }}">{{logbookentry.get_previous_by_date.date}}</a>
   {% endif %}
   {% if logbookentry.get_next_by_date %}
-    <a href="{% url logbookentry logbookentry.get_next_by_date.href %}">{{logbookentry.get_next_by_date.date}}</a>
+    <a href="{{ logbookentry.get_next_by_date.get_absolute_url }}">{{logbookentry.get_next_by_date.date}}</a>
   {% endif %}
 </p>
 
@@ -33,7 +34,7 @@
   {% else %}
     <td>
   {% endifequal %}
-  <a href="{% url personexpedition persontrip.person_expedition.person.href persontrip.person_expedition.expedition.year %}">{{persontrip.person_expedition.person}}</a>
+  <a href="{{ persontrip.person_expedition.get_absolute_url }}">{{persontrip.person_expedition.person}}</a>
   </td>
   
   <td>
@@ -44,12 +45,12 @@
 
   <td>
   {% if persontrip.get_previous_by_date %}
-    <a href="{% url logbookentry persontrip.get_previous_by_date.logbook_entry.href %}">{{persontrip.get_previous_by_date.date}}</a>
+    <a href="{{ persontrip.get_previous_by_date.logbook_entry.get_absolute_url }}">{{persontrip.get_previous_by_date.date}}</a>
   {% endif %}
   </td>
   <td>
   {% if persontrip.get_next_by_date %}
-     <a href="{% url logbookentry persontrip.get_next_by_date.logbook_entry.href %}">{{persontrip.get_next_by_date.date}}</a>
+     <a href="{{ persontrip.get_next_by_date.logbook_entry.get_absolute_url }}">{{persontrip.get_next_by_date.date}}</a>
   {% endif %}
   </td>
 </tr>

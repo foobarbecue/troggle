@@ -58,7 +58,7 @@ def LoadPersonsExpos():
     years = headers[5:]
     years.append("2008")
     for year in years:
-        expedition = models.Expedition(year = year, name = "CUCC expo%s" % year)
+        expedition = models.Expedition(year = year, name = "CUCC expo %s" % year)
         expedition.save()
 
     

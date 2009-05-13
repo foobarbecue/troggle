@@ -85,7 +85,7 @@ select { margin:0.5em }
 	<center>
   <select id="expeditionChooser" class="centre" onChange="redirectYear()">
     
-	{% for expedition in expeditions.reverse %}   	
+	{% for expedition in expeditions %}   	
 	    
     <option label="{{ expedition }}" value="{{ expedition }}" {% ifequal expedition current_expedition %}selected{% endifequal %}>
     
@@ -103,9 +103,9 @@ select { margin:0.5em }
       survey progress table </div>
   </div>      
     
-   <h3>Choose a wallet number</h3>
-	<center>
-  <select id="surveyChooser" class="centre" onChange="redirectSurvey()">
+   <h3>Choose a wallet number   </h3>
+   <center>
+     <select id="surveyChooser" class="centre" onChange="redirectSurvey()">
     <option label="show all" value="">
      {% for survey in current_expedition.survey_set.all %}
     </option>
@@ -113,6 +113,7 @@ select { margin:0.5em }
     		{% ifequal survey current_survey %}
     			selected
 	        {% endifequal %}>
+            {{ survey }}
 	</option>
     
     {% endfor %}
@@ -195,8 +196,9 @@ select { margin:0.5em }
       </p>
     </div>
     {% endfor %}
-    <div class="figure"> <a href="{{ settings.URL_ROOT }}admin/expo/scannedimage/add/"> <img src="{{ settings.URL_ROOT }}{{ settings.ADMIN_MEDIA_PREFIX }}img/admin/icon_addlink.gif" /> Add a new scanned notes page. </a> (to be improved) </div>
+    <div class="figure"> <a href="{{ settings.URL_ROOT }}admin/expo/scannedimage/add/"> <img src="{{ settings.URL_ROOT }}{{ settings.ADMIN_MEDIA_PREFIX }}img/admin/icon_addlink.gif" /> Add a new scanned notes page. </a>  </div>
   </div>
+  <br class="clearfloat" />
   <div id="survexFileContent" class="behind"> survex file editor, keeping file in original structure <br />
     who entered by </div>
   <div id="printedCentrelineContent" class="behind"> centreline </div>
@@ -212,7 +214,7 @@ select { margin:0.5em }
       </p>
     </div>
     {% endfor %}
-    <div class="figure"> <a href="{{ settings.URL_ROOT }}admin/expo/scannedimage/add/"> <img src="{{ settings.URL_ROOT }}{{ settings.ADMIN_MEDIA_PREFIX }}img/admin/icon_addlink.gif" /> Add a new scanned notes page. </a> (to be improved) </div>
+    <div class="figure"> <a href="{{ settings.URL_ROOT }}admin/expo/scannedimage/add/"> <img src="{{ settings.URL_ROOT }}{{ settings.ADMIN_MEDIA_PREFIX }}img/admin/icon_addlink.gif" /> Add a new scanned sketch. </a>  </div>
   </div>
   <div id="tunnelXMLfileContent" class="behind"> link to tunnel xml file. potentially instance of tunnel applet... </div>
   <div id="mainSketchIntegrationContent" class="behind"> link to main sketch file </div>

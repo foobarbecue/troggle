@@ -29,8 +29,12 @@ class PersonAdmin(admin.ModelAdmin):
 class PersonExpeditionAdmin(admin.ModelAdmin):
     search_fields = ('person__first_name','expedition__year')
 
+class CaveAdmin(admin.ModelAdmin):
+    search_fields = ('official_name','kataster_number','unofficial_number')
+    extra = 4
+
 admin.site.register(Photo)
-admin.site.register(Cave)
+admin.site.register(Cave, CaveAdmin)
 admin.site.register(Area)
 admin.site.register(OtherCaveName)
 admin.site.register(CaveAndEntrance)

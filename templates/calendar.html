@@ -21,6 +21,18 @@
 
 {% endblock %}
 
+{% block contentheader %}
+	<h2>Expedition members present calendar for {{ expedition.year }}</h2>
+	<table style="margin:0 auto">
+	<tr>
+    	<td class='yes' width="10"></td><td>Expedition member present in Austria</td>
+    </tr>
+    <tr>
+        <td class='no' width="10"></td><td>Expedition member absent in Austria</td>
+	</tr></table>
+    <br />
+{% endblock%}
+
 {% block content %}
 	{% if expedition %}
     	<table>
@@ -47,7 +59,8 @@
     		{% for personexpedition in expedition.personexpedition_set.all %}
             	<tr>
                       <td class="name">
-                          {{ personexpedition.person }}
+                          <a href="">{{ personexpedition.person }}</a>
+                          
                       </td>
                       {% if personexpedition.ListDaysTF %}
                       {% for dateTF in personexpedition.ListDaysTF %}
