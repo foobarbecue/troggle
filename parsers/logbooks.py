@@ -7,14 +7,6 @@ import re
 import os
 import datetime
 
-# Dave Johnson (Stonker) is hacked -- are there two of this DJ name
-# Dave Collins (Scout) is hacked
-# Letty ten Harkel has middle , tu = timeug or ""name removed
-# the <span lang=""sv""> have been removed
-# Dave Milne (Lummat)
-# Ben van Millingen
-# Rebecca Lawson (Becka)
-
 persontab = open(os.path.join(settings.EXPOWEB, "noinfo", "folk.csv"))
 personreader = csv.reader(persontab)
 headers = personreader.next()
@@ -186,7 +178,7 @@ def Parseloghtmltxt(year, expedition, txt):
 
 def LoadLogbooks():
     models.LogbookEntry.objects.all().delete()
-    expowebbase = os.path.join(settings.EXPOWEB, "years")  # this could be a url
+    expowebbase = os.path.join(settings.EXPOWEB, "years")  
     yearlinks = [ 
 #                    ("2008", "2008/logbook/2008logbook.txt"), 
 #                    ("2007", "2007/logbook/2007logbook.txt"), 

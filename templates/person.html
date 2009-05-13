@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+
+{% block title %}Person {{person.id}}{% endblock %}
+
+{% block content %}
+    <div class="personblock"><a href="/person/{{person.id}}">{{person}}</a>
+    <ul>
+    {% for personexpedition in person.personexpedition_set.all %}
+        <li>
+        <table><tr><td>
+        {{personexpedition.expedition}}
+        </td><td>
+        <div>
+        {% for persontrip in personexpedition.persontrip_set.all %}
+            <a href="/logbook/{{persontrip.logbookentry.id}}">{{persontrip.date}}</a>
+        {% endfor %}
+        </div>
+        </td></tr></table>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}
