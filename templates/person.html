@@ -3,6 +3,8 @@
 
 {% block title %}Person {{person|wiki_to_html_short}}{% endblock %}
 
+{% block editLink %}| <a href={{person.get_admin_url}}>Edit person {{person|wiki_to_html_short}}</a>{% endblock %}
+
 {% block contentheader %}
 <h2> {{person|wiki_to_html_short}} </h2>
 {% endblock %}

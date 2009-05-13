@@ -5,24 +5,28 @@ from django.db import models
 from django.contrib import admin
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 import os
 from django.conf import settings
 import datetime
 
 from models_survex import *
 
-class Model(models.Model):
+#This class is for adding fields and methods which all of our models will have.
+class TroggleModel(models.Model):
     new_since_parsing = models.BooleanField(default=False)
-    def save(self):
-        new_since_parsing = True
-	super(Model, self).save()
+    
+    def get_admin_url(self):
+        return settings.URL_ROOT + "/admin/expo/" + self._meta.object_name + "/" + str(self.pk)
 
-class Expedition(Model):
+    class Meta:
+	    abstract = True
+
+class Expedition(TroggleModel):
     year        = models.CharField(max_length=20, unique=True)
     name        = models.CharField(max_length=100)
     date_from  = models.DateField(blank=True,null=True)
     date_to    = models.DateField(blank=True,null=True)
-    dates_guessed = models.BooleanField(default=False)
     
     def __unicode__(self):
         return self.year
@@ -65,7 +69,7 @@ class Expedition(Model):
     
 
 
-class Person(Model):
+class Person(TroggleModel):
     first_name  = models.CharField(max_length=100)
     last_name   = models.CharField(max_length=100)
     is_vfho     = models.BooleanField(help_text="VFHO is the Vereines f&uuml;r H&ouml;hlenkunde in Obersteier, a nearby Austrian caving club.")    
@@ -119,7 +123,7 @@ class Person(Model):
         #self.notability = 0.0  # set temporarily
         
 
-class PersonExpedition(Model):
+class PersonExpedition(TroggleModel):
     expedition  = models.ForeignKey(Expedition)
     person      = models.ForeignKey(Person)
     date_from   = models.DateField(blank=True,null=True)
@@ -197,7 +201,7 @@ class PersonExpedition(Model):
     def get_absolute_url(self):
         return settings.URL_ROOT + '/personexpedition/' + str(self.person.first_name) + '_' + str(self.person.last_name) + '/' +self.expedition.year
 	
-class LogbookEntry(models.Model):
+class LogbookEntry(TroggleModel):
     date    = models.DateField()
     expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
     author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip
@@ -229,7 +233,7 @@ class LogbookEntry(models.Model):
     def get_previous_by_id(self):
         Logbook.objects.get(id=self.id-1)
 
-class PersonTrip(models.Model):
+class PersonTrip(TroggleModel):
     person_expedition = models.ForeignKey(PersonExpedition,null=True)
     
         # this will be a foreign key of the place(s) the trip went through
@@ -252,7 +256,7 @@ class PersonTrip(models.Model):
 # move following classes into models_cave
 #
 
-class Area(models.Model):
+class Area(TroggleModel):
     short_name = models.CharField(max_length=100)
     name = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(blank=True,null=True)
@@ -268,14 +272,14 @@ class Area(models.Model):
         elif self.parent:
             return self.parent.kat_area()
 
-class CaveAndEntrance(models.Model):
+class CaveAndEntrance(TroggleModel):
     cave = models.ForeignKey('Cave')
     entrance = models.ForeignKey('Entrance')
     entrance_letter = models.CharField(max_length=20,blank=True,null=True)
     def __unicode__(self):
         return unicode(self.cave) + unicode(self.entrance_letter)
         
-class Cave(models.Model):
+class Cave(TroggleModel):
     # too much here perhaps
     official_name = models.CharField(max_length=160)
     area = models.ManyToManyField(Area, blank=True, null=True)
@@ -357,18 +361,18 @@ class Cave(models.Model):
 
 
 
-class OtherCaveName(models.Model):
+class OtherCaveName(TroggleModel):
     name = models.CharField(max_length=160)
     cave = models.ForeignKey(Cave)
     def __unicode__(self):
         return unicode(self.name)
 
-class SurveyStation(models.Model):
+class SurveyStation(TroggleModel):
     name = models.CharField(max_length=200)
     def __unicode__(self):
         return unicode(self.name)
 
-class Entrance(models.Model):
+class Entrance(TroggleModel):
     name = models.CharField(max_length=100, blank=True,null=True)
     entrance_description = models.TextField(blank=True,null=True)
     explorers = models.TextField(blank=True,null=True)
@@ -421,7 +425,7 @@ class Entrance(models.Model):
             if f[0] == self.findability:
                 return f[1]
                 
-class CaveArea(models.Model):
+class CaveArea(TroggleModel):
     description = models.TextField()
     name = models.CharField(max_length=200, unique = True)
     cave = models.ForeignKey('Cave')
@@ -429,7 +433,7 @@ class CaveArea(models.Model):
     survexFile = models.CharField(max_length=200)
 
 
-class QM(models.Model):
+class QM(TroggleModel):
     #based on qm.csv in trunk/expoweb/smkridge/204 which has the fields:
     #"Number","Grade","Area","Description","Page reference","Nearest station","Completion description","Comment"
     found_by = models.ForeignKey(LogbookEntry, related_name='QMs_found',blank=True, null=True )
@@ -458,7 +462,7 @@ class QM(models.Model):
 	return str(QMnumber)
 
 photoFileStorage = FileSystemStorage(location=settings.EXPOWEB+'photos', base_url=settings.PHOTOS_URL)
-class Photo(models.Model): 
+class Photo(TroggleModel): 
     caption = models.CharField(max_length=1000,blank=True,null=True)
     contains_person_trip = models.ManyToManyField(PersonTrip,blank=True,null=True)
     contains_person = models.ManyToManyField(Person,blank=True,null=True)
@@ -486,7 +490,7 @@ def get_scan_path(instance, filename):
     number="%02d" % instance.survey.wallet_number + str(instance.survey.wallet_letter) #using %02d string formatting because convention was 2009#01
     return os.path.join('./',year,year+r'#'+number,instance.contents+str(instance.number_in_wallet)+r'.jpg')
 
-class ScannedImage(models.Model): 
+class ScannedImage(TroggleModel): 
     file = models.ImageField(storage=scansFileStorage, upload_to=get_scan_path)
     scanned_by = models.ForeignKey(Person,blank=True, null=True)
     scanned_on = models.DateField(null=True)
@@ -506,7 +510,7 @@ class ScannedImage(models.Model):
     def __str__(self):
         return get_scan_path(self,'')
 
-class Survey(models.Model):
+class Survey(TroggleModel):
     expedition = models.ForeignKey('Expedition')
     wallet_number = models.IntegerField(blank=True,null=True)
     wallet_letter = models.CharField(max_length=1,blank=True,null=True)

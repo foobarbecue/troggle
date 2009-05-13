@@ -2,7 +2,7 @@
 {% load wiki_markup %}
 
 {% block title %}Expedition {{expedition.name}}{% endblock %}
-
+{% block editLink %}<a href={{expedition.get_admin_url}}>Edit expedition {{expedition|wiki_to_html_short}}</a>{% endblock %}
 {% block content %}
 <h2>{{expedition.name}}: {{expedition.date_from}} - {{expedition.date_to}}</h2>
 

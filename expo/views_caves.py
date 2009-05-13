@@ -14,7 +14,7 @@ def caveindex(request):
 def cavehref(request, cave_id='', offical_name=''):
     try:
         cave = Cave.objects.get(kataster_number=cave_id)
-    except DoesNotExist:
+    except Cave.DoesNotExist:
         cave = Cave.objects.get(unofficial_number=cave_id)
     return render_response(request,'cave.html', {'cave': cave,})
 

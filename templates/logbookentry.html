@@ -2,7 +2,7 @@
 {% load wiki_markup %}
 
 {% block title %}Logbook {{logbookentry.id}}{% endblock %}
-
+{% block editLink %}<a href={{logbookentry.get_admin_url}}>Edit logbook entry {{logbookentry|wiki_to_html_short}}</a>{% endblock %}
 {% block content %}
 
 <h2>{{logbookentry.title|safe}}</h2>

@@ -252,7 +252,6 @@ def SetDatesFromLogbookEntries(expedition):
         persontrips = personexpedition.persontrip_set.order_by('date')
         personexpedition.date_from = min([persontrip.date  for persontrip in persontrips] or [None])
         personexpedition.date_to = max([persontrip.date  for persontrip in persontrips] or [None])
-        personexpedition.dates_guessed = True
         personexpedition.save()
 
 # The below is all unnecessary, just use the built in get_previous_by_date and get_next_by_date
@@ -269,7 +268,6 @@ def SetDatesFromLogbookEntries(expedition):
     # from trips rather than logbook entries, which may include events outside the expedition
     expedition.date_from = min([personexpedition.date_from  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_from] or [None])
     expedition.date_to = max([personexpedition.date_to  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_to] or [None])
-    expedition.dates_guessed = True
     expedition.save()
 
 # The below has been replaced with the methods get_next_by_id and get_previous_by_id
