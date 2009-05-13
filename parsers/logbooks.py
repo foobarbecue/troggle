@@ -3,7 +3,6 @@
 import settings
 import expo.models as models
 import csv
-import sqlite3
 import re
 import os
 import datetime
@@ -24,11 +23,12 @@ header = dict(zip(headers, range(len(headers))))
 
 def LoadExpos():
     models.Expedition.objects.all().delete()
-    y = models.Expedition(year = "2008", name = "CUCC expo2008")
-    y.save()
-    for year in headers[5:]:
-        y = models.Expedition(year = year, name = "CUCC expo%s" % y)
+    years = headers[5:]
+    years.append("2008")
+    for year in years:
+        y = models.Expedition(year = year, name = "CUCC expo%s" % year)
         y.save()
+    print "lll", years 
 
 def LoadPersons():
     models.Person.objects.all().delete()
@@ -40,44 +40,59 @@ def LoadPersons():
         name = person[header["Name"]]
         name = re.sub("<.*?>", "", name)
         lname = name.split()
-        if len(lname) >= 2:
-            firstname, lastname = lname[0], lname[1]
+        mbrack = re.match("\((.*?)\)", lname[-1])
+
+        if mbrack:
+            nickname = mbrack.group(1)
+            del lname[-1]
+        elif name == "Anthony Day":
+            nickname = "Dour"
         else:
+            nickname = ""
+
+        if len(lname) == 3:  # van something
+            firstname, lastname = lname[0], "%s %s" % (lname[1], lname[2])
+        elif len(lname) == 2:
+            firstname, lastname = lname[0], lname[1]
+        elif len(lname) == 1:
             firstname, lastname = lname[0], ""
-        print firstname, lastname
+        else:
+            assert False, lname
+        #print firstname, lastname
         #assert lastname == person[header[""]], person
+
         pObject = models.Person(first_name = firstname,
                                 last_name = lastname,
-                                is_guest = person[header["Guest"]] == "1",
                                 is_vfho = person[header["VfHO member"]],
                                 mug_shot = person[header["Mugshot"]])
         pObject.save()
+        is_guest = person[header["Guest"]] == "1"  # this is really a per-expo catagory; not a permanent state
 
         for year, attended in zip(headers, person)[5:]:
             yo = models.Expedition.objects.filter(year = year)[0]
             if attended == "1" or attended == "-1":
-                pyo = models.PersonExpedition(person = pObject, expedition = yo)
+                pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname=nickname, is_guest=is_guest)
                 pyo.save()
 
         if name in expoers2008:
             print "2008:", name
             expomissing.discard(name)
             yo = models.Expedition.objects.filter(year = "2008")[0]
-            pyo = models.PersonExpedition(person = pObject, expedition = yo)
+            pyo = models.PersonExpedition(person = pObject, expedition = yo, is_guest=is_guest)
             pyo.save()
 
 
-    print expomissing
+    # this fills in those peopl for whom 2008 was their first expo
     for name in expomissing:
         firstname, lastname = name.split()
+        is_guest = name in ["Eeva Makiranta", "Kieth Curtis"]
         pObject = models.Person(first_name = firstname,
                                 last_name = lastname,
-                                is_guest = name in ["Eeva Makiranta", "Kieth Curtis"],
                                 is_vfho = False,
                                 mug_shot = "")
         pObject.save()
         yo = models.Expedition.objects.filter(year = "2008")[0]
-        pyo = models.PersonExpedition(person = pObject, expedition = yo)
+        pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname="", is_guest=is_guest)
         pyo.save()
 
 
@@ -95,7 +110,7 @@ def GetTripPersons(trippeople, expedition):
         if tripperson and tripperson[0] != '*':
             #assert tripperson in personyearmap, "'%s' << %s\n\n %s" % (tripperson, trippeople, personyearmap)
             personyear = expedition.GetPersonExpedition(tripperson)
-            print personyear
+            #print personyear
             res.append(personyear)
             if mul:
                 author = personyear
@@ -154,6 +169,7 @@ def Parseloghtmltxt(year, expedition, txt):
         else:
             assert False, tripdate
         ldate = datetime.date(year, month, day)
+        print "ttt", tripdate
         #assert tripid[:-1] == "t" + tripdate, (tripid, tripdate)
         trippersons, author = GetTripPersons(trippeople, expedition)
         tripcave = ""
@@ -162,7 +178,8 @@ def Parseloghtmltxt(year, expedition, txt):
         tu = timeug or ""
 
         for tripperson in trippersons:
-            pto = models.PersonTrip(personexpedition = tripperson, place=tripcave, date=ldate, timeunderground=tu, logbookentry=lbo)
+            pto = models.PersonTrip(personexpedition = tripperson, place=tripcave, date=ldate, timeunderground=tu, 
+                                    logbookentry=lbo, is_logbookentryauthor=(tripperson == author))
             pto.save()
 
 
@@ -183,15 +200,16 @@ def LoadLogbooks():
         fin = open(os.path.join(expowebbase, lloc))
         txt = fin.read()
         fin.close()
-        #print personyearmap
         if year >= "2007":
             Parselogwikitxt(year, personyearmap, txt)
         else:
             Parseloghtmltxt(year, expedition, txt)
 
+
 # command line run through the loading stages
-LoadExpos()
-LoadPersons()
+# you can comment out these in turn to control what gets reloaded
+#LoadExpos()
+#LoadPersons()
 LoadLogbooks()
 
 

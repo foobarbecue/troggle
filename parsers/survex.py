@@ -9,19 +9,19 @@ re_begin = re.compile(r"^\s*\*begin\s+(.*?)\s*$", re.IGNORECASE)
 re_end = re.compile(r"^\s*\*end\s+(.*?)\s*$", re.IGNORECASE)
 
 def save(x):   #There seems to be an intermitent problem with sqlite and Vista, this should fix it
-    try:
+    #try:
         x.save()
-    except sqlite3.OperationalError:
-        print "Error"
-        time.sleep(1)
-        save(x)
+    #except Exception: #sqlite3.OperationalError:
+    #    print "Error"
+    #    time.sleep(1)
+    #    save(x)
 
 def fileIterator(directory, filename):
     survex_file = os.path.join(directory, filename + ".svx")
     f = open(os.path.join(settings.SURVEX_DATA, survex_file), "rb")
     char = 0
     for line in f.readlines():
-        line = unicode(line, "latin1")
+        line = unicode(line, "latin1").decode("utf-8")
         include_extension = re_include_extension.match(line)
         include_no_extension = re_include_no_extension.match(line)
         def a(include):
@@ -53,6 +53,7 @@ def make_model(name, parent, iter_lines, sf, c, l):
           m.text = m.text + line
           m.end_file = survex_file
           m.end_char = count
+          print len(m.text)
           save(m)
           assert (end.groups()[0]).lower() == (name).lower()
           return None
