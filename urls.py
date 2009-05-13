@@ -26,7 +26,8 @@ urlpatterns = patterns('',
     url(r'^logbookentry/(?P<date>.*)/(?P<slug>.*)/?$', views_logbooks.logbookentry,name="logbookentry"),
     
     url(r'^survexblock/(.+)$',  views_caves.survexblock,    name="survexblock"),
-    url(r'^cavehref/(.+)$',     views_caves.cavehref,       name="cave"),
+    url(r'^cave/(?P<cave_id>[^/]+)/?$', views_caves.cave, name="cave"),
+    #url(r'^cavehref/(.+)$',     views_caves.cave,       name="cave"),
 
     url(r'^jgtfile/(.*)$',      view_surveys.jgtfile,       name="jgtfile"),
     url(r'^jgtuploadfile$',     view_surveys.jgtuploadfile, name="jgtuploadfile"),
@@ -41,7 +42,7 @@ urlpatterns = patterns('',
     url(r'^cavearea', caveArea, name="caveArea"),
 
     url(r'^survex/(.*?)\.index$', views_survex.index, name="survexindex"),
-    url(r'^cave/(?P<cave_id>[^/]+)/?$', views_caves.cavehref),
+    
     url(r'^cave/(?P<cave_id>[^/]+)/(?P<year>\d\d\d\d)-(?P<qm_id>\d\d)(?P<grade>[ABCDX]?)?$', views_caves.qm, name="qm"),
     (r'^survex/(?P<survex_file>.*)\.svx$', svx),
     (r'^survex/(?P<survex_file>.*)\.3d$', threed),
@@ -80,4 +81,6 @@ urlpatterns = patterns('',
 
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.PHOTOS_ROOT, 'show_indexes':True}),
+
+    url(r'^trip_report/?$',views_other.tripreport,name="trip_report")
 )
