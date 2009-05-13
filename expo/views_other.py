@@ -4,7 +4,7 @@ import troggle.settings as settings
 from django import forms
 from django.db.models import Q
 import re
-import randSent
+#import randSent (it's not ready yet)
 
 def stats(request):
     statsDict={}
@@ -14,6 +14,6 @@ def stats(request):
     statsDict['logbookEntryCount'] = int(LogbookEntry.objects.count())
     return render_to_response('statistics.html', statsDict)
 
-def frontPage(request):
+#def frontPage(request):
     
-    return render_to_response('index.html', {'randSent':randSent.randomLogbookSentence(),'settings':settings})
+#    return render_to_response('index.html', {'randSent':randSent.randomLogbookSentence(),'settings':settings})
