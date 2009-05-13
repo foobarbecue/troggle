@@ -19,11 +19,29 @@ class Expedition(models.Model):
     def __unicode__(self):
         return self.year
 
+    def GuessDateFrom(self):
+	try:
+		return self.logbookentry_set.order_by('date')[0].date
+	except IndexError:
+		pass
+
+    def GuessDateTo(self):		# returns the date of the last logbook entry in the expedition
+	try:
+		return self.logbookentry_set.order_by('date')[-1].date
+	except IndexError:
+		pass
+
     def ListDays(self):
-	if self.start_date and self.end_date:
+	if self.date_from and self.date_to:
 		res=[]
-		date=self.start_date
-		while date <= self.end_date:
+		date=self.date_from
+		while date <= self.date_to:
+			res.append(date)
+			date+=datetime.timedelta(days=1)
+		return res
+	elif self.GuessDateFrom() and self.GuessDateTo(): 	# if we don't have the real dates, try it with the dates taken from the earliest and latest logbook entries
+		date=self.GuessDateFrom()
+		while date <= self.GuessDateTo():
 			res.append(date)
 			date+=datetime.timedelta(days=1)
 		return res
@@ -78,18 +96,18 @@ class PersonExpedition(models.Model):
         if self.nickname:
             res.append(self.nickname)
         return res
-
+	    
     def ListDays(self):
-	if self.from_date and self.to_date:
+	if self.date_from and self.date_to:
 		res=[]
-		date=self.from_date
-		while date <= self.to_date:
+		date=self.date_from
+		while date <= self.date_to:
 			res.append(date)
 			date+=datetime.timedelta(days=1)
 		return res
 
     def ListDaysTF(self):
-	if self.from_date and self.to_date:
+	if self.date_from and self.date_to:
 		res=[]
 		for date in self.expedition.ListDays():
 			res.append(date in self.ListDays())

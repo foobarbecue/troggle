@@ -16,13 +16,13 @@ class SurveyAdmin(admin.ModelAdmin):
     inlines = (ScannedImageInline,)
 
 class LogbookEntryAdmin(admin.ModelAdmin):
-    search_fields = ('title',)
+    search_fields = ('title','expedition__year')
 
 class PersonAdmin(admin.ModelAdmin):
     search_fields = ('first_name','last_name')
     
 class PersonExpeditionAdmin(admin.ModelAdmin):
-    search_fields = ('person__first_name',)
+    search_fields = ('person__first_name','expedition__year')
 
 admin.site.register(Photo)
 admin.site.register(Cave)

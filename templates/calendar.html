@@ -9,12 +9,13 @@
     {% endif %}
 {% endblock %}
 
-{% block javascript %}
+{% block head %}
 <style type="text/css"> 
 <!--
-td.yes                     { background: #7f96e8; width: 80pt; font-size: 10pt }
-td.no                    { background: #ff6666; width: 80pt; font-size: 10pt }
-td.name                    { background: #7f96e8; width: 80pt; text-align:right; font-size: 10pt }
+.no                     { background: #7f96e8; width: 80pt; font-size: 10pt }
+.yes                    { background: #ff6666; width: 80pt; font-size: 10pt }
+.name                    { background: #999; width: 80pt; text-align:right; font-size: 10pt }
+.date                    { background: #999; width: 80pt; text-align:right; font-size: 10pt }
 --> 
 </style>
 
@@ -26,20 +27,20 @@ td.name                    { background: #7f96e8; width: 80pt; text-align:right;
         	<tr><td />
             	{% for date in expedition.ListDays %}               	
         	        {% ifchanged date.month %}
-    	                <td class="h">{{ date|date:"F" }}</td>
+    	                <td class="date">{{ date|date:"F" }}</td>
                     {% else %}
-                    	<td class="h"></td>
+                    	<td class="date"></td>
 	                {% endifchanged %}            
                 {% endfor %}                    
         	</tr>
             <tr><td />
             	{% for date in expedition.ListDays %}               	
-					<td class="h">{{ date|date:"D" }}</td>
+					<td class="date">{{ date|date:"D" }}</td>
                 {% endfor %}
             </tr>
         	<tr><td />
             	{% for date in expedition.ListDays %}               	
-					<td class="h">{{ date|date:"d" }}</td>
+					<td class="date">{{ date|date:"d" }}</td>
                 {% endfor %}
             </tr>
 
@@ -51,7 +52,7 @@ td.name                    { background: #7f96e8; width: 80pt; text-align:right;
                       {% for dateTF in personexpedition.ListDaysTF %}
                       		<td {{ dateTF|yesno:"class='yes',class='no'"|safe }}></td>
                       {% empty %}
-                      		<td colspan="{{ expedition.ListDays|length }}">No data yet.</td>
+                      		<td colspan="{{ expedition.ListDays|length }}"><center>No data.</center></td>
                       {% endfor %}
 
                     
