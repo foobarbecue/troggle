@@ -310,6 +310,8 @@ div.figure {
   border: thin silver solid;
   margin: 0.5em;
   padding: 0.5em;
+  display: inline;	
+  float: left;
 }
 div.figure p {
   text-align: left;
@@ -318,4 +320,7 @@ div.figure p {
 }
 img.thumbnail {
   width: 100%;
+}
+br.clearfloat {
+  clear:both;
 }

@@ -6,7 +6,10 @@
 {% block head %}
 
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/nav.css" />
-
+<!--<style type="text/css">
+h4 { text-align:right; text-decoration:underline }
+select { margin:0.5em }
+</style>-->
 <script language="javascript">
 	blankColor = "rgb(153, 153, 153)"
 	highlightedColor = "rgb(125, 125, 125)"
@@ -14,12 +17,12 @@
 	mnuItmLst=document.getElementsByClassName("menuBarItem")
 	function highlight(div){
 	for (var i = 0, divIter; divIter = mnuItmLst[i]; i++) {
-			/*loop though all menuitems. blank them except for the chosen one*/
+			/*loop though all menuitems. blank them except ones that are toggled on*/
 			if (divIter.style.backgroundColor!=chosenColor){
 			divIter.style.backgroundColor=blankColor;
 			}
 		}
-			/*highlight the mouseovered div unless it is the chosen one*/		
+			/*highlight the mouseovered div unless it is toggled on*/		
 		if (div.style.backgroundColor!=chosenColor){
 			div.style.backgroundColor=highlightedColor;
 		}
@@ -32,7 +35,18 @@
 		}
 	}
 	
-	function choose(div){
+	function toggle(div){
+		if (document.getElementById(div.id+"Content").style.display="none"){
+			document.getElementById(div.id+"Content").style.display="block";
+			div.style.backgroundColor=chosenColor;
+		}
+		else {
+			document.getElementById(div.id+"Content").style.display="none";
+			div.style.backgroundColor=blankColor;
+		}
+	}
+	
+/*	function choose(div){
 		for (var i = 0, divIter; divIter = mnuItmLst[i]; i++) {
 			document.getElementById(divIter.id+"Content").style.display="none";
 			}
@@ -42,7 +56,7 @@
 			}
 		div.style.backgroundColor=chosenColor;
 		document.getElementById(progressTableContent).style.display="none";
-	}
+	}*/
 	
 	function redirectSurvey(){
 		window.location = "{% url survey %}" + '/' + document.getElementById("expeditionChooser").value + "%23" + document.getElementById("surveyChooser").value;
@@ -54,7 +68,6 @@
 </script>
 {% endblock %}
 
-<body class="twoColHybLtHdr">
 <div id="currentLocation">
   CUCC Expo virtual survey binder:
   {% if current_survey %}
@@ -69,7 +82,7 @@
   <br />
 
   <h3>Choose a year</h3>
-
+	<center>
   <select id="expeditionChooser" class="centre" onChange="redirectYear()">
     
 	{% for expedition in expeditions.reverse %}   	
@@ -82,33 +95,44 @@
     {% endfor %}
   
   </select>
-  <br>
+  	</center>
 
+  <div>
+<!--  	<h4>Click to toggle:</h4>-->
+    <div id="progressTable" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="toggle(this)"> {% if current_expedition.survey_set.all %}&#10003;{% endif %}
+      survey progress table </div>
+  </div>      
+    
    <h3>Choose a wallet number</h3>
-
+	<center>
   <select id="surveyChooser" class="centre" onChange="redirectSurvey()">
-    <option label="show all" value=""> {% for survey in current_expedition.survey_set.all %}
+    <option label="show all" value="">
+     {% for survey in current_expedition.survey_set.all %}
+    </option>
     <option label="{{ survey }}" value="{{ survey.wallet_number }}" 
     		{% ifequal survey current_survey %}
     			selected
-	        {% endifequal %}	>
-    {{ survey }} </option>
+	        {% endifequal %}>
+	</option>
     
     {% endfor %}
         
     <option label="add" value="add">
   </select>
-  <div id="status">
-    <div id="notes" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)"> {% if notes %}&#10003;{% endif %}
+
+  </center>
+<!--      	<h4>Click to toggle:</h4>-->
+  <div id="surveyWalletNav">
+    <div id="notes" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="toggle(this)"> {% if notes %}&#10003;{% endif %}
       scanned notes </div>
-    <div id="survexFile" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)"> {% if current_survey.survex_file %}&#10003;{% endif %}
+    <div id="survexFile" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="toggle(this)"> {% if current_survey.survex_file %}&#10003;{% endif %}
       survex file </div>
-    <div id="printedCentreline" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)"> {% if current_survey.centreline_printed_on %}&#10003;{% endif %}
+    <div id="printedCentreline" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="toggle(this)"> {% if current_survey.centreline_printed_on %}&#10003;{% endif %}
       printed centreline </div>
-    <div id="scannedPassageSketch" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)"> {% if planSketches %}&#10003;{% endif %}
+    <div id="scannedPassageSketch" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="toggle(this)"> {% if planSketches %}&#10003;{% endif %}
       scanned passage sketch </div>
-    <div id="tunnelXMLfile" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)">tunnel xml file</div>
-    <div id="mainSketchIntegration" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="choose(this)">add to main sketch</div>
+    <div id="tunnelXMLfile" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="toggle(this)">tunnel xml file</div>
+    <div id="mainSketchIntegration" class="menuBarItem" onMouseOver="highlight(this)" onMouseOut="unhighlight(this)" onClick="toggle(this)">add to main sketch</div>
   </div>
  </div>
 </div>
@@ -117,7 +141,7 @@
 {% block content %}
 <div id="mainContent">
 
-  <div id="progressTableContent" style="display:block; overflow:auto">
+  <div id="progressTableContent" class="behind" style="overflow:auto">
   <h3>Survey progress table for {{ current_expedition }}</h3>
   {% if current_expedition.survey_set.all %} <!-- if there are any surveys in the expedition, make the table -->
     <table class="centre">
@@ -156,7 +180,7 @@
         {% endfor %} </tr>
     </table>
 	{% else %}
-		<center>[ There are no surveys in the database for this year. ]</center>
+		<center>[ There are no surveys in the database for this year. Put link in to add one. ]</center>
 	{% endif %}
   </div>
   <div id="notesContent" class="behind">
@@ -195,5 +219,5 @@
   <!-- end #mainContent -->
 </div>
 <br class="clearfloat" />
-</div>
+
 {% endblock %}
