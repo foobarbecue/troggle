@@ -11,13 +11,13 @@
 
 {% block content %}
 {% if person.blurb %}
-{{person.blurb}}
+{{person.blurb|safe}}
 {% endif %}
 
 {% for pic in person.photo_set.all %}
 {% if pic.is_mugshot %}
     <div class="figure">
-      <p> <img src="{{ pic.file.url }}" class="thumbnail" />
+      <p> <img src="{{ pic.thumbnail_image.url }}" class="thumbnail" />
       <p> {{ pic.caption }}
       </p>
       </p>

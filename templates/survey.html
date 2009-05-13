@@ -179,11 +179,11 @@
 		<center>[ There are no surveys in the database for this year. Put link in to add one. ]</center>
 	{% endif %}
   </div>
-  <div id="notesContent" class="behind">
+  <div id="notesContent" class="behind" style="overflow: auto">
     <h3>Scanned notes for {{ current_survey }}.</h3>
     {% for noteItem in notes %}
     <div class="figure">
-      <p> <img src="{{ noteItem.correctURL }}" class="thumbnail">
+      <p> <img src="{{ noteItem.thumbnail_image.url }}" class="thumbnail">
       <p> File at: <a href="{{ noteItem.correctURL }}"> {{ noteItem.file.name }} </a> <br />
         Scanned by: {{ noteItem.scanned_by }} <br />
         On: {{ noteItem.scanned_on }} <br />
@@ -201,8 +201,8 @@
     <h3>Scanned plan sketch files for {{ current_survey }}.</h3>
     {% for sketchItem in planSketches %}
     <div class="figure">
-      <p> <img src="{{ sketchItem.correctURL }}" class="thumbnail" />
-      <p> File at: <a href="{{ sketchItem.correctUrl }}"> {{ sketchItem.file.name }} </a> <br />
+      <p> <img src="{{ sketchItem.thumbnail_image.url }}" class="thumbnail" />
+      <p> File at: <a href="{{ sketchItem.correctURL }}"> {{ sketchItem.file.name }} </a> <br />
         Scanned by: {{ sketchItem.scanned_by }} <br />
         On: {{ sketchItem.scanned_on }} <br />
       </p>

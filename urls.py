@@ -68,6 +68,8 @@ urlpatterns = patterns('',
     
 #    (r'^personform/(.*)$', personForm),
 
+    (r'^photologue/', include('photologue.urls')),
+
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
 

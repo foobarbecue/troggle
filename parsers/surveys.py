@@ -1,19 +1,19 @@
 import sys
 import os
 import types
-sys.path.append('C:\\Expo\\expoweb')
-from troggle import *
-os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
+#sys.path.append('C:\\Expo\\expoweb')
+#from troggle import *
+#os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
 import troggle.settings as settings
 from troggle.expo.models import *
-
+from PIL import Image
 #import settings
 #import expo.models as models
 import csv
 import re
 import datetime
 
-def readSurveysFromCSV():
+def readSurveysFromCSV(logfile=None):
     try:
         surveytab = open(os.path.join(settings.SURVEYS, "Surveys.csv"))
     except IOError:
@@ -29,8 +29,18 @@ def readSurveysFromCSV():
     if Expedition.objects.count()==0:
         print "There are no expeditions in the database. Please run the logbook parser."
         sys.exit()
+
+    if logfile:
+        logfile.write("Deleting all scanned images")
     ScannedImage.objects.all().delete()
+    
+    if logfile:
+        logfile.write("Deleting all survey objects")
     Survey.objects.all().delete()
+    
+    if logfile:
+        logfile.write("Beginning to import surveys from "+str(os.path.join(settings.SURVEYS, "Surveys.csv"))+"\n"+"-"*60+"\n")
+    
     for survey in surveyreader:
         walletNumberLetter = re.match(r'(?P<number>\d*)(?P<letter>[a-zA-Z]*)',survey[header['Survey Number']]) #I hate this, but some surveys have a letter eg 2000#34a. This line deals with that.
     #    print walletNumberLetter.groups()
@@ -47,7 +57,9 @@ def readSurveysFromCSV():
             #try and find the sketch_scan
             pass
         surveyobj.save()
-        print "added survey " + survey[header['Year']] + "#" + surveyobj.wallet_number + "\r",
+
+        if logfile:
+            logfile.write("added survey " + survey[header['Year']] + "#" + surveyobj.wallet_number + "\r")
 
 def listdir(*directories):
     try:
@@ -59,7 +71,7 @@ def listdir(*directories):
         return [folder.rstrip(r"/") for folder in folders]
 
 # add survey scans
-def parseSurveyScans(year):
+def parseSurveyScans(year, logfile=None):
 #    yearFileList = listdir(year.year)
     yearPath=os.path.join(settings.SURVEY_SCANS, year.year)
     yearFileList=os.listdir(yearPath)
@@ -92,17 +104,27 @@ def parseSurveyScans(year):
                 survey=Survey.objects.get_or_create(wallet_number=surveyNumber, expedition=year)[0]
             except Survey.MultipleObjectsReturned:
                 survey=Survey.objects.filter(wallet_number=surveyNumber, expedition=year)[0]
-               
+            file=os.path.join(year.year, surveyFolder, scan)
             scanObj = ScannedImage(
-                file=os.path.join(year.year, surveyFolder, scan),
+                file=file,
                 contents=scanType,
                 number_in_wallet=scanNumber,
-                survey=survey
+                survey=survey,
+                new_since_parsing=False,
                 )
             #print "Added scanned image at " + str(scanObj)
+            if scanFormat=="png":
+                if isInterlacedPNG(os.path.join(settings.SURVEY_SCANS,file)):
+                    print file + "is an interlaced PNG. No can do."
+                continue
             scanObj.save()
 
-def parseSurveys():
+def parseSurveys(logfile=None):
     readSurveysFromCSV()                
     for year in Expedition.objects.filter(year__gte=2000):   #expos since 2000, because paths and filenames were nonstandard before then
         parseSurveyScans(year)
+
+def isInterlacedPNG(filePath): #We need to check for interlaced PNGs because the thumbnail engine can't handle them (uses PIL)
+    file=Image.open(filePath)
+    return file.info['interlace']
+    

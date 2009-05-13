@@ -19,7 +19,7 @@
     {% if user.username %}
     You are logged in as {{ user.username }} 
     	{% if user.person %}(<a href="{{ user.person.get_absolute_url }}">{{ user.person }}</a>)
-        	{% else %} <a href="{% url profiles_create_profile %}">sort your profile</a>
+        	{% else %} <a href={% url profiles_select_profile %}>sort your profile</a>
         {% endif %}.
     | <a href="{% url auth_logout %}">Log out</a> {% else %} <a href="{% url registration_register %}">Sign up</a> | <a href="{% url auth_login %}">Log in</a> {% endif %}
     {% endblock%}

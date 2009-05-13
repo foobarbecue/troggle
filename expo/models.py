@@ -11,12 +11,22 @@ from django.conf import settings
 import datetime
 from decimal import Decimal, getcontext
 from  django.core.urlresolvers import reverse
+from imagekit.models import ImageModel
 getcontext().prec=2 #use 2 significant figures for decimal calculations
 
 from models_survex import *
 
 #This class is for adding fields and methods which all of our models will have.
 class TroggleModel(models.Model):
+    new_since_parsing = models.BooleanField(default=False, editable=False)
+    
+    def get_admin_url(self):
+        return settings.URL_ROOT + "/admin/expo/" + self._meta.object_name.lower() + "/" + str(self.pk)
+
+    class Meta:
+	    abstract = True
+
+class TroggleImageModel(ImageModel):
     new_since_parsing = models.BooleanField(default=False, editable=False)
     
     def get_admin_url(self):
@@ -517,7 +527,7 @@ class QM(TroggleModel):
 	return res
 
 photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
-class Photo(TroggleModel): 
+class Photo(TroggleImageModel): 
     caption = models.CharField(max_length=1000,blank=True,null=True)
     contains_logbookentry = models.ForeignKey(LogbookEntry,blank=True,null=True)
     contains_person = models.ManyToManyField(Person,blank=True,null=True)
@@ -527,10 +537,14 @@ class Photo(TroggleModel):
     contains_entrance = models.ForeignKey(Entrance, related_name="photo_file",blank=True,null=True)
     nearest_survey_point = models.ForeignKey(SurveyStation,blank=True,null=True)
     nearest_QM = models.ForeignKey(QM,blank=True,null=True)
-    
-    
     lon_utm = models.FloatField(blank=True,null=True)
     lat_utm = models.FloatField(blank=True,null=True)
+    
+    class IKOptions:
+        spec_module = 'expo.imagekit_specs'
+        cache_dir = 'thumbs'
+        image_field = 'file'
+        
     #content_type = models.ForeignKey(ContentType)
     #object_id = models.PositiveIntegerField()
     #location = generic.GenericForeignKey('content_type', 'object_id')
@@ -545,7 +559,7 @@ def get_scan_path(instance, filename):
     number="%02d" % instance.survey.wallet_number + str(instance.survey.wallet_letter) #using %02d string formatting because convention was 2009#01
     return os.path.join('./',year,year+r'#'+number,instance.contents+str(instance.number_in_wallet)+r'.jpg')
 
-class ScannedImage(TroggleModel): 
+class ScannedImage(TroggleImageModel): 
     file = models.ImageField(storage=scansFileStorage, upload_to=get_scan_path)
     scanned_by = models.ForeignKey(Person,blank=True, null=True)
     scanned_on = models.DateField(null=True)
@@ -554,6 +568,11 @@ class ScannedImage(TroggleModel):
     number_in_wallet = models.IntegerField(null=True)
     lon_utm = models.FloatField(blank=True,null=True)
     lat_utm = models.FloatField(blank=True,null=True)
+
+    class IKOptions:
+        spec_module = 'expo.imagekit_specs'
+        cache_dir = 'thumbs'
+        image_field = 'file'
     #content_type = models.ForeignKey(ContentType)
     #object_id = models.PositiveIntegerField()
     #location = generic.GenericForeignKey('content_type', 'object_id')
