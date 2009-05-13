@@ -19,6 +19,9 @@ class Expedition(models.Model):
     def __unicode__(self):
         return self.year
 
+    class Meta:
+        ordering = ('year',)
+    
     def GuessDateFrom(self):
 	try:
 		return self.logbookentry_set.order_by('date')[0].date
@@ -71,11 +74,19 @@ class Person(models.Model):
     
     class Meta:
 	    verbose_name_plural = "People"
+    class Meta:
+        ordering = ('last_name', 'first_name')
     
     def __unicode__(self):
         if self.last_name:
             return "%s %s" % (self.first_name, self.last_name)
         return self.first_name
+    
+    # these ought to be possible by piping through |min in the template, or getting the first of an ordered list
+    def Firstexpedition(self):
+        return self.personexpedition_set.order_by('expedition')[0]
+    def Lastexpedition(self):
+        return self.personexpedition_set.order_by('-expedition')[0]
     
 
 class PersonExpedition(models.Model):
@@ -96,6 +107,9 @@ class PersonExpedition(models.Model):
         print res
         return res
 
+    class Meta:
+        ordering = ('expedition',)
+    
     def GetPersonChronology(self):
         res = { }
         for persontrip in self.persontrip_set.all():

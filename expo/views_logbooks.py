@@ -10,7 +10,13 @@ import re
 
 def personindex(request):
     persons = Person.objects.all()
-    return render_to_response('personindex.html', {'persons': persons, 'settings': settings})
+    
+    personss = [ ]
+    ncols = 5
+    nc = (len(persons) + ncols - 1) / ncols
+    for i in range(ncols):
+        personss.append(persons[i * nc: (i + 1) * nc])
+    return render_to_response('personindex.html', {'persons': persons, 'personss':personss, 'settings': settings})
 
 def expedition(request, expeditionname):
     year = int(expeditionname)

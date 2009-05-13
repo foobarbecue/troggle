@@ -91,7 +91,7 @@ def LoadPersonsExpos():
 
         is_guest = person[header["Guest"]] == "1"  # this is really a per-expo catagory; not a permanent state
         pObject.save()
-        parseMugShotAndBlurb(firstname, lastname, person, header, pObject)
+        #parseMugShotAndBlurb(firstname, lastname, person, header, pObject)
     
         for year, attended in zip(headers, person)[5:]:
             yo = models.Expedition.objects.filter(year = year)[0]
@@ -111,11 +111,18 @@ def LoadPersonsExpos():
         firstname, lastname = name.split()
         is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
         print "2008:", name
-        pObject = models.Person(first_name = firstname,
-                                last_name = lastname,
-                                is_vfho = False,
-                                mug_shot = "")
-        pObject.save()
+        persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
+        if not persons:
+            pObject = models.Person(first_name = firstname,
+                                    last_name = lastname,
+                                    is_vfho = False,
+                                    mug_shot = "")
+            pObject.href = firstname.lower()
+            if lastname:
+                pObject.href += "_" + lastname.lower()
+            pObject.save()
+        else:
+            pObject = persons[0]
         yo = models.Expedition.objects.filter(year = "2008")[0]
         pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname="", is_guest=is_guest)
         pyo.save()

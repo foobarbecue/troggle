@@ -28,7 +28,7 @@ def frontPage(request):
         message = "Reloaded survexblocks"
 
     #'randSent':randSent.randomLogbookSentence(),
-    expeditions =  Expedition.objects.all()
+    expeditions =  Expedition.objects.order_by("-year")
     return render_to_response('index.html', {'expeditions':expeditions, 'settings':settings, "message":message})
     
 def calendar(request,year):

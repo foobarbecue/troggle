@@ -4,25 +4,13 @@
 {% block title %}Person {{person|wiki_to_html_short}}{% endblock %}
 
 {% block content %}
-<div class="personblock"><a href="{% url person person.href%}">{{person|wiki_to_html_short}}</a>
-<ul>
+
+<p>{{person|wiki_to_html_short}} has been on expo in the following years:</p>
+<p>
 {% for personexpedition in person.personexpedition_set.all %}
-    <li>
-    <table><tr><td>
-    {{personexpedition.expedition}}
-    </td><td>
-    <div>
-    <ul>
-    {% for persontrip in personexpedition.persontrip_set.all %}
-        <li><a href="{% url logbookentry persontrip.logbook_entry.id %}">{{persontrip.date}}</a> {{persontrip.logbookentry}} 
-        ({{persontrip.logbookentry.place|wiki_to_html_short}}) - 
-            {{persontrip.logbookentry.title|wiki_to_html_short}}</li>
-    {% endfor %}
-    <ul>
-    </div>
-    </td></tr></table>
-    </li>
+  | <a href="{% url personexpedition personexpedition.person.href personexpedition.expedition.year %}">{{personexpedition.expedition.year}}</a>
 {% endfor %}
-</ul>
-</div>
+</p>
+
+
 {% endblock %}
