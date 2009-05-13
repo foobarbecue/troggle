@@ -1,9 +1,9 @@
 import sys
 import os
 import types
-sys.path.append('C:\\Expo\\expoweb')
-from troggle import *
-os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
+#sys.path.append('C:\\Expo\\expoweb')
+#from troggle import *
+#os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
 import troggle.settings as settings
 import troggle.expo.models as models
 
