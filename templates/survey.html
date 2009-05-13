@@ -40,12 +40,12 @@
 	}
 	
 	function redirectSurvey(){
-		window.location = "{{ settings.URL_ROOT }}/survey/" + document.getElementById("expeditionChooser").value + "%23" + document.getElementById("surveyChooser").value;
+		window.location = "{{ settings.URL_ROOT }}survey/" + document.getElementById("expeditionChooser").value + "%23" + document.getElementById("surveyChooser").value;
 		document.getElementById("progressTableContent").style.display='hidden'
 	}
 	
 	function redirectYear(){
-		window.location = "{{ settings.URL_ROOT }}/survey/" + document.getElementById("expeditionChooser").value + "%23"
+		window.location = "{{ settings.URL_ROOT }}survey/" + document.getElementById("expeditionChooser").value + "%23"
 	}
 </script>
 {% endblock %}
