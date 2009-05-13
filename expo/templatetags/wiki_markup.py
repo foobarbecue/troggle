@@ -2,6 +2,7 @@ from django import template
 from django.utils.html import conditional_escape
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
+import settings
 import re
 
 register = template.Library()
@@ -54,7 +55,7 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub("&#39;&#39;&#39;([^']+)&#39;&#39;&#39;", r"<b>\1</b>", value, re.DOTALL)
     value = re.sub("&#39;&#39;([^']+)&#39;&#39;", r"<i>\1</i>", value, re.DOTALL)
     #make cave links
-    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="/troggle/cave/\1/">\1</a>', value, re.DOTALL)
+    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/troggle/cave/\1/">\1</a>' % settings.URL_ROOT, value, re.DOTALL)
     #Make lists from lines starting with lists of [stars and hashes]
     outValue = ""
     listdepth = []
