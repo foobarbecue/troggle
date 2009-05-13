@@ -345,7 +345,4 @@ class Survey(models.Model):
     rendered_image = models.ImageField(upload_to='renderedSurveys',blank=True,null=True)
     def __str__(self):
         return self.expedition_year.year+"#"+"%02d" % self.wallet_number
-	
-    class admin():
-	    pass
 	    
