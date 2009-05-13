@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-import troggle.settings as settings
+from django.conf import settings
 
 from expo.views import *  # flat import
 from expo.views_caves import *
