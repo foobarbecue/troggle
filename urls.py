@@ -36,7 +36,7 @@ urlpatterns = patterns('',
     url(r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     #(r'^cavesearch', caveSearch),
-    url(r'^cave/(?P<cave_id>[^/]+)/(?P<subcave>[a-zA-Z/]+)/?$', subcave, name="subcave"),
+    url(r'^cave/(?P<cave_id>[^/]+)(?P<subcave>/.*)/?$', subcave, name="subcave"),
 
     url(r'^survex/(.*?)\.index$', views_survex.index, name="survexindex"),
     

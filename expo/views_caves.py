@@ -54,15 +54,16 @@ def survexblock(request, survexpath):
 
 def subcave(request, cave_id, subcave):
     print subcave
-    subcaveSeq=re.findall('([a-zA-Z]*)(?:/)',subcave)
+    subcaveSeq=re.findall('(?:/)([^/]*)',subcave)
     print subcaveSeq
-    cave=models.Cave.objects.filter(kataster_number = cave_id)[0]
+    cave=models.Cave.objects.get(kataster_number = cave_id)
     subcave=models.Subcave.objects.get(name=subcaveSeq[0], cave=cave)
     if len(subcaveSeq)>1: 
-        for singleSubcave in subcaveSeq[1:]:
-            subcave=subcave.subcave_set.get(name=singleSubcave)
+        for subcaveUrlSegment in subcaveSeq[1:]:
+            if subcaveUrlSegment:
+                subcave=subcave.children.get(name=subcaveUrlSegment)
     print subcave
-    return render_response(request,'subcave.html', {'subcave': subcave,})
+    return render_response(request,'subcave.html', {'subcave': subcave,'cave':cave})
 
 def caveSearch(request):
     query_string = ''

@@ -1,17 +1,14 @@
-import urllib
-import string
+import urllib, urlparse, string, os, datetime
 from django.forms import ModelForm
 from django.db import models
 from django.contrib import admin
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-import os
 from django.conf import settings
-import datetime
 from decimal import Decimal, getcontext
-from  django.core.urlresolvers import reverse
-from troggle.imagekit.models import ImageModel
+from django.core.urlresolvers import reverse
+from imagekit.models import ImageModel
 getcontext().prec=2 #use 2 significant figures for decimal calculations
 
 from models_survex import *
@@ -462,7 +459,7 @@ class Subcave(TroggleModel):
     description = models.TextField()
     name = models.CharField(max_length=200, )
     cave = models.ForeignKey('Cave', blank=True, null=True, help_text="Only the top-level subcave should be linked to a cave")
-    parent= models.ForeignKey('Subcave', blank=True, null=True,)
+    parent= models.ForeignKey('Subcave', blank=True, null=True, related_name='children')
     adjoining = models.ManyToManyField('Subcave',blank=True, null=True,)
     survex_file = models.CharField(max_length=200, blank=True, null=True,)
     
@@ -473,14 +470,17 @@ class Subcave(TroggleModel):
         urlString=self.name
         if self.parent:
             parent=self.parent
-            while parent.parent:
+            while parent: #recursively walk up the tree, adding parents to the left of the URL
                 urlString=parent.name+'/'+urlString
+                if parent.cave:
+                    cave=parent.cave
                 parent=parent.parent
-            urlString=unicode(parent.cave.kataster_number)+urlString
+            urlString='cave/'+unicode(cave.kataster_number)+'/'+urlString
         else:
-            urlString=unicode(self.cave.kataster_number)+urlString
+            urlString='cave/'+unicode(self.cave.kataster_number)+'/'+urlString
             
-        return settings.URL_ROOT + urlString
+            
+        return urlparse.urljoin(settings.URL_ROOT, urlString)
 
 class QM(TroggleModel):
     #based on qm.csv in trunk/expoweb/smkridge/204 which has the fields:

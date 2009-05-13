@@ -84,5 +84,5 @@ INSTALLED_APPS = (
     'troggle.registration',
     'troggle.profiles',
     'troggle.expo',
-   'troggle.imagekit', 
+    'troggle.imagekit', 
 )
