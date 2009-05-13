@@ -28,6 +28,9 @@ from profiles import views
 
 
 urlpatterns = patterns('',
+                       url(r'^select/$',
+                           views.select_profile,
+                           name='profiles_select_profile'),
                        url(r'^create/$',
                            views.create_profile,
                            name='profiles_create_profile'),

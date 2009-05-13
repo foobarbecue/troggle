@@ -9,5 +9,5 @@ registration_complete.html | {{ block.super }}
 {% endblock %}
 
 {% block content %}
-Thank you for signing up. An email with the activation code has been sent to your inbox. 
+Thank you for signing up, {{ user.username }}. An email with the activation code has been sent to your inbox. Please <a href={% url profiles_create_profile %}> create your profile</a>. If you have been on the expedition in the past, this step allows existing expedition data to be linked to your new account.
 {% endblock %}

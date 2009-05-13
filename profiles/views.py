@@ -2,7 +2,6 @@
 Views for creating, editing and viewing site-specific user profiles.
 
 """
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -13,11 +12,35 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.generic.list_detail import object_list
+from django import forms
+
+from expo.models import Person
+
+from troggle.alwaysUseRequestContext import render_response
 
 from profiles import utils
 
-import troggle.settings as settings
+from django.conf import settings
 
+class SelectPersonForm(forms.Form): #This and the select_profile view 
+	person = forms.ModelChoiceField(queryset=Person.objects.all())
+
+def select_profile(request):
+
+    if request.method == 'POST':
+            form = SelectPersonForm(request.POST)
+            if form.is_valid():
+		    profile_obj=form.cleaned_data['person']
+		    profile_obj.user=request.user
+		    profile_obj.save()
+		    return HttpResponseRedirect(profile_obj.get_absolute_url())
+    else:
+        form = SelectPersonForm()
+	context = RequestContext(request)
+    return render_to_response('profiles/select_profile.html', {
+        'form':form,},
+	context_instance=context
+	)
 
 
 def create_profile(request, form_class=None, success_url=None,
@@ -81,7 +104,7 @@ def create_profile(request, form_class=None, success_url=None,
     """
     try:
         profile_obj = request.user.get_profile()
-        return HttpResponseRedirect(reverse('profiles_edit_profile'))
+        return HttpResponseRedirect(profile_obj.get_absolute_url())
     except ObjectDoesNotExist:
         pass
     

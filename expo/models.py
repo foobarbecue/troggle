@@ -66,13 +66,13 @@ class Person(models.Model):
     mug_shot    = models.CharField(max_length=100, blank=True,null=True)
     blurb = models.TextField(blank=True,null=True)
     
-    href        = models.CharField(max_length=200)
+    #href        = models.CharField(max_length=200)
     orderref    = models.CharField(max_length=200)  # for alphabetic 
     
     #the below have been removed and made methods. I'm not sure what the b in bisnotable stands for. - AC 16 Feb
     #notability  = models.FloatField()               # for listing the top 20 people
     #bisnotable  = models.BooleanField()
-    user	= models.ForeignKey(User, unique=True, null=True, blank=True)
+    user	= models.OneToOneField(User, null=True, blank=True)
     def get_absolute_url(self):
         return settings.URL_ROOT + "/person/%s_%s/" % (self.first_name, self.last_name)
 
@@ -93,24 +93,24 @@ class Person(models.Model):
 #    def Lastexpedition(self):
 #        return self.personexpedition_set.order_by('-expedition')[0]
     
-    def notability(self):
-        notability = 0.0
-	for personexpedition in person.personexpedition_set.all():
-             if not personexpedition.is_guest:
-                notability += 1.0 / (2012 - int(self.personexpedition.expedition.year))
-        return notability
+    #def notability(self):
+        #notability = 0.0
+	#for personexpedition in person.personexpedition_set.all():
+             #if not personexpedition.is_guest:
+                #notability += 1.0 / (2012 - int(self.personexpedition.expedition.year))
+        #return notability
 
-    def bisnotable(self):
-        return self.notability > 0.3
+    #def bisnotable(self):
+        #return self.notability > 0.3
     
-    def Sethref(self):
-        if self.last_name:
-            self.href = self.first_name.lower() + "_" + self.last_name.lower()
-            self.orderref = self.last_name + " " + self.first_name
-        else:
-            self.href = self.first_name.lower()
-            self.orderref = self.first_name
-        self.notability = 0.0  # set temporarily
+    #def Sethref(self):
+        #if self.last_name:
+            #self.href = self.first_name.lower() + "_" + self.last_name.lower()
+            #self.orderref = self.last_name + " " + self.first_name
+        #else:
+          #  self.href = self.first_name.lower()
+            #self.orderref = self.first_name
+        #self.notability = 0.0  # set temporarily
         
 
 class PersonExpedition(models.Model):
@@ -291,7 +291,7 @@ class Cave(models.Model):
     extent = models.CharField(max_length=100,blank=True,null=True)
     survex_file = models.CharField(max_length=100,blank=True,null=True) #should be filefield, need to fix parser first
     
-    href    = models.CharField(max_length=100)
+    #href    = models.CharField(max_length=100)
     
     def get_absolute_url(self):
         if self.kataster_number:
