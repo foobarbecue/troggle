@@ -1,5 +1,6 @@
 import sys
 import os
+import urllib
 import types
 sys.path.append('C:\\Expo\\expoweb')
 from troggle import *
@@ -13,12 +14,21 @@ import csv
 import re
 import datetime
 
-surveytab = open(os.path.join(settings.SURVEYS, "Surveys.csv"))
-dialect=csv.Sniffer().sniff(surveytab.read())
-surveytab.seek(0,0)
+def openFileOrWeb(name):
+    try:
+        f = open(os.path.join(settings.SURVEYS, name))
+    except:
+        f = urllib.urlopen(settings.SURVEYS + name)
+    return f.readlines()
+
+surveytab = openFileOrWeb("Surveys.csv")
+
+dialect=csv.Sniffer().sniff(reduce(lambda x, y: x + "\n" + y, surveytab))
 surveyreader = csv.reader(surveytab,dialect=dialect)
+print surveyreader
 headers = surveyreader.next()
 header = dict(zip(headers, range(len(headers)))) #set up a dictionary where the indexes are header names and the values are column numbers
+print header
 
 # test if the expeditions have been added yet
 if len(models.Expedition.objects.all())==0:
@@ -27,9 +37,10 @@ if len(models.Expedition.objects.all())==0:
 models.ScannedImage.objects.all().delete()
 models.Survey.objects.all().delete()
 for survey in surveyreader:
+    print type(survey), survey
     walletNumberLetter = re.match(r'(?P<number>\d*)(?P<letter>[a-zA-Z]*)',survey[header['Survey Number']]) #I hate this, but some surveys have a letter eg 2000#34a. This line deals with that.
 #    print walletNumberLetter.groups()
-    
+
     surveyobj = models.Survey(
         expedition = models.Expedition.objects.filter(year=survey[header['Year']])[0],
         wallet_number = walletNumberLetter.group('number'),
@@ -43,7 +54,7 @@ for survey in surveyreader:
         pass
     surveyobj.save()
     print "added survey " + survey[header['Year']] + "#" + surveyobj.wallet_number
-    
+
 # add survey scans
 def parseSurveyScans(year):
     yearPath=os.path.join(settings.SURVEYS, year.year)
