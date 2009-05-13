@@ -27,13 +27,20 @@ class PersonExpeditionInline(admin.TabularInline):
 class PersonAdmin(admin.ModelAdmin):
     search_fields = ('first_name','last_name')
     inlines = (PersonExpeditionInline,)
-    
+
+class QMAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+	obj.new_since_parsing=True
+	obj.save()
+	
 class PersonExpeditionAdmin(admin.ModelAdmin):
     search_fields = ('person__first_name','expedition__year')
 
 class CaveAdmin(admin.ModelAdmin):
     search_fields = ('official_name','kataster_number','unofficial_number')
     extra = 4
+
+
 
 admin.site.register(Photo)
 admin.site.register(Cave, CaveAdmin)
