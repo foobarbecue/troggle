@@ -82,5 +82,5 @@ urlpatterns = patterns('',
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.PHOTOS_ROOT, 'show_indexes':True}),
 
-    url(r'^trip_report/?$',views_other.tripreport,name="trip_report")
+    #url(r'^trip_report/?$',views_other.tripreport,name="trip_report")
 )
