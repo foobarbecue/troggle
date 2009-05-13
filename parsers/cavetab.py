@@ -9,6 +9,8 @@ import time
 import re
 import os
 
+from troggle.helpers import save_carefully
+
 ##format of CAVETAB2.CSV is
 KatasterNumber = 0
 KatStatusCode = 1
@@ -136,15 +138,20 @@ def html_to_wiki(text):
             text2 = ""
     return out
 
-def LoadCaveTab():
+def LoadCaveTab(logfile=None):
     cavetab = open(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"))
     caveReader = csv.reader(cavetab)
     caveReader.next() # Strip out column headers
-    
+
+    if logfile:
+        logfile.write("Beginning to import caves from "+str(cavetab)+"\n"+"-"*60+"\n")
+
     for katArea in ['1623', '1626']:
         if not models.Area.objects.filter(short_name = katArea):
             newArea = models.Area(short_name = katArea)
             newArea.save()
+            if logfile:
+                logfile.write("Added area "+str(newArea.short_name)+"\n")
     area1626 = models.Area.objects.filter(short_name = '1626')[0]
     area1623 = models.Area.objects.filter(short_name = '1623')[0]
     
@@ -153,33 +160,43 @@ def LoadCaveTab():
         if line[Area] == 'nonexistent':
             continue
         entranceLetters=[] #Used in caves that have mulitlple entrances, which are not described on seperate lines
-        if line[MultipleEntrances] == 'yes' or line[MultipleEntrances]=='':
+        if line[MultipleEntrances] == 'yes' or line[MultipleEntrances]=='': #When true, this line contains an actual cave, otherwise it is an extra entrance.
             args = {}
+            defaultArgs = {}
+            
             def addToArgs(CSVname, modelName):
                 if line[CSVname]:
                     args[modelName] = html_to_wiki(line[CSVname])
+                    
+            def addToDefaultArgs(CSVname, modelName): #This has to do with the non-destructive import. These arguments will be passed as the "default" dictionary in a get_or_create
+                if line[CSVname]:
+                    defaultArgs[modelName] = html_to_wiki(line[CSVname])
+            
+            # The attributes added using "addToArgs" will be used to look up an existing cave. Those added using "addToDefaultArgs" will not.
             addToArgs(KatasterNumber, "kataster_number")
-            addToArgs(KatStatusCode, "kataster_code")
+            addToDefaultArgs(KatStatusCode, "kataster_code")
             addToArgs(UnofficialNumber, "unofficial_number")
             addToArgs(Name, "official_name")
-            addToArgs(Comment, "notes")
-            addToArgs(Explorers, "explorers")
-            addToArgs(UndergroundDescription, "underground_description")
-            addToArgs(Equipment, "equipment")
-            addToArgs(KatasterStatus, "kataster_status")
-            addToArgs(References, "references")
-            addToArgs(UndergroundCentreLine, "underground_centre_line")
-            addToArgs(UndergroundDrawnSurvey, "survey")
-            addToArgs(Length, "length")
-            addToArgs(Depth, "depth")
-            addToArgs(Extent, "extent")
-            addToArgs(SurvexFile, "survex_file")
-            addToArgs(Notes, "notes")
+            addToDefaultArgs(Comment, "notes")
+            addToDefaultArgs(Explorers, "explorers")
+            addToDefaultArgs(UndergroundDescription, "underground_description")
+            addToDefaultArgs(Equipment, "equipment")
+            addToDefaultArgs(KatasterStatus, "kataster_status")
+            addToDefaultArgs(References, "references")
+            addToDefaultArgs(UndergroundCentreLine, "underground_centre_line")
+            addToDefaultArgs(UndergroundDrawnSurvey, "survey")
+            addToDefaultArgs(Length, "length")
+            addToDefaultArgs(Depth, "depth")
+            addToDefaultArgs(Extent, "extent")
+            addToDefaultArgs(SurvexFile, "survex_file")
+            addToDefaultArgs(Notes, "notes")
 
-            newCave = models.Cave(**args)
-            newCave.save()
-    
-            if line[Area]:
+            newCave, created=save_carefully(models.Cave, lookupAttribs=args, nonLookupAttribs=defaultArgs)
+            if logfile:
+                logfile.write("Added cave "+str(newCave)+"\n")
+
+            #If we created a new cave, add the area to it. This does mean that if a cave's identifying features have not changed, areas will not be updated from csv.
+            if created and line[Area]:
                 if line[Area] ==  "1626":
                     newCave.area.add(area1626)
                 else:
@@ -190,16 +207,20 @@ def LoadCaveTab():
                         newArea = models.Area(short_name = line[Area], parent = area1623)
                         newArea.save()
                     newCave.area.add(newArea)
-            else:
+            elif created:
                 newCave.area.add(area1623)
-    
-            newCave.save()
 
-        if line[UnofficialName]:
-            newUnofficialName = models.OtherCaveName(cave = newCave, name = line[UnofficialName])
-            newUnofficialName.save()
-    
-        if line[MultipleEntrances] == '' or \
+            newCave.save()
+            if logfile:
+                logfile.write("Added area "+line[Area]+" to cave "+str(newCave)+"\n")
+
+            if created and line[UnofficialName]:
+                newUnofficialName = models.OtherCaveName(cave = newCave, name = line[UnofficialName])
+                newUnofficialName.save()
+                if logfile:
+                    logfile.write("Added unofficial name "+str(newUnofficialName)+" to cave "+str(newCave)+"\n")
+
+        if created and line[MultipleEntrances] == '' or \
             line[MultipleEntrances] == 'entrance' or \
             line[MultipleEntrances] == 'last entrance':
             args = {}
@@ -258,6 +279,8 @@ def LoadCaveTab():
             addToArgs(Bearings, 'bearings')
             newEntrance = models.Entrance(**args)
             newEntrance.save()
+            if logfile:
+                logfile.write("Added entrance "+str(newEntrance)+"\n")            
     
             if line[Entrances]:
                 entrance_letter = line[Entrances]
@@ -266,6 +289,8 @@ def LoadCaveTab():
     
             newCaveAndEntrance = models.CaveAndEntrance(cave = newCave, entrance = newEntrance, entrance_letter = entrance_letter)
             newCaveAndEntrance.save()
+            if logfile:
+                logfile.write("Added CaveAndEntrance "+str(newCaveAndEntrance)+"\n")
 
 
 # lookup function modelled on GetPersonExpeditionNameLookup

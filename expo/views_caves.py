@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
 from django.http import HttpResponseRedirect
 from django.conf import settings
+import re
 
 def getCave(cave_id):
     """Returns a cave object when given a cave name or number. It is used by views including cavehref, ent, and qm."""
@@ -51,10 +52,17 @@ def survexblock(request, survexpath):
     ftext = survexblock.text
     return render_response(request,'survexblock.html', {'survexblock':survexblock, 'ftext':ftext, })
 
-def caveArea(request, name):
-    cavearea = models.CaveArea.objects.get(name = name)
-    cave = cavearea.cave
-    return render_response(request,'cavearea.html', {'cavearea': cavearea, 'cave': cave,})
+def subcave(request, cave_id, subcave):
+    print subcave
+    subcaveSeq=re.findall('([a-zA-Z]*)(?:/)',subcave)
+    print subcaveSeq
+    cave=models.Cave.objects.filter(kataster_number = cave_id)[0]
+    subcave=models.Subcave.objects.get(name=subcaveSeq[0], cave=cave)
+    if len(subcaveSeq)>1: 
+        for singleSubcave in subcaveSeq[1:]:
+            subcave=subcave.subcave_set.get(name=singleSubcave)
+    print subcave
+    return render_response(request,'subcave.html', {'subcave': subcave,})
 
 def caveSearch(request):
     query_string = ''

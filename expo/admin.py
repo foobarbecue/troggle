@@ -5,18 +5,24 @@ import django.forms as forms
 from expo.forms import LogbookEntryForm
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
 
+#overriding admin save so we have the new since parsing field
+class TroggleModelAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+	obj.new_since_parsing=True
+	obj.save()
+
 class RoleInline(admin.TabularInline):
     model = PersonRole
     extra = 4
 
-class SurvexBlockAdmin(admin.ModelAdmin):
+class SurvexBlockAdmin(TroggleModelAdmin):
     inlines = (RoleInline,)
 
 class ScannedImageInline(admin.TabularInline):
     model = ScannedImage
     extra = 4
 
-class SurveyAdmin(admin.ModelAdmin):
+class SurveyAdmin(TroggleModelAdmin):
     inlines = (ScannedImageInline,)
 
 class QMInline(admin.TabularInline):
@@ -34,7 +40,7 @@ class PersonTripInline(admin.TabularInline):
     extra = 1
 
 #class LogbookEntryAdmin(VersionAdmin):
-class LogbookEntryAdmin(admin.ModelAdmin):
+class LogbookEntryAdmin(TroggleModelAdmin):
     prepopulated_fields = {'slug':("title",)}
     search_fields = ('title','expedition__year')
     inlines = (PersonTripInline, PhotoInline)
@@ -47,20 +53,17 @@ class PersonExpeditionInline(admin.TabularInline):
     
 
 
-class PersonAdmin(admin.ModelAdmin):
+class PersonAdmin(TroggleModelAdmin):
     search_fields = ('first_name','last_name')
     inlines = (PersonExpeditionInline,)
 
-class QMAdmin(admin.ModelAdmin):
+class QMAdmin(TroggleModelAdmin):
     search_fields = ('found_by__cave__kataster_number','number')
-    def save_model(self, request, obj, form, change):
-	obj.new_since_parsing=True
-	obj.save()
 
-class PersonExpeditionAdmin(admin.ModelAdmin):
+class PersonExpeditionAdmin(TroggleModelAdmin):
     search_fields = ('person__first_name','expedition__year')
 
-class CaveAdmin(admin.ModelAdmin):
+class CaveAdmin(TroggleModelAdmin):
     search_fields = ('official_name','kataster_number','unofficial_number')
     #inlines = (QMInline,)
     extra = 4
@@ -68,6 +71,7 @@ class CaveAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Photo)
+admin.site.register(Subcave)
 admin.site.register(Cave, CaveAdmin)
 admin.site.register(Area)
 admin.site.register(OtherCaveName)

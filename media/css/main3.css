@@ -7,10 +7,7 @@ dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td
 	{
-	margin: 0;
-	padding: 0;
-	border: 0;
-	outline: 0;
+
 	font-weight: inherit;
 	font-style: inherit;
 	font-size: 100%;
@@ -32,37 +29,19 @@ ul
 	list-style: none; 
 }
 
-body 
-{
-	background-color: white;
-	color: black;
-	font: 100% Verdana, Arial, Helvetica, sans-serif;
-	margin: 0; 
-	padding: 0;
-	margin-left: auto; 
-	margin-right: auto; 
-}
-
-div#content 
-{
-    border: thin black dotted;
-    margin: 50px; 
-}
-
-
-
-
 div#footer 
 {
+    position: fixed;
+    bottom: 0;
     clear:both;
     background-color:#999;
-    color:white;
+    color:red;
     text-align:center;
     margin-left:auto;
     margin-right:auto;
 }
 
-img#frontPageBanner{position:relative;width:inherit;height:inherit;}
+
 
 div.logbookentry
 {
@@ -144,13 +123,7 @@ p.indent
     margin-left:10px;
 }
 
-#expoHeader {
-	width:100%;
-	position:relative;
-	left:0;
-	right:0;
-	height:100px;
-}
+
 #currentLocation {
 	float:right;
 	background:#999;
@@ -158,15 +131,6 @@ p.indent
 	font-variant: small-caps;
 	margin: 0px;
 	padding: 0px;
-}
-#expoHeaderText {
-	background:#999;
-	position:absolute;
-	bottom:0px;
-	clip:rect(10px auto auto auto)
-/*	filter:alpha(opacity=90);
-	-moz-opacity:.90;
-	opacity:.90; */
 }
 
 
@@ -179,18 +143,6 @@ hr{
 	border:#000;
 	color:#000;
 	background:#000;
-}
-
-div#expoHeader h1{
-	position:relative;
-	bottom:-8px;
-	vertical-align:top;
-}
-
-div#editLink { right:0px; top:0px; text-align: right; position: absolute; top:0; right:0; z-index:1; background:#999 }
-
-div#expoFinalDate {
-	display: inline;
 }
 
 div.centre img			{ vertical-align: middle; }
@@ -240,30 +192,9 @@ table.bigfatborder		{ border-width: 6px; }
 table.trad td, table.trad th	{ margin: 0pt; border: 1px solid #aaa;
 				border-color: #8d8d8d #c0c0c0 #c0c0c0 #8d8d8d; }
 
-/*Divs for layout*/
-html, body, div.contents {
-min-height: 100%;
-height: 100%;
-width:100%;
-}
-html>body, html>body div.contents {
-height: auto;
-}
-body {
-}
-div.contents {
-position: absolute;
-top: 0;
-right: 0;
-}
-
-
-div.main {
-margin-bottom: 3em;
-}
-
 
 /* You are not expected to understand this. It is necessary. */
+/* The above is the most fucktarded comment I have ever read. AC, 24 APR 2009 */
 table.centre			{ margin-left: auto; margin-right: auto; }
 table.centre td			{ text-align: left; }
 
@@ -339,3 +270,91 @@ img.thumbnail {
 br.clearfloat {
   clear:both;
 }
+
+#error {
+	color: red;
+}
+
+div#header {
+	position:fixed;
+	left:100px;
+	right:100px;
+	top:0;
+	margin-left:auto;
+	margin-right:auto;
+	height:50px;
+	background-image: url( ../204plan.gif);
+	border-bottom:thin solid #000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-variant: normal;
+}
+
+
+div#editLinks {
+	position:absolute;
+    background: #999;
+	bottom:0px;
+	right:0px;
+	font-family: "Courier New", Courier, monospace;
+	filter:alpha(opacity=75);
+	-moz-opacity:.75;
+	opacity:.75;
+
+}
+
+div#content {
+	margin-top: 50px;
+	margin-left: 100px;
+	margin-right: 100px;
+	padding: 10px;
+	
+}
+
+
+img#banner {
+	position:fixed;
+	width:100%;
+	bottom:0;
+	left:0;
+}
+
+body {
+	background-color:#CCC;
+	padding-bottom:100px;
+
+}
+
+h1 {
+	margin-top:0;
+	margin-left:10px;	
+	vertical-align:top;
+}
+
+
+#rightMargin {
+	position:absolute;
+	z-index:-2;
+	width:100px;
+	right:0px;
+	top:0px;	
+	clip: rect(auto,auto,auto,auto);
+}
+
+#leftMargin {
+	position:absolute;
+	z-index:-2;
+	width:100px;
+	top:0px;
+	left:0px;
+	clip: rect(auto,100px,auto,auto,);
+}
+
+#footerLinks{
+	position:fixed;
+	text-align: center;
+	bottom:0;
+	left:0;
+	width:100%;
+	background-color:#333
+}
+

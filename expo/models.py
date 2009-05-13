@@ -235,10 +235,10 @@ class LogbookEntry(TroggleModel):
         return "%s: (%s)" % (self.date, self.title)
 
     def get_next_by_id(self):
-        Logbook.objects.get(id=self.id+1)
+        LogbookEntry.objects.get(id=self.id+1)
 
     def get_previous_by_id(self):
-        Logbook.objects.get(id=self.id-1)
+        LogbookEntry.objects.get(id=self.id-1)
 
 class PersonTrip(TroggleModel):
     person_expedition = models.ForeignKey(PersonExpedition,null=True)
@@ -448,13 +448,29 @@ class Entrance(TroggleModel):
             if f[0] == self.findability:
                 return f[1]
                 
-class CaveArea(TroggleModel):
+class Subcave(TroggleModel):
     description = models.TextField()
-    name = models.CharField(max_length=200, unique = True)
-    cave = models.ForeignKey('Cave')
-    parentArea = models.ForeignKey('CaveArea')
-    survexFile = models.CharField(max_length=200)
-
+    name = models.CharField(max_length=200, )
+    cave = models.ForeignKey('Cave', blank=True, null=True, help_text="Only the top-level subcave should be linked to a cave")
+    parent= models.ForeignKey('Subcave', blank=True, null=True,)
+    adjoining = models.ManyToManyField('Subcave',blank=True, null=True,)
+    survex_file = models.CharField(max_length=200, blank=True, null=True,)
+    
+    def __unicode__(self):
+        return self.name
+    
+    def get_absolute_url(self):
+        urlString=self.name
+        if self.parent:
+            parent=self.parent
+            while parent.parent:
+                urlString=parent.name+'/'+urlString
+                parent=parent.parent
+            urlString=unicode(parent.cave.kataster_number)+urlString
+        else:
+            urlString=unicode(self.cave.kataster_number)+urlString
+            
+        return settings.URL_ROOT + urlString
 
 class QM(TroggleModel):
     #based on qm.csv in trunk/expoweb/smkridge/204 which has the fields:
@@ -473,7 +489,7 @@ class QM(TroggleModel):
     location_description = models.TextField(blank=True)
     #should be a foreignkey to surveystation
     nearest_station_description = models.CharField(max_length=400,null=True,blank=True)
-    nearest_station = models.OneToOneField(SurveyStation,null=True,blank=True)
+    nearest_station = models.CharField(max_length=200,blank=True,null=True)
     area = models.CharField(max_length=100,blank=True,null=True)
     completion_description = models.TextField(blank=True,null=True)
     comment=models.TextField(blank=True,null=True)

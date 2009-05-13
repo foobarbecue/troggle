@@ -5,28 +5,35 @@
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main3.css" />
 <title>{% block title %}THE TITLE{% endblock %}</title>
 <script src="{{ settings.MEDIA_URL }}js/base.js" type="text/javascript"></script>
+<script src="{{ settings.MEDIA_URL }}js/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+ 
+$("#killEyeCandy").click(function () {
+      $("#leftMargin").fadeIn("slow");
+ });
+
+
+
+</script>
+
 {% block head %}{% endblock %}
 </head>
 <body>
-<div class="wrapper">
-  <div id="expoHeader"> <img id="frontPageBanner" src="{{ settings.MEDIA_URL }}loserBanner.jpg"/>
-    <div id="expoHeaderText">
-      <h1>CUCC Expeditions to Austria: 1976 - </h1>
-      <div id="expoFinalDate">
-        <h1>2009</h1>
-      </div>
-    </div>
-  </div>
-  <hr/>
-  <div id="editLink"> {% block loginInfo %}
+
+<div id="header"> 
+  <h1>CUCC Expeditions to Austria: 1976 - 2009</h1>
+  <div id="editLinks"> {% block loginInfo %}
     {% if user.username %}
-    You are logged in as {{ user.username }}. 
+    You are logged in as {{ user.username }} {% if user.person %}<a href="{{ user.person.get_absolute_url }}">{{ user.person }}</a>{% endif %}. 
     | <a href="{{ settings.URL_ROOT }}/accounts/logout/">Log out</a> {% else %} <a href="{{ settings.URL_ROOT }}/accounts/register">Sign up</a> | <a href="{{ settings.URL_ROOT }}/accounts/login/">Log in</a> {% endif %}
     {% endblock%}
-    | <a href="{{ settings.URL_ROOT }}">Home </a> |
+    | <a href="{{ settings.URL_ROOT }}">Home </a> | <a href="#" id="killEyeCandy">Kill Eyecandy</a> |
     {% block editLink %}
     
-    {% endblock %} </div>
+    {% endblock %}
+   </div>
+</div>
+    
   {% block nav %}
   <!-- Use id="nav" for the left side menu -->
   {% endblock %}
@@ -39,7 +46,16 @@
   </div>
 </div>
 <div class="push"></div>
-</div>
-<div id="footer"> {% block footer %} <a href="http://cucc.survex.com"> CUCC website</a>| <a href="http://cucc.survex.com/expo"> Expedition website </a>| <a href="{% url frontpage %}"> Troggle front page </a>| <a href="{% url caveindex %}"> All caves </a>| <a href="{% url personindex %}"> All cavers </a>| <a href="{% url caveindex %}"> Virtual survey binder </a>| <a href="{% url survey %}"> Expedition statistics </a>| <a href="{% url calendar 2007 %}"> Expedition calendar </a> {% endblock %} </div>
+<div class="footer"> 
+<img id="banner" src="{{ settings.MEDIA_URL }}expoBanner.gif"/>
+</div> 
+
+<img id="leftMargin" src="{{ settings.MEDIA_URL }}eieshole.jpg">
+<img id="rightMargin" src="{{ settings.MEDIA_URL }}goesser.jpg">
+
+<div class="footer" id="footerLinks"> 
+<a href="http://cucc.survex.com"> CUCC website</a>| <a href="http://cucc.survex.com/expo"> Expedition website </a>| <a href="{% url frontpage %}"> Troggle front page </a>| <a href="{% url caveindex %}"> All caves </a>| <a href="{% url personindex %}"> All cavers </a>| <a href="{% url caveindex %}"> Virtual survey binder </a>| <a href="{% url survey %}"> Expedition statistics </a>| <a href="{% url calendar 2007 %}"> Expedition calendar </a> 
+</div> 
+
 </body>
 </html>

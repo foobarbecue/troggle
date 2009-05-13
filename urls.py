@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     
     url(r'^survexblock/(.+)$',  views_caves.survexblock,    name="survexblock"),
     url(r'^cave/(?P<cave_id>[^/]+)/?$', views_caves.cave, name="cave"),
-    #url(r'^cavehref/(.+)$',     views_caves.cave,       name="cave"),
+    #url(r'^cavehref/(.+)$',     views_caves.cave,       name="cave"),url(r'cave'),
 
     url(r'^jgtfile/(.*)$',      view_surveys.jgtfile,       name="jgtfile"),
     url(r'^jgtuploadfile$',     view_surveys.jgtuploadfile, name="jgtuploadfile"),
@@ -39,7 +39,7 @@ urlpatterns = patterns('',
     url(r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     #(r'^cavesearch', caveSearch),
-    url(r'^cavearea', caveArea, name="caveArea"),
+    url(r'^cave/(?P<cave_id>[^/]+)/(?P<subcave>[a-zA-Z/]+)/?$', subcave, name="subcave"),
 
     url(r'^survex/(.*?)\.index$', views_survex.index, name="survexindex"),
     
@@ -59,7 +59,9 @@ urlpatterns = patterns('',
 
     url(r'^survey/?$', surveyindex, name="survey"),
     url(r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey, name="survey"),
-    
+
+    url(r'^controlpanel/?$', views_other.controlPanel, name="survey"),
+
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
     #url(r'^admin/', include(admin.site.urls),name="admin"),

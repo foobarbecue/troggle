@@ -13,6 +13,7 @@ import re
 import datetime
 import os
 
+from troggle.helpers import save_carefully
 
 # 
 # When we edit logbook entries, allow a "?" after any piece of data to say we've frigged it and
@@ -72,21 +73,23 @@ def GetTripCave(place):                     #need to be fuzzier about matching h
 
 noncaveplaces = [ "Journey", "Loser Plateau" ]
 def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_underground):
+    """ saves a logbook entry and related persontrips """
     trippersons, author = GetTripPersons(trippeople, expedition, logtime_underground)
 #    tripCave = GetTripCave(place)
-
-    lbo = models.LogbookEntry(date=date, place=place, title=title[:50], text=text, author=author, expedition=expedition)
+    #
     lplace = place.lower()
     if lplace not in noncaveplaces:
-        lbo.cave=GetCaveLookup().get(lplace)
-        #print "pppp %s |%s|" % (lplace, str(lbo.cave))
-    
-    lbo.save()
-    #print "ttt", date, place
+        cave=GetCaveLookup().get(lplace)
+
+    #Check for an existing copy of the current entry, and save
+    lookupAttribs={'date':date, 'title':title[:50]} 
+    nonLookupAttribs={'place':place, 'text':text, 'author':author, 'expedition':expedition, 'cave':cave}
+    lbo, created=save_carefully(models.LogbookEntry, lookupAttribs, nonLookupAttribs)
+
     for tripperson, time_underground in trippersons:
-        pto = models.PersonTrip(person_expedition = tripperson, place=place, date=date, time_underground=time_underground,
-                                logbook_entry=lbo, is_logbook_entry_author=(tripperson == author))
-        pto.save()
+        lookupAttribs={'person_expedition':tripperson, 'date':date}
+        nonLookupAttribs={'place':place,'time_underground':time_underground,'logbook_entry':lbo,'is_logbook_entry_author':(tripperson == author)}
+        save_carefully(models.PersonTrip, lookupAttribs, nonLookupAttribs)
 
 
 def ParseDate(tripdate, year):
@@ -235,7 +238,7 @@ def Parseloghtml03(year, expedition, txt):
 
 yearlinks = [ 
                 ("2008", "2008/2008logbook.txt", Parselogwikitxt), 
-                ("2007", "2007/2007logbook.txt", Parselogwikitxt), 
+                #("2007", "2007/2007logbook.txt", Parselogwikitxt), 
                 ("2006", "2006/logbook/logbook_06.txt", Parselogwikitxt), 
                 ("2005", "2005/logbook.html", Parseloghtmltxt), 
                 ("2004", "2004/logbook.html", Parseloghtmltxt), 
@@ -299,15 +302,17 @@ def SetDatesFromLogbookEntries(expedition):
 #            logbookentry.href = "%s" % logbookentry.date
 #        logbookentry.save()
 #        lprevlogbookentry = logbookentry
-    for logbookentry in expedition.logbookentry_set.all():
-        logbookentry.slug = slugify(logbookentry.title)
-        logbookentry.save()
+
         
         
 def LoadLogbookForExpedition(expedition):
-    print "deleting logbooks for", expedition
-    expedition.logbookentry_set.all().delete()
-    models.PersonTrip.objects.filter(person_expedition__expedition=expedition).delete()
+    """ Parses all logbook entries for one expedition """
+    
+    #We're checking for stuff that's changed in admin before deleting it now.
+    #print "deleting logbooks for", expedition
+    #expedition.logbookentry_set.all().delete()
+    #models.PersonTrip.objects.filter(person_expedition__expedition=expedition).delete()
+    
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
     year = str(expedition.year)
     for lyear, lloc, parsefunc in yearlinks:
@@ -322,7 +327,10 @@ def LoadLogbookForExpedition(expedition):
 
 
 def LoadLogbooks():
-    models.LogbookEntry.objects.all().delete()
+    """ This is the master function for parsing all logbooks into the Troggle database. Requires yearlinks, which is a list of tuples for each expedition with expedition year, logbook path, and parsing function. """
+    
+    #Deletion has been moved to a seperate function to enable the non-destructive importing
+    #models.LogbookEntry.objects.all().delete()
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
     #yearlinks = [ ("2001", "2001/log.htm", Parseloghtml01), ] #overwrite
     #yearlinks = [ ("1996", "1996/log.htm", Parseloghtml01),] # overwrite

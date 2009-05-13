@@ -35,7 +35,7 @@ USE_I18N = True
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/troggle/media-admin/'
 PHOTOS_ROOT = os.path.join(EXPOWEB, 'photos')
-#MEDIA_URL = urlparse.urljoin(URL_ROOT , '/site_media/')
+MEDIA_URL = urlparse.urljoin(URL_ROOT , '/site_media/')
 SURVEYS_URL = urlparse.urljoin(URL_ROOT , '/survey_scans/')
 PHOTOS_URL  = urlparse.urljoin(URL_ROOT , '/photos/')
 SVX_URL = urlparse.urljoin(URL_ROOT , '/survex/')
@@ -80,6 +80,7 @@ INSTALLED_APPS = (
     'django.contrib.redirects',
     #'photologue',
     #'troggle.reversion',
+    'django_evolution',
     'troggle.registration',
     'troggle.profiles',
     'troggle.expo'

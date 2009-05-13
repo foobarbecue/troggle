@@ -1,33 +1,58 @@
 import os
+import time
 import settings
 os.environ['PYTHONPATH'] = settings.PYTHON_PATH
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 from django.core import management
 from django.db import connection
-
-cursor = connection.cursor()
-cursor.execute("drop database %s" % settings.DATABASE_NAME)
-cursor.execute("create database %s" % settings.DATABASE_NAME)
-cursor.execute("ALTER DATABASE %s CHARACTER SET=utf8" % settings.DATABASE_NAME)
-cursor.execute("USE %s" % settings.DATABASE_NAME)
-management.call_command('syncdb')
 from django.contrib.auth.models import User
-user = User.objects.create_user('m', 'm@m.com', 'm')
-user.is_staff = True
-user.is_superuser = True
-user.save()
 
-#Make directories that troggle requires
-if not os.path.isdir(settings.PHOTOS_ROOT):
-    os.mkdir(settings.PHOTOS_ROOT)
+def reload_db():
+    cursor = connection.cursor()
+    cursor.execute("drop database %s" % settings.DATABASE_NAME)
+    cursor.execute("create database %s" % settings.DATABASE_NAME)
+    cursor.execute("ALTER DATABASE %s CHARACTER SET=utf8" % settings.DATABASE_NAME)
+    cursor.execute("USE %s" % settings.DATABASE_NAME)
+    management.call_command('syncdb')
+    user = User.objects.create_user('m', 'm@m.com', 'm')
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
 
-import parsers.cavetab
-parsers.cavetab.LoadCaveTab()
-import parsers.people
-parsers.people.LoadPersonsExpos()
-import parsers.logbooks
-parsers.logbooks.LoadLogbooks()
-import parsers.survex
-parsers.survex.LoadAllSurvexBlocks()
-import parsers.QMs
-import parsers.surveys
+def make_dirs():
+    """Make directories that troggle requires"""
+    if not os.path.isdir(settings.PHOTOS_ROOT):
+        os.mkdir(settings.PHOTOS_ROOT)
+
+def import_cavetab():
+    import parsers.cavetab
+    parsers.cavetab.LoadCaveTab(logfile=settings.LOGFILE)
+
+def import_people():
+    import parsers.people
+    parsers.people.LoadPersonsExpos()
+
+def import_logbooks():
+    settings.LOGFILE.write('\nBegun importing logbooks at ' + time.asctime() +'\n'+'-'*60)
+    import parsers.logbooks
+    parsers.logbooks.LoadLogbooks()
+
+def import_survex():
+    import parsers.survex
+    parsers.survex.LoadAllSurvexBlocks()
+
+def import_QMs():
+    import parsers.QMs
+
+def import_surveys():
+    import parsers.surveys
+
+def reset():
+    reload_db()
+    make_dirs()
+    import_cavetab()
+    import_people()
+    import_logbooks()
+    import_survex()
+    import_QMs()
+    import_surveys()

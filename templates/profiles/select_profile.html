@@ -2,10 +2,37 @@
 
 {% block content %}
 
+<h2>Troggle profile selection page</h2>
+
+Hello, {{ user }}.
+
+<br /><br />
+
+{% if user.person %}
+This is where you go to associate a new user account with a pre-existing profile from old expo data.
+
+<br /><br />
+
+However, you already have a profile- your name should be {{user.person.first_name}} {{user.person.last_name}}. If you don't believe me, go see it at: <br /><br /> <a href= {{ user.person.get_absolute_url }}> {{ user.person.get_absolute_url }} </a> <br /><br /> or edit it at:
+<br /><br /> <a href= {{ user.person.get_admin_url }}> {{ user.person.get_admin_url }} </a>.<br /><br />
+
+If your account is associated with the wrong person's profile due to inebriation or incompetance during account setup, click <a href="{{ user.person.get_absolute_url }}/?clear_profile=True">here</a> to dissasociate your profile from your user account.
+
+{% else %}
+
+You have an account in the system, but no profile. If you have been on expo before, please choose yourself from the list below.
+<br /><br />
+
 <form method="post">
 {{ form.as_p }}
-<input type="submit" />
+<input name="" type="submit" value="This is me!" />
 </form>
+<br />
+
+Yes, you could choose the wrong person if you want. That would be lame. Instead, do something that's actually funny. For example, fry a random object or maybe take some mac and cheese somewhere it doesn't usually get to go. Perhaps you can start a new tradition of laminating the expo leader.
+
+
+{% endif %}
 
 {% if form.errors %}
  <p class="errornote">Please correct the errors below</p>

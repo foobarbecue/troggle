@@ -5,6 +5,8 @@ from django.db import models
 from troggle.parsers.logbooks import LoadLogbookForExpedition
 from troggle.parsers.people import GetPersonExpeditionNameLookup
 from troggle.expo.forms import PersonForm
+from  django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 
 # Django uses Context, not RequestContext when you call render_to_response. We always want to use RequestContext, so that django adds the context from settings.TEMPLATE_CONTEXT_PROCESSORS. This way we automatically get necessary settings variables passed to each template. So we use a custom method, render_response instead of render_to_response. Hopefully future Django releases will make this unnecessary.
 from troggle.alwaysUseRequestContext import render_response
@@ -52,8 +54,16 @@ def expedition(request, expeditionname):
     def get_absolute_url(self):
         return ('expedition', (expedition.year))
 
-def person(request, first_name='', last_name=''):
+def person(request, first_name='', last_name='', ):
     person = Person.objects.get(first_name = first_name, last_name = last_name)
+    
+    #This is for removing the reference to the user's profile, in case they set it to the wrong person
+    if request.method == 'GET':
+        if request.GET.get('clear_profile')=='True':
+            person.user=None
+            person.save()
+            return HttpResponseRedirect(reverse('profiles_select_profile'))
+    
     return render_response(request,'person.html', {'person': person, })
     
     def get_absolute_url(self):
@@ -74,11 +84,11 @@ def newQMlink(logbookentry):
     if logbookentry.cave:
         for log in logbookentry.cave.logbookentry_set.all():
             try:
-	        biggestQMnumberInLog = logbookentry.QMs_found.order_by('-number')[0].number
-	    except IndexError:
+                biggestQMnumberInLog = logbookentry.QMs_found.order_by('-number')[0].number
+            except IndexError:
                 biggestQMnumberInLog = 0
-	    if biggestQMnumberInLog > biggestQMnumber:
-		    biggestQMnumber = biggestQMnumberInLog
+        if biggestQMnumberInLog > biggestQMnumber:
+            biggestQMnumber = biggestQMnumberInLog
     else:
         return None
 
@@ -97,8 +107,8 @@ def logbookSearch(request, extra):
     found_entries = None
     if ('q' in request.GET) and request.GET['q'].strip():
         query_string = request.GET['q']
-	entry_query = search.get_query(query_string, ['text','title',])
-	found_entries = LogbookEntry.objects.filter(entry_query)
+    entry_query = search.get_query(query_string, ['text','title',])
+    found_entries = LogbookEntry.objects.filter(entry_query)
 
     return render_response(request,'logbooksearch.html',
                           { 'query_string': query_string, 'found_entries': found_entries, })

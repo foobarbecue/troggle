@@ -7,6 +7,7 @@ import re
 import datetime
 import os
 import shutil
+from helpers import save_carefully
 
 #   Julian: the below code was causing errors and it seems like a duplication of the above. Hope I haven't broken anything by commenting it. -Aaron
 #
@@ -72,47 +73,45 @@ def LoadPersonsExpos():
     print "Loading personexpeditions"
     models.Person.objects.all().delete()
     models.PersonExpedition.objects.all().delete()
-    expoers2008 = """Edvin Deadman,Kathryn Hopkins,Djuke Veldhuis,Becka Lawson,Julian Todd,Natalie Uomini,Aaron Curtis,Tony Rooke,Ollie Stevens,Frank Tully,Martin Jahnke,Mark Shinwell,Jess Stirrups,Nial Peters,Serena Povia,Olly Madge,Steve Jones,Pete Harley,Eeva Makiranta,Keith Curtis""".split(",")
-    expomissing = set(expoers2008)
+    #expoers2008 = """Edvin Deadman,Kathryn Hopkins,Djuke Veldhuis,Becka Lawson,Julian Todd,Natalie Uomini,Aaron Curtis,Tony Rooke,Ollie Stevens,Frank Tully,Martin Jahnke,Mark Shinwell,Jess Stirrups,Nial Peters,Serena Povia,Olly Madge,Steve Jones,Pete Harley,Eeva Makiranta,Keith Curtis""".split(",")
+    #expomissing = set(expoers2008)
 
     for personline in personreader:
         name = personline[header["Name"]]
         name = re.sub("<.*?>", "", name)
         mname = re.match("(\w+)(?:\s((?:van |ten )?\w+))?(?:\s\(([^)]*)\))?", name)
         nickname = mname.group(3) or ""
-
-        person = models.Person(first_name=mname.group(1), last_name=(mname.group(2) or ""))
-        person.is_vfho = personline[header["VfHO member"]]
-        #person.Sethref()
-        #print "NNNN", person.href
-        is_guest = (personline[header["Guest"]] == "1")  # this is really a per-expo catagory; not a permanent state
-        person.save()
+	
+        lookupAttribs={'first_name':mname.group(1), 'last_name':(mname.group(2) or "")}
+        nonLookupAttribs={'is_vfho':personline[header["VfHO member"]],}
+        person, created = save_carefully(models.Person, lookupAttribs=lookupAttribs, nonLookupAttribs=nonLookupAttribs)
+	
         parseMugShotAndBlurb(personline=personline, header=header, person=person)
     
         # make person expedition from table
         for year, attended in zip(headers, personline)[5:]:
             expedition = models.Expedition.objects.get(year=year)
             if attended == "1" or attended == "-1":
-                personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname=nickname, is_guest=is_guest)
+                personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname=nickname, is_guest=(personline[header["Guest"]] == "1"))
                 personexpedition.save()
 
 
     # this fills in those people for whom 2008 was their first expo
-    print "Loading personexpeditions 2008"
-    for name in expomissing:
-        firstname, lastname = name.split()
-        is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
-        print "2008:", name
-        persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
-        if not persons:
-            person = models.Person(first_name=firstname, last_name = lastname, is_vfho = False, mug_shot = "")
-            #person.Sethref()
-            person.save()
-        else:
-            person = persons[0]
-        expedition = models.Expedition.objects.get(year="2008")
-        personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname="", is_guest=is_guest)
-        personexpedition.save()
+    #print "Loading personexpeditions 2008"
+    #for name in expomissing:
+        # firstname, lastname = name.split()
+        # is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
+        # print "2008:", name
+        # persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
+        # if not persons:
+            # person = models.Person(first_name=firstname, last_name = lastname, is_vfho = False, mug_shot = "")
+            # #person.Sethref()
+            # person.save()
+        # else:
+            # person = persons[0]
+        # expedition = models.Expedition.objects.get(year="2008")
+        # personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname="", is_guest=is_guest)
+        # personexpedition.save()
 
     #Notability is now a method of person. Makes no sense to store it in the database; it would need to be recalculated every time something changes. - AC 16 Feb 09
     # could rank according to surveying as well

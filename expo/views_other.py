@@ -1,10 +1,9 @@
-from troggle.expo.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition
+from troggle.expo.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, Photo
 import troggle.settings as settings
 from django import forms
 from django.db.models import Q
-from troggle.parsers.people import LoadPersonsExpos
+import databaseReset
 import re
-from troggle.parsers.survex import LoadAllSurvexBlocks
 import randSent
 from django.http import HttpResponse
 
@@ -27,7 +26,7 @@ def frontpage(request):
     if "reloadexpos" in request.GET:
         message = LoadPersonsExpos()
         message = "Reloaded personexpos"
-    if "reloadsurvex" in request.GET:
+    if "reloadsurvex" in request.POST:
         message = LoadAllSurvexBlocks()
         message = "Reloaded survexblocks"
 
@@ -39,7 +38,17 @@ def frontpage(request):
 def calendar(request,year):
     week=['S','S','M','T','W','T','F']
     if year:
-	expedition=Expedition.objects.get(year=year)
-	PersonExpeditions=expedition.personexpedition_set.all()
-	
+        expedition=Expedition.objects.get(year=year)
+        PersonExpeditions=expedition.personexpedition_set.all()
+    
     return render_response(request,'calendar.html', locals())
+
+def controlPanel(request):
+    message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
+    if request.method=='POST':
+        for item in request.POST:
+            if request.user.is_superuser and item!='item':
+                print "running"+ " databaseReset."+item+"()"
+                exec "databaseReset."+item+"()"
+
+    return render_response(request,'controlPanel.html', )

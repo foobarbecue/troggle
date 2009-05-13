@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<form name="form1" method="post" action="">
+
+<h3>Dump:</h3>
+
+<table>
+<tr><td>Dump entire database and recreate tables: </td><td><input type="checkbox" name="dump_db" /></td></tr>
+</table>
+
+<h3>Import (non-destructive):</h3>
+
+<table>
+<tr><td>caves from cavetab2.csv using parsers\cavetab.py</td><td> <input type="checkbox" class="parser" name="import_cavetab"/></td></tr>
+<tr><td>logbook entries using parsers\logbooks.py</td><td><input type="checkbox" name="import_logbooks"/></td></tr>
+<tr><td>people from folk.csv using parsers\people.py</td><td><input type="checkbox" name="import_folk"/></td></tr>
+<tr><td>QMs using parsers\QMs.py</td><td><input type="checkbox" name="QMs" value="import_QMs" /></td></tr>
+<tr><td>survey scans using parsers\surveys.py</td><td><input type="checkbox" name="import_surveys" /></td></tr>
+<tr><td>survex data using parsers\survex.py</td><td><input type="checkbox" name="survex" value="import_survex" /></td></tr>
+
+</table>
+
+
+    <p>
+      <input type="submit" id="Import" value="Import">
+      
+      <input type="submit" name="check_all_import" id="check_all_import" value="Check all">
+    </p>
+</form>
+
+<h3>Export to csv:</h3>
+<table>
+<tr>
+  <td>caves to cavetab2.csv</td><td> <input name="export_cavetab" type="submit" id="export_cavetab" value="Export" disabled /></td></tr>
+</label>
+</table>
+{% endblock %}
