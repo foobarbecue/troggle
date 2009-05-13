@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 import sys
-sys.path.append('C:\\Expo\\expoweb\\troggle\\')
 import settings
 import expo.models as models
 import csv
 import time
 
-#import sqlite3
 import re
 import os
 
@@ -88,8 +86,9 @@ def html_to_wiki(text):
     #if s:
     #    print s.groups()
     #Lists
-    text = re.sub("^</p>(.*)", r"\1", text)
-    text = re.sub("(.*)<p>$", r"\1", text)
+    text = re.sub("</p>", r"", text)
+    text = re.sub("<p>$", r"", text)
+    text = re.sub("<p>", r"\n\n", text)
     out = ""
     lists = ""
     while text:
