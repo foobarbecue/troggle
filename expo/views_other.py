@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from troggle.expo.models import Cave, Expedition, Person, LogbookEntry
+from troggle.expo.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition
 import troggle.settings as settings
 from django import forms
 from django.db.models import Q
@@ -17,3 +17,14 @@ def stats(request):
 def frontPage(request):
     
     return render_to_response('index.html', {'randSent':randSent.randomLogbookSentence(),'settings':settings})
+    
+def calendar(request,year):
+    week=['S','S','M','T','W','T','F']
+    if year:
+	expedition=Expedition.objects.get(year=year)
+	PersonExpeditions=expedition.personexpedition_set.all()
+	
+	dictToPass=locals()
+	dictToPass.update({'settings':settings})
+    return render_to_response('calendar.html', dictToPass)
+	

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}
+	CUCC expedition calendar:
+	{% if expedition %}
+		{{ expedition.year }}
+    {% else %}
+    	choose a year
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+<style type="text/css"> 
+<!--
+td.f                     { background: #7f96e8; width: 80pt; font-size: 10pt }
+td.ff                    { background: #ff6666; width: 80pt; font-size: 10pt }
+td.fe                    { background: #7f96e8; width: 80pt; text-align:right; font-size: 10pt }
+td.ffe                   { background: #ff6666; width: 80pt; text-align:right; font-size: 10pt }
+td.e			 { background: #aaaaaa; width: 80pt; text-align:center; font-size: 10pt }
+td.n			 { width: 120pt }
+td.t			 { font-size: 10pt }
+td.week			 { width: 4pt }
+td.h			 { width: 80pt; font-size: 8pt; text-align: center }
+tr.r			 { height: 40pt }
+tr.brk			 { height: 12pt }
+tr.sbrk			 { height: 2pt }
+tr.dblsbrk		 { height: 4pt }
+td.sbrk			 { background: #dddddd }
+td.dblsbrk		 { background: #dddddd; font-size: 6pt }
+span.l			 { background: #7f96e8 }
+span.s			 { background: #ff6666 }
+table.t			 { background: #dddddd }
+body			 { margin-left: 5%; margin-right: 5% }
+--> 
+</style>
+
+{% endblock %}
+
+{% block content %}
+	{% if expedition %}
+    	<table>
+        	<tr>
+            	{% for date in expedition.ListDays %}               	
+        	        {% ifchanged date.month %}
+    	                <td class="h">{{ date|date:"F" }}</td>
+                    {% else %}
+                    	<td class="h"></td>
+	                {% endifchanged %}            
+                {% endfor %}                    
+        	<tr>
+            	{% for date in expedition.ListDays %}               	
+					<td class="h">{{ date|date:"D" }}</td>
+                {% endfor %}
+            <tr>
+        	<tr>
+            	{% for date in expedition.ListDays %}               	
+					<td class="h">{{ date|date:"d" }}</td>
+                {% endfor %}
+            <tr>
+    {% endif %}
+{% endblock %}

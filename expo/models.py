@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.core.files.storage import FileSystemStorage
 import os
 import troggle.settings as settings
+import datetime
 from models_survex import *
 
 class Expedition(models.Model):
@@ -16,6 +17,14 @@ class Expedition(models.Model):
 
     def __unicode__(self):
         return self.year
+
+    def ListDays(self):
+        dates=[]
+	date=self.start_date
+        while date <= self.end_date:
+		dates.append(date)
+                date+=datetime.timedelta(days=1)
+	return dates
 
     def GetPersonExpedition(self, name):
         person_expeditions = PersonExpedition.objects.filter(expedition=self)
