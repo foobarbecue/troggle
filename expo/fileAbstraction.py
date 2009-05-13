@@ -25,9 +25,15 @@ def listdir(*path):
             c = reduce(urljoin, strippedpath)
         else:
             c = ""
-        print strippedpath, c
-        return urllib.urlopen(settings.FILES + "listdir/" + c)
+        c = c.replace("#", "%23")
+        print "FILE: ", settings.FILES + "listdir/" + c
+        return urllib.urlopen(settings.FILES + "listdir/" + c).read()
+        
+def dirsAsList(*path):
+    return [d for d in listdir(*path).split("\n") if len(d) > 0 and d[-1] == "/"]
 
+def filesAsList(*path):
+    return [d for d in listdir(*path).split("\n") if len(d) > 0 and d[-1] != "/"]
 
 def readFile(*path):
     try:

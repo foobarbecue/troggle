@@ -14,10 +14,11 @@ import troggle.expo.fileAbstraction as fileAbstraction
 import csv
 import re
 import datetime
+import cStringIO
 
 surveytab = fileAbstraction.readFile("Surveys.csv")
 dialect=csv.Sniffer().sniff(surveytab)
-surveyreader = csv.reader(surveytab,dialect=dialect)
+surveyreader = csv.reader(cStringIO.StringIO(surveytab),dialect=dialect)
 print surveyreader
 headers = surveyreader.next()
 header = dict(zip(headers, range(len(headers)))) #set up a dictionary where the indexes are header names and the values are column numbers
@@ -50,12 +51,13 @@ for survey in surveyreader:
 
 # add survey scans
 def parseSurveyScans(year):
-    yearDirList = [d for d in fileAbstraction.listdir(year.year).split("\n") if d[-1] == "/"]
+    yearDirList = fileAbstraction.dirsAsList(year.year)
     for surveyFolder in yearDirList:
         print surveyFolder
         try:
             surveyNumber=re.match(r'\d\d\d\d#0*(\d+)',surveyFolder).groups()
-            scanList=fileAbstraction.listdir(yearPath, surveyFolder).split("\n")
+            scanList=fileAbstraction.filesAsList(year.year, surveyFolder)
+            print "BAR: ", year.year, surveyFolder, scanList
         except AttributeError:
             print surveyFolder + " ignored"
             continue
@@ -63,6 +65,7 @@ def parseSurveyScans(year):
         for scan in scanList:
             try:
                 scanChopped=re.match(r'(?i).*(notes|elev|plan|elevation|extend)(\d*)\.(png|jpg|jpeg)',scan).groups()
+                print "BAR: ", scanChopped
                 scanType,scanNumber,scanFormat=scanChopped
             except AttributeError:
                 print "Adding scans: " + scan + " ignored"
@@ -79,14 +82,14 @@ def parseSurveyScans(year):
                 survey=models.Survey.objects.get_or_create(wallet_number=surveyNumber, expedition=year)[0]
             except models.Survey.MultipleObjectsReturned:
                 survey=models.Survey.objects.filter(wallet_number=surveyNumber, expedition=year)[0]
-               
+
             scanObj = models.ScannedImage(
                 file=os.path.join(year.year, surveyFolder, scan),
                 contents=scanType,
                 number_in_wallet=scanNumber,
                 survey=survey
                 )
-            #print "Added scanned image at " + str(scanObj)
+            print "Added scanned image at " + str(scanObj)
             scanObj.save()
                 
 for year in models.Expedition.objects.filter(year__gte=2000):   #expos since 2000, because paths and filenames were nonstandard before then

@@ -350,6 +350,7 @@ class Photo(models.Model):
 scansFileStorage = FileSystemStorage(location=settings.SURVEYS, base_url=settings.SURVEYS_URL)
 def get_scan_path(instance, filename):
     year=instance.survey.expedition.year
+    print "WN: ", type(instance.survey.wallet_number), instance.survey.wallet_number
     number="%02d" % instance.survey.wallet_number + str(instance.survey.wallet_letter) #using %02d string formatting because convention was 2009#01
     return os.path.join('./',year,year+r'#'+number,instance.contents+str(instance.number_in_wallet)+r'.jpg')
 
