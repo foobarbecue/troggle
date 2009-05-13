@@ -18,8 +18,13 @@ class SurveyAdmin(admin.ModelAdmin):
 class LogbookEntryAdmin(admin.ModelAdmin):
     search_fields = ('title','expedition__year')
 
+class PersonExpeditionInline(admin.TabularInline):
+    model = PersonExpedition
+    extra = 1
+
 class PersonAdmin(admin.ModelAdmin):
     search_fields = ('first_name','last_name')
+    inlines = (PersonExpeditionInline,)
     
 class PersonExpeditionAdmin(admin.ModelAdmin):
     search_fields = ('person__first_name','expedition__year')

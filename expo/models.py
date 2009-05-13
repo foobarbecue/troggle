@@ -4,6 +4,7 @@ from django.forms import ModelForm
 from django.db import models
 from django.contrib import admin
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.models import User
 import os
 import troggle.settings as settings
 import datetime
@@ -59,6 +60,7 @@ class Person(models.Model):
     mug_shot    = models.CharField(max_length=100, blank=True,null=True)
     blurb = models.TextField(blank=True,null=True)
     href        = models.CharField(max_length=200)
+    user	= models.ForeignKey(User, unique=True, null=True, blank=True)
     
     class Meta:
 	    verbose_name_plural = "People"

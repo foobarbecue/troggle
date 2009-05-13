@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method="post">
+{{ form }}
+<input type="submit" />
+</form>
+
+{% if form.errors %}
+ <p class="errornote">Please correct the errors below</p>
+{% endif %}
+{% endblock %}

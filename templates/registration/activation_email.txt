@@ -1,0 +1,3 @@
+Activate your account in {{ expiration_days }} days...
+{{ URL_ROOT }}{% url registration_activate activation_key %}
+

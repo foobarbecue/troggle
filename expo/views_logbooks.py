@@ -4,6 +4,7 @@ import troggle.settings as settings
 
 from troggle.parsers.logbooks import LoadLogbookForExpedition
 from troggle.parsers.people import GetPersonExpeditionNameLookup
+from troggle.expo.forms import PersonForm
 
 import search
 import re
@@ -58,3 +59,8 @@ def logbookSearch(request, extra):
     return render_to_response('logbooksearch.html',
                           { 'query_string': query_string, 'found_entries': found_entries, 'settings': settings})
                           #context_instance=RequestContext(request))
+
+def personForm(request,pk):
+    person=Person.objects.get(pk=pk)
+    form=PersonForm(instance=person)
+    return render_to_response('personform.html', {'form':form,'settings':settings})

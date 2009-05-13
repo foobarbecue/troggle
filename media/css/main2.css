@@ -62,6 +62,8 @@ div#footer
     margin-right:auto;
 }
 
+#frontPageBanner{ position:relative; width:inherit; height:inherit; }
+
 div.logbookentry
 {
     text-align:left;

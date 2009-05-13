@@ -46,6 +46,10 @@ TEMPLATE_LOADERS = (
 #   'django.template.loaders.eggs.load_template_source',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = ( "django.core.context_processors.auth", "troggle.context.settingsContext") 
+
+LOGIN_REDIRECT_URL = '/'
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,6 +60,10 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'troggle.urls'
 
+ACCOUNT_ACTIVATION_DAYS=3
+
+AUTH_PROFILE_MODULE = 'expo.person'
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,5 +71,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.redirects',
+    'troggle.registration',
+    'troggle.profiles',
     'troggle.expo'
 )

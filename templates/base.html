@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main2.css" />
+<link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main3.css" />
 
 <title>{% block title %}THE TITLE{% endblock %}</title>
 
@@ -11,21 +11,34 @@
 </head>
 
 <body>
-<a href="/">
-<div style="float:none">
-  <div id="expoHeader" style="background:#222"> <img src="{{ settings.MEDIA_URL }}loserBanner.jpg" style="position:relative;width:inherit;height:inherit;"/>
+
+<div>
+  <div id="expoHeader"> <img id="frontPageBanner" src="{{ settings.MEDIA_URL }}loserBanner.jpg"/>
     <div id="expoHeaderText">
-      <h1>CUCC Expeditions to Austria: 1976 - 2008</h1>
+      <h1>CUCC Expeditions to Austria: 1976 - </h1>
+      <div id="expoFinalDate">
+        <h1>2009</h1>
+      </div>
     </div>
   </div>
   <hr/>
-  <div id="editLink" style="right:0px; top:0px; text-align: right; position: absolute; top:0; right:0; z-index:1; background:#999"> 
+  <div id="editLink"> 
+  	{% block loginInfo %}
+    	{% if user %}
+	    	You are logged in as {{ user.username }}. 
+            | <a href="{{ settings.URL_ROOT }}/accounts/logout">Log out</a>
+        {% else %}
+        	<a href="{{ settings.URL_ROOT }}/accounts/register">Sign up</a>
+            | <a href="{{ settings.URL_ROOT }}/accounts/login">Log in</a>
+        {% endif %}
+    {% endblock%}
+    | <a href="{{ settings.URL_ROOT }}">Home </a>
  	{% block editLink %}
-    	not editable
+
     {% endblock %}
   </div>
 </div>
-</a>
+
 
 
   {% block nav %}
