@@ -7,6 +7,7 @@ from troggle import *
 os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
 import troggle.settings as settings
 import troggle.expo.models as models
+import fileAbstraction
 
 #import settings
 #import expo.models as models
@@ -16,9 +17,9 @@ import datetime
 
 def openFileOrWeb(name):
     try:
-        f = open(os.path.join(settings.SURVEYS, name))
+        f = open(os.path.join(settings.FILES, name))
     except:
-        f = urllib.urlopen(settings.SURVEYS + name)
+        f = urllib.urlopen(settings.FILES + "download/" + name)
     return f.readlines()
 
 surveytab = openFileOrWeb("Surveys.csv")
@@ -57,12 +58,12 @@ for survey in surveyreader:
 
 # add survey scans
 def parseSurveyScans(year):
-    yearPath=os.path.join(settings.SURVEYS, year.year)
-    yearFileList=os.listdir(yearPath)
-    for surveyFolder in yearFileList:
+    yearDirList = [d for d in fileAbstraction.listdir(year.year).split("\n") if d[-1] == "/"]
+    for surveyFolder in yearDirList:
+        print surveyFolder
         try:
             surveyNumber=re.match(r'\d\d\d\d#0*(\d+)',surveyFolder).groups()
-            scanList=os.listdir(os.path.join(yearPath,surveyFolder))
+            scanList=fileAbstraction.listdir(yearPath, surveyFolder).split("\n")
         except AttributeError:
             print surveyFolder + " ignored"
             continue
