@@ -14,6 +14,13 @@ import re
 
 @models.permalink #this allows the nice get_absolute_url syntax we are using
 
+def getNotablePersons():
+    notablepersons = []
+    for person in Person.objects.all():
+            if person.bisnotable():
+                notablepersons.append(person)
+    return notablepersons		
+
 def personindex(request):
     persons = Person.objects.all()
     # From what I can tell, "persons" seems to be the table rows, while "personss" is the table columns. - AC 16 Feb 09
@@ -23,7 +30,11 @@ def personindex(request):
     for i in range(ncols):
         personss.append(persons[i * nc: (i + 1) * nc])
     
-    notablepersons = Person.objects.filter(bisnotable=True)
+    notablepersons = []
+    for person in Person.objects.all():
+            if person.bisnotable():
+                notablepersons.append(person)
+
     return render_response(request,'personindex.html', {'persons': persons, 'personss':personss, 'notablepersons':notablepersons, })
 
 def expedition(request, expeditionname):

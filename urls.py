@@ -12,12 +12,12 @@ urlpatterns = patterns('',
     
     url(r'^$',              views_other.frontpage,      name="frontpage"),
     
-    url(r'^caveindex$',     views_caves.caveindex,      name="caveindex"),
+    url(r'^caveindex/?$',     views_caves.caveindex,      name="caveindex"),
     url(r'^personindex$',   views_logbooks.personindex, name="personindex"),
     
     
     #(r'^person/(?P<person_id>\d*)/?$', views_logbooks.person),
-    url(r'^person/(?P<first_name>[A-Z]*[a-z]*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z]*)/?', views_logbooks.person, name="person"),
+    url(r'^person/(?P<first_name>[A-Z]*[a-z\-\']*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z\-]*)/?', views_logbooks.person, name="person"),
     #url(r'^person/(\w+_\w+)$',       views_logbooks.person,      name="person"),
     
     url(r'^expedition/(\d+)$',  views_logbooks.expedition,  name="expedition"),

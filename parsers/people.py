@@ -106,7 +106,7 @@ def LoadPersonsExpos():
         persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
         if not persons:
             person = models.Person(first_name=firstname, last_name = lastname, is_vfho = False, mug_shot = "")
-            person.Sethref()
+            #person.Sethref()
             person.save()
         else:
             person = persons[0]

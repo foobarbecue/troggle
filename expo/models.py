@@ -11,7 +11,13 @@ import datetime
 
 from models_survex import *
 
-class Expedition(models.Model):
+class Model(models.Model):
+    new_since_parsing = models.BooleanField(default=False)
+    def save(self):
+        new_since_parsing = True
+	super(Model, self).save()
+
+class Expedition(Model):
     year        = models.CharField(max_length=20, unique=True)
     name        = models.CharField(max_length=100)
     date_from  = models.DateField(blank=True,null=True)
@@ -59,7 +65,7 @@ class Expedition(models.Model):
     
 
 
-class Person(models.Model):
+class Person(Model):
     first_name  = models.CharField(max_length=100)
     last_name   = models.CharField(max_length=100)
     is_vfho     = models.BooleanField(help_text="VFHO is the Vereines f&uuml;r H&ouml;hlenkunde in Obersteier, a nearby Austrian caving club.")    
@@ -93,15 +99,15 @@ class Person(models.Model):
 #    def Lastexpedition(self):
 #        return self.personexpedition_set.order_by('-expedition')[0]
     
-    #def notability(self):
-        #notability = 0.0
-	#for personexpedition in person.personexpedition_set.all():
-             #if not personexpedition.is_guest:
-                #notability += 1.0 / (2012 - int(self.personexpedition.expedition.year))
-        #return notability
+    def notability(self):
+        notability = 0.0
+        for personexpedition in Person.personexpedition_set.all():
+             if not personexpedition.is_guest:
+                notability += 1.0 / (2012 - int(self.personexpedition.expedition.year))
+        return notability
 
-    #def bisnotable(self):
-        #return self.notability > 0.3
+    def bisnotable(self):
+        return self.notability > 0.3
     
     #def Sethref(self):
         #if self.last_name:
@@ -113,12 +119,11 @@ class Person(models.Model):
         #self.notability = 0.0  # set temporarily
         
 
-class PersonExpedition(models.Model):
+class PersonExpedition(Model):
     expedition  = models.ForeignKey(Expedition)
     person      = models.ForeignKey(Person)
     date_from   = models.DateField(blank=True,null=True)
     date_to     = models.DateField(blank=True,null=True)
-    dates_guessed = models.BooleanField(default=False)
     is_guest    = models.BooleanField(default=False)  
     COMMITTEE_CHOICES = (
         ('leader','Expo leader'),

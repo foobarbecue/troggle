@@ -1,5 +1,6 @@
 from troggle.expo.models import *
 from django.contrib import admin
+#from troggle.reversion.admin import VersionAdmin #django-reversion version control
 
 class RoleInline(admin.TabularInline):
     model = PersonRole
@@ -15,6 +16,7 @@ class ScannedImageInline(admin.TabularInline):
 class SurveyAdmin(admin.ModelAdmin):
     inlines = (ScannedImageInline,)
 
+#class LogbookEntryAdmin(VersionAdmin):
 class LogbookEntryAdmin(admin.ModelAdmin):
     search_fields = ('title','expedition__year')
 

@@ -8,7 +8,7 @@ from troggle.alwaysUseRequestContext import render_response # see views_logbooks
 def caveindex(request):
     caves = Cave.objects.all()
     notablecavehrefs = [ "161", "204", "258", "76" ]  # could detect notability by trips and notability of people who have been down them
-    notablecaves = [ Cave.objects.get(href=href)  for href in notablecavehrefs ]
+    notablecaves = [Cave.objects.get(kataster_number=kataster_number)  for kataster_number in notablecavehrefs ]
     return render_response(request,'caveindex.html', {'caves': caves, 'notablecaves':notablecaves})
 
 def cavehref(request, cave_id='', offical_name=''):
