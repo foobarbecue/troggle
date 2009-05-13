@@ -132,7 +132,9 @@ img.thumbnail {
 	}
 	
 	function unhighlight(div){
-//		div.style.backgroundColor="#EBEBEB";
+		if (div.style.backgroundColor=="#EBEBEB"){
+			div.style.backgroundColor="#EBEBEB";
+		}
 	}
 	
 	function choose(div){
@@ -191,15 +193,15 @@ img.thumbnail {
 </div>
 <div id="mainContent">
   <div id="notesContent" class="behind">
-     There are {{ notes|length }} notes files for {{ current_survey }}.
+     <h2>Scanned notes for {{ current_survey }}.</h2>
 
       {% for noteItem in notes %}
     	<div class="figure">
 	        <p>
-    		  {{ noteItem.file.correctURL }} <img src="{{ noteItem.correctURL }}" class="thumbnail">
+			   <img src="{{ noteItem.correctURL }}" class="thumbnail">
             <p>
                File at: 
-               		<a href="{{ noteItem.file.correctUrl }}">
+               		<a href="{{ noteItem.correctURL }}">
 		               {{ noteItem.file.name }}
                		</a> <br />
                Scanned by: {{ noteItem.scanned_by }} <br />
@@ -220,15 +222,15 @@ img.thumbnail {
     who entered by </div>
   <div id="printedCentrelineContent" class="behind"> centreline </div>
   <div id="scannedPassageSketchContent" class="behind">
-     There are {{ planSketches|length }} plan sketch files for {{ current_survey }}.
+     <h2>Scanned plan sketch files for {{ current_survey }}.</h2>
 
       {% for sketchItem in planSketches %}
     	<div class="figure">
 	        <p>
-    		  {{ sketchItem.file.correctURL }} <img src="{{ sketchItem.correctURL }}" class="thumbnail">
+    		  <img src="{{ sketchItem.correctURL }}" class="thumbnail">
             <p>
                File at: 
-               		<a href="{{ sketchItem.file.correctUrl }}">
+               		<a href="{{ sketchItem.correctUrl }}">
 		               {{ sketchItem.file.name }}
                		</a> <br />
                Scanned by: {{ sketchItem.scanned_by }} <br />

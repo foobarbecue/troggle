@@ -309,8 +309,8 @@ def get_scan_path(instance, filename):
 
 class ScannedImage(models.Model): 
     file = models.ImageField(storage=scansFileStorage, upload_to=get_scan_path)
-    scannedBy = models.ForeignKey(Person,blank=True, null=True)
-    scannedOn = models.DateField(null=True)
+    scanned_by = models.ForeignKey(Person,blank=True, null=True)
+    scanned_on = models.DateField(null=True)
     survey = models.ForeignKey('Survey')
     contents = models.CharField(max_length=20,choices=(('notes','notes'),('plan','plan_sketch'),('elevation','elevation_sketch')))
     number_in_wallet = models.IntegerField(null=True)
@@ -326,9 +326,6 @@ class ScannedImage(models.Model):
     
     def __str__(self):
         return get_scan_path(self,'')
-	
-    class admin():
-	    pass
 
 class Survey(models.Model):
     expedition_year = models.ForeignKey('Expedition')
