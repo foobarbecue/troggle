@@ -3,8 +3,11 @@ from troggle.expo.models import Cave, Expedition, Person, LogbookEntry, PersonEx
 import troggle.settings as settings
 from django import forms
 from django.db.models import Q
+from troggle.parsers.people import LoadPersonsExpos
 import re
 import randSent
+
+from django.core.urlresolvers import reverse
 
 def stats(request):
     statsDict={}
@@ -15,8 +18,13 @@ def stats(request):
     return render_to_response('statistics.html', statsDict)
 
 def frontPage(request):
-    
-    return render_to_response('index.html', {'randSent':randSent.randomLogbookSentence(),'settings':settings})
+    message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
+    if "reload" in request.GET:
+        message = LoadPersonsExpos()
+        message = "Reloaded personexpos"
+    #'randSent':randSent.randomLogbookSentence(),
+    expeditions =  Expedition.objects.all()
+    return render_to_response('index.html', {'expeditions':expeditions, 'settings':settings, "message":message})
     
 def calendar(request,year):
     week=['S','S','M','T','W','T','F']
@@ -27,4 +35,3 @@ def calendar(request,year):
 	dictToPass=locals()
 	dictToPass.update({'settings':settings})
     return render_to_response('calendar.html', dictToPass)
-	

@@ -4,25 +4,25 @@
 {% block title %}Person {{person|wiki_to_html_short}}{% endblock %}
 
 {% block content %}
-    <div class="personblock"><a href="/person/{{person.id}}">{{person|wiki_to_html_short}}</a>
+<div class="personblock"><a href="{% url person person.href%}">{{person|wiki_to_html_short}}</a>
+<ul>
+{% for personexpedition in person.personexpedition_set.all %}
+    <li>
+    <table><tr><td>
+    {{personexpedition.expedition}}
+    </td><td>
+    <div>
     <ul>
-    {% for personexpedition in person.personexpedition_set.all %}
-        <li>
-        <table><tr><td>
-        {{personexpedition.expedition}}
-        </td><td>
-        <div>
-        <ul>
-        {% for persontrip in personexpedition.persontrip_set.all %}
-            <li><a href="/logbookentry/{{persontrip.logbookentry.id}}">{{persontrip.date}}</a>
-            ({{persontrip.logbookentry.place|wiki_to_html_short}}) - 
-             {{persontrip.logbookentry.title|wiki_to_html_short}}</li>
-        {% endfor %}
-        <ul>
-        </div>
-        </td></tr></table>
-        </li>
+    {% for persontrip in personexpedition.persontrip_set.all %}
+        <li><a href="{% url logbookentry persontrip.logbook_entry.id %}">{{persontrip.date}}</a> {{persontrip.logbookentry}} 
+        ({{persontrip.logbookentry.place|wiki_to_html_short}}) - 
+            {{persontrip.logbookentry.title|wiki_to_html_short}}</li>
     {% endfor %}
-    </ul>
+    <ul>
+    </div>
+    </td></tr></table>
+    </li>
+{% endfor %}
+</ul>
 </div>
 {% endblock %}

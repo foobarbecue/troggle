@@ -8,9 +8,21 @@
 <h2>The unfinished front page</h2>
 <p>Some handy links into the less incomplete parts of this webpage</p>
 
+<h3>{{message}}</h3>
+
 <ul>
     <li><a href="{% url personindex %}">List osf people</a></li>
     <li><a href="/statistics">Statistics of what's loaded in the database</a></li>
+</ul>
+
+<form action="" method="GET"><input type="submit" name="reload" value="Reload"></form>
+
+<ul id="expeditionlist">
+    <li>
+    {% for expedition in expeditions %}
+        <a href="{% url expedition expedition.year %}">{{expedition.name}}</a>
+    {% endfor %}
+    </li>
 </ul>
 
 {% endblock %}

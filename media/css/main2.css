@@ -1,22 +1,42 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td
+	{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+	}
+
+
 .caption			{ font-size: 8pt; margin-bottom: 0pt; }
 .centre				{ text-align: center; }
 .plus2pt			{ font-size: 160%; }
 
-body, td, center, ul, p, input 	
+ul
 {
-	color:  rgb(0, 0, 0);
-	font-family: sans-serif;
+	list-style: none; 
 }
 
 body 
 {
-	background-color: #FFFFFF;
+	background-color: white;
+	color: black;
 	font: 100% Verdana, Arial, Helvetica, sans-serif;
-	Zbackground: #666666;
 	margin: 0; 
 	padding: 0;
-	text-align: center; 
-	color: #000000;
+	margin-left: auto; 
+	margin-right: auto; 
 }
 
 div#content 
@@ -27,11 +47,82 @@ div#content
 
 div#footer 
 {
+    clear:both;
     background-color:black;
     color:white;
     text-align:center;
     margin-left:auto;
     margin-right:auto;
+}
+
+div.logbookentry
+{
+    text-align:left;
+}
+div.logbookentry ul.cavers
+{
+    float:left;
+    padding-left:20px;
+    padding-right:10px;
+    margin-top:0px;
+}
+td.author
+{
+    background-color:yellow;
+}
+
+div.logbookentry p
+{
+    margin:10px;
+}
+
+div#content div#col2
+{
+    float:right; 
+    width:33%;
+    background-color:#feeeed;
+}
+
+div#content h2
+{
+    text-align:center;
+    font-size:200%;
+    padding-bottom:30px;
+}
+
+
+table.prevnextexpeditions
+{
+    width:100%;
+}
+
+table.prevnextexpeditions td
+{
+    padding: 2px;
+}
+
+table.expeditionpersonlist
+{
+    width:100%;
+}
+
+table.expeditionpersonlist td
+{
+    padding: 2px;
+}
+
+div#content div#col1
+{
+    width:66%;
+}
+table.expeditionlogbooks td
+{
+    padding: 2px;
+}
+
+ul#expeditionlist
+{
+    width: 300px
 }
 
 

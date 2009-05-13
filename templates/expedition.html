@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+
+{% block title %}Expedition {{expedition.name}}{% endblock %}
+
+{% block content %}
+<h2>{{expedition.name}}: {{expedition.date_from}} - {{expedition.date_to}}</h2>
+
+<div id="col2">
+<table class="prevnextexpeditions">
+<tr>
+  <td>{% if expedition_prev %}&lt; &lt; <a href="{% url expedition expedition_prev.year %}">{{expedition_prev.year}}</a>{% endif %}</td>
+  <td>{% if expedition_next %}&gt; &gt; <a href="{% url expedition expedition_next.year %}">{{expedition_next.year}}</a>{% endif %}</td>
+</tr>
+</ul>
+
+<table class="expeditionpersonlist">
+<tr><th>Caver</th><th>From</th><th>To</th></tr>
+{% for personexpedition in expedition.personexpedition_set.all %}
+  <tr>
+    <td><a href="{% url person personexpedition.person.href%}">{{personexpedition.person}}</a></td>
+    <td>{{personexpedition.date_from}}</td>
+    <td>{{personexpedition.date_to}}</td>
+  </tr>
+{% endfor %}
+</table>
+</div>
+
+<div id="col1">
+<h3>Logbook entries</h3>
+<form action="" method="GET"><input type="submit" name="reload" value="Reload"></form>
+<p>debug message: {{message}}</p>
+
+<table class="expeditionlogbooks">
+<tr><th>Date</th><th>Title</th><th>Author</th><th>Place</th></tr>
+{% for logbookentry in logbookentries %}
+  <tr>
+    <td>{{logbookentry.date}}</td>
+    <td><a href="{% url logbookentry logbookentry.id %}">{{logbookentry.title|safe}}</td>
+    <td><a href="{% url person logbookentry.author.person.href%}">{{logbookentry.author.name}}</a></td>
+    <td>{{logbookentry.place}}</td>
+  </tr>
+{% endfor %}
+</table>
+</div>
+
+{% endblock %}

@@ -2,25 +2,52 @@
 {% load wiki_markup %}
 
 {% block title %}Logbook {{logbookentry.id}}{% endblock %}
-{% block editLink %}<a href="{{settings.URL_ROOT}}admin/expo/logbookentry/{{logbookentry.id}}">edit </a>{% endblock %}
+
 {% block content %}
-    <div class="logbookblock">
-    <h2>{{logbookentry.title}} - {{logbookentry.date}}</h2>
-    <h3>place (to be a link to cave shaped object): <u>{{logbookentry.place}}</u></h3>
-    <ul>
-    {% for persontrip in logbookentry.persontrip_set.all %}
-        <li>
-            <a href="/person/{{persontrip.personexpedition.person.id}}">{{persontrip.personexpedition}}</a>
-            <a href="{{settings.URL_ROOT}}admin/expo/logbookentry/{{logbookentry.id}}">edit </a>
-            {% ifequal persontrip.personexpedition logbookentry.author %}
-                (author)
-            {% endifequal %}
-            {% if persontrip.timeunderground %}
-                - T/U {{persontrip.timeunderground}}</p>
-            {% endif %}
-        </li>
-    {% endfor %}
-    </ul>
-    <div>{{logbookentry.text|wiki_to_html}}</div>
-    </div>
+<h2>{{logbookentry.title|safe}}</h2>
+
+<div id="col2">
+<p><a href="{% url expedition logbookentry.expedition.year %}">{{logbookentry.expedition.name}}</a></p>
+<p>place: {{logbookentry.place}}</p>
+
+<table class="cavers">
+<tr><th>Caver</th><th>T/U</th><th>Prev</th><th>Next</th></tr>
+{% for persontrip in logbookentry.persontrip_set.all %}
+<tr>
+  {% ifequal persontrip.person_expedition logbookentry.author %}
+    <td class="author">
+  {% else %}
+    <td>
+  {% endifequal %}
+  <a href="{% url person persontrip.person_expedition.person.href %}">{{persontrip.person_expedition.person}}</a>
+  </td>
+  
+  <td>
+  {% if persontrip.timeunderground %}
+     - T/U {{persontrip.timeunderground}}</p>
+  {% endif %}
+  </td>
+
+  <td>
+  {% if persontrip.persontrip_prev %}
+    <a href="{% url logbookentry persontrip.persontrip_prev.logbook_entry.id %}">{{persontrip.persontrip_prev.date}}</a>
+  {% endif %}
+  </td>
+  <td>
+  {% if persontrip.persontrip_next %}
+     <a href="{% url logbookentry persontrip.persontrip_next.logbook_entry.id %}">{{persontrip.persontrip_next.date}}</a>
+  {% endif %}
+  </td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<div id="col1">
+<div class="logbookentry">
+<b>{{logbookentry.date}}</b>
+    {{logbookentry.text|wiki_to_html}}</div>
+</div>
+</div>
+
 {% endblock %}

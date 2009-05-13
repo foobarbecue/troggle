@@ -21,10 +21,12 @@ urlpatterns = patterns('',
     (r'^survex/(?P<survex_file>.*)\.err$', err),
 
     url(r'^personindex$', personindex, name="personindex"),
-    (r'^person/(?P<person_id>\d*)(?P<first_name>[a-zA-Z]*)[-_/\.\s(\%20)]*(?P<last_name>[a-zA-Z]*)/?$', person),
+    url(r'^person/(.+)$', person, name="person"),
 
-    (r'^logbookentry/(.*)/?$', logbookentry),
+    url(r'^logbookentry/(\d+)$', logbookentry, name="logbookentry"),
     url(r'^logbooksearch/(.*)/?$', logbookSearch),
+    
+    url(r'^expedition/(\d+)$', expedition, name="expedition"),
     
     url(r'^statistics/?$', stats, name="stats"),
     

@@ -4,23 +4,29 @@
 {% block title %}Person Index{% endblock %}
 
 {% block content %}
+
 {% for person in persons %}
-    <div class="personblock"><a href="/person/{{person.id}}">{{person|wiki_to_html_short}}</a>
-    <ul>
-    {% for personexpedition in person.personexpedition_set.all %}
-        <li>
-        <table><tr><td>
-        {{personexpedition.expedition}}
-        </td><td>
-        <div>
-        {% for persontrip in personexpedition.persontrip_set.all %}
-            <a href="/logbookentry/{{persontrip.logbookentry.id}}">{{persontrip.date}}</a>
-        {% endfor %}
-        </div>
-        </td></tr></table>
-        </li>
+<div class="personblock"><a href="{% url person person.href%}">{{person|wiki_to_html_short}}</a>
+<ul>
+{% for personexpedition in person.personexpedition_set.all %}
+    <li>
+
+    <table><tr><td>
+    {{personexpedition.expedition}}
+    </td><td>
+
+    <div>
+    {% for persontrip in personexpedition.persontrip_set.all %}
+        <a href="{% url logbookentry persontrip.logbook_entry.id %}">{{persontrip.date}}</a>
     {% endfor %}
-    </ul>
+    </div>
+
+    </td></tr></table>
+
+    </li>
+{% endfor %}
+</ul>
 </div>
 {% endfor %}
+
 {% endblock %}

@@ -7,120 +7,11 @@ import re
 import datetime
 import os
 
-persontab = open(os.path.join(settings.EXPOWEB, "noinfo", "folk.csv"))
-personreader = csv.reader(persontab)
-headers = personreader.next()
-header = dict(zip(headers, range(len(headers))))
-
-def LoadExpos():
-    models.Expedition.objects.all().delete()
-    years = headers[5:]
-    years.append("2008")
-    for year in years:
-        y = models.Expedition(year = year, name = "CUCC expo%s" % year)
-        y.save()
-    print "lll", years 
-
-def LoadPersons():
-    models.Person.objects.all().delete()
-    models.PersonExpedition.objects.all().delete()
-    expoers2008 = """Edvin Deadman,Kathryn Hopkins,Djuke Veldhuis,Becka Lawson,Julian Todd,Natalie Uomini,Aaron Curtis,Tony Rooke,Ollie Stevens,Frank Tully,Martin Jahnke,Mark Shinwell,Jess Stirrups,Nial Peters,Serena Povia,Olly Madge,Steve Jones,Pete Harley,Eeva Makiranta,Keith Curtis""".split(",")
-    expomissing = set(expoers2008)
-
-    for person in personreader:
-        name = person[header["Name"]]
-        name = re.sub("<.*?>", "", name)
-        mname = re.match("(\w+)(?:\s((?:van |ten )?\w+))?(?:\s\(([^)]*)\))?", name)
-
-        if mname.group(3):
-            nickname = mname.group(3)
-        else:
-            nickname = ""
-
-        firstname, lastname = mname.group(1), mname.group(2) or ""
-
-        print firstname, lastname, "NNN", nickname
-        #assert lastname == person[header[""]], person
-
-        pObject = models.Person(first_name = firstname,
-                                last_name = lastname,
-                                is_vfho = person[header["VfHO member"]],
-                )
-
-        is_guest = person[header["Guest"]] == "1"  # this is really a per-expo catagory; not a permanent state
-        pObject.save()
-        parseMugShotAndBlurb(firstname, lastname, person, header, pObject)
-    
-        for year, attended in zip(headers, person)[5:]:
-            yo = models.Expedition.objects.filter(year = year)[0]
-            if attended == "1" or attended == "-1":
-                pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname=nickname, is_guest=is_guest)
-                pyo.save()
-
-            # error
-            elif (firstname, lastname) == ("Mike", "Richardson") and year == "2001":
-                print "Mike Richardson(2001) error"
-                pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname=nickname, is_guest=is_guest)
-                pyo.save()
-
-            
-
-
-
-    # this fills in those peopl for whom 2008 was their first expo
-    for name in expomissing:
-        firstname, lastname = name.split()
-        is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
-        print "2008:", name
-        pObject = models.Person(first_name = firstname,
-                                last_name = lastname,
-                                is_vfho = False,
-                                mug_shot = "")
-        pObject.save()
-        yo = models.Expedition.objects.filter(year = "2008")[0]
-        pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname="", is_guest=is_guest)
-        pyo.save()
-
-#   Julian: the below code was causing errors and it seems like a duplication of the above. Hope I haven't broken anything by commenting it. -Aaron
-#
-#        if name in expoers2008:
-#            print "2008:", name
-#            expomissing.discard(name) # I got an error which I think was caused by this -- python complained that a set changed size during iteration.
-#            yo = models.Expedition.objects.filter(year = "2008")[0]
-#            pyo = models.PersonExpedition(person = pObject, expedition = yo, is_guest=is_guest)
-#            pyo.save()
-
-def parseMugShotAndBlurb(firstname, lastname, person, header, pObject):
-    #create mugshot Photo instance
-    mugShotPath = os.path.join(settings.EXPOWEB, "folk", person[header["Mugshot"]])
-    if mugShotPath[-3:]=='jpg': #if person just has an image, add it
-        mugShotObj = models.Photo(
-            caption="Mugshot for "+firstname+" "+lastname,
-            is_mugshot=True,
-            file=mugShotPath,
-            )
-        mugShotObj.save()
-        mugShotObj.contains_person.add(pObject)
-        mugShotObj.save()
-    elif mugShotPath[-3:]=='htm': #if person has an html page, find the image(s) and add it. Also, add the text from the html page to the "blurb" field in his model instance.
-        personPageOld=open(mugShotPath,'r').read()
-        pObject.blurb=re.search('<body>.*<hr',personPageOld,re.DOTALL).group() #this needs to be refined, take care of the HTML and make sure it doesn't match beyond the blurb
-        for photoFilename in re.findall('i/.*?jpg',personPageOld,re.DOTALL):
-            mugShotPath=settings.EXPOWEB+"folk/"+photoFilename
-        mugShotObj = models.Photo(
-            caption="Mugshot for "+firstname+" "+lastname,
-            is_mugshot=True,
-            file=mugShotPath,
-            )
-        mugShotObj.save()
-        mugShotObj.contains_person.add(pObject)
-        mugShotObj.save()
-    pObject.save()
 
 #
 # the logbook loading section
 #
-def GetTripPersons(trippeople, expedition):
+def GetTripPersons(trippeople, expedition, logtime_underground):
     res = [ ]
     author = None
     for tripperson in re.split(",|\+|&amp;|&(?!\w+;)| and ", trippeople):
@@ -133,11 +24,11 @@ def GetTripPersons(trippeople, expedition):
             personyear = expedition.GetPersonExpedition(tripperson)
             if not personyear:
                 print "NoMatchFor: '%s'" % tripperson    
-            res.append(personyear)
+            res.append((personyear, logtime_underground))
             if mul:
                 author = personyear
     if not author:
-        author = res[-1]
+        author = res[-1][0]
     return res, author
 
 def GetTripCave(place):                     #need to be fuzzier about matching here. Already a very slow function...
@@ -167,19 +58,21 @@ def GetTripCave(place):                     #need to be fuzzier about matching h
         print "No cave found for place " , place
         return
 
-def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, tu):
-    trippersons, author = GetTripPersons(trippeople, expedition)
+
+def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_underground):
+    trippersons, author = GetTripPersons(trippeople, expedition, logtime_underground)
     tripCave = GetTripCave(place)
 
-    lbo = models.LogbookEntry(date=date, place=place, title=title[:50], text=text, author=author)
+    lbo = models.LogbookEntry(date=date, place=place, title=title[:50], text=text, author=author, expedition=expedition)
     if tripCave:
         lbo.cave=tripCave
     lbo.save()
     print "ttt", date, place
-    for tripperson in trippersons:
-        pto = models.PersonTrip(person_expedition = tripperson, place=place, date=date, time_underground=(tu or ""),
+    for tripperson, time_underground in trippersons:
+        pto = models.PersonTrip(person_expedition = tripperson, place=place, date=date, time_underground=time_underground,
                                 logbook_entry=lbo, is_logbook_entry_author=(tripperson == author))
         pto.save()
+
 
 def ParseDate(tripdate, year):
     mdatestandard = re.match("(\d\d\d\d)-(\d\d)-(\d\d)", tripdate)
@@ -216,7 +109,7 @@ def Parselogwikitxt(year, expedition, txt):
 
         ldate = ParseDate(tripdate.strip(), year)
         #print "\n", tripcave, "---   ppp", trippeople, len(triptext)
-        EnterLogIntoDbase(date = ldate, place = tripcave, title = tripplace, text = triptext, trippeople=trippeople, expedition=expedition, tu=tu)
+        EnterLogIntoDbase(date = ldate, place = tripcave, title = tripplace, text = triptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
 
 # 2002, 2004, 2005
 def Parseloghtmltxt(year, expedition, txt):
@@ -246,7 +139,7 @@ def Parseloghtmltxt(year, expedition, txt):
         ltriptext = re.sub("</p>", "", triptext)
         ltriptext = re.sub("\s*?\n\s*", " ", ltriptext)
         ltriptext = re.sub("<p>", "\n\n", ltriptext).strip()
-        EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, tu=tu)
+        EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
 
 
 # main parser for pre-2001.  simpler because the data has been hacked so much to fit it
@@ -283,7 +176,8 @@ def Parseloghtml01(year, expedition, txt):
 
         #print ldate, trippeople.strip()
             # could includ the tripid (url link for cross referencing)
-        EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, tu=tu)
+        EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
+
 
 def Parseloghtml03(year, expedition, txt):
     tripparas = re.findall("<hr\s*/>([\s\S]*?)(?=<hr)", txt)
@@ -312,25 +206,67 @@ def Parseloghtml03(year, expedition, txt):
         ltriptext = re.sub("\s*?\n\s*", " ", ltriptext)
         ltriptext = re.sub("<p>", "\n\n", ltriptext).strip()
         ltriptext = re.sub("[^\s0-9a-zA-Z\-.,:;'!&()\[\]<>?=+*%]", "_NONASCII_", ltriptext)
-        EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, tu=tu)
+        EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
+
+yearlinks = [ 
+                ("2008", "2008/2008logbook.txt", Parselogwikitxt), 
+                ("2007", "2007/2007logbook.txt", Parselogwikitxt), 
+                ("2006", "2006/logbook/logbook_06.txt", Parselogwikitxt), 
+                ("2005", "2005/logbook.html", Parseloghtmltxt), 
+                ("2004", "2004/logbook.html", Parseloghtmltxt), 
+                ("2003", "2003/logbook.html", Parseloghtml03), 
+                ("2002", "2002/logbook.html", Parseloghtmltxt), 
+                ("2001", "2001/log.htm", Parseloghtml01), 
+                ("2000", "2000/log.htm", Parseloghtml01), 
+                ("1999", "1999/log.htm", Parseloghtml01), 
+                ("1998", "1998/log.htm", Parseloghtml01), 
+                ("1997", "1997/log.htm", Parseloghtml01), 
+                #("1996", "1996/log.htm", Parseloghtml01), 
+            ]
+
+def SetDatesFromLogbookEntries(expedition):
+    for personexpedition in expedition.personexpedition_set.all():
+        persontrips = personexpedition.persontrip_set.order_by('date')
+        personexpedition.date_from = min([persontrip.date  for persontrip in persontrips] or [None])
+        personexpedition.date_to = max([persontrip.date  for persontrip in persontrips] or [None])
+        personexpedition.save()
+    
+        lprevpersontrip = None
+        for persontrip in persontrips:
+            persontrip.persontrip_prev = lprevpersontrip
+            if lprevpersontrip:
+                lprevpersontrip.persontrip_next = persontrip
+                lprevpersontrip.save()
+            persontrip.persontrip_next = None
+            lprevpersontrip = persontrip
+            persontrip.save()
+            
+    # from trips rather than logbook entries, which may include events outside the expedition
+    expedition.date_from = min([personexpedition.date_from  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_from] or [None])
+    expedition.date_to = max([personexpedition.date_to  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_to] or [None])
+    expedition.save()
+    
+        
+        
+def LoadLogbookForExpedition(expedition):
+    expedition.logbookentry_set.all().delete()
+    models.PersonTrip.objects.filter(person_expedition__expedition=expedition).delete()
+    expowebbase = os.path.join(settings.EXPOWEB, "years")  
+    year = str(expedition.year)
+    for lyear, lloc, parsefunc in yearlinks:
+        if lyear == year:
+            break
+    fin = open(os.path.join(expowebbase, lloc))
+    txt = fin.read()
+    fin.close()
+    parsefunc(year, expedition, txt)
+    SetDatesFromLogbookEntries(expedition)
+    return "TOLOAD: " + year + "  " + str(expedition.personexpedition_set.all()[1].logbookentry_set.count()) + "  " + str(models.PersonTrip.objects.filter(person_expedition__expedition=expedition).count())
+
 
 def LoadLogbooks():
     models.LogbookEntry.objects.all().delete()
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
-    yearlinks = [ 
-                    ("2008", "2008/2008logbook.txt", Parselogwikitxt), 
-                    ("2007", "2007/2007logbook.txt", Parselogwikitxt), 
-                    ("2006", "2006/logbook/logbook_06.txt", Parselogwikitxt), 
-                    ("2005", "2005/logbook.html", Parseloghtmltxt), 
-                    ("2004", "2004/logbook.html", Parseloghtmltxt), 
-                    ("2003", "2003/logbook.html", Parseloghtml03), 
-                    ("2002", "2002/logbook.html", Parseloghtmltxt), 
-                    ("2001", "2001/log.htm", Parseloghtml01), 
-                    ("2000", "2000/log.htm", Parseloghtml01), 
-                    ("1999", "1999/log.htm", Parseloghtml01), 
-                    ("1998", "1998/log.htm", Parseloghtml01), 
-                    ("1997", "1997/log.htm", Parseloghtml01), 
-                ]
     #yearlinks = [ ("2001", "2001/log.htm", Parseloghtml01), ] #overwrite
 
     for year, lloc, parsefunc in yearlinks:
@@ -339,11 +275,6 @@ def LoadLogbooks():
         txt = fin.read()
         fin.close()
         parsefunc(year, expedition, txt)
-        
+        SetDatesFromLogbookEntries(expedition)
 
-# command line run through the loading stages
-# you can comment out these in turn to control what gets reloaded
-LoadExpos()
-LoadPersons()
-LoadLogbooks()
 

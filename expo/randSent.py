@@ -15,6 +15,8 @@ def weighted_choice(lst):
 def randomLogbookSentence():
     randSent={}
 
+    # needs to handle empty logbooks without crashing
+
     #Choose a random logbook entry
     randSent['entry']=LogbookEntry.objects.order_by('?')[0]
 

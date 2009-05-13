@@ -12,8 +12,8 @@ from models_survex import *
 class Expedition(models.Model):
     year        = models.CharField(max_length=20, unique=True)
     name        = models.CharField(max_length=100)
-    start_date  = models.DateField(blank=True,null=True)
-    end_date    = models.DateField(blank=True,null=True)
+    date_from  = models.DateField(blank=True,null=True)
+    date_to    = models.DateField(blank=True,null=True)
 
     def __unicode__(self):
         return self.year
@@ -47,14 +47,24 @@ class Person(models.Model):
     blurb = models.TextField(blank=True,null=True)
     class Meta:
 	    verbose_name_plural = "People"
+    
     def __unicode__(self):
-        return "%s %s" % (self.first_name, self.last_name)
+        if self.last_name:
+            return "%s %s" % (self.first_name, self.last_name)
+        return self.first_name
+    
+    # this should be a member entry
+    def href(self):
+        if self.last_name:
+            return "%s_%s" % (self.first_name.lower(), self.last_name.lower())
+        return self.first_name.lower()
+
 
 class PersonExpedition(models.Model):
     expedition  = models.ForeignKey(Expedition)
     person      = models.ForeignKey(Person)
-    from_date   = models.DateField(blank=True,null=True)
-    to_date     = models.DateField(blank=True,null=True)
+    date_from   = models.DateField(blank=True,null=True)
+    date_to     = models.DateField(blank=True,null=True)
     is_guest    = models.BooleanField(default=False)  
     nickname    = models.CharField(max_length=100,blank=True,null=True)
     
@@ -86,8 +96,13 @@ class PersonExpedition(models.Model):
 
     def __unicode__(self):
         return "%s: (%s)" % (self.person, self.expedition)
-
-
+    
+    def name(self):
+        if self.nickname:
+            return "%s (%s) %s" % (self.person.first_name, self.nickname, self.person.last_name)
+        if self.person.last_name:
+            return "%s %s" % (self.person.first_name, self.person.last_name)
+        return self.person.first_name
 
 	
 #class LogbookSentanceRating(models.Model):
@@ -187,13 +202,18 @@ class Cave(models.Model):
 
 class LogbookEntry(models.Model):
     date    = models.DateField()
+    expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
     author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip
     title   = models.CharField(max_length=200)
     cave = models.ForeignKey(Cave,blank=True,null=True)
     place   = models.CharField(max_length=100,blank=True,null=True)  
     text    = models.TextField()
+    
+    logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
+    logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
+    
     class Meta:
-	verbose_name_plural = "Logbook Entries"
+	   verbose_name_plural = "Logbook Entries"
         # several PersonTrips point in to this object
     
     def __unicode__(self):
@@ -206,9 +226,12 @@ class PersonTrip(models.Model):
         # possibly a trip has a plurality of triplets pointing into it
     place           = models.CharField(max_length=100)  
     date            = models.DateField()    
-    time_underground = models.CharField(max_length=100)
+    time_underground = models.FloatField()  
     logbook_entry    = models.ForeignKey(LogbookEntry)
     is_logbook_entry_author = models.BooleanField()
+    
+    persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
+    persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
 
     def __unicode__(self):
         return "%s %s (%s)" % (self.person_expedition, self.place, self.date)
