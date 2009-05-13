@@ -481,7 +481,7 @@ class QM(TroggleModel):
     def get_previous_by_id(self):
         return QM.objects.get(id=self.id-1)
 
-photoFileStorage = FileSystemStorage(location=settings.EXPOWEB.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
+photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
 class Photo(TroggleModel): 
     caption = models.CharField(max_length=1000,blank=True,null=True)
     contains_person_trip = models.ManyToManyField(PersonTrip,blank=True,null=True)
