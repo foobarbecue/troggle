@@ -84,7 +84,7 @@ def make_model(name, parent, iter_lines, sf, c, l):
                                                 survex_block = m,
                                                 role = models.Role.objects.get(name = roles[role])).save()
                               else:
-                                  print "no person", exp, sname, role
+                                  print ("no person", exp, sname, role)
                           except AttributeError:
                               print ("Person not found: " + name + " in " + file_ + "  " + role).encode('ascii', 'xmlcharrefreplace')
               except AssertionError, inst:

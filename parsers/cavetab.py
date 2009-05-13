@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
-import settings
+sys.path.append("/home/mjg/expoweb/troggle")
 import expo.models as models
+import settings as settings
 import csv
 import time
 
