@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load wiki_markup %}
 
-{% block title %}{{ cave.official_name|wiki_to_html }}{% endblock %}
+{% block title %}{{ cave.official_name|wiki_to_html_short }}{% endblock %}
 
 {% block contentheader %}
 <table id="cavepage">

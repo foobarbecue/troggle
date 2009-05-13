@@ -2,8 +2,8 @@
 {% load wiki_markup %}
 
 {% block content %}
-{{ cavearea.description }}
-{{ cavearea.name }}
-{{ cavearea.parentArea }}
-{{ cavearea.survexFile }}
+{{ cavearea.description|wiki_to_html_short }}
+{{ cavearea.name|wiki_to_html_short }}
+{{ cavearea.parentArea|wiki_to_html_short }}
+{{ cavearea.survexFile|wiki_to_html_short }}
 {% endblock %}
