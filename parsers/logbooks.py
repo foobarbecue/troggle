@@ -1,6 +1,6 @@
 #.-*- coding: utf-8 -*-
 
-import settings
+import troggle.settings as settings
 import expo.models as models
 import csv
 import re
