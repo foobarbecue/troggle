@@ -1,0 +1,330 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td
+	{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+	}
+
+html, body {
+	height: 100%
+}
+
+
+.caption			{ font-size: 8pt; margin-bottom: 0pt; }
+.centre				{ text-align: center; }
+.plus2pt			{ font-size: 160%; }
+
+ul
+{
+	list-style: none; 
+}
+
+body 
+{
+	background-color: white;
+	color: black;
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	margin: 0; 
+	padding: 0;
+	margin-left: auto; 
+	margin-right: auto; 
+}
+
+div#content 
+{
+    border: thin black dotted;
+    margin: 50px; 
+}
+
+
+
+
+div#footer 
+{
+    clear:both;
+    background-color:black;
+    color:white;
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+img#frontPageBanner{position:relative;width:inherit;height:inherit;}
+
+div.logbookentry
+{
+    text-align:left;
+}
+div.logbookentry ul.cavers
+{
+    float:left;
+    padding-left:20px;
+    padding-right:10px;
+    margin-top:0px;
+}
+td.author
+{
+    background-color:yellow;
+}
+
+div.logbookentry p
+{
+    margin:10px;
+}
+
+div#content div#col2
+{
+    float:right; 
+    width:33%;
+    background-color:#feeeed;
+}
+
+div#content h2
+{
+    text-align:center;
+    font-size:200%;
+    padding-bottom:30px;
+}
+
+
+table.prevnextexpeditions
+{
+    width:100%;
+}
+
+table.prevnextexpeditions td
+{
+    padding: 2px;
+}
+
+table.expeditionpersonlist
+{
+    width:100%;
+}
+
+table.expeditionpersonlist td
+{
+    padding: 2px;
+}
+
+div#content div#col1
+{
+    width:66%;
+}
+table.expeditionlogbooks td
+{
+    padding: 2px;
+}
+
+ul#expeditionlist
+{
+    width: 300px
+}
+
+div.survexblock
+{
+    width:50%;
+    background-color:#e0e0e0;
+}
+p.indent
+{
+    margin-left:10px;
+}
+
+#expoHeader {
+	width:100%;
+	position:relative;
+	left:0;
+	right:0;
+	height:100px;
+}
+#currentLocation {
+	float:right;
+	background:#999;
+	line-height: 80%;
+	font-variant: small-caps;
+	margin: 0px;
+	padding: 0px;
+}
+#expoHeaderText {
+	background:#999;
+	position:absolute;
+	bottom:0px;
+	clip:rect(10px auto auto auto)
+/*	filter:alpha(opacity=90);
+	-moz-opacity:.90;
+	opacity:.90; */
+}
+
+
+
+hr{
+	margin:0;
+	padding:0;
+	height:1px;
+	border:thin solid #000;
+	border:#000;
+	color:#000;
+	background:#000;
+}
+
+div#expoHeader h1{
+	position:relative;
+	bottom:-8px;
+	vertical-align:top;
+}
+
+div#editLink { right:0px; top:0px; text-align: right; position: absolute; top:0; right:0; z-index:1; background:#999 }
+
+div#expoFinalDate {
+	display: inline;
+}
+
+div.centre img			{ vertical-align: middle; }
+
+h1				{ text-align: center; font-size: 210%; display: inline;}
+h2				{ color: #009900; }
+h3				{ color: #2c105e; text-align:left; border-bottom:thin solid black; margin-bottom:1em; margin-top:1em }
+h4				{ color: #0d664c; }
+h4.navbar {line-height: 0px;}
+img.onright, div.onright	{ vertical-align: top; float: right;
+				margin-left: 10pt;  margin-bottom: 10pt;
+				margin-right: 8pt; }
+img.onleft, div.onleft		{ vertical-align: top; float: left;
+				margin-right: 10pt; margin-bottom: 10pt;
+				margin-left: 8pt; }
+img.icon			{ vertical-align: middle; }
+img.aligntop			{ vertical-align: top; }
+blockquote {
+  font: Georgia, "Times New Roman", Times, serif;
+  font-weight:bold;
+  font-variant:small-caps;
+  width: 400px;
+  background: url(../close-quote.gif) no-repeat right bottom;
+  padding-left: 25px;
+  text-indent: -25px;
+  text-align: right;
+  vertical-align:bottom;
+  color:#CCCC66;
+}
+blockquote:first-letter {
+  background: url(../open-quote.gif) no-repeat left top;
+  padding-left: 40px;
+  font: italic 1.4em Georgia, "Times New Roman", Times, serif;
+}
+table.imgtable			{ margin-left: auto; margin-right: auto; }
+table.imgtable td		{ vertical-align: middle; text-align: center;
+				padding: 10px; }
+
+table.normal		{ border: thin; border-top:solid ; border-left:dotted ; border-bottom:dotted; border-right:hidden ; border-width:1px;}
+table.normal td		{ border: thin; border-right:dotted ; border-width:1px; border-spacing:0px }
+table.normal th		{ border-left:thin ; border-right:thin ; text-align: left}
+
+/* "Traditional" table with borders.*/
+table.trad			{ margin: 0pt; border: 1px solid #000;
+				border-color: #c0c0c0 #8d8d8d #8d8d8d #c0c0c0; }
+table.bigfatborder		{ border-width: 6px; }
+table.trad td, table.trad th	{ margin: 0pt; border: 1px solid #aaa;
+				border-color: #8d8d8d #c0c0c0 #c0c0c0 #8d8d8d; }
+
+/*Divs for layout*/
+html, body, div.contents {
+min-height: 100%;
+height: 100%;
+width:100%;
+}
+html>body, html>body div.contents {
+height: auto;
+}
+body {
+}
+div.contents {
+position: absolute;
+top: 0;
+right: 0;
+}
+
+
+div.main {
+margin-bottom: 3em;
+}
+
+
+/* You are not expected to understand this. It is necessary. */
+table.centre			{ margin-left: auto; margin-right: auto; }
+table.centre td			{ text-align: left; }
+
+h2#tophead			{ text-align: center; margin-bottom: -10pt; }
+table#cavepage			{ width: 100%; font-size: 160%; }
+table#cavepage th#kat_no	{ text-align: left; width: 25%; }
+table#cavepage th#name		{ text-align: center; width: 50%; }
+table#cavepage th#status	{ text-align: right; width: 25%; }
+
+.command                        { color: #FF0000; }
+.comment                        { color: #888888; font-style:italic;}
+
+.thumbnail {
+	width: 300px;
+}
+
+table {
+	border: thin solid silver;
+	border-collapse: collapse;
+}
+td {
+	padding:0px;
+	border: thin solid silver;
+}
+
+
+#nav {
+
+}
+
+.menuBarItem {
+	font-variant: small-caps;
+	text-align: right;
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	border-top-width: thin;
+	border-right-width: thin;
+	border-bottom-width: thin;
+	border-left-width: thin;
+}
+.behind {
+	display: none;
+}
+div.figure {
+  width: 20%;
+  border: thin silver solid;
+  margin: 0.5em;
+  padding: 0.5em;
+  display: inline;	
+  float: left;
+}
+div.figure p {
+  text-align: left;
+  font-size: smaller;
+  text-indent: 0;
+}
+img.thumbnail {
+  width: 100%;
+}
+br.clearfloat {
+  clear:both;
+}
