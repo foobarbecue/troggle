@@ -266,7 +266,7 @@ def LoadLogbooks():
                     ("1998", "1998/log.htm", Parseloghtml01), 
                     ("1997", "1997/log.htm", Parseloghtml01), 
                 ]
-#    yearlinks = [ ("1997", "1997/log.htm", Parseloghtml01), ] #overwrite
+    #yearlinks = [ ("2001", "2001/log.htm", Parseloghtml01), ] #overwrite
 
     for year, lloc, parsefunc in yearlinks:
         expedition = models.Expedition.objects.filter(year = year)[0]
@@ -278,6 +278,6 @@ def LoadLogbooks():
 
 # command line run through the loading stages
 # you can comment out these in turn to control what gets reloaded
-LoadExpos()LoadPersons()
+#LoadExpos()#LoadPersons()
 LoadLogbooks()
 
