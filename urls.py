@@ -8,13 +8,13 @@ admin.autodiscover()
 urlpatterns = patterns('',
     
     (r'^$', frontPage),
-    (r'^cave/?$', caveindex),
+    url(r'^cave/?$', caveindex, name="caveindex"),
     (r'^cave/(?P<cave_id>[^/]+)/?$', cave),
     (r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     (r'^cavesearch', caveSearch),
 
-    (r'^survex/(?P<survex_file>.*)\.index$', index),
+    url(r'^survex/(?P<survex_file>.*)\.index$', index, name="survexindex"),
     (r'^survex/(?P<survex_file>.*)\.svx$', svx),
     (r'^survex/(?P<survex_file>.*)\.3d$', threed),
     (r'^survex/(?P<survex_file>.*)\.log$', log),
@@ -34,7 +34,7 @@ urlpatterns = patterns('',
     url(r'^statistics/?$', stats, name="stats"),
     
     url(r'^calendar/(?P<year>\d\d\d\d)?$', calendar, name="calendar"),
-    
+
     url(r'^survey/?$', surveyindex, name="survey"),
     (r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey),
     

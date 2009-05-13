@@ -27,8 +27,11 @@
 <h3>{{message}}</h3>
 
 <ul>
-    <li><a href="{% url personindex %}">List osf people</a></li>
+    <li><a href="{% url caveindex %}">List of Caves</a></li>
+    <li><a href="{% url personindex %}">List of People</a></li>
     <li><a href="/statistics">Statistics of what's loaded in the database</a></li>
+    <li><a href="{% url survexindex survex_file=all %}">Survex directory</a></li>
+    <li><a href="{% url survey %}">Survey files</a></li>
 </ul>
 
 <form action="" method="GET">
@@ -37,11 +40,13 @@
 </form>
 
 <ul id="expeditionlist">
-    <li>
+
     {% for expedition in expeditions %}
-        <a href="{% url expedition expedition.year %}">{{expedition.name}}</a>
+        <li>
+            <a href="{% url expedition expedition.year %}">{{expedition.name}}</a>
+        </li>
     {% endfor %}
-    </li>
+
 </ul>
 
 {% endblock %}
