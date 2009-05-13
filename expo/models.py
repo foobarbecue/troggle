@@ -10,6 +10,7 @@ import os
 from django.conf import settings
 import datetime
 from decimal import Decimal, getcontext
+from  django.core.urlresolvers import reverse
 getcontext().prec=2 #use 2 significant figures for decimal calculations
 
 from models_survex import *
@@ -211,6 +212,7 @@ class LogbookEntry(TroggleModel):
     cave    = models.ForeignKey('Cave',blank=True,null=True)
     place   = models.CharField(max_length=100,blank=True,null=True)  
     text    = models.TextField()
+    slug    = models.SlugField(max_length=100)
     #href    = models.CharField(max_length=100)
     
     
@@ -224,7 +226,7 @@ class LogbookEntry(TroggleModel):
         ordering = ('-date',)
 
     def get_absolute_url(self):
-        return settings.URL_ROOT + "/logbookentry/" + str(self.pk)
+        return settings.URL_ROOT + reverse('logbookentry',kwargs={'date':self.date,'slug':self.slug})
 
     def __unicode__(self):
         return "%s: (%s)" % (self.date, self.title)

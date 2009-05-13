@@ -24,6 +24,7 @@ class QMInline(admin.TabularInline):
 
 #class LogbookEntryAdmin(VersionAdmin):
 class LogbookEntryAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug':("title",)}
     search_fields = ('title','expedition__year')
     #inlines = (QMInline,) #doesn't work because QM has two foreignkeys to Logbookentry- need workaround
 

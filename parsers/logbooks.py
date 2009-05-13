@@ -6,6 +6,8 @@ import troggle.expo.models as models
 from troggle.parsers.people import GetPersonExpeditionNameLookup
 from troggle.parsers.cavetab import GetCaveLookup
 
+from django.template.defaultfilters import slugify
+
 import csv
 import re
 import datetime
@@ -286,7 +288,7 @@ def SetDatesFromLogbookEntries(expedition):
 #        lprevlogbookentry = logbookentry
         
 # This combined date / number key is a weird way of doing things. Use the primary key instead. If we are going to use the date for looking up entries, we should set it up to allow multiple results.
-#    # order by date for setting the references
+    # order by date for setting the references
 #    lprevlogbookentry = None
 #    for logbookentry in expedition.logbookentry_set.order_by('date'):
 #        if lprevlogbookentry and lprevlogbookentry.date == logbookentry.date:
@@ -297,6 +299,9 @@ def SetDatesFromLogbookEntries(expedition):
 #            logbookentry.href = "%s" % logbookentry.date
 #        logbookentry.save()
 #        lprevlogbookentry = logbookentry
+    for logbookentry in expedition.logbookentry_set.all():
+        logbookentry.slug = slugify(logbookentry.title)
+        logbookentry.save()
         
         
 def LoadLogbookForExpedition(expedition):

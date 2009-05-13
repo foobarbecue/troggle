@@ -87,8 +87,8 @@ def newQMlink(logbookentry):
     nextQMnumber=biggestQMnumber+1
     return settings.URL_ROOT + r'/admin/expo/qm/add/?' + r'found_by=' + str(logbookentry.pk) +'&number=' + str(nextQMnumber)
 
-def logbookentry(request, logbookentry_pk):
-    logbookentry = LogbookEntry.objects.get(pk = logbookentry_pk)
+def logbookentry(request, date, slug):
+    logbookentry = LogbookEntry.objects.get(date=date, slug=slug)
     
     return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry, 'newQMlink':newQMlink(logbookentry)})
 
