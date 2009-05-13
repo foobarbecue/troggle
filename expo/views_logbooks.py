@@ -63,8 +63,8 @@ def person(request, first_name='', last_name=''):
 #    person = Person.objects.get(href=name)
 #    
 
-def personexpedition(request, href, year):
-    person = Person.objects.get(href=href)
+def personexpedition(request, first_name='',  last_name='', year=''):
+    person = Person.objects.get(first_name = first_name, last_name = last_name)
     expedition = Expedition.objects.get(year=year)
     personexpedition = person.personexpedition_set.get(expedition=expedition)
     return render_response(request,'personexpedition.html', {'personexpedition': personexpedition, })

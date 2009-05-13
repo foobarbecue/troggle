@@ -83,11 +83,11 @@ def LoadPersonsExpos():
 
         person = models.Person(first_name=mname.group(1), last_name=(mname.group(2) or ""))
         person.is_vfho = personline[header["VfHO member"]]
-        person.Sethref()
+        #person.Sethref()
         #print "NNNN", person.href
         is_guest = (personline[header["Guest"]] == "1")  # this is really a per-expo catagory; not a permanent state
         person.save()
-        #parseMugShotAndBlurb(personline=personline, header=header, person=person)
+        parseMugShotAndBlurb(personline=personline, header=header, person=person)
     
         # make person expedition from table
         for year, attended in zip(headers, personline)[5:]:
@@ -106,7 +106,7 @@ def LoadPersonsExpos():
         persons = list(models.Person.objects.filter(first_name=firstname, last_name=lastname))
         if not persons:
             person = models.Person(first_name=firstname, last_name = lastname, is_vfho = False, mug_shot = "")
-            person.Sethref()
+            #person.Sethref()
             person.save()
         else:
             person = persons[0]

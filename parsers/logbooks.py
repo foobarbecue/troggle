@@ -198,7 +198,7 @@ def Parseloghtml01(year, expedition, txt):
         
 
         #print ldate, trippeople.strip()
-            # could include the tripid (url link for cross referencing)
+            # could includ the tripid (url link for cross referencing)
         EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
 
 
@@ -244,10 +244,10 @@ yearlinks = [
                 ("1999", "1999/log.htm", Parseloghtml01), 
                 ("1998", "1998/log.htm", Parseloghtml01), 
                 ("1997", "1997/log.htm", Parseloghtml01), 
-                ("1996", "1996/log.htm", Parseloghtml01), 
+                ("1996", "1996/log.htm", Parseloghtml01),
                 ("1995", "1995/log.htm", Parseloghtml01), 
                 ("1994", "1994/log.htm", Parseloghtml01), 
-                ("1993", "1993/log.htm", Parseloghtml01), 
+                ("1993", "1993/log.htm", Parseloghtml01), 		
             ]
 
 def SetDatesFromLogbookEntries(expedition):
@@ -258,25 +258,22 @@ def SetDatesFromLogbookEntries(expedition):
         personexpedition.save()
 
 # The below is all unnecessary, just use the built in get_previous_by_date and get_next_by_date
-# it might be if it f***ing worked!  but it doesn't does it!
-        lprevpersontrip = None
-        for persontrip in persontrips:
-            persontrip.persontrip_prev = lprevpersontrip
-            if lprevpersontrip:
-                lprevpersontrip.persontrip_next = persontrip
-                lprevpersontrip.save()
-            persontrip.persontrip_next = None
-            lprevpersontrip = persontrip
-            persontrip.save()
+#        lprevpersontrip = None
+#        for persontrip in persontrips:
+#            persontrip.persontrip_prev = lprevpersontrip
+#            if lprevpersontrip:
+#                lprevpersontrip.persontrip_next = persontrip
+#                lprevpersontrip.save()
+#            persontrip.persontrip_next = None
+#            lprevpersontrip = persontrip
+#            persontrip.save()
             
-    # from trips rather than logbook entries, which may include events outside the expedition  (so what?)
+    # from trips rather than logbook entries, which may include events outside the expedition
     expedition.date_from = min([personexpedition.date_from  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_from] or [None])
     expedition.date_to = max([personexpedition.date_to  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_to] or [None])
     expedition.save()
 
 # The below has been replaced with the methods get_next_by_id and get_previous_by_id
-# (this might be true, but it's sort of in the order of the logbook.  
-# [Maybe we'd want to sort it by date and display it in that order, in which case it's tough luck! - JGT]
 #    # order by appearance in the logbook (done by id)
 #    lprevlogbookentry = None
 #    for logbookentry in expedition.logbookentry_set.order_by('id'):
@@ -288,9 +285,7 @@ def SetDatesFromLogbookEntries(expedition):
 #        logbookentry.save()
 #        lprevlogbookentry = logbookentry
         
-# This combined date / number key is a weird way of doing things. Use the primary key instead. 
-# If we are going to use the date for looking up entries, we should set it up to allow multiple results.
-# [Not weird.  Very common.  A date is meaningful and almost gets there.  Simply needs small amount of disambiguation to make it a primary key -- JGT]
+# This combined date / number key is a weird way of doing things. Use the primary key instead. If we are going to use the date for looking up entries, we should set it up to allow multiple results.
 #    # order by date for setting the references
 #    lprevlogbookentry = None
 #    for logbookentry in expedition.logbookentry_set.order_by('date'):
@@ -325,7 +320,7 @@ def LoadLogbooks():
     models.LogbookEntry.objects.all().delete()
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
     #yearlinks = [ ("2001", "2001/log.htm", Parseloghtml01), ] #overwrite
-    #yearlinks = [ ("1993", "1993/log.htm", Parseloghtml01),] # overwrite
+    #yearlinks = [ ("1996", "1996/log.htm", Parseloghtml01),] # overwrite
 
     for year, lloc, parsefunc in yearlinks:
         expedition = models.Expedition.objects.filter(year = year)[0]
@@ -334,4 +329,5 @@ def LoadLogbooks():
         fin.close()
         parsefunc(year, expedition, txt)
         SetDatesFromLogbookEntries(expedition)
+
 

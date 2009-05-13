@@ -260,7 +260,19 @@ class PersonTrip(TroggleModel):
     def __unicode__(self):
         return "%s %s (%s)" % (self.person_expedition, self.place, self.date)
 
+    def get_persons_next_trip(self):
+	try:
+            return PersonTrip.objects.filter(person_expedition__person=self.person_expedition.person, date__gt=self.date)[0]
+        except:
+	    return
 
+    def get_persons_previous_trip(self):
+	try:
+            return PersonTrip.objects.filter(person_expedition__person=self.person_expedition.person, date__lt=self.date)[0]
+        except:
+	    return
+
+#    def get_persons_previous_trip(self):
 #
 # move following classes into models_cave
 #

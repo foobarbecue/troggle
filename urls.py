@@ -17,12 +17,11 @@ urlpatterns = patterns('',
     
     
     #(r'^person/(?P<person_id>\d*)/?$', views_logbooks.person),
-    url(r'^person/(?P<first_name>[A-Z]*[a-z\-\']*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z\-]*)/?', views_logbooks.person, name="person"),
+    url(r'^person/(?P<first_name>[A-Z]*[a-z\-\']*)[^a-zA-Z]*(?P<last_name>[a-z\-\']*[^a-zA-Z]*[A-Z]*[a-z\-]*)/?', views_logbooks.person, name="person"),
     #url(r'^person/(\w+_\w+)$',       views_logbooks.person,      name="person"),
-
+    
     url(r'^expedition/(\d+)$',  views_logbooks.expedition,  name="expedition"),
-    #url(r'^personexpedition/(?P<first_name>[A-Z]*[a-z]*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z]*)/(?P<year>\d+)/?$', views_logbooks.personexpedition, name="personexpedition"),
-    url(r'^personexpedition/(.+?)/(\d+)$', views_logbooks.personexpedition, name="personexpedition"),
+    url(r'^personexpedition/(?P<first_name>[A-Z]*[a-z]*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z]*)/(?P<year>\d+)/?$', views_logbooks.personexpedition, name="personexpedition"),
     url(r'^logbookentry/(.+)$', views_logbooks.logbookentry,name="logbookentry"),
     
     url(r'^survexblock/(.+)$',  views_caves.survexblock,    name="survexblock"),
@@ -78,5 +77,5 @@ urlpatterns = patterns('',
         {'document_root': settings.SURVEYS, 'show_indexes':True}),
 
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': settings.PHOTOS_ROOT, 'show_indexes':True}),
+        {'document_root': settings.PHOTOS, 'show_indexes':True}),
 )

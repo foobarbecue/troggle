@@ -44,13 +44,13 @@
   </td>
 
   <td>
-  {% if persontrip.persontrip_prev %}
-    <a href="{{ persontrip.persontrip_prev.logbook_entry.get_absolute_url }}">{{persontrip.persontrip_prev.date}}</a>
+  {% if persontrip.get_previous_by_date %}
+    <a href="{{ persontrip.get_persons_previous_trip.logbook_entry.get_absolute_url }}">{{persontrip.get_persons_previous_trip.date}}</a>
   {% endif %}
   </td>
   <td>
-  {% if persontrip.persontrip_next %}
-     <a href="{{ persontrip.persontrip_next.logbook_entry.get_absolute_url }}">{{persontrip.persontrip_next.date}}</a>
+  {% if persontrip.get_persons_next_trip %}
+     <a href="{{ persontrip.get_persons_next_trip.logbook_entry.get_absolute_url }}">{{persontrip.get_persons_next_trip.date}}</a>
   {% endif %}
   </td>
 </tr>
