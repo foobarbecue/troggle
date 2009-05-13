@@ -2,11 +2,67 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}/css/main2.css" />
+    <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main2.css" />
     <title>{% block title %}{% endblock %}</title>
+
+<!-- script to toggle navbar -->
+
+<script language="javascript">
+<!--
+  function showFooter(){
+        document.getElementById('footerHidden').style.display = 'none';
+	document.getElementById('footerShowing').style.display = 'block';
+      }
+      
+  function hideFooter(){
+        document.getElementById('footerHidden').style.display = 'block';
+	document.getElementById('footerShowing').style.display = 'none';
+      }
+
+   function makeTransparent(){
+	document.getElementById('footerShowing').style.backgroundColor = 'transparent';
+      }
+-->
+</script>
+
 </head>
 <body>
+<div class="contents">
+<div class="main">
     {% block content %}{% endblock %}
-    {% block footer %}{% endblock %}
+</div>
+    {% block footer %}
+
+<div class="footer" id="footerHidden" style="display:none">
+	<h4><a href="javascript:;" onMouseDown="showFooter();">[Show Troggle Navigation / Search]</a></h4> 
+</div>
+
+<div class="footer" id="footerShowing" style="background-color:#CCC">
+	<h4 class="navbar"> Troggle navigation <a href="javascript:;" onMouseDown="hideFooter();">[Hide]</a> or <a href="javascript:;" onMouseDown="makeTransparent();">[Make transparent]</a></align></h4>
+    <table class="normal">	
+	<tr>
+		<td rowspan="2">
+			<a href="{{ settings.URL_ROOT }}cave">list caves</a> or 
+				<form name="input" action="{{ settings.URL_ROOT }}cavesearch" method="get">
+					<input type="text" name="q" value="search caves">
+					<input type="submit" value="Submit">
+				</form>
+		</td>
+		<td rowspan="2">
+			<a href="{{ settings.URL_ROOT }}logbookentry">list logbook entries</a> or
+				<form name="input" action="{{ settings.URL_ROOT }}logbooksearch" method="get">
+					<input type="text" name="q" value="search logbooks">
+					<input type="submit" value="Submit">
+				</form>
+		</td>
+		<td><a href="{{ settings.URL_ROOT }}person">list cavers</a></td>
+		<td><a href="{{ settings.URL_ROOT }}statistics"> statistics</a></td>
+	  <tr>
+      <td><a href="{{ settings.URL_ROOT }}photos">photos</a></td>
+      <td><a href="{{ settings.URL_ROOT }}admin"> admin</a></td>
+    </table>
+</div>
+    <p>{% endblock %}</p>
 </body>
+
 </html>

@@ -73,7 +73,7 @@ def LoadPersons():
     # this fills in those peopl for whom 2008 was their first expo
     for name in expomissing:
         firstname, lastname = name.split()
-        is_guest = name in ["Eeva Makiranta", "Kieth Curtis"]
+        is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
         pObject = models.Person(first_name = firstname,
                                 last_name = lastname,
                                 is_vfho = False,

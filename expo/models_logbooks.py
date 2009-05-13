@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib import admin
-
+from django.forms import ModelForm
 
 class Expedition(models.Model):
     year        = models.CharField(max_length=20, unique=True)
@@ -80,8 +80,3 @@ class PersonTrip(models.Model):
 
     def __unicode__(self):
         return "%s %s (%s)" % (self.person_expedition, self.place, self.date)
-
-
-
-
-

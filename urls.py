@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 from expo.views import *
-
+import troggle.settings as settings
 from django.contrib import admin
 admin.autodiscover()
 
@@ -9,6 +9,8 @@ urlpatterns = patterns('',
     (r'^cave/$', caveindex),
     (r'^cave/(?P<cave_id>[^/]+)/$', cave),
     (r'^cave/(?P<cave_id>[^/]+)/(?P<ent_letter>[^/]?)$', ent),
+    (r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
+    (r'^cavesearch/$', caveSearch),
     
     (r'^survex/(?P<survex_file>.*)\.index$', index),
     (r'^survex/(?P<survex_file>.*)\.svx$', svx),
@@ -20,11 +22,14 @@ urlpatterns = patterns('',
     (r'^person/(.*)$', person),
 
     (r'^logbookentry/(.*)$', logbookentry),
+    (r'^logbooksearch/(.*)$', logbookSearch),
+    
+    (r'^troggle/statistics/$', stats),
     
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
 
-    (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': 'c:/expodjango/troggle/media/'}),
+    (r'^troggle/site_media/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
 
 )
