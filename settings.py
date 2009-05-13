@@ -1,4 +1,4 @@
-from localsettingsubuntu import *
+from localsettings import *
 # Django settings for troggle2 project.
 
 DEBUG = True
