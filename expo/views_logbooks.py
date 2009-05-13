@@ -69,20 +69,28 @@ def personexpedition(request, first_name='',  last_name='', year=''):
     personexpedition = person.personexpedition_set.get(expedition=expedition)
     return render_response(request,'personexpedition.html', {'personexpedition': personexpedition, })
 
-def logbookentry(request, logbookentry_pk):
-    logbookentry = LogbookEntry.objects.get(pk = logbookentry_pk)
-    logsforcave=logbookentry.cave.logbookentry_set.all()
+def newQMlink(logbookentry):
     biggestQMnumber=0
-    for log in logsforcave:
-	    try:
+    if logbookentry.cave:
+        for log in logbookentry.cave.logbookentry_set.all():
+            try:
 	        biggestQMnumberInLog = logbookentry.QMs_found.order_by('-number')[0].number
 	    except IndexError:
                 biggestQMnumberInLog = 0
 	    if biggestQMnumberInLog > biggestQMnumber:
 		    biggestQMnumber = biggestQMnumberInLog
+    else:
+        return None
+
+
+
     nextQMnumber=biggestQMnumber+1
-    newQMlink=settings.URL_ROOT + r'/admin/expo/qm/add/?' + r'found_by=' + str(logbookentry.pk) +'&number=' + str(nextQMnumber)
-    return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry, 'newQMlink':newQMlink})
+    return settings.URL_ROOT + r'/admin/expo/qm/add/?' + r'found_by=' + str(logbookentry.pk) +'&number=' + str(nextQMnumber)
+
+def logbookentry(request, logbookentry_pk):
+    logbookentry = LogbookEntry.objects.get(pk = logbookentry_pk)
+    
+    return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry, 'newQMlink':newQMlink(logbookentry)})
 
 def logbookSearch(request, extra):
     query_string = ''
