@@ -98,7 +98,7 @@ def GetTripPersons(trippeople, expedition):
         tripperson = tripperson.strip()
         mul = re.match("<u>(.*?)</u>$", tripperson)
         if mul:
-            tripperson = mul.group(1)
+            tripperson = mul.group(1).strip()
         if tripperson and tripperson[0] != '*':
             #assert tripperson in personyearmap, "'%s' << %s\n\n %s" % (tripperson, trippeople, personyearmap)
             personyear = expedition.GetPersonExpedition(tripperson)
@@ -110,7 +110,7 @@ def GetTripPersons(trippeople, expedition):
         author = res[-1]
     return res, author
 
-def Parselogwikitxt(year, personyearmap, txt):
+def Parselogwikitxt(year, expedition, txt):
     trippara = re.findall("===(.*?)===([\s\S]*?)(?====)", txt)
     for triphead, triptext in trippara:
         tripheadp = triphead.split("|")
@@ -130,13 +130,18 @@ def Parselogwikitxt(year, personyearmap, txt):
 
         assert re.match("\d\d\d\d-\d\d-\d\d", tripdate), tripdate
         ldate = datetime.date(int(tripdate[:4]), int(tripdate[5:7]), int(tripdate[8:10]))
-        lbo = models.LogbookEntry(date = ldate, cave = tripcave, title = tripsplace[-1], text = triptext, tu = triptime)
+        print "ppp", trippeople, len(triptext)
+        trippersons, author = GetTripPersons(trippeople, expedition)
+        triptext = triptext[:10] # seems to have aproblem with this
+        print "ttt", triptext
+        lbo = models.LogbookEntry(date = ldate, place = tripcave, title = tripsplace[-1], text = triptext, author=author)
         lbo.save()
 
-        trippersons, author = GetTripPersons(trippeople, personyearmap)
+        print "ppp", trippersons
         for tripperson in trippersons:
-            lbo.cavers.add(tripperson)
-        # add the author
+            pto = models.PersonTrip(personexpedition = tripperson, place=tripcave, date=ldate, timeunderground=triptime, 
+                                    logbookentry=lbo, is_logbookentryauthor=(tripperson == author))
+            pto.save()
 
 def Parseloghtmltxt(year, expedition, txt):
     tripparas = re.findall("<hr\s*/>([\s\S]*?)(?=<hr)", txt)
@@ -169,6 +174,7 @@ def Parseloghtmltxt(year, expedition, txt):
         lbo.save()
         tu = timeug or ""
 
+        print "ppp", trippeople, trippersons
         for tripperson in trippersons:
             pto = models.PersonTrip(personexpedition = tripperson, place=tripcave, date=ldate, timeunderground=tu, 
                                     logbookentry=lbo, is_logbookentryauthor=(tripperson == author))
@@ -181,10 +187,10 @@ def LoadLogbooks():
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
     yearlinks = [ 
 #                    ("2008", "2008/logbook/2008logbook.txt"), 
-#                    ("2007", "2007/logbook/2007logbook.txt"), 
-#                    ("2005", "2005/logbook.html"), 
+                    ("2007", "2007/logbook/2007logbook.txt"), 
+                    ("2005", "2005/logbook.html"), 
                     ("2004", "2004/logbook.html"), 
-#                    ("2003", "2003/logbook.html"), 
+#not done                    ("2003", "2003/logbook.html"), 
                 ]
 
     for year, lloc in yearlinks:
@@ -193,7 +199,7 @@ def LoadLogbooks():
         txt = fin.read()
         fin.close()
         if year >= "2007":
-            Parselogwikitxt(year, personyearmap, txt)
+            Parselogwikitxt(year, expedition, txt)
         else:
             Parseloghtmltxt(year, expedition, txt)
 
