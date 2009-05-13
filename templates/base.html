@@ -34,8 +34,10 @@
 
 
 
-<div id="content" > 
-{% block content %} 
+<div id="content" >
+{% block contentheader %}
+{% endblock %}
+{% block content %}
     REPLACE : The content
 {% endblock %} 
 <br class="clearfloat" /> <!--This is to ensure that the content div expands around floated objects*/-->

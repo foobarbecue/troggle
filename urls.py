@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     (r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     (r'^cavesearch', caveSearch),
+    url(r'^cavearea', caveArea, name="caveArea"),
 
     url(r'^survex/(.*?)\.index$', index, name="survexindex"),
     (r'^survex/(?P<survex_file>.*)\.svx$', svx),

@@ -27,6 +27,11 @@ def survexblock(request, survexpath):
     ftext = survexblock.text
     return render_to_response('survexblock.html', {'survexblock':survexblock, 'ftext':ftext, 'settings':settings })
 
+def caveArea(request, name):
+    cavearea = models.CaveArea.objects.get(name = name)
+    cave = cavearea.cave
+    return render_to_response('cavearea.html', {'cavearea': cavearea, 'cave': cave, 'settings':settings })
+
 def caveSearch(request):
     query_string = ''
     found_entries = None

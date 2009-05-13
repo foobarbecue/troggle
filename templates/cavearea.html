@@ -1,0 +1,9 @@
+{% extends "cavebase.html" %}
+{% load wiki_markup %}
+
+{% block content %}
+{{ cavearea.description }}
+{{ cavearea.name }}
+{{ cavearea.parentArea }}
+{{ cavearea.survexFile }}
+{% endblock %}

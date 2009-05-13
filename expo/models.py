@@ -362,6 +362,14 @@ class Entrance(models.Model):
         for f in self.FINDABLE_CHOICES:
             if f[0] == self.findability:
                 return f[1]
+                
+class CaveArea(models.Model):
+    description = models.TextField()
+    name = models.CharField(max_length=200, unique = True)
+    cave = models.ForeignKey('Cave')
+    parentArea = models.ForeignKey('CaveArea')
+    survexFile = models.CharField(max_length=200)
+
 
 class QM(models.Model):
     #based on qm.csv in trunk/expoweb/smkridge/204 which has the fields:
