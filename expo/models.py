@@ -538,7 +538,7 @@ class Photo(TroggleModel):
     def __str__(self):
         return self.caption
 
-scansFileStorage = FileSystemStorage(location=settings.SURVEYS, base_url=settings.SURVEYS_URL)
+scansFileStorage = FileSystemStorage(location=settings.SURVEY_SCANS, base_url=settings.SURVEYS_URL)
 def get_scan_path(instance, filename):
     year=instance.survey.expedition.year
     print "WN: ", type(instance.survey.wallet_number), instance.survey.wallet_number

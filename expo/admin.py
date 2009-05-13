@@ -24,6 +24,7 @@ class ScannedImageInline(admin.TabularInline):
 
 class SurveyAdmin(TroggleModelAdmin):
     inlines = (ScannedImageInline,)
+    search_fields = ('expedition__year','wallet_number')    
 
 class QMInline(admin.TabularInline):
 	model=QM
