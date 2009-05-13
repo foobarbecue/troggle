@@ -14,7 +14,7 @@ from models_survex import *
 
 #This class is for adding fields and methods which all of our models will have.
 class TroggleModel(models.Model):
-    new_since_parsing = models.BooleanField(default=False)
+    new_since_parsing = models.BooleanField(default=False, editable=False)
     
     def get_admin_url(self):
         return settings.URL_ROOT + "/admin/expo/" + self._meta.object_name + "/" + str(self.pk)
@@ -333,6 +333,8 @@ class Cave(TroggleModel):
             else:
                 return self.unofficial_number
 
+    def get_QMs(self):
+        return QM.objects.filter(found_by__cave=self)	
     
     def kat_area(self):
         for a in self.area.all():
@@ -470,7 +472,16 @@ class QM(TroggleModel):
 	QMnumber=str(self.found_by.cave)+'-'+str(self.found_by.date.year)+"-"+str(self.number)+self.grade
 	return str(QMnumber)
 
-photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
+    def get_absolute_url(self):
+        return settings.URL_ROOT + '/cave/' + self.found_by.cave.kataster_number + '/' + str(self.found_by.date.year) + '-' + '%02d' %self.number
+
+    def get_next_by_id(self):
+        return QM.objects.get(id=self.id+1)
+
+    def get_previous_by_id(self):
+        return QM.objects.get(id=self.id-1)
+
+photoFileStorage = FileSystemStorage(location=settings.EXPOWEB.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
 class Photo(TroggleModel): 
     caption = models.CharField(max_length=1000,blank=True,null=True)
     contains_person_trip = models.ManyToManyField(PersonTrip,blank=True,null=True)
