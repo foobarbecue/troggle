@@ -1,4 +1,4 @@
-import troggle.settings as settings
+from django.conf import settings
 import fileAbstraction
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
