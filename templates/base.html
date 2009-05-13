@@ -8,6 +8,22 @@
 <script src="{{ settings.MEDIA_URL }}js/base.js" type="text/javascript"></script>
 </head>
 <body>
+
+<body onLoad="fadeText()">
+<img src="{{ settings.MEDIA_URL }}loserBanner.jpg" style="width:100%;position:absolute; z-index:-4;width:100%;left:0;right:0;height:100px">
+<div id="expoHeader" style="display:inline;">
+  <h1>CUCC Expeditions to Austria: 1976 - </h1>
+  <div id="expoFinalDate" style="display:inline;" >
+    <h1>1976</h1>
+  </div>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<center><iframe src="{{ settings.MEDIA_URL }}intro.html" style="height:600px; width:800px; border:hidden"></iframe></center>
+
+</body>
+
 <div id="editLink" style="right:0px; top:0px; text-align: right; position: absolute; top:0; right:0; z-index:1">
 	{% block editLink %}not editable
 	{% endblock %}

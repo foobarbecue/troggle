@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from troggle.expo.models import Cave, CaveAndEntrance
+from troggle.expo.models import Cave, CaveAndEntrance, Survey
 import troggle.settings as settings
 from troggle.expo.forms import CaveForm
 import search
@@ -33,5 +33,17 @@ def caveSearch(request):
                           { 'query_string': query_string, 'found_entries': found_entries, 'settings': settings})
                           #context_instance=RequestContext(request))
 
+def surveyindex(request):
+    surveys=Survey.objects.all()
+    return render_to_response('survey.html',{'settings':settings,'surveys':surveys})
 
-
+def survey(request,survey_id):
+    surveys=Survey.objects.all()
+    current_survey=Survey.objects.get(pk=survey_id)
+    notes=current_survey.scannedimage_set.filter(contents='notes')
+    planSketches=current_survey.scannedimage_set.filter(contents='plan')
+    elevationSketches=current_survey.scannedimage_set.filter(contents='elevation')
+    dictToPass=locals()
+    dictToPass.update({'settings':settings})
+    
+    return render_to_response('survey.html',dictToPass)

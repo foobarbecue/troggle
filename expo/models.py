@@ -1,6 +1,10 @@
+import urllib
 from django.forms import ModelForm
 from django.db import models
 from django.contrib import admin
+from django.core.files.storage import FileSystemStorage
+import os
+import troggle.settings as settings
 from models_survex import *
 
 class Expedition(models.Model):
@@ -108,7 +112,7 @@ class Cave(models.Model):
     length = models.CharField(max_length=100,blank=True,null=True)
     depth = models.CharField(max_length=100,blank=True,null=True)
     extent = models.CharField(max_length=100,blank=True,null=True)
-    survex_file = models.CharField(max_length=100,blank=True,null=True)
+    survex_file = models.CharField(max_length=100,blank=True,null=True) #should be filefield, need to fix parser first
     def __unicode__(self):
         if self.kataster_number:
             if self.kat_area():
@@ -296,3 +300,53 @@ class Photo(models.Model):
     def __str__(self):
         return self.caption
 
+scansFileStorage = FileSystemStorage(location=settings.SURVEYS, base_url=settings.SURVEYS_URL)
+def get_scan_path(instance, filename):
+    year=instance.survey.expedition_year.year
+    number="%02d" % instance.survey.wallet_number + instance.survey.wallet_letter #using %02d string formatting because convention was 2009#01
+    return os.path.join('./',year,year+r'#'+number,instance.contents+str(instance.number_in_wallet)+r'.jpg')
+
+class ScannedImage(models.Model): 
+    file = models.ImageField(storage=scansFileStorage, upload_to=get_scan_path)
+    scannedBy = models.ForeignKey(Person,blank=True, null=True)
+    scannedOn = models.DateField(null=True)
+    survey = models.ForeignKey('Survey')
+    contents = models.CharField(max_length=20,choices=(('notes','notes'),('plan','plan_sketch'),('elevation','elevation_sketch')))
+    number_in_wallet = models.IntegerField(null=True)
+    lon_utm = models.FloatField(blank=True,null=True)
+    lat_utm = models.FloatField(blank=True,null=True)
+    #content_type = models.ForeignKey(ContentType)
+    #object_id = models.PositiveIntegerField()
+    #location = generic.GenericForeignKey('content_type', 'object_id')
+
+    def correctURL(self):
+	return urllib.quote(self.file.url)
+    
+    def __str__(self):
+        return get_scan_path(self,'')
+	
+    class admin():
+	    pass
+
+class Survey(models.Model):
+    expedition_year = models.ForeignKey('Expedition')
+    wallet_number = models.IntegerField(blank=True,null=True)
+    wallet_letter = models.CharField(max_length=1,blank=True,null=True)
+    comments = models.TextField(blank=True,null=True)
+    location = models.CharField(max_length=400,blank=True,null=True)
+    #notes_scan = models.ForeignKey('ScannedImage',related_name='notes_scan',blank=True, null=True)  	#Replaced by contents field of ScannedImage model
+    survex_block  = models.ForeignKey('SurvexBlock',blank=True, null=True)
+    centreline_printed_on = models.DateField(blank=True, null=True)
+    centreline_printed_by = models.ForeignKey('Person',related_name='centreline_printed_by',blank=True,null=True)
+    #sketch_scan = models.ForeignKey(ScannedImage,blank=True, null=True) 					#Replaced by contents field of ScannedImage model
+    tunnel_file = models.FileField(upload_to='surveyXMLfiles',blank=True, null=True)
+    tunnel_main_sketch = models.ForeignKey('Survey',blank=True,null=True)
+    integrated_into_main_sketch_on = models.DateField(blank=True,null=True)
+    integrated_into_main_sketch_by = models.ForeignKey('Person' ,related_name='integrated_into_main_sketch_by', blank=True,null=True)
+    rendered_image = models.ImageField(upload_to='renderedSurveys',blank=True,null=True)
+    def __str__(self):
+        return self.expedition_year.year+"#"+"%02d" % self.wallet_number
+	
+    class admin():
+	    pass
+	    

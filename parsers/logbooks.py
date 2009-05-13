@@ -5,6 +5,7 @@ import expo.models as models
 import csv
 import re
 import datetime
+import os
 
 persontab = open(os.path.join(settings.EXPOWEB, "noinfo", "folk.csv"))
 personreader = csv.reader(persontab)

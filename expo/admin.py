@@ -8,6 +8,13 @@ class RoleInline(admin.TabularInline):
 class SurvexBlockAdmin(admin.ModelAdmin):
     inlines = (RoleInline,)
 
+class SurveyInline(admin.TabularInline):
+    model = ScannedImage
+    extra = 4
+
+class SurveyAdmin(admin.ModelAdmin):
+    inlines = (SurveyInline,)
+
 admin.site.register(Photo)
 admin.site.register(Cave)
 admin.site.register(Area)
@@ -24,4 +31,6 @@ admin.site.register(Role)
 admin.site.register(LogbookEntry)
 admin.site.register(PersonTrip)
 admin.site.register(QM)
+admin.site.register(Survey, SurveyAdmin)
+admin.site.register(ScannedImage)
 

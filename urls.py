@@ -27,10 +27,17 @@ urlpatterns = patterns('',
     
     (r'^statistics/?$', stats),
     
+    (r'^survey/?$', surveyindex),
+    (r'^survey/(?P<survey_id>.*)$', survey),
+    
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
 
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+
+    (r'^survey_scans/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': settings.SURVEYS, 'show_indexes':True}),
+
 
 )
