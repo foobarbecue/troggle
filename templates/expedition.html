@@ -38,7 +38,12 @@
     <td>{{logbookentry.date}}</td>
     <td><a href="{% url logbookentry logbookentry.href %}">{{logbookentry.title|safe}}</td>
     <td><a href="{% url personexpedition logbookentry.author.person.href logbookentry.author.expedition.year %}">{{logbookentry.author.name}}</a></td>
-    <td>{{logbookentry.place}}</td>
+
+    {% if logbookentry.cave %}
+      <td><a href="{% url cave logbookentry.cave.href %}">{{logbookentry.place}}</a></td>
+    {% else %}
+      <td>{{logbookentry.place}}</td>
+    {% endif %}
   </tr>
 {% endfor %}
 </table>

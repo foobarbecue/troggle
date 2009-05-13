@@ -9,8 +9,10 @@ urlpatterns = patterns('',
     
     (r'^$', frontPage),
     url(r'^caveindex$', caveindex, name="caveindex"),
+    url(r'^cave/(?P<cave_id>[^/]+)/?$', cave),
     
-    (r'^cave/(?P<cave_id>[^/]+)/?$', cave),
+    url(r'^cavehref/(.+)$', cave, name="cave"),
+    
     (r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     (r'^cavesearch', caveSearch),

@@ -7,12 +7,19 @@ import search
 
 def caveindex(request):
     caves = Cave.objects.all()
-    return render_to_response('caveindex.html', {'caves': caves, 'settings': settings})
+    notablecavehrefs = [ "161", "204", "258", "76" ]
+    notablecaves = [ Cave.objects.get(href=href)  for href in notablecavehrefs ]
+    return render_to_response('caveindex.html', {'caves': caves, 'notablecaves':notablecaves, 'settings': settings})
 
 def cave(request, cave_id):
     #hm, we're only choosing by the number within kataster, needs to be fixed. Caves in 1626 will presumably not work. - AC 7DEC08
     cave = Cave.objects.filter(kataster_number = cave_id)[0]
     return render_to_response('cave.html', {'cave': cave, 'settings': settings})
+
+def cavehref(request, href):
+    cave = Cave.objects.get(href=href)
+    return render_to_response('cave.html', {'cave': cave, 'settings': settings})
+
 
 def ent(request, cave_id, ent_letter):
     cave = Cave.objects.filter(kataster_number = cave_id)[0]

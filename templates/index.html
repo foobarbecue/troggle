@@ -9,26 +9,25 @@
 <b>Work down through an expedition page link</b>
 <p class="indent"><b>Remaining work:</b> 
 
-<p>continue to build up the network; </p>
-<p>tables of trips per year per person;</p> 
+<p>(separate out the recent/notable people) vast front-page layout table of folks and caving trips and years; </p>
 <p>parse 1995-1976 logbooks; </p>
-<p>continue to correct the name matching and spelling; </p>
+<p>name matching and spelling in survex files; </p>
 <p>detect T/U on log entries; </p>
+<p>Improve logbook wikihtml text</p>
 <p>match caves to log entries; </p>
-<p>see the cave list;</p> 
 <p>simplify the survex parsing code (if necessary); </p>
-<p>vast front-page layout table of folks and caving trips and years; </p>
 <p>links between logbooks and survex blocks to cave things; </p>
 <p>where are the subcaves; </p>
 <p>mini-tree of survexblocks; </p>
 <p>connect sketches to caves to survey blocks and render thumbnailwise; </p>
 <p>all images to start appearing in pages; and so on</p>
+<p>tables of trips per year per person;</p> 
 
 <h3>{{message}}</h3>
 
 <ul>
-    <li><a href="{% url personindex %}">List of People</a></li>
-    <li><a href="{% url caveindex %}">List of Caves</a></li>
+    <li><b><a href="{% url personindex %}">List of People</a></b></li>
+    <li><b><a href="{% url caveindex %}">List of Caves</a></b></li>
     <li><a href="/statistics">Statistics of what's loaded in the database</a></li>
     <li><a href="{% url survexindex all %}">Survex directory</a></li>
     <li><a href="{% url survey %}">Survey files</a></li>
@@ -40,13 +39,11 @@
 </form>
 
 <ul id="expeditionlist">
-
-    {% for expedition in expeditions %}
-        <li>
-            <a href="{% url expedition expedition.year %}">{{expedition.name}}</a>
-        </li>
-    {% endfor %}
-
+{% for expedition in expeditions %}
+<li>
+  <a href="{% url expedition expedition.year %}">{{expedition.name}}</a>
+</li>
+{% endfor %}
 </ul>
 
 {% endblock %}

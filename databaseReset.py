@@ -18,6 +18,7 @@ user.is_superuser = True
 user.save()
 
 import parsers.cavetab
+parsers.cavetab.LoadCaveTab()
 import parsers.people
 parsers.people.LoadPersonsExpos()
 import parsers.logbooks

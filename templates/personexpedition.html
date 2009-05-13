@@ -36,7 +36,12 @@
     {% for persontrip in persondate.1.persontrips %}
       <tr>
         <td class="trip"><a href="{% url logbookentry persontrip.logbook_entry.href %}">{{persontrip.logbook_entry.title|safe}}</a></td>
-        <td class="place">{{persontrip.place}}</td>
+
+        {% if persontrip.logbook_entry.cave %}
+          <td><a href="{% url cave persontrip.logbook_entry.cave.href %}">{{persontrip.place}}</a></td>
+        {% else %}
+          <td>{{persontrip.place}}</td>
+        {% endif %}
       </tr>
     {% endfor %}
     </table>

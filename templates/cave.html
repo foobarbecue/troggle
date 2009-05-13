@@ -2,6 +2,19 @@
 {% load wiki_markup %}
 
 {% block content %}
+
+<div id="col2">
+  <h3>All trips done in this cave</h3>
+  <table>
+  {% for logbookentry in cave.logbookentry_set.all %}
+    <tr>
+      <td>{{logbookentry.date}}</td>
+      <td><a href="{% url logbookentry logbookentry.href %}">{{logbookentry.title|safe}}</a></td>
+    </tr>
+  {% endfor %}
+  </table>
+</div>
+
 {% if cave.entrances %}
     <h2>Entrances</h2>
     {% for ent in cave.entrances %}

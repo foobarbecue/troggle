@@ -4,7 +4,19 @@
 {% block title %}Cave Index{% endblock %}
 
 {% block content %}
-{% for cave in caves %}
-<p>{{ cave }} <a href="{{settings.URL_ROOT}}cave/{{ cave.kataster_number }}/">{{ cave.official_name|wiki_to_html_short }}</a> </p>
+
+<h3>Notable caves</h3>
+<ul>
+{% for cave in notablecaves %}
+  <li> <a href="{% url cave cave.href %}">{{cave.official_name|wiki_to_html_short}} ({{cave.href}})</a> </li>
 {% endfor %}
+</ul>
+
+<h3>All caves</h3>
+<ul>
+{% for cave in caves %}
+  <li> <a href="{% url cave cave.href %}">{{cave.official_name|wiki_to_html_short}} ({{cave.href}})</a> </li>
+{% endfor %}
+</ul>
+
 {% endblock %}

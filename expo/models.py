@@ -49,18 +49,6 @@ class Expedition(models.Model):
 			date+=datetime.timedelta(days=1)
 		return res
 
-    # deprecated
-    def GetPersonExpedition(self, name):
-        person_expeditions = PersonExpedition.objects.filter(expedition=self)
-        res = None
-        for person_expedition in person_expeditions:
-            for possible_name_from in person_expedition.GetPossibleNameForms():
-                #print "nnn", possiblenamefrom
-                if name == possible_name_from:
-                    assert not res, "Ambiguous: " + name
-                    res = person_expedition
-        return res
-
     
 
 
@@ -198,6 +186,7 @@ class CaveAndEntrance(models.Model):
         return unicode(self.cave) + unicode(self.entrance_letter)
         
 class Cave(models.Model):
+    # too much here perhaps
     official_name = models.CharField(max_length=160)
     area = models.ManyToManyField(Area, blank=True, null=True)
     kataster_code = models.CharField(max_length=20,blank=True,null=True)
@@ -216,6 +205,18 @@ class Cave(models.Model):
     depth = models.CharField(max_length=100,blank=True,null=True)
     extent = models.CharField(max_length=100,blank=True,null=True)
     survex_file = models.CharField(max_length=100,blank=True,null=True) #should be filefield, need to fix parser first
+    
+    href    = models.CharField(max_length=100)
+    
+    def Sethref(self):
+        if self.kataster_number:
+            self.href = self.kataster_number
+        elif self.unofficial_number:
+            self.href = self.unofficial_number
+        else:
+            self.href = official_name.lower()
+            
+        
     def __unicode__(self):
         if self.kataster_number:
             if self.kat_area():
@@ -227,6 +228,8 @@ class Cave(models.Model):
                 return self.kat_area() + u": " + self.unofficial_number
             else:
                 return self.unofficial_number
+
+    
     def kat_area(self):
         for a in self.area.all():
             if a.kat_area():
@@ -271,12 +274,15 @@ class LogbookEntry(models.Model):
     text    = models.TextField()
     href    = models.CharField(max_length=100)
     
+    # turn these into functions
     logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
     logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
     
     class Meta:
 	   verbose_name_plural = "Logbook Entries"
         # several PersonTrips point in to this object
+    class Meta:
+        ordering = ('-date',)
     
     def __unicode__(self):
         return "%s: (%s)" % (self.date, self.title)
@@ -287,6 +293,7 @@ class PersonTrip(models.Model):
         # this will be a foreign key of the place(s) the trip went through
         # possibly a trip has a plurality of triplets pointing into it
     place           = models.CharField(max_length=100)  
+    # should add cave thing here (copied from logbook maybe)
     date            = models.DateField()    
     time_underground = models.FloatField()  
     logbook_entry    = models.ForeignKey(LogbookEntry)
@@ -474,3 +481,5 @@ class Survey(models.Model):
 
     def elevations(self):
 	    return self.scannedimage_set.filter(contents='elevation')
+    
+    

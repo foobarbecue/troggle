@@ -56,9 +56,6 @@ MarkingComment = 43
 Findability = 44
 FindabilityComment = 45
 
-cavetab = open(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"))
-caveReader = csv.reader(cavetab)
-caveReader.next() # Strip out column headers
 
 def html_to_wiki(text):
     if type(text) != str:
@@ -138,130 +135,137 @@ def html_to_wiki(text):
             text2 = ""
     return out
 
-for katArea in ['1623', '1626']:
-    if not models.Area.objects.filter(short_name = katArea):
-        newArea = models.Area(short_name = katArea)
-        newArea.save()
-area1626 = models.Area.objects.filter(short_name = '1626')[0]
-area1623 = models.Area.objects.filter(short_name = '1623')[0]
+def LoadCaveTab():
+    cavetab = open(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"))
+    caveReader = csv.reader(cavetab)
+    caveReader.next() # Strip out column headers
+    
+    for katArea in ['1623', '1626']:
+        if not models.Area.objects.filter(short_name = katArea):
+            newArea = models.Area(short_name = katArea)
+            newArea.save()
+    area1626 = models.Area.objects.filter(short_name = '1626')[0]
+    area1623 = models.Area.objects.filter(short_name = '1623')[0]
+    
+    counter=0
+    for line in caveReader :
+        if line[Area] == 'nonexistent':
+            continue
+        entranceLetters=[] #Used in caves that have mulitlple entrances, which are not described on seperate lines
+        if line[MultipleEntrances] == 'yes' or line[MultipleEntrances]=='':
+            args = {}
+            def addToArgs(CSVname, modelName):
+                if line[CSVname]:
+                    args[modelName] = html_to_wiki(line[CSVname])
+            addToArgs(KatasterNumber, "kataster_number")
+            addToArgs(KatStatusCode, "kataster_code")
+            addToArgs(UnofficialNumber, "unofficial_number")
+            addToArgs(Name, "official_name")
+            addToArgs(Comment, "notes")
+            addToArgs(Explorers, "explorers")
+            addToArgs(UndergroundDescription, "underground_description")
+            addToArgs(Equipment, "equipment")
+            addToArgs(KatasterStatus, "kataster_status")
+            addToArgs(References, "references")
+            addToArgs(UndergroundCentreLine, "underground_centre_line")
+            addToArgs(UndergroundDrawnSurvey, "survey")
+            addToArgs(Length, "length")
+            addToArgs(Depth, "depth")
+            addToArgs(Extent, "extent")
+            addToArgs(SurvexFile, "survex_file")
+            addToArgs(Notes, "notes")
 
-counter=0
-for line in caveReader :
-    if line[Area] == 'nonexistent':
-        continue
-    entranceLetters=[] #Used in caves that have mulitlple entrances, which are not described on seperate lines
-    if line[MultipleEntrances] == 'yes' or line[MultipleEntrances]=='':
-        args = {}
-        def addToArgs(CSVname, modelName):
-            if line[CSVname]:
-                args[modelName] = html_to_wiki(line[CSVname])
-        addToArgs(KatasterNumber, "kataster_number")
-        addToArgs(KatStatusCode, "kataster_code")
-        addToArgs(UnofficialNumber, "unofficial_number")
-        addToArgs(Name, "official_name")
-        addToArgs(Comment, "notes")
-        addToArgs(Explorers, "explorers")
-        addToArgs(UndergroundDescription, "underground_description")
-        addToArgs(Equipment, "equipment")
-        addToArgs(KatasterStatus, "kataster_status")
-        addToArgs(References, "references")
-        addToArgs(UndergroundCentreLine, "underground_centre_line")
-        addToArgs(UndergroundDrawnSurvey, "survey")
-        addToArgs(Length, "length")
-        addToArgs(Depth, "depth")
-        addToArgs(Extent, "extent")
-        addToArgs(SurvexFile, "survex_file")
-        addToArgs(Notes, "notes")
-
-        newCave = models.Cave(**args)
-        newCave.save()
-
-        if line[Area]:
-            if line[Area] ==  "1626":
-                newCave.area.add(area1626)
-            else:
-                area = models.Area.objects.filter(short_name = line[Area])
-                if area:
-                    newArea = area[0]
+            newCave = models.Cave(**args)
+            newCave.Sethref()
+            newCave.save()
+    
+            if line[Area]:
+                if line[Area] ==  "1626":
+                    newCave.area.add(area1626)
                 else:
-                    newArea = models.Area(short_name = line[Area], parent = area1623)
-                    newArea.save()
-                newCave.area.add(newArea)
-        else:
-           newCave.area.add(area1623)
-
-        newCave.save()
+                    area = models.Area.objects.filter(short_name = line[Area])
+                    if area:
+                        newArea = area[0]
+                    else:
+                        newArea = models.Area(short_name = line[Area], parent = area1623)
+                        newArea.save()
+                    newCave.area.add(newArea)
+            else:
+                newCave.area.add(area1623)
+    
+            newCave.save()
 
         if line[UnofficialName]:
             newUnofficialName = models.OtherCaveName(cave = newCave, name = line[UnofficialName])
             newUnofficialName.save()
-    if line[MultipleEntrances] == '' or \
-        line[MultipleEntrances] == 'entrance' or \
-        line[MultipleEntrances] == 'last entrance':
-        args = {}
-        def addToArgs(CSVname, modelName):
-            if line[CSVname]:
-                args[modelName] = html_to_wiki(line[CSVname])
-        def addToArgsViaDict(CSVname, modelName, dictionary):
-            if line[CSVname]:
-                args[modelName] = dictionary[html_to_wiki(line[CSVname])]
-        addToArgs(EntranceName, 'name')
-        addToArgs(Explorers, 'explorers')
-        addToArgs(Map, 'map_description')
-        addToArgs(Location, 'location_description')
-        addToArgs(Approach, 'approach')
-        addToArgs(EntranceDescription, 'entrance_description')
-        addToArgs(UndergroundDescription, 'underground_description')
-        addToArgs(PhotoOfLocation, 'photo')
-        addToArgsViaDict(Marking, 'marking', {"Paint": "P",
-                                              "Paint (?)": "P?",
-                                              "Tag": "T",
-                                              "Tag (?)": "T?",
-                                              "Retagged": "R",
-                                              "Retag": "R",
-                                              "Spit": "S",
-                                              "Spit (?)": "S?",
-                                              "Unmarked": "U",
-                                              "": "?",
-                                              })
-        addToArgs(MarkingComment, 'marking_comment')
-        addToArgsViaDict(Findability, 'findability', {"Surveyed": "S",
-                                                      "Lost": "L",
-                                                      "Refindable": "R",
-                                                      "": "?",
-                                                      "?": "?",
-                                                      })
-        addToArgs(FindabilityComment, 'findability_description')
-        addToArgs(Easting, 'easting')
-        addToArgs(Northing, 'northing')
-        addToArgs(Altitude, 'alt')
-        addToArgs(DescriptionOfOtherPoint, 'other_description')
-        def addToArgsSurveyStation(CSVname, modelName):
-            if line[CSVname]:
-                surveyPoint = models.SurveyStation(name = line[CSVname])
-                surveyPoint.save()
-                args[modelName] = html_to_wiki(surveyPoint)
-        addToArgsSurveyStation(TagPoint, 'tag_station')
-        addToArgsSurveyStation(ExactEntrance, 'exact_station')
-        addToArgsSurveyStation(OtherPoint, 'other_station')
-        addToArgs(OtherPoint, 'other_description')
-        if line[GPSpreSA]:
-            addToArgsSurveyStation(GPSpreSA, 'other_station')
-            args['other_description'] = 'pre selective availability GPS'
-        if line[GPSpostSA]:
-            addToArgsSurveyStation(GPSpostSA, 'other_station')
-            args['other_description'] = 'post selective availability GPS'
-        addToArgs(Bearings, 'bearings')
-        newEntrance = models.Entrance(**args)
-        newEntrance.save()
-
-        if line[Entrances]:
-            entrance_letter = line[Entrances]
-        else:
-            entrance_letter = ''
-
-        newCaveAndEntrance = models.CaveAndEntrance(cave = newCave, entrance = newEntrance, entrance_letter = entrance_letter)
-        newCaveAndEntrance.save()
+    
+        if line[MultipleEntrances] == '' or \
+            line[MultipleEntrances] == 'entrance' or \
+            line[MultipleEntrances] == 'last entrance':
+            args = {}
+            def addToArgs(CSVname, modelName):
+                if line[CSVname]:
+                    args[modelName] = html_to_wiki(line[CSVname])
+            def addToArgsViaDict(CSVname, modelName, dictionary):
+                if line[CSVname]:
+                    args[modelName] = dictionary[html_to_wiki(line[CSVname])]
+            addToArgs(EntranceName, 'name')
+            addToArgs(Explorers, 'explorers')
+            addToArgs(Map, 'map_description')
+            addToArgs(Location, 'location_description')
+            addToArgs(Approach, 'approach')
+            addToArgs(EntranceDescription, 'entrance_description')
+            addToArgs(UndergroundDescription, 'underground_description')
+            addToArgs(PhotoOfLocation, 'photo')
+            addToArgsViaDict(Marking, 'marking', {"Paint": "P",
+                                                "Paint (?)": "P?",
+                                                "Tag": "T",
+                                                "Tag (?)": "T?",
+                                                "Retagged": "R",
+                                                "Retag": "R",
+                                                "Spit": "S",
+                                                "Spit (?)": "S?",
+                                                "Unmarked": "U",
+                                                "": "?",
+                                                })
+            addToArgs(MarkingComment, 'marking_comment')
+            addToArgsViaDict(Findability, 'findability', {"Surveyed": "S",
+                                                        "Lost": "L",
+                                                        "Refindable": "R",
+                                                        "": "?",
+                                                        "?": "?",
+                                                        })
+            addToArgs(FindabilityComment, 'findability_description')
+            addToArgs(Easting, 'easting')
+            addToArgs(Northing, 'northing')
+            addToArgs(Altitude, 'alt')
+            addToArgs(DescriptionOfOtherPoint, 'other_description')
+            def addToArgsSurveyStation(CSVname, modelName):
+                if line[CSVname]:
+                    surveyPoint = models.SurveyStation(name = line[CSVname])
+                    surveyPoint.save()
+                    args[modelName] = html_to_wiki(surveyPoint)
+            addToArgsSurveyStation(TagPoint, 'tag_station')
+            addToArgsSurveyStation(ExactEntrance, 'exact_station')
+            addToArgsSurveyStation(OtherPoint, 'other_station')
+            addToArgs(OtherPoint, 'other_description')
+            if line[GPSpreSA]:
+                addToArgsSurveyStation(GPSpreSA, 'other_station')
+                args['other_description'] = 'pre selective availability GPS'
+            if line[GPSpostSA]:
+                addToArgsSurveyStation(GPSpostSA, 'other_station')
+                args['other_description'] = 'post selective availability GPS'
+            addToArgs(Bearings, 'bearings')
+            newEntrance = models.Entrance(**args)
+            newEntrance.save()
+    
+            if line[Entrances]:
+                entrance_letter = line[Entrances]
+            else:
+                entrance_letter = ''
+    
+            newCaveAndEntrance = models.CaveAndEntrance(cave = newCave, entrance = newEntrance, entrance_letter = entrance_letter)
+            newCaveAndEntrance.save()
 
 
 # lookup function modelled on GetPersonExpeditionNameLookup
@@ -277,6 +281,9 @@ def GetCaveLookup():
             Gcavelookup[cave.kataster_number] = cave
         if cave.unofficial_number:
             Gcavelookup[cave.unofficial_number] = cave
+    
+    Gcavelookup["tunnocks"] = Gcavelookup["258"]
+    Gcavelookup["hauchhole"] = Gcavelookup["234"]
     return Gcavelookup
         
         

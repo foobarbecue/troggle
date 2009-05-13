@@ -63,13 +63,16 @@ def GetTripCave(place):                     #need to be fuzzier about matching h
         return
 
 
+noncaveplaces = [ "Journey", "Loser Plateau" ]
 def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_underground):
     trippersons, author = GetTripPersons(trippeople, expedition, logtime_underground)
 #    tripCave = GetTripCave(place)
 
     lbo = models.LogbookEntry(date=date, place=place, title=title[:50], text=text, author=author, expedition=expedition)
-    lbo.cave=GetCaveLookup().get(place)
-    print "pppp", place, lbo.cave
+    lplace = place.lower()
+    if lplace not in noncaveplaces:
+        lbo.cave=GetCaveLookup().get(lplace)
+        print "pppp %s |%s|" % (lplace, str(lbo.cave))
     
     lbo.save()
     #print "ttt", date, place
@@ -158,7 +161,7 @@ def Parseloghtml01(year, expedition, txt):
         tripid = mtripid and mtripid.group(1) or ""
         tripheader = re.sub("</?(?:[ab]|span)[^>]*>", "", tripheader)
 
-        print [tripheader]
+        #print [tripheader]
         #continue
 
         tripdate, triptitle, trippeople = tripheader.split("|")

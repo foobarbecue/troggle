@@ -8,7 +8,12 @@
 
 <div id="col2">
 <p><a href="{% url expedition logbookentry.expedition.year %}">{{logbookentry.expedition.name}}</a></p>
-<p>place: {{logbookentry.place}}</p>
+
+{% if logbookentry.cave %}
+  <p>place: <a href="{% url cave logbookentry.cave.href %}">{{logbookentry.place}}</p>
+{% else %}
+  <p>{{logbookentry.place}}</p>
+{% endif %}
 
 <p>
   {% if logbookentry.logbookentry_prev %}
