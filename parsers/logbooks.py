@@ -1,16 +1,10 @@
 #.-*- coding: utf-8 -*-
-import sys
-import os
-sys.path.append('C:\\Expo\\expoweb')
-from troggle import *
-os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
-import troggle.settings as settings
-import troggle.expo.models as models
+
+import settings
+import expo.models as models
 import csv
 import re
 import datetime
-from django.db.models import Q
-
 
 persontab = open(os.path.join(settings.EXPOWEB, "noinfo", "folk.csv"))
 personreader = csv.reader(persontab)
