@@ -17,6 +17,7 @@ user.is_staff = True
 user.is_superuser = True
 user.save()
 
-import parsers.cavetab
-import parsers.survex
 import parsers.logbooks
+import parsers.cavetab
+import parsers.QMs
+import parsers.survex

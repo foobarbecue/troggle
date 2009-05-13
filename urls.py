@@ -6,11 +6,11 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Example:
-    (r'^cave/$', caveindex),
-    (r'^cave/(?P<cave_id>[^/]+)/$', cave),
-    (r'^cave/(?P<cave_id>[^/]+)/(?P<ent_letter>[^/]?)$', ent),
+    (r'^cave/?$', caveindex),
+    (r'^cave/(?P<cave_id>[^/]+)/?$', cave),
+    (r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
-    (r'^cavesearch/$', caveSearch),
+    (r'^cavesearch', caveSearch),
     
     (r'^survex/(?P<survex_file>.*)\.index$', index),
     (r'^survex/(?P<survex_file>.*)\.svx$', svx),
@@ -18,15 +18,15 @@ urlpatterns = patterns('',
     (r'^survex/(?P<survex_file>.*)\.log$', log),
     (r'^survex/(?P<survex_file>.*)\.err$', err),
 
-    (r'^person/$', personindex),
-    (r'^person/(.*)$', person),
+    (r'^person/?$', personindex),
+    (r'^person/(?P<person_id>\d*)(?P<first_name>[a-zA-Z]*)[-_/\.\s(\%20)]*(?P<last_name>[a-zA-Z]*)/?$', person),
 
-    (r'^logbookentry/(.*)$', logbookentry),
-    (r'^logbooksearch/(.*)$', logbookSearch),
+    (r'^logbookentry/(.*)/?$', logbookentry),
+    (r'^logbooksearch/(.*)/?$', logbookSearch),
     
-    (r'^statistics/$', stats),
+    (r'^statistics/?$', stats),
     
-    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
 
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
