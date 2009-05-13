@@ -34,6 +34,17 @@ def wiki_list(line, listdepth):
 @register.filter()
 @stringfilter
 def wiki_to_html(value, autoescape=None):
+    #find paragraphs
+    outValue = ""
+    for paragraph in re.split("\n\s*?\n", value, re.DOTALL):
+        outValue += "<p>"
+        outValue += wiki_to_html_short(paragraph, autoescape)
+        outValue += "</p>\n"
+    return mark_safe(outValue)
+
+@register.filter()
+@stringfilter
+def wiki_to_html_short(value, autoescape=None):
     if autoescape:
         value = conditional_escape(value)
     #deescape doubly escaped characters
@@ -42,9 +53,11 @@ def wiki_to_html(value, autoescape=None):
     value = re.sub("&#39;&#39;&#39;&#39;([^']+)&#39;&#39;&#39;&#39;", r"<b><i>\1</i></b>", value, re.DOTALL)
     value = re.sub("&#39;&#39;&#39;([^']+)&#39;&#39;&#39;", r"<b>\1</b>", value, re.DOTALL)
     value = re.sub("&#39;&#39;([^']+)&#39;&#39;", r"<i>\1</i>", value, re.DOTALL)
+    #make cave links
+    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="/troggle/cave/\1/">\1</a>', value, re.DOTALL)
     #Make lists from lines starting with lists of [stars and hashes]
-    listdepth = []
     outValue = ""
+    listdepth = []
     for line in value.split("\n"):
         t, listdepth = wiki_list(line, listdepth)
         outValue += t

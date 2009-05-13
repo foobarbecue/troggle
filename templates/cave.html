@@ -8,20 +8,20 @@
 <tr>
     <th id="kat_no">
         {% if cave.kataster_number %}
-            {{ cave.kataster_number|wiki_to_html }}
+            {{ cave.kataster_number|wiki_to_html_short }}
             {% if cave.entrancelist %}
-                - {{ cave.entrancelist|wiki_to_html }}
+                - {{ cave.entrancelist|wiki_to_html_short }}
             {% endif %}
             {% if cave.unofficial_number %}
-                <br />({{ cave.unofficial_number|wiki_to_html }})
+                <br />({{ cave.unofficial_number|wiki_to_html_short }})
             {% endif %}
         {% endif %}
     </th>
     <th id="name">
-         {{ cave.official_name|wiki_to_html }}
+         {{ cave.official_name|wiki_to_html_short }}
     </th>
     <th id="status">
-         {{ cave.kataster_code|wiki_to_html }}
+         {{ cave.kataster_code|wiki_to_html_short }}
     </th>
 </tr>
 </table>
@@ -29,9 +29,9 @@
 {% if cave.entrances %}
     <h2>Entrances</h2>
     {% for ent in cave.entrances %}
-        <a href = "./{{ ent.entrance_letter|wiki_to_html }}">{{ ent.entrance_letter|wiki_to_html }}</a>
+        <a href = "./{{ ent.entrance_letter|wiki_to_html_short }}">{{ ent.entrance_letter|wiki_to_html_short }}</a>
         {% if ent.entrance.marking %}
-            Marking: {{ ent.entrance.marking_val|wiki_to_html }}
+            Marking: {{ ent.entrance.marking_val|wiki_to_html_short }}
         {% endif %}
         <br>
     {% endfor %}

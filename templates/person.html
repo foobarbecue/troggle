@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load wiki_markup %}
 
-{% block title %}Person {{person.id}}{% endblock %}
+{% block title %}Person {{person|wiki_to_html_short}}{% endblock %}
 
 {% block content %}
-    <div class="personblock"><a href="/person/{{person.id}}">{{person}}</a>
+    <div class="personblock"><a href="/person/{{person.id}}">{{person|wiki_to_html_short}}</a>
     <ul>
     {% for personexpedition in person.personexpedition_set.all %}
         <li>
@@ -14,7 +14,9 @@
         <div>
         <ul>
         {% for persontrip in personexpedition.persontrip_set.all %}
-            <li><a href="/logbookentry/{{persontrip.logbookentry.id}}">{{persontrip.date}}</a> ({{persontrip.logbookentry.place}}) - {{persontrip.logbookentry.title}}</li>
+            <li><a href="/logbookentry/{{persontrip.logbookentry.id}}">{{persontrip.date}}</a>
+            ({{persontrip.logbookentry.place|wiki_to_html_short}}) - 
+             {{persontrip.logbookentry.title|wiki_to_html_short}}</li>
         {% endfor %}
         <ul>
         </div>
