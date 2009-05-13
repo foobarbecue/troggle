@@ -21,7 +21,8 @@ urlpatterns = patterns('',
     #url(r'^person/(\w+_\w+)$',       views_logbooks.person,      name="person"),
 
     url(r'^expedition/(\d+)$',  views_logbooks.expedition,  name="expedition"),
-    url(r'^personexpedition/(?P<first_name>[A-Z]*[a-z]*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z]*)/(?P<year>\d+)/?$', views_logbooks.personexpedition, name="personexpedition"),
+    #url(r'^personexpedition/(?P<first_name>[A-Z]*[a-z]*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z]*)/(?P<year>\d+)/?$', views_logbooks.personexpedition, name="personexpedition"),
+    url(r'^personexpedition/(.+?)/(\d+)$', views_logbooks.personexpedition, name="personexpedition"),
     url(r'^logbookentry/(.+)$', views_logbooks.logbookentry,name="logbookentry"),
     
     url(r'^survexblock/(.+)$',  views_caves.survexblock,    name="survexblock"),

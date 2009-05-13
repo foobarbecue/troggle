@@ -6,8 +6,8 @@
 {% block content %}
 
 <h2>The unfinished front page</h2>
-
 <ul>
+    <li><b>About {{totallogbookentries}} logbook entries have been loaded</b></li>
     <li><b><a href="{% url personindex %}">List of People</a></b></li>
     <li><b><a href="{% url caveindex %}">List of Caves</a></b></li>
     <li><a href="{% url jgtfile aaaa %}">JGT list of files</a> (temporary simple file list and tunnel use)</li>
@@ -15,21 +15,24 @@
     <li><a href="{% url survexindex all %}">Survex directory</a></li>
     <li><a href="{% url expedition 2008 %}">Expedition 2008</a></li>
     <li><a href="{% url expedition 2007 %}">Expedition 2007</a></li>
-    <li><a href="{% url expedition 1996 %}">Expedition 1996</a></li>
+    <li><a href="{% url expedition 1993 %}">Expedition 1993</a> (earliest parsed)</li>
 </ul>
 
 <h2>Further work</h2>
 
+<p>Julian's work:
+<p>parse 1992-1976 logbooks; (esp top 161)</p>
+<p>detect T/U on log entries; </p>
+<p>name matching and spelling in survex files; </p>
+<p>Improve logbook wikihtml text</p>
+
+<p>Other work:</p>
 <p>surf through the tunnel sketches and images</p>
 <p>bugs with all.svx block (double dot)
-<p>name matching and spelling in survex files; </p>
 <p>render bitmap view of every survex block as a thumbnail</p>
 <p>upload tunnel images and tunnel sketches</p>
-<p>parse 1995-1976 logbooks; (esp top 161)</p>
 <p>where are the subcaves; </p>
 <p>cave section entrance match for logbook entries</p>
-<p>detect T/U on log entries; </p>
-<p>Improve logbook wikihtml text</p>
 <p>simplify the survex parsing code (if necessary); </p>
 <p>wiki survex stop linegap between comment lins</p>
 <p>links between logbooks and survex blocks to cave things; </p>
@@ -48,6 +51,7 @@
 {% for expedition in expeditions %}
 <li>
   <a href="{% url expedition expedition.year %}">{{expedition.name}}</a>
+  - <b>{{expedition.logbookentry_set.count}}</b> logbook entries
 </li>
 {% endfor %}
 </ul>

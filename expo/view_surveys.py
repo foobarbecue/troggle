@@ -94,35 +94,64 @@ def jgtfile(request, f):
     return HttpResponse("unknown file::%s::" % f, mimetype = "text/plain")
 
 
-def SaveImageInDir(name, imgdir, fdata):
-    print ("hihihihi", fdata, settings.SURVEYS)
-    print os.path.join(settings.SURVEYS, imgdir)
-    if not os.path.isdir(os.path.join(settings.SURVEYS, imgdir)):
-        print "*** Must have directory '%s' in '%s'" % (imgdir, settings.SURVEYS)
+def UniqueFile(fname):
     while True:
-        fname = os.path.join(settings.SURVEYS, imgdir, name)
         if not os.path.exists(fname):
             break
-        mname = re.match("(.*?)(?:-(\d+))?\.(png|jpg|jpeg)$(?i)", name)
+        mname = re.match("(.*?)(?:-(\d+))?\.(png|jpg|jpeg)$(?i)", fname)
         if mname:
-            name = "%s-%d.%s" % (mname.group(1), int(mname.group(2) or "0") + 1, mname.group(3))
+            fname = "%s-%d.%s" % (mname.group(1), int(mname.group(2) or "0") + 1, mname.group(3))
+    return fname
+
+
+# join it all up and then split them off for the directories that don't exist
+# anyway, this mkdir doesn't work
+def SaveImageInDir(name, imgdir, project, fdata, bbinary):
+    print ("hihihihi", fdata, settings.SURVEYS)
+    fimgdir = os.path.join(settings.SURVEYS, imgdir)
+    if not os.path.isdir(fimgdir):
+        print "*** Making directory", fimgdir
+        os.path.mkdir(fimgdir)
+    fprojdir = os.path.join(fimgdir, project)
+    if not os.path.isdir(fprojdir):
+        print "*** Making directory", fprojdir
+        os.path.mkdir(fprojdir)
+        print "hhh"
+        
+    fname = os.path.join(fprojdir, name)
+    print fname, "fff"
+    fname = UniqueFile(fname)
+    
+    p2, p1 = os.path.split(fname)
+    p3, p2 = os.path.split(p2)
+    p4, p3 = os.path.split(p3)
+    res = os.path.join(p3, p2, p1)
+    
     print "saving file", fname
-    fout = open(fname, "wb")
+    fout = open(fname, (bbinary and "wb" or "w"))
     fout.write(fdata.read())
     fout.close()
     res = os.path.join(imgdir, name)
     return res.replace("\\", "/")
 
+
+# do we want to consider saving project/field rather than field/project
 def jgtuploadfile(request):
     filesuploaded = [ ]
-    project, user, tunnelversion = request.POST["project"], request.POST["user"], request.POST["tunnelversion"]
+    project, user, password, tunnelversion = request.POST["tunnelproject"], request.POST["tunneluser"], request.POST["tunnelpassword"], request.POST["tunnelversion"]
     print (project, user, tunnelversion)
     for uploadedfile in request.FILES.values():
         if uploadedfile.field_name in ["tileimage", "backgroundimage"] and \
                         uploadedfile.content_type in ["image/png", "image/jpeg"]:
             fname = user + "_" + re.sub("[\\\\/]", "-", uploadedfile.name) # very escaped \
             print fname
-            fileuploaded = SaveImageInDir(fname, uploadedfile.field_name, uploadedfile)
+            fileuploaded = SaveImageInDir(fname, uploadedfile.field_name, project, uploadedfile, True)
+            filesuploaded.append(settings.URL_ROOT + "/jgtfile/" + fileuploaded)
+        if uploadedfile.field_name in ["sketch"] and \
+                        uploadedfile.content_type in ["text/plain"]:
+            fname = user + "_" + re.sub("[\\\\/]", "-", uploadedfile.name) # very escaped \
+            print fname
+            fileuploaded = SaveImageInDir(fname, uploadedfile.field_name, project, uploadedfile, False)
             filesuploaded.append(settings.URL_ROOT + "/jgtfile/" + fileuploaded)
     #print "FF", request.FILES
     #print ("FFF", request.FILES.values())
