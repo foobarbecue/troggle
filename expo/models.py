@@ -9,6 +9,8 @@ from django.contrib.contenttypes.models import ContentType
 import os
 from django.conf import settings
 import datetime
+from decimal import Decimal, getcontext
+getcontext().prec=2 #use 2 significant figures for decimal calculations
 
 from models_survex import *
 
@@ -76,13 +78,7 @@ class Person(TroggleModel):
     mug_shot    = models.CharField(max_length=100, blank=True,null=True)
     blurb = models.TextField(blank=True,null=True)
     
-    
-       # this has been put back in so that the personexpedition links work
-       # if you're going to insist on replace something that works with an over-complex, dire, inevitably-flawed pointless 
-       # and unnecessary regexp like (?P<first_name>[A-Z]*[a-z\-\']*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z\-]*)/?
-       # for no reason at all, at least make it work everywhere!
-    href        = models.CharField(max_length=200)  
-    
+    #href        = models.CharField(max_length=200)
     orderref    = models.CharField(max_length=200)  # for alphabetic 
     
     #the below have been removed and made methods. I'm not sure what the b in bisnotable stands for. - AC 16 Feb
@@ -110,23 +106,23 @@ class Person(TroggleModel):
 #        return self.personexpedition_set.order_by('-expedition')[0]
     
     def notability(self):
-        notability = 0.0
-        for personexpedition in Person.personexpedition_set.all():
+        notability = Decimal(0)
+        for personexpedition in self.personexpedition_set.all():
              if not personexpedition.is_guest:
-                notability += 1.0 / (2012 - int(self.personexpedition.expedition.year))
+                notability += Decimal(1) / (2012 - int(personexpedition.expedition.year))
         return notability
 
     def bisnotable(self):
-        return self.notability > 0.3
+        return self.notability() > Decimal(1)/Decimal(3)
     
-    def Sethref(self):
-        if self.last_name:
-            self.href = self.first_name.lower() + "_" + self.last_name.lower()
-            self.orderref = self.last_name + " " + self.first_name
-        else:
-            self.href = self.first_name.lower()
-            self.orderref = self.first_name
-        self.notability = 0.0  # set temporarily
+    #def Sethref(self):
+        #if self.last_name:
+            #self.href = self.first_name.lower() + "_" + self.last_name.lower()
+            #self.orderref = self.last_name + " " + self.first_name
+        #else:
+          #  self.href = self.first_name.lower()
+            #self.orderref = self.first_name
+        #self.notability = 0.0  # set temporarily
         
 
 class PersonExpedition(TroggleModel):
@@ -215,9 +211,6 @@ class LogbookEntry(TroggleModel):
     cave    = models.ForeignKey('Cave',blank=True,null=True)
     place   = models.CharField(max_length=100,blank=True,null=True)  
     text    = models.TextField()
-    
-    # having this commented out prevents us from ever devising a regular URL, possibly based on the date of the trip 
-    # and then disambiguated depending on how many trips there are
     #href    = models.CharField(max_length=100)
     
     
