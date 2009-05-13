@@ -18,7 +18,7 @@
 {% ifequal otherpersonexpedition personexpedition %}
   | <b>{{otherpersonexpedition.expedition.year}}</b>
 {% else %}
-  | <a href="{{ personexpedition.get_absolute_url }}">{{otherpersonexpedition.expedition.year}}</a>
+  | <a href="{{ otherpersonexpedition.get_absolute_url }}">{{otherpersonexpedition.expedition.year}}</a>
 {% endifequal %}
 {% endfor %}
 </p>
