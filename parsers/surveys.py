@@ -2,12 +2,12 @@ import sys
 import os
 import urllib
 import types
-sys.path.append('C:\\Expo\\expoweb')
+#sys.path.append('C:\\Expo\\expoweb')
 from troggle import *
-os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
+#os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
 import troggle.settings as settings
 import troggle.expo.models as models
-import fileAbstraction
+import troggle.expo.fileAbstraction as fileAbstraction
 
 #import settings
 #import expo.models as models
@@ -15,16 +15,8 @@ import csv
 import re
 import datetime
 
-def openFileOrWeb(name):
-    try:
-        f = open(os.path.join(settings.FILES, name))
-    except:
-        f = urllib.urlopen(settings.FILES + "download/" + name)
-    return f.readlines()
-
-surveytab = openFileOrWeb("Surveys.csv")
-
-dialect=csv.Sniffer().sniff(reduce(lambda x, y: x + "\n" + y, surveytab))
+surveytab = fileAbstraction.readFile("Surveys.csv")
+dialect=csv.Sniffer().sniff(surveytab)
 surveyreader = csv.reader(surveytab,dialect=dialect)
 print surveyreader
 headers = surveyreader.next()
