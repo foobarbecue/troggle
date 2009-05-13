@@ -1,5 +1,16 @@
-def save(objectType, lookupAttribs={}, nonLookupAttribs={}):
+from settings import LOGFILE
 
+def save_carefully(objectType, lookupAttribs={}, nonLookupAttribs={}):
+    """Looks up instance using lookupAttribs and carries out the following:
+            -if instance does not exist in DB: add instance to DB, return (new instance, True)
+            -if instance exists in DB and was modified using Troggle: do nothing, return (existing instance, False)
+            -if instance exists in DB and was not modified using Troggle: overwrite instance, return (instance, False)
+            
+        The checking is accomplished using Django's get_or_create and the new_since_parsing boolean field
+        defined in expo.models.TroggleModel.
+    
+    """
+    
     instance, created=objectType.objects.get_or_create(defaults=nonLookupAttribs, **lookupAttribs)
 
     if not created and not instance.new_since_parsing:
@@ -7,4 +18,14 @@ def save(objectType, lookupAttribs={}, nonLookupAttribs={}):
             setattr(instance, k, v)
         instance.save()
     
-    return instance
+    if LOGFILE:
+        if created:
+            LOGFILE.write(unicode(instance)+u' was just added to the database for the first time. \n')
+        
+        if not created and instance.new_since_parsing:
+            LOGFILE.write(unicode(instance)+" has been modified using Troggle, so the current script left it as is. \n")
+
+        if not created and not instance.new_since_parsing:
+            LOGFILE.write(unicode(instance)+" existed in the database unchanged since last parse. It was overwritten by the current script. \n")
+        LOGFILE.flush()
+    return (instance, created)
