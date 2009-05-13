@@ -30,6 +30,8 @@ class Person(models.Model):
     is_vfho     = models.BooleanField(help_text="VFHO is the Vereines f&uuml;r H&ouml;hlenkunde in Obersteier, a nearby Austrian caving club.")    
     mug_shot    = models.CharField(max_length=100, blank=True,null=True)
     blurb = models.TextField(blank=True,null=True)
+    class Meta:
+	    verbose_name_plural = "People"
     def __unicode__(self):
         return "%s %s" % (self.first_name, self.last_name)
 
@@ -159,7 +161,8 @@ class LogbookEntry(models.Model):
     cave = models.ForeignKey(Cave,blank=True,null=True)
     place   = models.CharField(max_length=100,blank=True,null=True)  
     text    = models.TextField()
-
+    class Meta:
+	verbose_name_plural = "LogbookEntries"
         # several PersonTrips point in to this object
     
     def __unicode__(self):
@@ -292,3 +295,4 @@ class Photo(models.Model):
 
     def __str__(self):
         return self.caption
+
