@@ -71,7 +71,18 @@ def personexpedition(request, first_name='',  last_name='', year=''):
 
 def logbookentry(request, logbookentry_pk):
     logbookentry = LogbookEntry.objects.get(pk = logbookentry_pk)
-    return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry, })
+    logsforcave=logbookentry.cave.logbookentry_set.all()
+    biggestQMnumber=0
+    for log in logsforcave:
+	    try:
+	        biggestQMnumberInLog = logbookentry.QMs_found.order_by('-number')[0].number
+	    except IndexError:
+                biggestQMnumberInLog = 0
+	    if biggestQMnumberInLog > biggestQMnumber:
+		    biggestQMnumber = biggestQMnumberInLog
+    nextQMnumber=biggestQMnumber+1
+    newQMlink=settings.URL_ROOT + r'/admin/expo/qm/add/?' + r'found_by=' + str(logbookentry.pk) +'&number=' + str(nextQMnumber)
+    return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry, 'newQMlink':newQMlink})
 
 def logbookSearch(request, extra):
     query_string = ''

@@ -9,5 +9,5 @@ registration_complete.html | {{ block.super }}
 {% endblock %}
 
 {% block content %}
-Thank you for signing up, {{ user.username }}. An email with the activation code has been sent to your inbox. If you have been on the expedition in the past, you already have a profile in the system; <a href={% url profiles_select_profile %}>click here </a> to find it and link it to your account. Otherwise, please <a href={% url profiles_create_profile %}> create yourself a new profile</a>. If you have been on the expedition in the past, this step allows existing expedition data to be linked to your new account.
+Thank you for signing up, {{ user.username }}. An email with the activation code has been sent to your inbox. If you have been on the expedition in the past, you already have a profile in the system; <a href={% url profiles_select_profile %}>click here </a> to find it and link it to your account. Otherwise, please <a href={% url profiles_create_profile %}> create yourself a new profile</a>. 
 {% endblock %}

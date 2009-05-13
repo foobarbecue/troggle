@@ -3,16 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main3.css" />
-
 <title>{% block title %}THE TITLE{% endblock %}</title>
-
 <script src="{{ settings.MEDIA_URL }}js/base.js" type="text/javascript"></script>
 {% block head %}{% endblock %}
 </head>
-
 <body>
-
-<div>
+<div class="wrapper">
   <div id="expoHeader"> <img id="frontPageBanner" src="{{ settings.MEDIA_URL }}loserBanner.jpg"/>
     <div id="expoHeaderText">
       <h1>CUCC Expeditions to Austria: 1976 - </h1>
@@ -22,46 +18,28 @@
     </div>
   </div>
   <hr/>
-  <div id="editLink"> 
-  	{% block loginInfo %}
-    	{% if user.username %}
-	    	You are logged in as {{ user.username }}. 
-            | <a href="{{ settings.URL_ROOT }}/accounts/logout">Log out</a>
-        {% else %}
-        	<a href="{{ settings.URL_ROOT }}/accounts/register">Sign up</a>
-            | <a href="{{ settings.URL_ROOT }}/accounts/login">Log in</a>
-        {% endif %}
+  <div id="editLink"> {% block loginInfo %}
+    {% if user.username %}
+    You are logged in as {{ user.username }}. 
+    | <a href="{{ settings.URL_ROOT }}/accounts/logout/">Log out</a> {% else %} <a href="{{ settings.URL_ROOT }}/accounts/register">Sign up</a> | <a href="{{ settings.URL_ROOT }}/accounts/login/">Log in</a> {% endif %}
     {% endblock%}
     | <a href="{{ settings.URL_ROOT }}">Home </a> |
- 	{% block editLink %}
-
-    {% endblock %}
-  </div>
-</div>
-
-
-
+    {% block editLink %}
+    
+    {% endblock %} </div>
   {% block nav %}
   <!-- Use id="nav" for the left side menu -->
-  {% endblock %} 
-
-
-
-<div id="content" >
-{% block contentheader %}
-{% endblock %}
-{% block content %}
+  {% endblock %}
+  <div id="content" > {% block contentheader %}
+    {% endblock %}
+    {% block content %}
     REPLACE : The content
-{% endblock %} 
-<br class="clearfloat" /> <!--This is to ensure that the content div expands around floated objects*/-->
+    {% endblock %} <br class="clearfloat" />
+    <!--This is to ensure that the content div expands around floated objects*/-->
+  </div>
 </div>
-
-
-<div id="footer">
-{% block footer %}
-  THE FOOTER
-{% endblock %}
+<div class="push"></div>
 </div>
+<div id="footer"> {% block footer %} <a href="http://cucc.survex.com"> CUCC website</a>| <a href="http://cucc.survex.com/expo"> Expedition website </a>| <a href="{% url frontpage %}"> Troggle front page </a>| <a href="{% url caveindex %}"> All caves </a>| <a href="{% url personindex %}"> All cavers </a>| <a href="{% url caveindex %}"> Virtual survey binder </a>| <a href="{% url survey %}"> Expedition statistics </a>| <a href="{% url calendar 2007 %}"> Expedition calendar </a> {% endblock %} </div>
 </body>
 </html>
-

@@ -55,7 +55,7 @@ div#content
 div#footer 
 {
     clear:both;
-    background-color:black;
+    background-color:#999;
     color:white;
     text-align:center;
     margin-left:auto;
@@ -293,6 +293,17 @@ td {
 #nav {
 
 }
+
+.redtext{
+		 color:#F00;
+		 }
+
+a.redtext:link {
+	color:#F00;
+	
+}
+
+.redtext
 
 .menuBarItem {
 	font-variant: small-caps;

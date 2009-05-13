@@ -19,7 +19,7 @@ class TroggleModel(models.Model):
     new_since_parsing = models.BooleanField(default=False, editable=False)
     
     def get_admin_url(self):
-        return settings.URL_ROOT + "/admin/expo/" + self._meta.object_name + "/" + str(self.pk)
+        return settings.URL_ROOT + "/admin/expo/" + self._meta.object_name.lower() + "/" + str(self.pk)
 
     class Meta:
 	    abstract = True
@@ -214,8 +214,8 @@ class LogbookEntry(TroggleModel):
     #href    = models.CharField(max_length=100)
     
     
-    logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
-    logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
+    #logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
+    #logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
 
     class Meta:
 	   verbose_name_plural = "Logbook Entries"

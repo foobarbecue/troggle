@@ -4,7 +4,8 @@ import troggle.settings as settings
 from expo.views import *  # flat import
 from expo.views_caves import *
 from expo.views_survex import *
-
+from expo.models import *
+from django.views.generic.create_update import create_object
 from django.contrib import admin
 admin.autodiscover()
 
@@ -41,7 +42,7 @@ urlpatterns = patterns('',
 
     url(r'^survex/(.*?)\.index$', views_survex.index, name="survexindex"),
     url(r'^cave/(?P<cave_id>[^/]+)/?$', views_caves.cavehref),
-    url(r'^cave/(?P<cave_id>[^/]+)/(?P<year>\d\d\d\d)-(?P<qm_id>\d\d)?$', views_caves.qm),
+    url(r'^cave/(?P<cave_id>[^/]+)/(?P<year>\d\d\d\d)-(?P<qm_id>\d\d)(?P<grade>[ABCDX]?)?$', views_caves.qm, name="qm"),
     (r'^survex/(?P<survex_file>.*)\.svx$', svx),
     (r'^survex/(?P<survex_file>.*)\.3d$', threed),
     (r'^survex/(?P<survex_file>.*)\.log$', log),
@@ -59,7 +60,8 @@ urlpatterns = patterns('',
     url(r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey, name="survey"),
     
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
-    (r'^admin/(.*)', admin.site.root),
+    
+    url(r'^admin/', include(admin.site.urls),name="admin"),
 
     (r'^accounts/', include('registration.urls')),
     (r'^profiles/', include('profiles.urls')),

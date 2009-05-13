@@ -2,7 +2,8 @@ from django import template
 from django.utils.html import conditional_escape
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
-import troggle.settings as settings
+from django.conf import settings
+from expo.models import QM
 import re
 
 register = template.Library()
@@ -55,7 +56,35 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub("&#39;&#39;&#39;([^']+)&#39;&#39;&#39;", r"<b>\1</b>", value, re.DOTALL)
     value = re.sub("&#39;&#39;([^']+)&#39;&#39;", r"<i>\1</i>", value, re.DOTALL)
     #make cave links
-    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/troggle/cave/\1/">\1</a>' % settings.URL_ROOT, value, re.DOTALL)
+    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/cave/\1/">\1</a>' % settings.URL_ROOT, value, re.DOTALL)
+    
+    
+    #function for replacing wikicode qm links with html qm links
+    def qmrepl(matchobj):
+	if len(matchobj.groups())==4:
+		grade=matchobj.groups()[3]
+	else:
+		grade=''
+        qmdict={'urlroot':settings.URL_ROOT,'cave':matchobj.groups()[0],'year':matchobj.groups()[1],'number':matchobj.groups()[2],'grade':grade}
+	try:
+	    qm=QM.objects.get(found_by__cave__kataster_number=qmdict['cave'],found_by__date__year=qmdict['year'], number=qmdict['number'])
+	    url=r'<a href=' + str(qm.get_absolute_url()) +'>' + str(qm) + '</a>'
+	except QM.DoesNotExist:
+	    url = r'<a class="redtext" href="%(urlroot)s/cave/%(cave)s/%(year)s-%(number)s%(grade)s">%(cave)s:%(year)s-%(number)s%(grade)s</a>' % qmdict
+        return url 
+
+    #make qm links
+    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\QM:(\d*)-(\d*)([ABCDX]?)\]\]",qmrepl, value, re.DOTALL)
+    
+    #qms=qmfinder.search(value)
+    #for qm in qms:
+        #if QM.objects.filter(cave__kataster_number=qm[0], found_by__year=qm[1], number=qm[2]).count >= 1: # If there is at lesat one QM matching this query
+	#replace qm with link in red
+        #else 
+	 #replace qm with link in blue
+	 
+    #turn qm links red if nonexistant
+    
     #Make lists from lines starting with lists of [stars and hashes]
     outValue = ""
     listdepth = []

@@ -6,9 +6,13 @@ from troggle.parsers.people import LoadPersonsExpos
 import re
 from troggle.parsers.survex import LoadAllSurvexBlocks
 import randSent
+from django.http import HttpResponse
 
 from django.core.urlresolvers import reverse
 from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
+
+def showrequest(request):
+    return HttpResponse(request.GET)
 
 def stats(request):
     statsDict={}

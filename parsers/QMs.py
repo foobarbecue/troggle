@@ -33,9 +33,9 @@ def parseCaveQMs(cave,pathToCSV):
             year=int(line[0][1:5])
             #check if placeholder exists for given year, create it if not
             if cave=='stein':
-                placeholder, hadToCreate = LogbookEntry.objects.get_or_create(date__year=year, text="placeholder for QMs in 204", defaults={"date": date(year, 1, 1),"cave":steinBr})
+                placeholder, hadToCreate = LogbookEntry.objects.get_or_create(date__year=year, title="placeholder for QMs in 204", text="QMs temporarily attached to this should be re-attached to their actual trips", defaults={"date": date(year, 1, 1),"cave":steinBr})
             elif cave=='hauch':
-                placeholder, hadToCreate = LogbookEntry.objects.get_or_create(date__year=year, text="placeholder for QMs in 234", defaults={"date": date(year, 1, 1),"cave":hauchHl})            
+                placeholder, hadToCreate = LogbookEntry.objects.get_or_create(date__year=year, title="placeholder for QMs in 234", text="QMs temporarily attached to this should be re-attached to their actual trips", defaults={"date": date(year, 1, 1),"cave":hauchHl})            
             if hadToCreate:
                 print cave+" placeholder logbook entry for " + str(year) + " added to database"
             QMnum=re.match(r".*?-\d*?-X?(?P<numb>\d*)",line[0]).group("numb")

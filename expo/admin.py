@@ -1,5 +1,7 @@
 from troggle.expo.models import *
 from django.contrib import admin
+from django.forms import ModelForm
+import django.forms as forms
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
 
 class RoleInline(admin.TabularInline):
@@ -16,9 +18,14 @@ class ScannedImageInline(admin.TabularInline):
 class SurveyAdmin(admin.ModelAdmin):
     inlines = (ScannedImageInline,)
 
+class QMInline(admin.TabularInline):
+	model=QM
+	extra = 4
+
 #class LogbookEntryAdmin(VersionAdmin):
 class LogbookEntryAdmin(admin.ModelAdmin):
     search_fields = ('title','expedition__year')
+    #inlines = (QMInline,) #doesn't work because QM has two foreignkeys to Logbookentry- need workaround
 
 class PersonExpeditionInline(admin.TabularInline):
     model = PersonExpedition
@@ -29,15 +36,17 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = (PersonExpeditionInline,)
 
 class QMAdmin(admin.ModelAdmin):
+    search_fields = ('found_by__cave__kataster_number','number')
     def save_model(self, request, obj, form, change):
 	obj.new_since_parsing=True
 	obj.save()
-	
+
 class PersonExpeditionAdmin(admin.ModelAdmin):
     search_fields = ('person__first_name','expedition__year')
 
 class CaveAdmin(admin.ModelAdmin):
     search_fields = ('official_name','kataster_number','unofficial_number')
+    #inlines = (QMInline,)
     extra = 4
 
 
@@ -57,7 +66,7 @@ admin.site.register(PersonExpedition,PersonExpeditionAdmin)
 admin.site.register(Role)
 admin.site.register(LogbookEntry, LogbookEntryAdmin)
 admin.site.register(PersonTrip)
-admin.site.register(QM)
+admin.site.register(QM, QMAdmin)
 admin.site.register(Survey, SurveyAdmin)
 admin.site.register(ScannedImage)
 

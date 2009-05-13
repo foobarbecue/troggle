@@ -1,9 +1,12 @@
-from troggle.expo.models import Cave, CaveAndEntrance, Survey, Expedition
+from troggle.expo.models import Cave, CaveAndEntrance, Survey, Expedition, QM
 import troggle.expo.models as models
 import troggle.settings as settings
-from troggle.expo.forms import CaveForm
+from django.forms.models import formset_factory
 import search
+from django.core.urlresolvers import reverse
 from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
+from django.http import HttpResponseRedirect
+from django.conf import settings
 
 def getCave(cave_id):
     """Returns a cave object when given a cave name or number. It is used by views including cavehref, ent, and qm."""
@@ -21,11 +24,19 @@ def caveindex(request):
 
 def cavehref(request, cave_id='', offical_name=''):
     return render_response(request,'cave.html', {'cave': getCave(cave_id),})
-
-def qm(request,cave_id,qm_id,year):
+    
+def qm(request,cave_id,qm_id,year,grade=None):
     year=int(year)
-    qm=getCave(cave_id).get_QMs().get(number=qm_id,found_by__date__year=year)
-    return render_response(request,'qm.html',{'qm':qm,})
+    try:
+        qm=getCave(cave_id).get_QMs().get(number=qm_id,found_by__date__year=year)
+	return render_response(request,'qm.html',locals())
+
+    except QM.DoesNotExist:
+	url= settings.URL_ROOT + r'/admin/expo/qm/add/?'+  r'number=' + qm_id
+	if grade:
+	    url += r'&grade=' + grade
+	return HttpResponseRedirect(url)
+    
 
 def ent(request, cave_id, ent_letter):
     cave = Cave.objects.filter(kataster_number = cave_id)[0]
