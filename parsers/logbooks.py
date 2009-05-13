@@ -92,7 +92,7 @@ def LoadPersons():
 
 def parseMugShotAndBlurb(firstname, lastname, person, header, pObject):
     #create mugshot Photo instance
-    mugShotPath = settings.EXPOWEB+"folk/"+person[header["Mugshot"]]
+    mugShotPath = os.path.join(settings.EXPOWEB, "folk", person[header["Mugshot"]])
     if mugShotPath[-3:]=='jpg': #if person just has an image, add it
         mugShotObj = models.Photo(
             caption="Mugshot for "+firstname+" "+lastname,

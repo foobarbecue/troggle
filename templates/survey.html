@@ -51,14 +51,14 @@
 {% endblock %}
 
 <body class="twoColHybLtHdr">
-{% block currentLocation %}
+<div id="currentLocation">
   CUCC Expo virtual survey binder:
   {% if current_survey %}
   {{current_survey}}
   {% else %}
   {{current_year }}
   {% endif %}
-{% endblock %}
+</div>
 
 {% block nav %}
 <div id="sidebar1">

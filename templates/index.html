@@ -5,8 +5,12 @@
 
 {% block content %}
 
+<h2>The unfinished front page</h2>
+<p>Some handy links into the less incomplete parts of this webpage</p>
 
-{% endblock %}
-{% block currentLocation %}
-Welcome to the website of the Cambridge University Caving Club's expeditions to Austria.
+<ul>
+    <li><a href="{% url personindex %}">List osf people</a></li>
+    <li><a href="/statistics">Statistics of what's loaded in the database</a></li>
+</ul>
+
 {% endblock %}

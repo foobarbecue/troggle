@@ -2,19 +2,39 @@
 .centre				{ text-align: center; }
 .plus2pt			{ font-size: 160%; }
 
-body, td, center, ul, p, input 	{
+body, td, center, ul, p, input 	
+{
 	color:  rgb(0, 0, 0);
 	font-family: sans-serif;
 }
-body {
+
+body 
+{
 	background-color: #FFFFFF;
 	font: 100% Verdana, Arial, Helvetica, sans-serif;
-	background: #666666;
-	margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+	Zbackground: #666666;
+	margin: 0; 
 	padding: 0;
-	text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+	text-align: center; 
 	color: #000000;
 }
+
+div#content 
+{
+    border: thin black dotted;
+    margin: 50px; 
+}
+
+div#footer 
+{
+    background-color:black;
+    color:white;
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+
 #expoHeader {
 	width:100%;
 	position:relative;
@@ -123,11 +143,8 @@ position: absolute;
 top: 0;
 right: 0;
 }
-div.footer {
-position: fixed;
-bottom: 2px;
-left: 2px;
-}
+
+
 div.main {
 margin-bottom: 3em;
 }
