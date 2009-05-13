@@ -3,27 +3,66 @@
 .plus2pt			{ font-size: 160%; }
 
 body, td, center, ul, p, input 	{
-	color:  rgb(204, 204, 102);
+	color:  rgb(0, 0, 0);
 	font-family: sans-serif;
 }
 body {
-	background-color: #000;
+	background-color: #FFFFFF;
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #666666;
+	margin: 0; /* it's good practice to zero the margin and padding of the body element to account for differing browser defaults */
+	padding: 0;
+	text-align: center; /* this centers the container in IE 5* browsers. The text is then set to the left aligned default in the #container selector */
+	color: #000000;
 }
 #expoHeader {
-	position: relative;
-	display: inline;
-	top:60px;
+	width:100%;
+	position:relative;
+	left:0;
+	right:0;
+	height:100px;
 }
+#currentLocation {
+	float:right;
+	background:#999;
+	line-height: 80%;
+	font-variant: small-caps;
+	margin: 0px;
+	padding: 0px;
+}
+#expoHeaderText {
+	background:#999;
+	position:absolute;
+	bottom:0px;
+	clip:rect(10px auto auto auto)
+/*	filter:alpha(opacity=90);
+	-moz-opacity:.90;
+	opacity:.90; */
+}
+
+hr{
+	margin:0;
+	padding:0;
+	height:1px;
+	border:thin solid #000;
+	border:#000;
+	color:#000;
+	background:#000;
+}
+
+#expoHeader h1{
+	position:relative;
+	bottom:-8px;
+	vertical-align:top;
+}
+
 #expoFinalDate {
 	display: inline;
 }
-h1 {
-	display: inline;
-}
-a:link, a:visited		{ text-decoration: none; }
+
 div.centre img			{ vertical-align: middle; }
 
-h1				{ text-align: center; font-size: 210%; opacity:0.7; filter:alpha(opacity=70);}
+h1				{ text-align: center; font-size: 210%; display: inline;}
 h2				{ color: #009900; }
 h3				{ color: #2c105e; }
 h4				{ color: #0d664c; }
@@ -105,3 +144,113 @@ table#cavepage th#status	{ text-align: right; width: 25%; }
 
 .command                        { color: #FF0000; }
 .comment                        { color: #888888; font-style:italic;}
+
+/* Fron dreamweaver template */
+body {
+
+}
+.twoColHybLtHdr #container {
+	width: 80%;  /* this will create a container 80% of the browser width */
+	background: #FFFFFF;
+	margin: 0 auto; /* the auto margins (in conjunction with a width) center the page */
+	border: 1px solid #000000;
+	text-align: left; /* this overrides the text-align: center on the body element. */
+}
+.thumbnail {
+	width: 300px;
+}
+
+table {
+	border: thin solid silver;
+	border-collapse: collapse;
+}
+td {
+	padding:0px;
+	border: thin solid silver;
+}
+.twoColHybLtHdr #header h1 {
+	margin: 0; /* zeroing the margin of the last element in the #header div will avoid margin collapse - an unexplainable space between divs. If the div has a border around it, this is not necessary as that also avoids the margin collapse */
+	padding: 10px 0; /* using padding instead of margin will allow you to keep the element away from the edges of the div */
+}
+/* Tips for sidebar1:
+1. Since we are working in relative units, it's best not to use padding on the sidebar. It will be added to the overall width for standards compliant browsers creating an unknown actual width. 
+2. Since em units are used for the sidebar value, be aware that its width will vary with different default text sizes.
+3. Space between the side of the div and the elements within it can be created by placing a left and right margin on those elements as seen in the ".twoColHybLtHdr #sidebar1 p" rule.
+*/
+.twoColHybLtHdr #sidebar1 {
+	float: left;
+	width: 12em; /* since this element is floated, a width must be given */
+	background: #EBEBEB; /* the background color will be displayed for the length of the content in the column, but no further */
+	padding: 15px 0; /* top and bottom padding create visual space within this div  */
+}
+.twoColHybLtHdr #sidebar1 h3, .twoColHybLtHdr #sidebar1 p {
+	margin-left: 10px; /* the left and right margin should be given to every element that will be placed in the side columns */
+	margin-right: 10px;
+}
+
+.twoColHybLtHdr #mainContent {
+	margin: 0 20px 0 13em; /* the right margin can be given in percentages or pixels. It creates the space down the right side of the page. */
+}
+.twoColHybLtHdr #footer {
+	padding: 0 10px; /* this padding matches the left alignment of the elements in the divs that appear above it. */
+	background:#DDDDDD;
+}
+.twoColHybLtHdr #footer p {
+	margin: 0; /* zeroing the margins of the first element in the footer will avoid the possibility of margin collapse - a space between divs */
+	padding: 10px 0; /* padding on this element will create space, just as the the margin would have, without the margin collapse issue */
+}
+/* Miscellaneous classes for reuse */
+.fltrt { /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
+	float: right;
+	margin-left: 8px;
+}
+.fltlft { /* this class can be used to float an element left in your page */
+	float: left;
+	margin-right: 8px;
+}
+.clearfloat { /* this class should be placed on a div or break element and should be the final element before the close of a container that should fully contain a float */
+	clear:both;
+	height:0;
+	font-size: 1px;
+	line-height: 0px;
+}
+.menuBarItem {
+	font-variant: small-caps;
+	text-align: right;
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	border-top-width: thin;
+	border-right-width: thin;
+	border-bottom-width: thin;
+	border-left-width: thin;
+}
+.behind {
+	display: none;
+}
+div.figure {
+  float: left;
+  width: 25%;
+  border: thin silver solid;
+  margin: 0.5em;
+  padding: 0.5em;
+}
+div.figure p {
+  text-align: left;
+  font-size: smaller;
+  text-indent: 0;
+}
+img.thumbnail {
+  width: 100%;
+}
+
+</style>
+[if IE]>
+<style type="text/css"> 
+/* place css fixes for all versions of IE in this conditional comment */
+.twoColHybLtHdr #sidebar1 { padding-top: 30px; }
+.twoColHybLtHdr #mainContent { zoom: 1; padding-top: 15px; }
+/* the above proprietary zoom property gives IE the hasLayout it may need to avoid several bugs */
+</style>
+<![endif]

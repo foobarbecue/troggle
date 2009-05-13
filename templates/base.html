@@ -4,73 +4,38 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main2.css" />
 <title>{% block title %}{% endblock %}</title>
-<!-- script to toggle navbar -->
+
 <script src="{{ settings.MEDIA_URL }}js/base.js" type="text/javascript"></script>
+{% block javascript %}{% endblock %}
 </head>
 <body>
-
-<body onLoad="fadeText()">
-<img src="{{ settings.MEDIA_URL }}loserBanner.jpg" style="width:100%;position:absolute; z-index:-4;width:100%;left:0;right:0;height:100px">
-<div id="expoHeader" style="display:inline;">
-  <h1>CUCC Expeditions to Austria: 1976 - </h1>
-  <div id="expoFinalDate" style="display:inline;" >
-    <h1>1976</h1>
+<div style="float:none">
+  <div id="expoHeader" style="background:#222"> <img src="{{ settings.MEDIA_URL }}loserBanner.jpg" style="position:relative;width:inherit;height:inherit;"/>
+    <div id="expoHeaderText">
+      <h1>CUCC Expeditions to Austria: 1976 - </h1>
+      <div id="expoFinalDate" style="display:inline;" >
+        <h1>1976</h1>
+      </div>
+    </div>
+  </div>
+  <hr/>
+  <div id="editLink" style="right:0px; top:0px; text-align: right; position: absolute; top:0; right:0; z-index:1; background:#999"> 
+ 	{% block editLink %}
+    	not editable
+    {% endblock %}
   </div>
 </div>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<center><iframe src="{{ settings.MEDIA_URL }}intro.html" style="height:600px; width:800px; border:hidden"></iframe></center>
+<div id="nav" style="float:left; top:200; background:#999; width:200; height:100%"> {% block nav %}
+  
+  {% endblock %} </div>
 
-</body>
-
-<div id="editLink" style="right:0px; top:0px; text-align: right; position: absolute; top:0; right:0; z-index:1">
-	{% block editLink %}not editable
-	{% endblock %}
-</div>
-<div id="bottomRight" style="position:absolute;right:0;bottom:0">
-<img src="{{ settings.MEDIA_URL }}SilkRoadsilouetteAndrew.png" id="bridge" style="position:absolute; right:60px; bottom:0;z-index:-1;">
-{% block lgbkQuote %}{% endblock %}
-</div>
-
-<div id="headerBackBar" style="background-color:#CCCC66; position:absolute; left:0; right:0; z-index:-2; top:60px; opacity:0.7; filter:alpha(opacity=70);height:75px; color:#000000; text-indent:100px">
-  <p>
-  <br>
+<div id="currentLocation"> <br>
   {% block currentLocation %}
   Welcome to the website of the Cambridge University Caving Club's expeditions to Austria.
-  {% endblock %}
-  </p>
-</div>
-<div class="contents">
-<div class="main"> {% block content %}{% endblock %} </div>
+  {% endblock %} </div>
+<div class="content"> {% block content %} 
+  {% endblock %} </div>
 {% block footer %}
-<div class="footer" id="footerHidden">
-  <h4><a href="javascript:;" onMouseDown="showDiv('footerHidden','footerShowing');">[Show Troggle Navigation / Search]</a></h4>
-</div>
-<div class="footer" id="footerShowing" style="background-color:#CCC; display:none">
-  <h4 class="navbar"> Troggle navigation <a href="javascript:;" onMouseDown="hideDiv('footerHidden','footerShowing');">[Hide]</a> or <a href="javascript:;" onMouseDown="makeDivTransparent('footerShowing');">[Make transparent]</a>
-    </align>
-  </h4>
-  <table class="normal">
-    <tr>
-      <td rowspan="2"><a href="{{ settings.URL_ROOT }}cave">list caves</a> or
-        <form name="input" action="{{ settings.URL_ROOT }}cavesearch" method="get">
-          <input type="text" name="q" value="search caves">
-          <input type="submit" value="Submit">
-        </form></td>
-      <td rowspan="2"><a href="{{ settings.URL_ROOT }}logbookentry">list logbook entries</a> or
-        <form name="input" action="{{ settings.URL_ROOT }}logbooksearch" method="get">
-          <input type="text" name="q" value="search logbooks">
-          <input type="submit" value="Submit">
-        </form></td>
-      <td><a href="{{ settings.URL_ROOT }}person">list cavers</a></td>
-      <td><a href="{{ settings.URL_ROOT }}statistics"> statistics</a></td>
-    <tr>
-      <td><a href="{{ settings.URL_ROOT }}photos">photos</a></td>
-      <td><a href="{{ settings.URL_ROOT }}admin"> admin</a></td>
-  </table>
-</div>
 <p>{% endblock %}</p>
-
 </body>
 </html>

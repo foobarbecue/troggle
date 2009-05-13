@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     
-    #(r'^$', frontPage),
+    (r'^$', frontPage),
     (r'^cave/?$', caveindex),
     (r'^cave/(?P<cave_id>[^/]+)/?$', cave),
     (r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
