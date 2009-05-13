@@ -19,12 +19,13 @@ class Expedition(models.Model):
         return self.year
 
     def ListDays(self):
-        dates=[]
-	date=self.start_date
-        while date <= self.end_date:
-		dates.append(date)
-                date+=datetime.timedelta(days=1)
-	return dates
+	if self.start_date and self.end_date:
+		res=[]
+		date=self.start_date
+		while date <= self.end_date:
+			res.append(date)
+			date+=datetime.timedelta(days=1)
+		return res
 
     def GetPersonExpedition(self, name):
         person_expeditions = PersonExpedition.objects.filter(expedition=self)
@@ -66,6 +67,22 @@ class PersonExpedition(models.Model):
         if self.nickname:
             res.append(self.nickname)
         return res
+
+    def ListDays(self):
+	if self.from_date and self.to_date:
+		res=[]
+		date=self.from_date
+		while date <= self.to_date:
+			res.append(date)
+			date+=datetime.timedelta(days=1)
+		return res
+
+    def ListDaysTF(self):
+	if self.from_date and self.to_date:
+		res=[]
+		for date in self.expedition.ListDays():
+			res.append(date in self.ListDays())
+		return res
 
     def __unicode__(self):
         return "%s: (%s)" % (self.person, self.expedition)

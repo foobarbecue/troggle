@@ -18,6 +18,12 @@ class SurveyAdmin(admin.ModelAdmin):
 class LogbookEntryAdmin(admin.ModelAdmin):
     search_fields = ('title',)
 
+class PersonAdmin(admin.ModelAdmin):
+    search_fields = ('first_name','last_name')
+    
+class PersonExpeditionAdmin(admin.ModelAdmin):
+    search_fields = ('person__first_name',)
+
 admin.site.register(Photo)
 admin.site.register(Cave)
 admin.site.register(Area)
@@ -27,9 +33,9 @@ admin.site.register(SurveyStation)
 admin.site.register(Entrance)
 admin.site.register(SurvexBlock, SurvexBlockAdmin)
 admin.site.register(Expedition)
-admin.site.register(Person)
+admin.site.register(Person,PersonAdmin)
 admin.site.register(PersonRole)
-admin.site.register(PersonExpedition)
+admin.site.register(PersonExpedition,PersonExpeditionAdmin)
 admin.site.register(Role)
 admin.site.register(LogbookEntry, LogbookEntryAdmin)
 admin.site.register(PersonTrip)
