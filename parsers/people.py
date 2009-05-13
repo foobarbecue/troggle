@@ -120,3 +120,40 @@ def LoadPersonsExpos():
         pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname="", is_guest=is_guest)
         pyo.save()
 
+# expedition name lookup cached for speed (it's a very big list)
+Gpersonexpeditionnamelookup = { }
+def GetPersonExpeditionNameLookup(expedition):
+    global Gpersonexpeditionnamelookup
+    res = Gpersonexpeditionnamelookup.get(expedition.name)
+    if res:
+        return res
+    
+    res = {}
+    duplicates = set()
+    
+    personexpeditions = models.PersonExpedition.objects.filter(expedition=expedition)
+    for personexpedition in personexpeditions:
+        possnames = [ ]
+        f = personexpedition.person.first_name.lower()
+        l = personexpedition.person.last_name.lower()
+        if l:
+            possnames.append(f + " " + l)
+            possnames.append(f + " " + l[0])
+            possnames.append(f + l[0])
+            possnames.append(f[0] + " " + l)
+        possnames.append(f)
+        if personexpedition.nickname:
+            possnames.append(personexpedition.nickname.lower())
+        
+        for possname in possnames:
+            if possname in res:
+                duplicates.add(possname)
+            else:
+                res[possname] = personexpedition
+        
+    for possname in duplicates:
+        del res[possname]
+    
+    Gpersonexpeditionnamelookup[expedition.name] = res
+    return res
+

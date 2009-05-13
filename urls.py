@@ -28,7 +28,9 @@ urlpatterns = patterns('',
     
     url(r'^expedition/(\d+)$', expedition, name="expedition"),
     url(r'^personexpedition/(.+?)/(\d+)$', personexpedition, name="personexpedition"),
-    
+    url(r'^survexblock/(.+)$', survexblock, name="survexblock"),
+
+        
     url(r'^statistics/?$', stats, name="stats"),
     
     (r'^survey/?$', surveyindex),

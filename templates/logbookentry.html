@@ -25,11 +25,10 @@
 <tr>
   {% ifequal persontrip.person_expedition logbookentry.author %}
     <td class="author">
-{{persontrip.person_expedition.person.personrole_set.count}}
   {% else %}
     <td>
   {% endifequal %}
-  <a href="{% url person persontrip.person_expedition.person.href %}">{{persontrip.person_expedition.person}}</a>
+  <a href="{% url personexpedition persontrip.person_expedition.person.href persontrip.person_expedition.expedition.year %}">{{persontrip.person_expedition.person}}</a>
   </td>
   
   <td>

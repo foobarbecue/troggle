@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response
 from troggle.expo.models import Cave, CaveAndEntrance, Survey, Expedition
+import troggle.expo.models as models
 import troggle.settings as settings
 from troggle.expo.forms import CaveForm
 import search
@@ -20,6 +21,11 @@ def ent(request, cave_id, ent_letter):
                                                 'entrance': cave_and_ent.entrance,
                                                 'letter': cave_and_ent.entrance_letter,
                                                 'settings': settings})
+def survexblock(request, survexpath):
+    survexblock = models.SurvexBlock.objects.get(survexpath=survexpath)
+    #ftext = survexblock.filecontents()
+    ftext = survexblock.text
+    return render_to_response('survexblock.html', {'survexblock':survexblock, 'ftext':ftext, 'settings':settings })
 
 def caveSearch(request):
     query_string = ''
@@ -55,3 +61,4 @@ def survey(request,year,wallet_number):
     dictToPass.update({'settings':settings})
     
     return render_to_response('survey.html',dictToPass)
+    

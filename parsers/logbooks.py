@@ -2,6 +2,9 @@
 
 import troggle.settings as settings
 import troggle.expo.models as models
+
+from troggle.parsers.people import GetPersonExpeditionNameLookup
+
 import csv
 import re
 import datetime
@@ -21,7 +24,7 @@ def GetTripPersons(trippeople, expedition, logtime_underground):
             tripperson = mul.group(1).strip()
         if tripperson and tripperson[0] != '*':
             #assert tripperson in personyearmap, "'%s' << %s\n\n %s" % (tripperson, trippeople, personyearmap)
-            personyear = expedition.GetPersonExpedition(tripperson)
+            personyear = GetPersonExpeditionNameLookup(expedition).get(tripperson.lower())
             if not personyear:
                 print "NoMatchFor: '%s'" % tripperson    
             res.append((personyear, logtime_underground))

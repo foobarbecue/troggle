@@ -1,5 +1,8 @@
 import settings
 import expo.models as models
+
+from troggle.parsers.people import GetPersonExpeditionNameLookup
+
 import re
 import os
 
@@ -51,17 +54,20 @@ def fileIterator(directory, filename):
             yield survex_file, char, line
         char = char + len(line)
 
+
 def make_model(name, parent, iter_lines, sf, c, l):
+    m = models.SurvexBlock(name = name, begin_file = sf, begin_char = c, text = l)
+    m.survexpath = m.name
     if parent:
-        m = models.SurvexBlock(name = name, parent = parent, begin_file = sf, begin_char = c, text = l)
-    else:
-        m = models.SurvexBlock(name = name, begin_file = sf, begin_char = c, text = l)
+        m.parent = parent
+        m.survexpath = m.parent.survexpath + "." + m.name
     m.save()
 
+    # horrible local function
     def saveEnd(survex_file, count):
           if m.start_year and team:
               try:
-                  exp = models.Expedition.objects.get(year = str(file_year[1]))
+                  exp = models.Expedition.objects.get(year = str(m.start_year))
                   for file_, (role, names) in team:
                       if names.strip("\t").strip(" ") == "both" or names.strip("\t").strip(" ") == "Both":
                           names = reduce(lambda x, y: x + u" & " + y,
@@ -69,21 +75,31 @@ def make_model(name, parent, iter_lines, sf, c, l):
                                                 if names.strip("\t").strip(" ") != "both"
                                                    and names.strip("\t").strip(" ") != "Both"])
                       for name in re.split("&|/|\+|,|;", names):
+                          sname = name.strip(". ").lower()
                           try:
-                              models.PersonRole(personexpedition = exp.GetPersonExpedition(name.strip(" ")),
-                                                person = exp.GetPersonExpedition(name.strip(" ")).person,
+                              personexpedition = GetPersonExpeditionNameLookup(exp).get(sname)
+                              if personexpedition:
+                                  models.PersonRole(personexpedition = personexpedition,
+                                                person = personexpedition.person,
                                                 survex_block = m,
                                                 role = models.Role.objects.get(name = roles[role])).save()
+                              else:
+                                  print "no person", exp, sname, role
                           except AttributeError:
-                              print ("Person not found: " + name + " in " + file_).encode('ascii', 'xmlcharrefreplace')
+                              print ("Person not found: " + name + " in " + file_ + "  " + role).encode('ascii', 'xmlcharrefreplace')
               except AssertionError, inst:
                   print (unicode(inst) + ": " + unicode(file_year[0])).encode('ascii', 'xmlcharrefreplace')
-              except models.Expedition.DoesNotExist:
-                  print "Expo"+str(file_year[1]).encode('ascii', 'xmlcharrefreplace')
+              #except models.Expedition.DoesNotExist:
+              #    print "Expo"+str(file_year[1]).encode('ascii', 'xmlcharrefreplace')
 
           m.end_file = survex_file
           m.end_char = count
+          
+          if m.start_day:
+              m.date = "%04d-%02d-%02d" % (int(m.start_year), int(m.start_month), int(m.start_day))
+          
           m.save()
+    
     team = []
     file_year = None
     for survex_file, count, line in iter_lines:
@@ -120,8 +136,17 @@ def make_model(name, parent, iter_lines, sf, c, l):
     saveEnd(survex_file, count)
 
 
-for role in ["Insts", "Notes", "Pics", "Tape", "Other"]:
-    models.Role(name = role).save()
+#def LoadSurvexBlocks():
+#    survex_file = os.path.join(directory, filename + ".svx")
+#    f = open(os.path.join(settings.SURVEX_DATA, survex_file), "rb")
 
-filename = "all"
-make_model("", None, fileIterator("", filename), filename, 0, "")
+
+def LoadAllSurvexBlocks():
+    models.Role.objects.all().delete()
+    models.SurvexBlock.objects.all().delete()
+    for role in ["Insts", "Notes", "Pics", "Tape", "Other"]:
+        models.Role(name = role).save()
+    filename = "all"
+    make_model("all", None, fileIterator("", filename), filename, 0, "")
+
+

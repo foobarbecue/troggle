@@ -125,6 +125,15 @@ ul#expeditionlist
     width: 300px
 }
 
+div.survexblock
+{
+    width:50%;
+    background-color:#e0e0e0;
+}
+p.indent
+{
+    margin-left:10px;
+}
 
 #expoHeader {
 	width:100%;

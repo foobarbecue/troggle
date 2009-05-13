@@ -6,6 +6,7 @@ import re
 
 register = template.Library()
 
+# seems to add extra lines between the commented lines, which isn't so great.
 regexes = []
 regexes.append((re.compile(r"(;.*)$", re.IGNORECASE|re.MULTILINE),
                r'<span class = "comment">\1</span>\n'))

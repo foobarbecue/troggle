@@ -1,7 +1,10 @@
 from django.shortcuts import render_to_response
 from troggle.expo.models import Expedition, Person, PersonExpedition, PersonTrip, LogbookEntry
 import troggle.settings as settings
+
 from troggle.parsers.logbooks import LoadLogbookForExpedition
+from troggle.parsers.people import GetPersonExpeditionNameLookup
+
 import search
 import re
 
@@ -17,7 +20,7 @@ def expedition(request, expeditionname):
     message = "No message"
     if "reload" in request.GET:
         message = LoadLogbookForExpedition(expedition)
-    
+    #message = str(GetPersonExpeditionNameLookup(expedition).keys())
     logbookentries = expedition.logbookentry_set.order_by('date')
     return render_to_response('expedition.html', {'expedition': expedition, 'expedition_next':expedition_next, 'expedition_prev':expedition_prev, 'logbookentries':logbookentries, 'message':message, 'settings': settings})
 

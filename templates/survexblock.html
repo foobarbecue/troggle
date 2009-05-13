@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load survex_markup %}
+
+
+{% block title %}Survex Block{% endblock %}
+
+{% block content %}
+<h2>Survex Block {{survexblock.survexpath}}</h2>
+
+<p>Needs duplicates removed from right hand column</p>
+<p>Needs links to survex file presentation</p>
+<p>Needs to start dealing with misspellings of names (prob by editing the originals)</p>
+
+<div id="col2">
+
+{% if survexblock.parent %}
+    <p>Survey block above:</p>
+    <p class="indent"><a href="{% url survexblock survexblock.parent.survexpath %}">{{survexblock.parent.survexpath}}</a></p>
+{% endif %}
+
+{% if survexblock.survexblock_set.all %}
+    <p>Survey blocks below:</p>
+{% for survexblockdown in survexblock.survexblock_set.all %}
+    <p class="indent"><a href="{% url survexblock survexblockdown.survexpath %}">{{survexblockdown.survexpath}}</a></p>
+{% endfor %}
+{% endif %}
+
+<p>Date: {{survexblock.date}}</p>
+
+<table>
+{% for personrole in survexblock.personrole_set.all %}
+<tr>
+  <td><a href="{% url personexpedition personrole.personexpedition.person.href personrole.personexpedition.expedition.year%}">{{personrole.personexpedition.person}}</a></td>
+  <td>{{personrole.role}}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+</div>
+
+<div id="col1">
+{{ftext|survex_to_html}}
+</div>
+
+{% endblock %}

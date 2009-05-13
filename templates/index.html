@@ -6,7 +6,12 @@
 {% block content %}
 
 <h2>The unfinished front page</h2>
-<p>Some handy links into the less incomplete parts of this webpage</p>
+<b>Work down through an expedition page link</b>
+<p class="indent">Remaining work: continue to build up the network; tables of trips per year per person; parse 1996 logbook; 
+continue to correct the name matching and spelling; detect T/U on log entries; match caves to log entries; see the cave list; 
+simplify the survex parsing code (if necessary); vast front-page layout table of folks and caving trips and years; 
+links between logbooks and survex blocks to cave things; where are the subcaves; mini-tree of survexblocks; connect sketches 
+to caves to survey blocks and render thumbnailwise; all images to start appearing in pages; and so on</p>
 
 <h3>{{message}}</h3>
 
@@ -15,7 +20,10 @@
     <li><a href="/statistics">Statistics of what's loaded in the database</a></li>
 </ul>
 
-<form action="" method="GET"><input type="submit" name="reload" value="Reload"></form>
+<form action="" method="GET">
+  <input type="submit" name="reloadexpos" value="Reload Expos">
+  <input type="submit" name="reloadsurvex" value="Reload Survex">
+</form>
 
 <ul id="expeditionlist">
     <li>

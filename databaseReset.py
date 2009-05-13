@@ -24,4 +24,5 @@ import parsers.logbooks
 parsers.logbooks.LoadLogbooks()
 import parsers.QMs
 import parsers.survex
+parsers.survex.LoadAllSurvexBlocks()
 import parsers.surveys

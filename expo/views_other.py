@@ -5,6 +5,7 @@ from django import forms
 from django.db.models import Q
 from troggle.parsers.people import LoadPersonsExpos
 import re
+from troggle.parsers.survex import LoadAllSurvexBlocks
 import randSent
 
 from django.core.urlresolvers import reverse
@@ -19,9 +20,13 @@ def stats(request):
 
 def frontPage(request):
     message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
-    if "reload" in request.GET:
+    if "reloadexpos" in request.GET:
         message = LoadPersonsExpos()
         message = "Reloaded personexpos"
+    if "reloadsurvex" in request.GET:
+        message = LoadAllSurvexBlocks()
+        message = "Reloaded survexblocks"
+
     #'randSent':randSent.randomLogbookSentence(),
     expeditions =  Expedition.objects.all()
     return render_to_response('index.html', {'expeditions':expeditions, 'settings':settings, "message":message})

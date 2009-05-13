@@ -7,6 +7,7 @@ from django.core.files.storage import FileSystemStorage
 import os
 import troggle.settings as settings
 import datetime
+
 from models_survex import *
 
 class Expedition(models.Model):
@@ -27,6 +28,7 @@ class Expedition(models.Model):
 			date+=datetime.timedelta(days=1)
 		return res
 
+    # deprecated
     def GetPersonExpedition(self, name):
         person_expeditions = PersonExpedition.objects.filter(expedition=self)
         res = None
@@ -37,6 +39,8 @@ class Expedition(models.Model):
                     assert not res, "Ambiguous: " + name
                     res = person_expedition
         return res
+
+    
 
 
 class Person(models.Model):
@@ -64,6 +68,7 @@ class PersonExpedition(models.Model):
     is_guest    = models.BooleanField(default=False)  
     nickname    = models.CharField(max_length=100,blank=True,null=True)
     
+    # deprecated
     def GetPossibleNameForms(self):
         res = [ ]
         if self.person.last_name:

@@ -7,13 +7,19 @@
 {% block content %}
 <h2>{{personexpedition.person}}: {{personexpedition.expedition}} ({{personexpedition.date_from}} - {{personexpedition.date_to}})</h2>
 
+<h3>{{message}}</h3>
+
+<p>Needs links fore and back through expeditions attended by this person (or as a complete barchart type list with one date in bold)</p>
+<p>Needs lists below to be sorted by date, and the duplicates removed from survey role list</p>
+<p>Finally, a correspondence between these two columns</p>
+
 <div id="col2">
 <table class="survexcontibutions">
 <tr><th>Date</th><th>Place</th><th>Role</th></tr>
 {% for personrole in personexpedition.personrole_set.all %}
   <tr>
-    <td>{{personrole.survex_block.start_month}}</td>
-    <td>{{personrole.survex_block.name}}</td>
+    <td>{{personrole.survex_block.date}}</td>
+    <td><a href="{% url survexblock personrole.survex_block.survexpath %}">{{personrole.survex_block.survexpath}}</a></td>
     <td>{{personrole.role}}</td>
   </tr>
 {% endfor %}
