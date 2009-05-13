@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load survex_markup %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+  <H1>{{ title }}</H1>
+
+  <div><a href="{{ settings.SVX_URL }}{{ title }}.svx">Download svx file</a></div>
+  {% if has_3d %}
+    <div><a href="{{ settings.SVX_URL }}{{ title }}.3d">Download 3d file</a></div>
+    <div><a href="{{ settings.SVX_URL }}{{ title }}.err">Download err file</a></div>
+  {% else %}
+    <div>Processing failed</div>
+  {% endif %}
+  <div><a href="{{ settings.SVX_URL }}{{ title }}.log">Download log file</a></div>
+  
+  {{ text|survex_to_html }}
+
+{% endblock %}

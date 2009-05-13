@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+
+{% block title %}{{ cave.official_name|wiki_to_html }}{% endblock %}
+
+{% block content %}
+<table id="cavepage">
+<tr>
+    <th id="kat_no">
+        {% if cave.kataster_number %}
+            {{ cave.kataster_number|wiki_to_html }}
+            {% if cave.entrancelist %}
+                - {{ cave.entrancelist|wiki_to_html }}
+            {% endif %}
+            {% if cave.unofficial_number %}
+                <br />({{ cave.unofficial_number|wiki_to_html }})
+            {% endif %}
+        {% endif %}
+    </th>
+    <th id="name">
+         {{ cave.official_name|wiki_to_html }}
+    </th>
+    <th id="status">
+         {{ cave.kataster_code|wiki_to_html }}
+    </th>
+</tr>
+</table>
+
+{% if cave.entrances %}
+    <h2>Entrances</h2>
+    {% for ent in cave.entrances %}
+        <a href = "./{{ ent.entrance_letter|wiki_to_html }}">{{ ent.entrance_letter|wiki_to_html }}</a>
+        {% if ent.entrance.marking %}
+            Marking: {{ ent.entrance.marking_val|wiki_to_html }}
+        {% endif %}
+        <br>
+    {% endfor %}
+{% endif %}
+
+{% if cave.explorers %}
+    <h2>Explorers</h2>
+    {{ cave.explorers|wiki_to_html }}
+{% endif %}
+{% if cave.underground_description %}
+    <h2>Underground Description</h2>
+    {{ cave.underground_description|wiki_to_html }}
+{% endif %}
+{% if cave.equipment %}
+    <h2>Equipment</h2>
+    {{ cave.equipment|wiki_to_html }}
+{% endif %}
+{% if cave.references %}
+    <h2>References</h2>
+    {{ cave.references|wiki_to_html }}
+{% endif %}
+{% if cave.survey %}
+    <h2>Survey</h2>
+    {{ cave.survey|wiki_to_html }}
+{% endif %}
+{% if cave.kataster_status %}
+    <h2>Kataster_status</h2>
+    {{ cave.kataster_status|wiki_to_html }}
+{% endif %}
+{% if cave.underground_centre_line %}
+    <h2>Underground Centre Line</h2>
+    {{ cave.underground_centre_line|wiki_to_html }}
+{% endif %}
+{% if cave.survex_file %}
+    <h2>Survex File</h2>
+    {{ cave.survex_file|wiki_to_html }}
+{% endif %}
+{% if cave.notes %}
+    <h2>Notes</h2>
+    {{ cave.notes|wiki_to_html }}
+{% endif %}
+{% endblock %}

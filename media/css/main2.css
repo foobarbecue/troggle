@@ -1,0 +1,43 @@
+.caption			{ font-size: 8pt; margin-bottom: 0pt; }
+.centre				{ text-align: center; }
+.plus2pt			{ font-size: 160%; }
+
+body, td, center, ul, p, input 	{ color: #000; font-family: sans-serif; }
+a:link, a:visited		{ text-decoration: none; }
+div.centre img			{ vertical-align: middle; }
+h1				{ text-align: center; font-size: 210%;
+				line-height: 100%; }
+h2				{ color: #009900; }
+h3				{ color: #2c105e; }
+h4				{ color: #0d664c; }
+img.onright, div.onright	{ vertical-align: top; float: right;
+				margin-left: 10pt;  margin-bottom: 10pt;
+				margin-right: 8pt; }
+img.onleft, div.onleft		{ vertical-align: top; float: left;
+				margin-right: 10pt; margin-bottom: 10pt;
+				margin-left: 8pt; }
+img.icon			{ vertical-align: middle; }
+img.aligntop			{ vertical-align: top; }
+table.imgtable			{ margin-left: auto; margin-right: auto; }
+table.imgtable td		{ vertical-align: middle; text-align: center;
+				padding: 10px; }
+
+/* "Traditional" table with borders.*/
+table.trad			{ margin: 0pt; border: 1px solid #000;
+				border-color: #c0c0c0 #8d8d8d #8d8d8d #c0c0c0; }
+table.bigfatborder		{ border-width: 6px; }
+table.trad td, table.trad th	{ margin: 0pt; border: 1px solid #aaa;
+				border-color: #8d8d8d #c0c0c0 #c0c0c0 #8d8d8d; }
+
+/* You are not expected to understand this. It is necessary. */
+table.centre			{ margin-left: auto; margin-right: auto; }
+table.centre td			{ text-align: left; }
+
+h2#tophead			{ text-align: center; margin-bottom: -10pt; }
+table#cavepage			{ width: 100%; font-size: 160%; }
+table#cavepage th#kat_no	{ text-align: left; width: 25%; }
+table#cavepage th#name		{ text-align: center; width: 50%; }
+table#cavepage th#status	{ text-align: right; width: 25%; }
+
+.command                        { color: #FF0000; }
+.comment                        { color: #888888; font-style:italic;}

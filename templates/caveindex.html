@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+
+{% block title %}Cave Index{% endblock %}
+
+{% block content %}
+{% for cave in caves %}
+<p>{{ cave }} <a href="./{{ cave.kataster_number }}/">{{ cave.official_name|wiki_to_html }}</a> </p>
+{% endfor %}
+{% endblock %}
