@@ -5,7 +5,7 @@
 
 {% block content %}
 {% for person in persons %}
-    <div class="personblock"><a href="/person/{{person.id}}">{{person}}</a>
+    <div class="personblock"><a href="/person/{{person.id}}">{{person|wiki_to_html_short}}</a>
     <ul>
     {% for personexpedition in person.personexpedition_set.all %}
         <li>
