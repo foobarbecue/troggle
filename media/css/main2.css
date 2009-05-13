@@ -9,7 +9,17 @@ body, td, center, ul, p, input 	{
 body {
 	background-color: #000;
 }
-
+#expoHeader {
+	position: relative;
+	display: inline;
+	top:60px;
+}
+#expoFinalDate {
+	display: inline;
+}
+h1 {
+	display: inline;
+}
 a:link, a:visited		{ text-decoration: none; }
 div.centre img			{ vertical-align: middle; }
 

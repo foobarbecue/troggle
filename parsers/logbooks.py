@@ -1,11 +1,16 @@
 #.-*- coding: utf-8 -*-
-
-import settings
-import expo.models as models
+import sys
+import os
+sys.path.append('C:\\Expo\\expoweb')
+from troggle import *
+os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
+import troggle.settings as settings
+import troggle.expo.models as models
 import csv
 import re
-import os
 import datetime
+from django.db.models import Q
+
 
 persontab = open(os.path.join(settings.EXPOWEB, "noinfo", "folk.csv"))
 personreader = csv.reader(persontab)
@@ -39,43 +44,18 @@ def LoadPersons():
 
         firstname, lastname = mname.group(1), mname.group(2) or ""
 
-        #print firstname, lastname, "NNN", nickname
+        print firstname, lastname, "NNN", nickname
         #assert lastname == person[header[""]], person
 
         pObject = models.Person(first_name = firstname,
                                 last_name = lastname,
                                 is_vfho = person[header["VfHO member"]],
-				)
+                )
 
         is_guest = person[header["Guest"]] == "1"  # this is really a per-expo catagory; not a permanent state
         pObject.save()
-
-	#create mugshot Photo instance
-	mugShotPath = settings.EXPOWEB+"folk/"+person[header["Mugshot"]]
-	if mugShotPath[-3:]=='jpg': #if person just has an image, add it
-		mugShotObj = models.Photo(
-			caption="Mugshot for "+firstname+" "+lastname,
-			is_mugshot=True,
-			file=mugShotPath,
-			)
-		mugShotObj.save()
-		mugShotObj.contains_person.add(pObject)
-		mugShotObj.save()
-	elif mugShotPath[-3:]=='htm': #if person has an html page, find the image(s) and add it. Also, add the text from the html page to the "blurb" field in his model instance.
-		personPageOld=open(mugShotPath,'r').read()
-		pObject.blurb=re.search('<body>.*<hr',personPageOld,re.DOTALL).group() #this needs to be refined, take care of the HTML and make sure it doesn't match beyond the blurb
-		for photoFilename in re.findall('i/.*?jpg',personPageOld,re.DOTALL):
-			mugShotPath=settings.EXPOWEB+"folk/"+photoFilename
-		mugShotObj = models.Photo(
-			caption="Mugshot for "+firstname+" "+lastname,
-			is_mugshot=True,
-			file=mugShotPath,
-			)
-		mugShotObj.save()
-		mugShotObj.contains_person.add(pObject)
-		mugShotObj.save()
-        pObject.save()
-	
+        parseMugShotAndBlurb(firstname, lastname, person, header, pObject)
+    
         for year, attended in zip(headers, person)[5:]:
             yo = models.Expedition.objects.filter(year = year)[0]
             if attended == "1" or attended == "-1":
@@ -89,18 +69,14 @@ def LoadPersons():
                 pyo.save()
 
             
-        if name in expoers2008:
-            print "2008:", name
-            expomissing.discard(name)
-            yo = models.Expedition.objects.filter(year = "2008")[0]
-            pyo = models.PersonExpedition(person = pObject, expedition = yo, is_guest=is_guest)
-            pyo.save()
+
 
 
     # this fills in those peopl for whom 2008 was their first expo
     for name in expomissing:
         firstname, lastname = name.split()
         is_guest = name in ["Eeva Makiranta", "Keith Curtis"]
+        print "2008:", name
         pObject = models.Person(first_name = firstname,
                                 last_name = lastname,
                                 is_vfho = False,
@@ -110,6 +86,41 @@ def LoadPersons():
         pyo = models.PersonExpedition(person = pObject, expedition = yo, nickname="", is_guest=is_guest)
         pyo.save()
 
+#   Julian: the below code was causing errors and it seems like a duplication of the above. Hope I haven't broken anything by commenting it. -Aaron
+#
+#        if name in expoers2008:
+#            print "2008:", name
+#            expomissing.discard(name) # I got an error which I think was caused by this -- python complained that a set changed size during iteration.
+#            yo = models.Expedition.objects.filter(year = "2008")[0]
+#            pyo = models.PersonExpedition(person = pObject, expedition = yo, is_guest=is_guest)
+#            pyo.save()
+
+def parseMugShotAndBlurb(firstname, lastname, person, header, pObject):
+    #create mugshot Photo instance
+    mugShotPath = settings.EXPOWEB+"folk/"+person[header["Mugshot"]]
+    if mugShotPath[-3:]=='jpg': #if person just has an image, add it
+        mugShotObj = models.Photo(
+            caption="Mugshot for "+firstname+" "+lastname,
+            is_mugshot=True,
+            file=mugShotPath,
+            )
+        mugShotObj.save()
+        mugShotObj.contains_person.add(pObject)
+        mugShotObj.save()
+    elif mugShotPath[-3:]=='htm': #if person has an html page, find the image(s) and add it. Also, add the text from the html page to the "blurb" field in his model instance.
+        personPageOld=open(mugShotPath,'r').read()
+        pObject.blurb=re.search('<body>.*<hr',personPageOld,re.DOTALL).group() #this needs to be refined, take care of the HTML and make sure it doesn't match beyond the blurb
+        for photoFilename in re.findall('i/.*?jpg',personPageOld,re.DOTALL):
+            mugShotPath=settings.EXPOWEB+"folk/"+photoFilename
+        mugShotObj = models.Photo(
+            caption="Mugshot for "+firstname+" "+lastname,
+            is_mugshot=True,
+            file=mugShotPath,
+            )
+        mugShotObj.save()
+        mugShotObj.contains_person.add(pObject)
+        mugShotObj.save()
+    pObject.save()
 
 #
 # the logbook loading section
@@ -134,9 +145,40 @@ def GetTripPersons(trippeople, expedition):
         author = res[-1]
     return res, author
 
+def GetTripCave(place):                     #need to be fuzzier about matching here. Already a very slow function...
+#    print "Getting cave for " , place
+    try:
+        katastNumRes=[]
+        katastNumRes=list(models.Cave.objects.filter(kataster_number=int(place)))
+    except ValueError:
+        pass
+    officialNameRes=list(models.Cave.objects.filter(official_name=place))
+    tripCaveRes=officialNameRes+katastNumRes
+
+    if len(tripCaveRes)==1:
+#        print "Place " , place , "entered as" , tripCaveRes[0]
+        return tripCaveRes[0]
+
+    elif models.OtherCaveName.objects.filter(name=place):
+        tripCaveRes=models.OtherCaveName.objects.filter(name__icontains=place)[0].cave
+#        print "Place " , place , "entered as" , tripCaveRes
+        return tripCaveRes
+
+    elif len(tripCaveRes)>1:
+        print "Ambiguous place " + str(place) + " entered. Choose from " + str(tripCaveRes)
+        correctIndex=input("type list index of correct cave")
+        return tripCaveRes[correctIndex]
+    else:
+        print "No cave found for place " , place
+        return
+
 def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, tu):
     trippersons, author = GetTripPersons(trippeople, expedition)
+    tripCave = GetTripCave(place)
+
     lbo = models.LogbookEntry(date=date, place=place, title=title[:50], text=text, author=author)
+    if tripCave:
+        lbo.cave=tripCave
     lbo.save()
     print "ttt", date, place
     for tripperson in trippersons:
@@ -281,8 +323,8 @@ def LoadLogbooks():
     models.LogbookEntry.objects.all().delete()
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
     yearlinks = [ 
-                    ("2008", "2008/logbook/2008logbook.txt", Parselogwikitxt), 
-                    ("2007", "2007/logbook/2007logbook.txt", Parselogwikitxt), 
+                    ("2008", "2008/2008logbook.txt", Parselogwikitxt), 
+                    ("2007", "2007/2007logbook.txt", Parselogwikitxt), 
                     ("2006", "2006/logbook/logbook_06.txt", Parselogwikitxt), 
                     ("2005", "2005/logbook.html", Parseloghtmltxt), 
                     ("2004", "2004/logbook.html", Parseloghtmltxt), 

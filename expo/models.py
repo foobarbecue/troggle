@@ -162,7 +162,7 @@ class LogbookEntry(models.Model):
     place   = models.CharField(max_length=100,blank=True,null=True)  
     text    = models.TextField()
     class Meta:
-	verbose_name_plural = "LogbookEntries"
+	verbose_name_plural = "Logbook Entries"
         # several PersonTrips point in to this object
     
     def __unicode__(self):
