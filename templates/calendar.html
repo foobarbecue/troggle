@@ -49,13 +49,13 @@
                       <td class="name">
                           {{ personexpedition.person }}
                       </td>
+                      {% if personexpedition.ListDaysTF %}
                       {% for dateTF in personexpedition.ListDaysTF %}
                       		<td {{ dateTF|yesno:"class='yes',class='no'"|safe }}></td>
-                      {% empty %}
-                      		<td colspan="{{ expedition.ListDays|length }}"><center>No data.</center></td>
                       {% endfor %}
-
-                    
+                      {% else %}
+                      		<td colspan="{{ expedition.ListDays|length }}"><center>No data.</center></td>
+                      {% endif %}
                  </tr>
             {% endfor %}
 	    </table>
