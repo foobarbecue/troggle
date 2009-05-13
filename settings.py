@@ -1,4 +1,4 @@
-from localsettingsserver import *
+from localsettingsubuntu import *
 # Django settings for troggle2 project.
 
 DEBUG = True
@@ -34,7 +34,7 @@ MEDIA_ROOT = '/media-admin/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = 'http://127.0.0.1:8000/site_media/'
+MEDIA_URL = 'http://127.0.0.1:8000/troggle/site_media/'
 
 SVX_URL = 'http://127.0.0.1:8000/troggle/survex/'
 
@@ -67,7 +67,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'troggle.urls'
 
 TEMPLATE_DIRS = (
-    "/home/mjg/expoweb/troggle/templates"
+    "/home/goatchurch/expoweb/troggle/templates"
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
