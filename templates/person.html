@@ -12,9 +12,11 @@
         {{personexpedition.expedition}}
         </td><td>
         <div>
+        <ul>
         {% for persontrip in personexpedition.persontrip_set.all %}
-            <a href="/logbook/{{persontrip.logbookentry.id}}">{{persontrip.date}}</a>
+            <li><a href="/logbookentry/{{persontrip.logbookentry.id}}">{{persontrip.date}}</a> ({{persontrip.logbookentry.place}}) - {{persontrip.logbookentry.title}}</li>
         {% endfor %}
+        <ul>
         </div>
         </td></tr></table>
         </li>

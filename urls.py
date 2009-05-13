@@ -19,6 +19,8 @@ urlpatterns = patterns('',
     (r'^person/$', personindex),
     (r'^person/(.*)$', person),
 
+    (r'^logbookentry/(.*)$', logbookentry),
+    
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
 

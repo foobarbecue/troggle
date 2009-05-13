@@ -132,8 +132,8 @@ def Parselogwikitxt(year, expedition, txt):
         ldate = datetime.date(int(tripdate[:4]), int(tripdate[5:7]), int(tripdate[8:10]))
         print "ppp", trippeople, len(triptext)
         trippersons, author = GetTripPersons(trippeople, expedition)
-        triptext = triptext[:10] # seems to have aproblem with this
-        print "ttt", triptext
+        #triptext = triptext[:10] # seems to have aproblem with this
+        #print "ttt", triptext
         lbo = models.LogbookEntry(date = ldate, place = tripcave, title = tripsplace[-1], text = triptext, author=author)
         lbo.save()
 
@@ -170,7 +170,10 @@ def Parseloghtmltxt(year, expedition, txt):
         #assert tripid[:-1] == "t" + tripdate, (tripid, tripdate)
         trippersons, author = GetTripPersons(trippeople, expedition)
         tripcave = ""
-        lbo = models.LogbookEntry(date = ldate, place = tripcave, title = triptitle, text = triptext, author=author)
+        ltriptext = re.sub("</p>", "", triptext)
+        ltriptext = re.sub("\s*?\n\s*", " ", ltriptext)
+        ltriptext = re.sub("<p>", "\n\n", ltriptext).strip()
+        lbo = models.LogbookEntry(date = ldate, place = tripcave, title = triptitle, text = ltriptext, author=author)
         lbo.save()
         tu = timeug or ""
 
@@ -186,7 +189,7 @@ def LoadLogbooks():
     models.LogbookEntry.objects.all().delete()
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
     yearlinks = [ 
-#                    ("2008", "2008/logbook/2008logbook.txt"), 
+                    ("2008", "2008/logbook/2008logbook.txt"), 
                     ("2007", "2007/logbook/2007logbook.txt"), 
                     ("2005", "2005/logbook.html"), 
                     ("2004", "2004/logbook.html"), 
@@ -209,5 +212,4 @@ def LoadLogbooks():
 #LoadExpos()
 #LoadPersons()
 LoadLogbooks()
-
 
