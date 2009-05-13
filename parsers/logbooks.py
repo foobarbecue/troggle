@@ -13,7 +13,7 @@ import re
 import datetime
 import os
 
-from save_carefully import save_carefully
+from troggle.save_carefully import save_carefully
 
 # 
 # When we edit logbook entries, allow a "?" after any piece of data to say we've frigged it and
