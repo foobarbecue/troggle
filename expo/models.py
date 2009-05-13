@@ -303,8 +303,8 @@ class Photo(models.Model):
 
 scansFileStorage = FileSystemStorage(location=settings.SURVEYS, base_url=settings.SURVEYS_URL)
 def get_scan_path(instance, filename):
-    year=instance.survey.expedition_year.year
-    number="%02d" % instance.survey.wallet_number + instance.survey.wallet_letter #using %02d string formatting because convention was 2009#01
+    year=instance.survey.expedition.year
+    number="%02d" % instance.survey.wallet_number + str(instance.survey.wallet_letter) #using %02d string formatting because convention was 2009#01
     return os.path.join('./',year,year+r'#'+number,instance.contents+str(instance.number_in_wallet)+r'.jpg')
 
 class ScannedImage(models.Model): 
@@ -328,7 +328,7 @@ class ScannedImage(models.Model):
         return get_scan_path(self,'')
 
 class Survey(models.Model):
-    expedition_year = models.ForeignKey('Expedition')
+    expedition = models.ForeignKey('Expedition')
     wallet_number = models.IntegerField(blank=True,null=True)
     wallet_letter = models.CharField(max_length=1,blank=True,null=True)
     comments = models.TextField(blank=True,null=True)
@@ -344,5 +344,13 @@ class Survey(models.Model):
     integrated_into_main_sketch_by = models.ForeignKey('Person' ,related_name='integrated_into_main_sketch_by', blank=True,null=True)
     rendered_image = models.ImageField(upload_to='renderedSurveys',blank=True,null=True)
     def __str__(self):
-        return self.expedition_year.year+"#"+"%02d" % self.wallet_number
-	    
+        return self.expedition.year+"#"+"%02d" % self.wallet_number
+
+    def notes(self):
+	    return self.scannedimage_set.filter(contents='notes')
+
+    def plans(self):
+	    return self.scannedimage_set.filter(contents='plan')
+
+    def elevations(self):
+	    return self.scannedimage_set.filter(contents='elevation')

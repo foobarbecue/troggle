@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     (r'^statistics/?$', stats),
     
     (r'^survey/?$', surveyindex),
-    (r'^survey/(?P<survey_id>.*)$', survey),
+    (r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey),
     
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),

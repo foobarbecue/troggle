@@ -27,6 +27,14 @@ body {
 	background: #DDDDDD;
 	padding: 0 10px;  /* this padding matches the left alignment of the elements in the divs that appear beneath it. If an image is used in the #header instead of text, you may want to remove the padding. */
 }
+table {
+	border: thin solid silver;
+	border-collapse: collapse;
+}
+td {
+	padding:0px;
+	border: thin solid silver;
+}
 .twoColHybLtHdr #header h1 {
 	margin: 0; /* zeroing the margin of the last element in the #header div will avoid margin collapse - an unexplainable space between divs. If the div has a border around it, this is not necessary as that also avoids the margin collapse */
 	padding: 10px 0; /* using padding instead of margin will allow you to keep the element away from the edges of the div */
@@ -117,7 +125,7 @@ img.thumbnail {
 /* the above proprietary zoom property gives IE the hasLayout it may need to avoid several bugs */
 </style>
 <![endif]-->
-</head>
+
 <script language="javascript">
 	mnuItmLst=document.getElementsByClassName("menuBarItem")
 	function highlight(div){
@@ -148,11 +156,18 @@ img.thumbnail {
 		div.style.backgroundColor="#666666";
 	}
 	
-	function redirect(surveyPK){
-		window.location = "{{ settings.URL_ROOT }}/survey/" + surveyPK
+	function redirect(){
+		window.location = "{{ settings.URL_ROOT }}/survey/" + document.getElementById("expeditionChooser").value + "%23" + document.getElementById("surveyChooser").value;
+		document.getElementById("progressTableContent").style.display='hidden'
 	}
 	
+	function redirectYear(){
+		window.location = "{{ settings.URL_ROOT }}/survey/" + document.getElementById("expeditionChooser").value + "%23"
+	}
+
+	
 </script>
+</head>
 <body class="twoColHybLtHdr">
 <div id="header">
   <h1>CUCC Expo virtual survey binder</h1>
@@ -162,18 +177,31 @@ img.thumbnail {
   <h3>Survey Stages for {{ current_survey }}</h3>
   <br />
   
-  <select id="surveyChooser" onchange="redirect(this.value)">
-	{% for survey in surveys %}   	
-	    <option label="{{ survey }}" value="{{ survey.pk }}" 
-    		{% ifequal survey current_survey %}
+  <select id="expeditionChooser" onchange="redirectYear()">
+	{% for expedition in expeditions %}   	
+	    <option label="{{ expedition }}" value="{{ expedition }}"
+    		{% ifequal expedition current_expedition %}
     			selected
 	        {% endifequal %}	>
-    
-    {{ survey }}
+    {{ expedition }}
     </option>
     
     {% endfor %}
 
+  </select>
+  
+  <select id="surveyChooser" onchange="redirectSurvey()">
+  		<option label="show all" value="">
+	{% for survey in current_expedition.survey_set.all %}   	
+	    <option label="{{ survey }}" value="{{ survey.wallet_number }}" 
+    		{% ifequal survey current_survey %}
+    			selected
+	        {% endifequal %}	>
+    {{ survey }}
+    </option>
+    
+    {% endfor %}
+        <option label="add" value="add">
   </select>
   
   <div id="status">
@@ -192,8 +220,76 @@ img.thumbnail {
   <!-- end #sidebar1 -->
 </div>
 <div id="mainContent">
-  <div id="notesContent" class="behind">
-     <h2>Scanned notes for {{ current_survey }}.</h2>
+<div id="progressTableContent" class="behind" style="display:block;">
+     <h3>
+     Status of surveys from {{ current_expedition }}
+     </h3>
+     	<table>
+        	<tr>
+            	<th>
+                </th>
+            	{% for survey in current_expedition.survey_set.all %}
+	            	<th>
+                    	{{ survey.wallet_number }}
+                    </th>
+                {% endfor %}
+			</tr>
+        	<tr>
+            		<td>
+                    Notes
+                    </td>
+            	{% for survey in current_expedition.survey_set.all %}
+	            	<td>
+                    	{% if survey.notes %}
+                        	&#10003;
+                        {% endif %}
+                    </td>
+                {% endfor %}
+			</tr>
+        	<tr>
+            		<td>
+                    Survex file
+                    </td>
+            	{% for survey in current_expedition.survey_set.all %}
+	            	<td>
+                    	{% if survey.survex_file %}
+                        	&#10003;
+                        {% endif %}
+                    </td>
+                {% endfor %}
+			</tr>
+           	<tr>
+               		<td>
+                    Plans
+                    </td>
+            	{% for survey in current_expedition.survey_set.all %}
+	            	<td>
+                    	{% if survey.plans %}
+                        	&#10003;
+                        {% endif %}
+                    </td>
+                {% endfor %}
+			</tr>
+            <tr>
+               		<td>
+                    Elevations
+                    </td>
+            	{% for survey in current_expedition.survey_set.all %}
+	            	<td>
+                    	{% if survey.elevations %}
+                        	&#10003;
+                        {% endif %}
+                    </td>
+                {% endfor %}
+			</tr>
+		</table>
+
+
+    
+  </div>
+
+<div id="notesContent" class="behind">
+     <h3>Scanned notes for {{ current_survey }}.</h3>
 
       {% for noteItem in notes %}
     	<div class="figure">
@@ -222,12 +318,12 @@ img.thumbnail {
     who entered by </div>
   <div id="printedCentrelineContent" class="behind"> centreline </div>
   <div id="scannedPassageSketchContent" class="behind">
-     <h2>Scanned plan sketch files for {{ current_survey }}.</h2>
+     <h3>Scanned plan sketch files for {{ current_survey }}.</h3>
 
       {% for sketchItem in planSketches %}
     	<div class="figure">
 	        <p>
-    		  <img src="{{ sketchItem.correctURL }}" class="thumbnail">
+    		  <img src="{{ sketchItem.correctURL }}" class="thumbnail" />
             <p>
                File at: 
                		<a href="{{ sketchItem.correctUrl }}">

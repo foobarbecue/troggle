@@ -31,7 +31,7 @@ for survey in surveyreader:
 #    print walletNumberLetter.groups()
     
     surveyobj = models.Survey(
-        expedition_year = models.Expedition.objects.filter(year=survey[header['Year']])[0],
+        expedition = models.Expedition.objects.filter(year=survey[header['Year']])[0],
         wallet_number = walletNumberLetter.group('number'),
 
         comments = survey[header['Comments']],
@@ -58,20 +58,23 @@ def parseSurveyScans(year):
 
         for scan in scanList:
             try:
-                scanChopped=re.match(r'([a-zA-Z]*)(\d*)\.(png|jpg|JPG|PNG)',scan).groups()
+                scanChopped=re.match(r'(?i).*(notes|elev|plan|elevation|extend)(\d*)\.(png|jpg|jpeg)',scan).groups()
                 scanType,scanNumber,scanFormat=scanChopped
             except AttributeError:
-                print scan + " ignored"
+                print "Adding scans: " + scan + " ignored"
                 continue
+	    if scanType == 'elev' or scanType == 'extend':
+		scanType = 'elevation'
+
             if scanNumber=='':
                 scanNumber=1
 
             if type(surveyNumber)==types.TupleType:
                 surveyNumber=surveyNumber[0]
             try:
-                survey=models.Survey.objects.get_or_create(wallet_number=surveyNumber, expedition_year=year)[0]
+                survey=models.Survey.objects.get_or_create(wallet_number=surveyNumber, expedition=year)[0]
             except models.Survey.MultipleObjectsReturned:
-                survey=models.Survey.objects.filter(wallet_number=surveyNumber, expedition_year=year)[0]
+                survey=models.Survey.objects.filter(wallet_number=surveyNumber, expedition=year)[0]
                
             scanObj = models.ScannedImage(
                 file=os.path.join(year.year, surveyFolder, scan),
@@ -79,7 +82,7 @@ def parseSurveyScans(year):
                 number_in_wallet=scanNumber,
                 survey=survey
                 )
-            print "Added scanned image at " + str(scanObj)
+            #print "Added scanned image at " + str(scanObj)
             scanObj.save()
                 
 for year in models.Expedition.objects.filter(year__gte=2000):   #expos since 2000, because paths and filenames were nonstandard before then

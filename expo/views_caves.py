@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from troggle.expo.models import Cave, CaveAndEntrance, Survey
+from troggle.expo.models import Cave, CaveAndEntrance, Survey, Expedition
 import troggle.settings as settings
 from troggle.expo.forms import CaveForm
 import search
@@ -35,14 +35,22 @@ def caveSearch(request):
 
 def surveyindex(request):
     surveys=Survey.objects.all()
-    return render_to_response('survey.html',{'settings':settings,'surveys':surveys})
+    expeditions=Expedition.objects.all()
+    dictToPass=locals()
+    dictToPass.update({'settings':settings})
+    return render_to_response('survey.html',dictToPass)
 
-def survey(request,survey_id):
+def survey(request,year,wallet_number):
     surveys=Survey.objects.all()
-    current_survey=Survey.objects.get(pk=survey_id)
-    notes=current_survey.scannedimage_set.filter(contents='notes')
-    planSketches=current_survey.scannedimage_set.filter(contents='plan')
-    elevationSketches=current_survey.scannedimage_set.filter(contents='elevation')
+    expeditions=Expedition.objects.all()
+    current_expedition=Expedition.objects.filter(year=year)[0]
+    
+    if wallet_number!='':
+	    current_survey=Survey.objects.filter(expedition=current_expedition,wallet_number=wallet_number)[0]
+	    notes=current_survey.scannedimage_set.filter(contents='notes')
+	    planSketches=current_survey.scannedimage_set.filter(contents='plan')
+	    elevationSketches=current_survey.scannedimage_set.filter(contents='elevation')
+	    
     dictToPass=locals()
     dictToPass.update({'settings':settings})
     
