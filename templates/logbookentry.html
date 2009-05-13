@@ -10,12 +10,22 @@
 <p><a href="{% url expedition logbookentry.expedition.year %}">{{logbookentry.expedition.name}}</a></p>
 <p>place: {{logbookentry.place}}</p>
 
+<p>
+  {% if logbookentry.logbookentry_prev %}
+    <a href="{% url logbookentry logbookentry.logbookentry_prev.href %}">{{logbookentry.logbookentry_prev.date}}</a>
+  {% endif %}
+  {% if logbookentry.logbookentry_next %}
+    <a href="{% url logbookentry logbookentry.logbookentry_next.href %}">{{logbookentry.logbookentry_next.date}}</a>
+  {% endif %}
+</p>
+
 <table class="cavers">
 <tr><th>Caver</th><th>T/U</th><th>Prev</th><th>Next</th></tr>
 {% for persontrip in logbookentry.persontrip_set.all %}
 <tr>
   {% ifequal persontrip.person_expedition logbookentry.author %}
     <td class="author">
+{{persontrip.person_expedition.person.personrole_set.count}}
   {% else %}
     <td>
   {% endifequal %}
@@ -30,12 +40,12 @@
 
   <td>
   {% if persontrip.persontrip_prev %}
-    <a href="{% url logbookentry persontrip.persontrip_prev.logbook_entry.id %}">{{persontrip.persontrip_prev.date}}</a>
+    <a href="{% url logbookentry persontrip.persontrip_prev.logbook_entry.href %}">{{persontrip.persontrip_prev.date}}</a>
   {% endif %}
   </td>
   <td>
   {% if persontrip.persontrip_next %}
-     <a href="{% url logbookentry persontrip.persontrip_next.logbook_entry.id %}">{{persontrip.persontrip_next.date}}</a>
+     <a href="{% url logbookentry persontrip.persontrip_next.logbook_entry.href %}">{{persontrip.persontrip_next.date}}</a>
   {% endif %}
   </td>
 </tr>

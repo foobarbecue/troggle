@@ -23,10 +23,11 @@ urlpatterns = patterns('',
     url(r'^personindex$', personindex, name="personindex"),
     url(r'^person/(.+)$', person, name="person"),
 
-    url(r'^logbookentry/(\d+)$', logbookentry, name="logbookentry"),
+    url(r'^logbookentry/(.+)$', logbookentry, name="logbookentry"),
     url(r'^logbooksearch/(.*)/?$', logbookSearch),
     
     url(r'^expedition/(\d+)$', expedition, name="expedition"),
+    url(r'^personexpedition/(.+?)/(\d+)$', personexpedition, name="personexpedition"),
     
     url(r'^statistics/?$', stats, name="stats"),
     

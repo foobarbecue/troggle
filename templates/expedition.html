@@ -18,7 +18,7 @@
 <tr><th>Caver</th><th>From</th><th>To</th></tr>
 {% for personexpedition in expedition.personexpedition_set.all %}
   <tr>
-    <td><a href="{% url person personexpedition.person.href%}">{{personexpedition.person}}</a></td>
+    <td><a href="{% url personexpedition personexpedition.person.href personexpedition.expedition.year%}">{{personexpedition.person}}</a></td>
     <td>{{personexpedition.date_from}}</td>
     <td>{{personexpedition.date_to}}</td>
   </tr>
@@ -36,7 +36,7 @@
 {% for logbookentry in logbookentries %}
   <tr>
     <td>{{logbookentry.date}}</td>
-    <td><a href="{% url logbookentry logbookentry.id %}">{{logbookentry.title|safe}}</td>
+    <td><a href="{% url logbookentry logbookentry.href %}">{{logbookentry.title|safe}}</td>
     <td><a href="{% url person logbookentry.author.person.href%}">{{logbookentry.author.name}}</a></td>
     <td>{{logbookentry.place}}</td>
   </tr>

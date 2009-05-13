@@ -81,8 +81,11 @@ def LoadPersonsExpos():
         print firstname, lastname, "NNN", nickname
         #assert lastname == person[header[""]], person
 
+        href = firstname.lower()
+        if lastname:
+            href += "_" + lastname.lower()
         pObject = models.Person(first_name = firstname,
-                                last_name = lastname,
+                                last_name = lastname, href=href, 
                                 is_vfho = person[header["VfHO member"]],
                 )
 

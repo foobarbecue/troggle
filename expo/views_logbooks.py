@@ -22,17 +22,19 @@ def expedition(request, expeditionname):
     return render_to_response('expedition.html', {'expedition': expedition, 'expedition_next':expedition_next, 'expedition_prev':expedition_prev, 'logbookentries':logbookentries, 'message':message, 'settings': settings})
 
 def person(request, name):
-    persons = Person.objects.all()
-    for person in persons:
-        if person.href() == name:
-            break
-        person = None
+    person = Person.objects.get(href=name)
     return render_to_response('person.html', {'person': person, 'settings': settings})
 
+def personexpedition(request, name, expeditionname):
+    person = Person.objects.get(href=name)
+    year = int(expeditionname)
+    expedition = Expedition.objects.get(year=year)
+    personexpedition = person.personexpedition_set.get(expedition=expedition)
+    return render_to_response('personexpedition.html', {'personexpedition': personexpedition, 'settings': settings})
+
+
 def logbookentry(request, logbookentry_id):
-    logbookentry = LogbookEntry.objects.filter(id = logbookentry_id)[0]
-    
-    
+    logbookentry = LogbookEntry.objects.filter(href = logbookentry_id)[0]
     return render_to_response('logbookentry.html', {'logbookentry': logbookentry, 'settings': settings})
 
 

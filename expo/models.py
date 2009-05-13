@@ -45,6 +45,8 @@ class Person(models.Model):
     is_vfho     = models.BooleanField(help_text="VFHO is the Vereines f&uuml;r H&ouml;hlenkunde in Obersteier, a nearby Austrian caving club.")    
     mug_shot    = models.CharField(max_length=100, blank=True,null=True)
     blurb = models.TextField(blank=True,null=True)
+    href        = models.CharField(max_length=200)
+    
     class Meta:
 	    verbose_name_plural = "People"
     
@@ -53,12 +55,6 @@ class Person(models.Model):
             return "%s %s" % (self.first_name, self.last_name)
         return self.first_name
     
-    # this should be a member entry
-    def href(self):
-        if self.last_name:
-            return "%s_%s" % (self.first_name.lower(), self.last_name.lower())
-        return self.first_name.lower()
-
 
 class PersonExpedition(models.Model):
     expedition  = models.ForeignKey(Expedition)
@@ -205,9 +201,10 @@ class LogbookEntry(models.Model):
     expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
     author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip
     title   = models.CharField(max_length=200)
-    cave = models.ForeignKey(Cave,blank=True,null=True)
+    cave    = models.ForeignKey(Cave,blank=True,null=True)
     place   = models.CharField(max_length=100,blank=True,null=True)  
     text    = models.TextField()
+    href    = models.CharField(max_length=100)
     
     logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
     logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)

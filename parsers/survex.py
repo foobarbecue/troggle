@@ -70,7 +70,8 @@ def make_model(name, parent, iter_lines, sf, c, l):
                                                    and names.strip("\t").strip(" ") != "Both"])
                       for name in re.split("&|/|\+|,|;", names):
                           try:
-                              models.PersonRole(person = exp.GetPersonExpedition(name.strip(" ")).person,
+                              models.PersonRole(personexpedition = exp.GetPersonExpedition(name.strip(" ")),
+                                                person = exp.GetPersonExpedition(name.strip(" ")).person,
                                                 survex_block = m,
                                                 role = models.Role.objects.get(name = roles[role])).save()
                           except AttributeError:

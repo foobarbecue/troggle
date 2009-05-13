@@ -169,10 +169,20 @@ def Parseloghtml01(year, expedition, txt):
         triptitles = triptitle.split(" - ")
         tripcave = triptitles[0].strip()
 
-        ltriptext = re.sub("</p>", "", triptext)
+        ltriptext = triptext
+        
+        mtail = re.search('(?:<a href="[^"]*">[^<]*</a>|\s|/|-|&amp;|</?p>|\((?:same day|\d+)\))*$', ltriptext)
+        if mtail:
+            #print mtail.group(0)
+            ltriptext = ltriptext[:mtail.start(0)]
+        ltriptext = re.sub("</p>", "", ltriptext)
         ltriptext = re.sub("\s*?\n\s*", " ", ltriptext)
-        ltriptext = re.sub("<p>", "\n\n", ltriptext).strip()
+        ltriptext = re.sub("<p>|<br>", "\n\n", ltriptext).strip()
         #ltriptext = re.sub("[^\s0-9a-zA-Z\-.,:;'!]", "NONASCII", ltriptext)
+        ltriptext = re.sub("</?u>", "_", ltriptext)
+        ltriptext = re.sub("</?i>", "''", ltriptext)
+        ltriptext = re.sub("</?b>", "'''", ltriptext)
+        
 
         #print ldate, trippeople.strip()
             # could includ the tripid (url link for cross referencing)
@@ -246,6 +256,28 @@ def SetDatesFromLogbookEntries(expedition):
     expedition.date_to = max([personexpedition.date_to  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_to] or [None])
     expedition.save()
     
+    # order by appearance in the logbook (done by id)
+    lprevlogbookentry = None
+    for logbookentry in expedition.logbookentry_set.order_by('id'):
+        logbookentry.logbookentry_prev = lprevlogbookentry
+        if lprevlogbookentry:
+            lprevlogbookentry.logbookentry_next = logbookentry
+            lprevlogbookentry.save()
+        logbookentry.logbookentry_next = None
+        logbookentry.save()
+        lprevlogbookentry = logbookentry
+        
+    # order by date for setting the references
+    lprevlogbookentry = None
+    for logbookentry in expedition.logbookentry_set.order_by('date'):
+        if lprevlogbookentry and lprevlogbookentry.date == logbookentry.date:
+            mcount = re.search("_(\d+)$", lprevlogbookentry.href)
+            mc = mcount and (int(mcount.group(1)) + 1) or 1
+            logbookentry.href = "%s_%d" % (logbookentry.date, mc)
+        else:
+            logbookentry.href = "%s" % logbookentry.date
+        logbookentry.save()
+        lprevlogbookentry = logbookentry
         
         
 def LoadLogbookForExpedition(expedition):
@@ -268,6 +300,7 @@ def LoadLogbooks():
     models.LogbookEntry.objects.all().delete()
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
     #yearlinks = [ ("2001", "2001/log.htm", Parseloghtml01), ] #overwrite
+    #yearlinks = [ ("1997", "1997/log.htm", Parseloghtml01),] # overwrite
 
     for year, lloc, parsefunc in yearlinks:
         expedition = models.Expedition.objects.filter(year = year)[0]

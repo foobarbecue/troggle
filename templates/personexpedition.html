@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+
+{% block title %}Person {{personexpedition.person|wiki_to_html_short}} for {{personexpedition.expedition}}{% endblock %}
+
+
+{% block content %}
+<h2>{{personexpedition.person}}: {{personexpedition.expedition}} ({{personexpedition.date_from}} - {{personexpedition.date_to}})</h2>
+
+<div id="col2">
+<table class="survexcontibutions">
+<tr><th>Date</th><th>Place</th><th>Role</th></tr>
+{% for personrole in personexpedition.personrole_set.all %}
+  <tr>
+    <td>{{personrole.survex_block.start_month}}</td>
+    <td>{{personrole.survex_block.name}}</td>
+    <td>{{personrole.role}}</td>
+  </tr>
+{% endfor %}
+</table>
+</div>
+
+<div id="col1">
+<table class="expeditionlogbooks">
+<tr><th>Date</th><th>Title</th><th>Place</th></tr>
+{% for persontrip in personexpedition.persontrip_set.all %}
+  <tr>
+    <td>{{persontrip.date}}</td>
+    <td><a href="{% url logbookentry persontrip.logbook_entry.href %}">{{persontrip.logbook_entry.title|safe}}</td>
+    <td>{{persontrip.place}}</td>
+  </tr>
+{% endfor %}
+</table>
+</div>
+
+{% endblock %}
