@@ -29,20 +29,6 @@ ul
 	list-style: none; 
 }
 
-div#footer 
-{
-    position: fixed;
-    bottom: 0;
-    clear:both;
-    background-color:#999;
-    color:red;
-    text-align:center;
-    margin-left:auto;
-    margin-right:auto;
-}
-
-
-
 div.logbookentry
 {
     text-align:left;
@@ -149,7 +135,7 @@ div.centre img			{ vertical-align: middle; }
 
 h1				{ text-align: center; font-size: 210%; display: inline;}
 h2				{ color: #009900; }
-h3				{ color: #2c105e; text-align:left; border-bottom:thin solid black; margin-bottom:1em; margin-top:1em }
+h3				{ color: #000 text-align:left; border-bottom:thin solid black; margin-bottom:1em; margin-top:1em; font-weight:bold}
 h4				{ color: #0d664c; }
 h4.navbar {line-height: 0px;}
 img.onright, div.onright	{ vertical-align: top; float: right;
@@ -267,9 +253,6 @@ div.figure p {
 img.thumbnail {
   width: 100%;
 }
-br.clearfloat {
-  clear:both;
-}
 
 #error {
 	color: red;
@@ -299,19 +282,22 @@ div#editLinks {
 	filter:alpha(opacity=75);
 	-moz-opacity:.75;
 	opacity:.75;
+}
 
+div#editLinks a{
+	color:#FFF;
 }
 
 div#content {
 	margin-top: 50px;
-	margin-left: 100px;
-	margin-right: 100px;
-	padding: 10px;
-	
+	margin-left: 120px;
+	margin-right: 120px;
+	padding: 5em;
+	background:#CCC;
 }
 
 
-img#banner {
+.footer {
 	position:fixed;
 	width:100%;
 	bottom:0;
@@ -319,7 +305,7 @@ img#banner {
 }
 
 body {
-	background-color:#CCC;
+	background-color:#000;
 	padding-bottom:100px;
 
 }
@@ -331,22 +317,24 @@ h1 {
 }
 
 
-#rightMargin {
+.rightMargin {
 	position:absolute;
 	z-index:-2;
-	width:100px;
+	width:130px;
 	right:0px;
 	top:0px;	
 	clip: rect(auto,auto,auto,auto);
+	background:#000;
 }
 
-#leftMargin {
+.leftMargin {
 	position:absolute;
 	z-index:-2;
-	width:100px;
+	width:130px;
 	top:0px;
 	left:0px;
 	clip: rect(auto,100px,auto,auto,);
+	background:#000;
 }
 
 #footerLinks{
@@ -355,6 +343,24 @@ h1 {
 	bottom:0;
 	left:0;
 	width:100%;
-	background-color:#333
+	background-color:#000;
+	color:#999
 }
 
+#footerLinks a{
+	color:#FFF
+}
+
+/*.fadeIn {
+	display: none;
+}*/
+
+#timeMachine {
+	width:auto;
+	right:0;
+	left:auto;
+}
+
+#col1 {
+	width:60%
+}

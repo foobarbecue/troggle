@@ -32,9 +32,25 @@ def frontpage(request):
 
     #'randSent':randSent.randomLogbookSentence(),
     expeditions =  Expedition.objects.order_by("-year")
+    logbookentry = LogbookEntry
+    cave = Cave
+    photo = Photo
+    return render_response(request,'frontpage.html', locals())
+
+def todo(request):
+    message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
+    if "reloadexpos" in request.GET:
+        message = LoadPersonsExpos()
+        message = "Reloaded personexpos"
+    if "reloadsurvex" in request.POST:
+        message = LoadAllSurvexBlocks()
+        message = "Reloaded survexblocks"
+
+    #'randSent':randSent.randomLogbookSentence(),
+    expeditions =  Expedition.objects.order_by("-year")
     totallogbookentries = LogbookEntry.objects.count()
     return render_response(request,'index.html', {'expeditions':expeditions, 'all':'all', 'totallogbookentries':totallogbookentries, "message":message})
-    
+
 def calendar(request,year):
     week=['S','S','M','T','W','T','F']
     if year:

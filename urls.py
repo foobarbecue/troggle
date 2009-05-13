@@ -12,6 +12,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     
     url(r'^$',              views_other.frontpage,      name="frontpage"),
+    url(r'^todo/$',              views_other.todo,      name="todo"),
     
     url(r'^caveindex/?$',     views_caves.caveindex,      name="caveindex"),
     url(r'^personindex$',   views_logbooks.personindex, name="personindex"),
@@ -31,11 +32,7 @@ urlpatterns = patterns('',
 
     url(r'^jgtfile/(.*)$',      view_surveys.jgtfile,       name="jgtfile"),
     url(r'^jgtuploadfile$',     view_surveys.jgtuploadfile, name="jgtuploadfile"),
-        
-            
-                
-                    
-                        
+ 
     url(r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     #(r'^cavesearch', caveSearch),
@@ -60,7 +57,7 @@ urlpatterns = patterns('',
     url(r'^survey/?$', surveyindex, name="survey"),
     url(r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey, name="survey"),
 
-    url(r'^controlpanel/?$', views_other.controlPanel, name="survey"),
+    url(r'^controlpanel/?$', views_other.controlPanel, name="controlpanel"),
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),

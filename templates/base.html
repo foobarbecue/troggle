@@ -5,56 +5,117 @@
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main3.css" />
 <title>{% block title %}THE TITLE{% endblock %}</title>
 <script src="{{ settings.MEDIA_URL }}js/base.js" type="text/javascript"></script>
-<script src="{{ settings.MEDIA_URL }}js/jquery.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
+<script src="http://ejohn.org/apps/livesearch/jquery.livesearch.js" type="text/javascript"></script>
+
 <script type="text/javascript">
- 
-$("#killEyeCandy").click(function () {
-      $("#leftMargin").fadeIn("slow");
+$(document).ready(function() { 
+
+
+$(".toggleEyeCandy").click(function () {
+		  $(".leftMargin,.rightMargin").toggle("fade");
+		  $(".toggleEyeCandy").toggle();
  });
 
+$(".nav").css('opacity','7')
+$(".eyeCandy").hide();
+setTimeout("$('.leftMargin').fadeIn(3000);",2000);
+setTimeout("$('.rightMargin').fadeIn(3000);",4000);
 
+
+/*$("#footerLinks").hover(
+		  function() {$(".footer").fadeIn("slow")},
+		  function() {$(".footer").fadeOut("slow")}		  
+);*/
+$("#expoWebsiteLink").hover(
+		  function() {$("#richardBanner").fadeIn("slow")},
+		  function() {$("#richardBanner").fadeOut("slow")}		  
+);
+
+$("#cuccLink").hover(
+		  function() {
+
+			  $("#timeMachine").fadeIn("slow");
+  			  $(".rightMargin,.leftMargin").fadeTo("30","fast");
+			  },
+		  function() {$("#timeMachine").fadeOut("slow")}		  
+);
+
+
+});
+
+function contentHeight(){
+setMaxHeight($(".rightMargin,#content,.leftMargin,#col2"),$("#content"));
+};
+
+function setMaxHeight(group, target) {
+	tallest = 0;
+	group.each(function() {
+		thisHeight = $(this).height();
+		if(thisHeight > tallest) {
+			tallest = thisHeight;
+		}
+	});
+	target.height(tallest);
+}
+
+$('#q').liveUpdate('posts').focus();
 
 </script>
 
 {% block head %}{% endblock %}
 </head>
-<body>
+<body onLoad="contentHeight();">
 
 <div id="header"> 
   <h1>CUCC Expeditions to Austria: 1976 - 2009</h1>
   <div id="editLinks"> {% block loginInfo %}
     {% if user.username %}
-    You are logged in as {{ user.username }} {% if user.person %}<a href="{{ user.person.get_absolute_url }}">{{ user.person }}</a>{% endif %}. 
+    You are logged in as {{ user.username }} {% if user.person %}(<a href="{{ user.person.get_absolute_url }}">{{ user.person }}</a>){% endif %}.
     | <a href="{{ settings.URL_ROOT }}/accounts/logout/">Log out</a> {% else %} <a href="{{ settings.URL_ROOT }}/accounts/register">Sign up</a> | <a href="{{ settings.URL_ROOT }}/accounts/login/">Log in</a> {% endif %}
     {% endblock%}
-    | <a href="{{ settings.URL_ROOT }}">Home </a> | <a href="#" id="killEyeCandy">Kill Eyecandy</a> |
+    | <a href="{{ settings.URL_ROOT }}">Home</a> | <a class="toggleEyeCandy">Kill Eyecandy</a><a class="toggleEyeCandy" style="display: none;">Show Eyecandy</a>
     {% block editLink %}
     
     {% endblock %}
    </div>
 </div>
     
+<div id="nav">
   {% block nav %}
   <!-- Use id="nav" for the left side menu -->
   {% endblock %}
-  <div id="content" > {% block contentheader %}
+</div>
+ 
+ 
+  <div id="content" >
+  
+  	{% block contentheader %}
     {% endblock %}
+    
     {% block content %}
     REPLACE : The content
-    {% endblock %} <br class="clearfloat" />
-    <!--This is to ensure that the content div expands around floated objects*/-->
+    {% endblock %}
+    
   </div>
-</div>
-<div class="push"></div>
-<div class="footer"> 
-<img id="banner" src="{{ settings.MEDIA_URL }}expoBanner.gif"/>
-</div> 
 
-<img id="leftMargin" src="{{ settings.MEDIA_URL }}eieshole.jpg">
-<img id="rightMargin" src="{{ settings.MEDIA_URL }}goesser.jpg">
+<img id="richardBanner" class="footer eyeCandy" src="{{ settings.MEDIA_URL }}expoBanner.gif"/>
+<img id="timeMachine" class="footer eyeCandy" src="{{ settings.MEDIA_URL }}timemachine.gif"/>
+<img class="caversLink eyeCandy" src="{{ settings.MEDIA_URL }}expoBanner.gif"/>
 
-<div class="footer" id="footerLinks"> 
-<a href="http://cucc.survex.com"> CUCC website</a>| <a href="http://cucc.survex.com/expo"> Expedition website </a>| <a href="{% url frontpage %}"> Troggle front page </a>| <a href="{% url caveindex %}"> All caves </a>| <a href="{% url personindex %}"> All cavers </a>| <a href="{% url caveindex %}"> Virtual survey binder </a>| <a href="{% url survey %}"> Expedition statistics </a>| <a href="{% url calendar 2007 %}"> Expedition calendar </a> 
+
+
+
+<div id="footerLinks"> 
+	<a id="cuccLink" href="http://cucc.survex.com">CUCC website</a> | 
+    <a id="expoWebsiteLink" href="http://cucc.survex.com/expo">Expedition website</a> | 
+    External links | 
+    <a href="{% url frontpage %}">Troggle front page</a> | 
+    <a href="{% url caveindex %}">Caves</a> | 
+    <a id="caversLink" href="{% url personindex %}">Cavers</a> | 
+    <a href="{% url survey %}"> Survey binder</a> | 
+    <a href="{% url stats %}"> Statistics</a> | 
+    <a href="{% url calendar 2007 %}">Expedition calendar</a>
 </div> 
 
 </body>
