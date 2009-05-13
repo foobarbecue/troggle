@@ -17,6 +17,10 @@ user.is_staff = True
 user.is_superuser = True
 user.save()
 
+#Make directories that troggle requires
+if not os.path.isdir(settings.PHOTOS_ROOT):
+    os.mkdir(settings.PHOTOS_ROOT)
+
 import parsers.cavetab
 parsers.cavetab.LoadCaveTab()
 import parsers.people

@@ -13,7 +13,11 @@ import csv
 import re
 import datetime
 
-surveytab = open(os.path.join(settings.SURVEYS, "Surveys.csv"))
+try:
+    surveytab = open(os.path.join(settings.SURVEYS, "Surveys.csv"))
+except IOError:
+    import cStringIO, urllib
+    surveytab = cStringIO.StringIO(urllib.urlopen(settings.SURVEYS + "download/Surveys.csv").read())
 dialect=csv.Sniffer().sniff(surveytab.read())
 surveytab.seek(0,0)
 surveyreader = csv.reader(surveytab,dialect=dialect)
@@ -29,7 +33,7 @@ models.Survey.objects.all().delete()
 for survey in surveyreader:
     walletNumberLetter = re.match(r'(?P<number>\d*)(?P<letter>[a-zA-Z]*)',survey[header['Survey Number']]) #I hate this, but some surveys have a letter eg 2000#34a. This line deals with that.
 #    print walletNumberLetter.groups()
-    
+
     surveyobj = models.Survey(
         expedition = models.Expedition.objects.filter(year=survey[header['Year']])[0],
         wallet_number = walletNumberLetter.group('number'),
@@ -43,15 +47,23 @@ for survey in surveyreader:
         pass
     surveyobj.save()
     print "added survey " + survey[header['Year']] + "#" + surveyobj.wallet_number + "\r",
-    
+
+def listdir(*directories):
+    try:
+        return os.listdir(os.path.join(settings.SURVEYS, *directories))
+    except:
+        import urllib
+        url = settings.SURVEYS + reduce(lambda x, y: x + "/" + y, ["listdir"] + list(directories))
+        folders = urllib.urlopen(url.replace("#", "%23")).readlines()
+        return [folder.rstrip(r"/") for folder in folders]
+
 # add survey scans
 def parseSurveyScans(year):
-    yearPath=os.path.join(settings.SURVEYS, year.year)
-    yearFileList=os.listdir(yearPath)
+    yearFileList = listdir(year.year)
     for surveyFolder in yearFileList:
         try:
             surveyNumber=re.match(r'\d\d\d\d#0*(\d+)',surveyFolder).groups()
-            scanList=os.listdir(os.path.join(yearPath,surveyFolder))
+            scanList = listdir(year.year, surveyFolder)
         except AttributeError:
             print surveyFolder + " ignored",
             continue

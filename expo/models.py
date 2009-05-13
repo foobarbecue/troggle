@@ -461,7 +461,7 @@ class QM(TroggleModel):
 	QMnumber=str(self.found_by.cave)+'-'+str(self.found_by.date.year)+"-"+str(self.number)+self.grade
 	return str(QMnumber)
 
-photoFileStorage = FileSystemStorage(location=settings.EXPOWEB+'photos', base_url=settings.PHOTOS_URL)
+photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
 class Photo(TroggleModel): 
     caption = models.CharField(max_length=1000,blank=True,null=True)
     contains_person_trip = models.ManyToManyField(PersonTrip,blank=True,null=True)
