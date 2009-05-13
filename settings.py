@@ -1,5 +1,6 @@
 from localsettings import *
 import os
+import urllib
 # Django settings for troggle project.
 
 DEBUG = True
@@ -34,7 +35,7 @@ USE_I18N = True
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/troggle/media-admin/'
 PHOTOS_ROOT = os.path.join(EXPOWEB, 'photos')
-MEDIA_URL = URL_ROOT+'/site_media/'
+MEDIA_URL = URL_ROOT+'site_media/'
 SURVEYS_URL = URL_ROOT+'/survey_scans/'
 PHOTOS_URL  = URL_ROOT+'/photos/'
 SVX_URL = URL_ROOT+'/survex/'
