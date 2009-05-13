@@ -22,7 +22,7 @@ def caveindex(request):
     notablecaves = [Cave.objects.get(kataster_number=kataster_number)  for kataster_number in notablecavehrefs ]
     return render_response(request,'caveindex.html', {'caves': caves, 'notablecaves':notablecaves})
 
-def cavehref(request, cave_id='', offical_name=''):
+def cave(request, cave_id='', offical_name=''):
     return render_response(request,'cave.html', {'cave': getCave(cave_id),})
     
 def qm(request,cave_id,qm_id,year,grade=None):

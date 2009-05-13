@@ -2,6 +2,7 @@ from troggle.expo.models import *
 from django.contrib import admin
 from django.forms import ModelForm
 import django.forms as forms
+from expo.forms import LogbookEntryForm
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
 
 class RoleInline(admin.TabularInline):
@@ -22,15 +23,29 @@ class QMInline(admin.TabularInline):
 	model=QM
 	extra = 4
 
+class PhotoInline(admin.TabularInline):
+    model = Photo
+    exclude = ['is_mugshot', ]
+    extra = 1
+
+class PersonTripInline(admin.TabularInline):
+    model = PersonTrip
+    exclude = ['persontrip_next','Delete']
+    extra = 1
+
 #class LogbookEntryAdmin(VersionAdmin):
 class LogbookEntryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':("title",)}
     search_fields = ('title','expedition__year')
+    inlines = (PersonTripInline, PhotoInline)
+    form = LogbookEntryForm
     #inlines = (QMInline,) #doesn't work because QM has two foreignkeys to Logbookentry- need workaround
 
 class PersonExpeditionInline(admin.TabularInline):
     model = PersonExpedition
     extra = 1
+    
+
 
 class PersonAdmin(admin.ModelAdmin):
     search_fields = ('first_name','last_name')

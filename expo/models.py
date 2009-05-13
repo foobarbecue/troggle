@@ -39,7 +39,9 @@ class Expedition(TroggleModel):
         get_latest_by = 'date_from'
     
     def get_absolute_url(self):
-        return settings.URL_ROOT + "/expedition/%s" % self.year
+        #return settings.URL_ROOT + "/expedition/%s" % self.year
+        return settings.URL_ROOT + reverse('expedition',args=[self.year])
+    
     
     # lose these two functions (inelegant, and we may create a file with the dates that we can load from)
     def GuessDateFrom(self):
@@ -87,7 +89,7 @@ class Person(TroggleModel):
     #bisnotable  = models.BooleanField()
     user	= models.OneToOneField(User, null=True, blank=True)
     def get_absolute_url(self):
-        return settings.URL_ROOT + "/person/%s_%s/" % (self.first_name, self.last_name)
+        return settings.URL_ROOT + reverse('person',kwargs={'first_name':self.first_name,'last_name':self.last_name})
 
     class Meta:
 	    verbose_name_plural = "People"
@@ -202,7 +204,8 @@ class PersonExpedition(TroggleModel):
         return self.person.first_name
 
     def get_absolute_url(self):
-        return settings.URL_ROOT + '/personexpedition/' + str(self.person.first_name) + '_' + str(self.person.last_name) + '/' +self.expedition.year
+        #return settings.URL_ROOT + '/personexpedition/' + str(self.person.first_name) + '_' + str(self.person.last_name) + '/' +self.expedition.year
+	return settings.URL_ROOT + reverse('personexpedition',kwargs={'first_name':self.person.first_name,'last_name':self.person.last_name,'year':self.expedition.year})
 	
 class LogbookEntry(TroggleModel):
     date    = models.DateField()
@@ -249,8 +252,8 @@ class PersonTrip(TroggleModel):
     logbook_entry    = models.ForeignKey(LogbookEntry)
     is_logbook_entry_author = models.BooleanField()
     
-    persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
-    persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
+    #persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
+    #persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
 
     def __unicode__(self):
         return "%s %s (%s)" % (self.person_expedition, self.place, self.date)
@@ -325,7 +328,9 @@ class Cave(TroggleModel):
             href = self.unofficial_number
         else:
             href = official_name.lower()
-        return settings.URL_ROOT + '/cave/' + href + '/'
+        #return settings.URL_ROOT + '/cave/' + href + '/'
+	return settings.URL_ROOT + reverse('cave',kwargs={'cave_id':href,})
+
             
         
     def __unicode__(self):
@@ -480,7 +485,8 @@ class QM(TroggleModel):
 	return str(QMnumber)
 
     def get_absolute_url(self):
-        return settings.URL_ROOT + '/cave/' + self.found_by.cave.kataster_number + '/' + str(self.found_by.date.year) + '-' + '%02d' %self.number
+        #return settings.URL_ROOT + '/cave/' + self.found_by.cave.kataster_number + '/' + str(self.found_by.date.year) + '-' + '%02d' %self.number
+        return settings.URL_ROOT + reverse('qm',kwargs={'cave_id':self.cave.kataster_number,'year':self.found_by.date.year,'qm_id':self.number,'grade':self.grade})
 
     def get_next_by_id(self):
         return QM.objects.get(id=self.id+1)
@@ -488,10 +494,16 @@ class QM(TroggleModel):
     def get_previous_by_id(self):
         return QM.objects.get(id=self.id-1)
 
+    def wiki_link(self):
+        res = '[[cave:' + str(self.found_by.cave.kataster_number) + ' '
+        res += 'QM:' + str(self.found_by.date.year) + '-'
+        res += str(self.number) + self.grade + ']]'
+	return res
+
 photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
 class Photo(TroggleModel): 
     caption = models.CharField(max_length=1000,blank=True,null=True)
-    contains_person_trip = models.ManyToManyField(PersonTrip,blank=True,null=True)
+    contains_logbookentry = models.ForeignKey(LogbookEntry,blank=True,null=True)
     contains_person = models.ManyToManyField(Person,blank=True,null=True)
     file = models.ImageField(storage=photoFileStorage, upload_to='.',)
     is_mugshot = models.BooleanField(default=False)
