@@ -278,6 +278,6 @@ def LoadLogbooks():
 
 # command line run through the loading stages
 # you can comment out these in turn to control what gets reloaded
-#LoadExpos()#LoadPersons()
+LoadExpos()LoadPersons()
 LoadLogbooks()
 
