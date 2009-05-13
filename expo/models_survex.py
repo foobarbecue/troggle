@@ -27,6 +27,9 @@ class SurvexBlock(models.Model):
     end_file = models.CharField(max_length=200, blank=True, null=True)
     end_char = models.IntegerField(blank=True, null=True)
     
+    class Meta:
+        ordering = ('date', 'survexpath')
+
     def __unicode__(self):
         return unicode(self.name)
     
@@ -37,6 +40,15 @@ class SurvexBlock(models.Model):
         fin.close()
         return res
         
+    def GetPersonroles(self):
+        res = [ ]
+        for personrole in self.personrole_set.order_by('personexpedition'):
+            if res and res[-1]['person'] == personrole.personexpedition.person:
+                res[-1]['roles'] += ", " + str(personrole.role)
+            else:
+                res.append({'person':personrole.personexpedition.person, 'expeditionyear':personrole.personexpedition.expedition.year, 'roles':str(personrole.role)})
+        print res
+        return res
 
 
 class PersonRole(models.Model):

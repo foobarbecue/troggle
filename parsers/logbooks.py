@@ -4,6 +4,7 @@ import troggle.settings as settings
 import troggle.expo.models as models
 
 from troggle.parsers.people import GetPersonExpeditionNameLookup
+from troggle.parsers.cavetab import GetCaveLookup
 
 import csv
 import re
@@ -64,13 +65,14 @@ def GetTripCave(place):                     #need to be fuzzier about matching h
 
 def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_underground):
     trippersons, author = GetTripPersons(trippeople, expedition, logtime_underground)
-    tripCave = GetTripCave(place)
+#    tripCave = GetTripCave(place)
 
     lbo = models.LogbookEntry(date=date, place=place, title=title[:50], text=text, author=author, expedition=expedition)
-    if tripCave:
-        lbo.cave=tripCave
+    lbo.cave=GetCaveLookup().get(place)
+    print "pppp", place, lbo.cave
+    
     lbo.save()
-    print "ttt", date, place
+    #print "ttt", date, place
     for tripperson, time_underground in trippersons:
         pto = models.PersonTrip(person_expedition = tripperson, place=place, date=date, time_underground=time_underground,
                                 logbook_entry=lbo, is_logbook_entry_author=(tripperson == author))
@@ -156,7 +158,7 @@ def Parseloghtml01(year, expedition, txt):
         tripid = mtripid and mtripid.group(1) or ""
         tripheader = re.sub("</?(?:[ab]|span)[^>]*>", "", tripheader)
 
-        #print [tripheader]
+        print [tripheader]
         #continue
 
         tripdate, triptitle, trippeople = tripheader.split("|")
@@ -234,7 +236,7 @@ yearlinks = [
                 ("1999", "1999/log.htm", Parseloghtml01), 
                 ("1998", "1998/log.htm", Parseloghtml01), 
                 ("1997", "1997/log.htm", Parseloghtml01), 
-                #("1996", "1996/log.htm", Parseloghtml01), 
+                ("1996", "1996/log.htm", Parseloghtml01), 
             ]
 
 def SetDatesFromLogbookEntries(expedition):
@@ -303,7 +305,7 @@ def LoadLogbooks():
     models.LogbookEntry.objects.all().delete()
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
     #yearlinks = [ ("2001", "2001/log.htm", Parseloghtml01), ] #overwrite
-    #yearlinks = [ ("1997", "1997/log.htm", Parseloghtml01),] # overwrite
+    #yearlinks = [ ("1996", "1996/log.htm", Parseloghtml01),] # overwrite
 
     for year, lloc, parsefunc in yearlinks:
         expedition = models.Expedition.objects.filter(year = year)[0]

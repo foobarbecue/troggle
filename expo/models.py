@@ -86,6 +86,34 @@ class PersonExpedition(models.Model):
     is_guest    = models.BooleanField(default=False)  
     nickname    = models.CharField(max_length=100,blank=True,null=True)
     
+    def GetPersonroles(self):
+        res = [ ]
+        for personrole in self.personrole_set.order_by('survex_block'):
+            if res and res[-1]['survexpath'] == personrole.survex_block.survexpath:
+                res[-1]['roles'] += ", " + str(personrole.role)
+            else:
+                res.append({'date':personrole.survex_block.date, 'survexpath':personrole.survex_block.survexpath, 'roles':str(personrole.role)})
+        print res
+        return res
+
+    def GetPersonChronology(self):
+        res = { }
+        for persontrip in self.persontrip_set.all():
+            a = res.setdefault(persontrip.date, { })
+            a.setdefault("persontrips", [ ]).append(persontrip)
+        for personrole in self.personrole_set.all():
+            a = res.setdefault(personrole.survex_block.date, { })
+            b = a.setdefault("personroles", { })
+            survexpath = personrole.survex_block.survexpath
+            
+            if b.get(survexpath):
+                b[survexpath] += ", " + str(personrole.role)
+            else:
+                b[survexpath] = str(personrole.role)
+# needs converting dict into list            
+        return sorted(res.items())
+
+    
     # deprecated
     def GetPossibleNameForms(self):
         res = [ ]

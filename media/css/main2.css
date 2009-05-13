@@ -142,6 +142,17 @@ p.indent
     margin-left:10px;
 }
 
+table.survexcontibutions td.date
+{   width:90px;  }
+table.survexcontibutions td.roles
+{   width:100px;  background-color:#feeeed; }
+table.survexcontibutions td.survexblock
+{    width:260px;  background-color:#feeeed; }
+table.survexcontibutions td.trip
+{   width:190px;   }
+table.survexcontibutions td.place
+{   width:140px;   }
+
 #expoHeader {
 	width:100%;
 	position:relative;

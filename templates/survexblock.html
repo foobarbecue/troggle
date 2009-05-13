@@ -29,10 +29,10 @@
 <p>Date: {{survexblock.date}}</p>
 
 <table>
-{% for personrole in survexblock.personrole_set.all %}
+{% for personrole in survexblock.GetPersonroles %}
 <tr>
-  <td><a href="{% url personexpedition personrole.personexpedition.person.href personrole.personexpedition.expedition.year%}">{{personrole.personexpedition.person}}</a></td>
-  <td>{{personrole.role}}</td>
+  <td><a href="{% url personexpedition personrole.person.href personrole.expeditionyear%}">{{personrole.person}}</a></td>
+  <td>{{personrole.roles}}</td>
 </tr>
 {% endfor %}
 </table>
@@ -40,7 +40,7 @@
 
 </div>
 
-<div id="col1">
+<div class="survexblock">
 {{ftext|survex_to_html}}
 </div>
 

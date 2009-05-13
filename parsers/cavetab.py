@@ -262,3 +262,21 @@ for line in caveReader :
 
         newCaveAndEntrance = models.CaveAndEntrance(cave = newCave, entrance = newEntrance, entrance_letter = entrance_letter)
         newCaveAndEntrance.save()
+
+
+# lookup function modelled on GetPersonExpeditionNameLookup
+Gcavelookup = None
+def GetCaveLookup():
+    global Gcavelookup
+    if Gcavelookup:
+        return Gcavelookup
+    Gcavelookup = {"NONEPLACEHOLDER":None}
+    for cave in models.Cave.objects.all():
+        Gcavelookup[cave.official_name.lower()] = cave
+        if cave.kataster_number:
+            Gcavelookup[cave.kataster_number] = cave
+        if cave.unofficial_number:
+            Gcavelookup[cave.unofficial_number] = cave
+    return Gcavelookup
+        
+        
