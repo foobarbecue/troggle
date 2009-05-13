@@ -11,7 +11,7 @@ from django.conf import settings
 import datetime
 from decimal import Decimal, getcontext
 from  django.core.urlresolvers import reverse
-from imagekit.models import ImageModel
+from troggle.imagekit.models import ImageModel
 getcontext().prec=2 #use 2 significant figures for decimal calculations
 
 from models_survex import *
