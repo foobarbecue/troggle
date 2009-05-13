@@ -60,8 +60,8 @@ urlpatterns = patterns('',
     url(r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey, name="survey"),
     
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
-    
-    url(r'^admin/', include(admin.site.urls),name="admin"),
+    (r'^admin/(.*)', admin.site.root),
+    #url(r'^admin/', include(admin.site.urls),name="admin"),
 
     (r'^accounts/', include('registration.urls')),
     (r'^profiles/', include('profiles.urls')),
