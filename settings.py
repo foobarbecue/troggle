@@ -35,10 +35,12 @@ USE_I18N = True
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/troggle/media-admin/'
 PHOTOS_ROOT = os.path.join(EXPOWEB, 'photos')
-MEDIA_URL = urlparse.urljoin(URL_ROOT , '/site_media/')
-SURVEYS_URL = urlparse.urljoin(URL_ROOT , '/survey_scans/')
-PHOTOS_URL  = urlparse.urljoin(URL_ROOT , '/photos/')
-SVX_URL = urlparse.urljoin(URL_ROOT , '/survex/')
+
+if URL_ROOT:    
+    MEDIA_URL = urlparse.urljoin(URL_ROOT , '/site_media/')
+    SURVEYS_URL = urlparse.urljoin(URL_ROOT , '/survey_scans/')
+    PHOTOS_URL  = urlparse.urljoin(URL_ROOT , '/photos/')
+    SVX_URL = urlparse.urljoin(URL_ROOT , '/survex/')
 
 APPEND_SLASH = False
 SMART_APPEND_SLASH = True
