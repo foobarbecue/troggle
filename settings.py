@@ -1,4 +1,3 @@
-from localsettings import *
 import os
 import urlparse
 # Django settings for troggle project.
@@ -88,3 +87,5 @@ INSTALLED_APPS = (
     'troggle.expo',
     'troggle.imagekit', 
 )
+
+from localsettings import *
