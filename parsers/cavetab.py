@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
-sys.path.append("/home/mjg/expoweb/troggle")
 import troggle.expo.models as models
 from django.conf import settings
 import csv

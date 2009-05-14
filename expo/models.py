@@ -162,7 +162,8 @@ class PersonExpedition(TroggleModel):
 
     class Meta:
         ordering = ('expedition',)
-	get_latest_by = 'date_from'
+        #order_with_respect_to = 'expedition'
+	get_latest_by = 'expedition'
     
     def GetPersonChronology(self):
         res = { }

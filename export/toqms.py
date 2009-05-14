@@ -28,8 +28,7 @@ def qmRow(qm):
             qmRow[headers.index(column)]=modelField.replace(u'\xd7','x').replace(u'\u201c','').replace(u'\u2013','').replace(u'\xbd','')
     return qmRow
 
-def writeQmTable(path,cave):
-    outfile=file(path,'w')
+def writeQmTable(outfile,cave):
     cavewriter=csv.writer(outfile,lineterminator='\r')
     cavewriter.writerow(headers)
     for qm in cave.get_QMs():

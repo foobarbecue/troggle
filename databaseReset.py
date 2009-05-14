@@ -6,6 +6,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 from django.core import management
 from django.db import connection
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 
 def reload_db():
     cursor = connection.cursor()
@@ -56,3 +57,18 @@ def reset():
     import_survex()
     import_QMs()
     import_surveys()
+
+def export_cavetab():
+    from export import tocavetab
+    outfile=file(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"),'w')
+    tocavetab.writeCaveTab(outfile)
+    outfile.close()
+    
+def export_qms(): #finish this. need cave chooser
+    from export import toqms
+    outfile=file(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"),'w')
+    outfile.close()
+
+
+    
+    

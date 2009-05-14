@@ -5,8 +5,7 @@ from django.db.models import Q
 import databaseReset
 import re
 import randSent
-from django.http import HttpResponse
-
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
 
@@ -62,9 +61,20 @@ def calendar(request,year):
 def controlPanel(request):
     message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
     if request.method=='POST':
-        for item in request.POST:
-            if request.user.is_superuser and item!='item':
-                print "running"+ " databaseReset."+item+"()"
-                exec "databaseReset."+item+"()"
+        if request.user.is_superuser:
+            for item in request.POST:
+                if item!='item':
+                    print "running"+ " databaseReset."+item+"()"
+                    exec "databaseReset."+item+"()"
+        else:
+            return HttpResponseRedirect(reverse('auth_login'))
 
     return render_response(request,'controlPanel.html', )
+
+def downloadCavetab(request):
+    from export import tocavetab
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=CAVEETAB2.CSV'
+    tocavetab.writeCaveTab(response)
+    return response
+    

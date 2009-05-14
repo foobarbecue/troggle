@@ -42,8 +42,7 @@ def cavetabRow(cave):
             caveRow[headers.index(column)]=modelField.replace(u'\xd7','x').replace(u'\u201c','').replace(u'\u2013','').replace(u'\xbd','')
     return caveRow
 
-def writeCaveTab(path):
-    outfile=file(path,'w')
+def writeCaveTab(outfile):
     cavewriter=csv.writer(outfile,lineterminator='\r')
     cavewriter.writerow(headers)
     for cave in models.Cave.objects.all():

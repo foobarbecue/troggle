@@ -58,6 +58,7 @@ urlpatterns = patterns('',
     url(r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey, name="survey"),
 
     url(r'^controlpanel/?$', views_other.controlPanel, name="controlpanel"),
+    url(r'^cavetab/?$', views_other.downloadCavetab, name="downloadcavetab"),    
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
@@ -68,7 +69,6 @@ urlpatterns = patterns('',
     
 #    (r'^personform/(.*)$', personForm),
 
-    (r'^photologue/', include('photologue.urls')),
 
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
