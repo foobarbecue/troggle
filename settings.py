@@ -1,4 +1,4 @@
-from localsettings import *
+from localsettings import * #inital localsettings call so that urljoins work
 import os
 import urlparse
 # Django settings for troggle project.
@@ -87,3 +87,5 @@ INSTALLED_APPS = (
     'troggle.expo',
     'troggle.imagekit', 
 )
+
+from localsettings import * #localsettings needs to take precedence. Call it to override any existing vars.
