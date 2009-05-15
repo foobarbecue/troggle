@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load link %}
+{% block title %}Troggle: all {{object_list.1.meta.object_name}} objects{%endblock%}
+
+{% block contentheader %}
+<h1>All {{object_list.0.object_name}} objects</h1>
+{% endblock contentheader %}
+
+{% block content %}
+    <ul>
+        {% for object in object_list %}
+            | {{ object|link }}
+        {% endfor %} |
+    </ul>
+{% endblock content %}

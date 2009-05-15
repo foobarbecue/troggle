@@ -17,8 +17,11 @@ from models_survex import *
 class TroggleModel(models.Model):
     new_since_parsing = models.BooleanField(default=False, editable=False)
     
+    def object_name(self):
+        return self._meta.object_name
+
     def get_admin_url(self):
-        return settings.URL_ROOT + "/admin/expo/" + self._meta.object_name.lower() + "/" + str(self.pk)
+        return settings.URL_ROOT + "/admin/expo/" + self.object_name.lower() + "/" + str(self.pk)
 
     class Meta:
 	    abstract = True
@@ -26,8 +29,11 @@ class TroggleModel(models.Model):
 class TroggleImageModel(ImageModel):
     new_since_parsing = models.BooleanField(default=False, editable=False)
     
+    def object_name(self):
+        return self._meta.object_name
+
     def get_admin_url(self):
-        return settings.URL_ROOT + "/admin/expo/" + self._meta.object_name.lower() + "/" + str(self.pk)
+        return settings.URL_ROOT + "/admin/expo/" + self.object_name.lower() + "/" + str(self.pk)
 
     class Meta:
 	    abstract = True
@@ -42,7 +48,7 @@ class Expedition(TroggleModel):
         return self.year
 
     class Meta:
-        ordering = ('year',)
+        ordering = ('-year',)
         get_latest_by = 'date_from'
     
     def get_absolute_url(self):

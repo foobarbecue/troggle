@@ -47,6 +47,7 @@ def import_QMs():
 
 def import_surveys():
     import parsers.surveys
+    parsers.surveys.parseSurveys(logfile=settings.LOGFILE)
 
 def reset():
     reload_db()

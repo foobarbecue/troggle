@@ -7,6 +7,7 @@ from expo.views_survex import *
 from expo.models import *
 from django.views.generic.create_update import create_object
 from django.contrib import admin
+from django.views.generic.list_detail import object_list
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -14,8 +15,8 @@ urlpatterns = patterns('',
     url(r'^$',              views_other.frontpage,      name="frontpage"),
     url(r'^todo/$',              views_other.todo,      name="todo"),
     
-    url(r'^caveindex/?$',     views_caves.caveindex,      name="caveindex"),
-    url(r'^personindex$',   views_logbooks.personindex, name="personindex"),
+    url(r'^caves/?$',     views_caves.caveindex,      name="caveindex"),
+    url(r'^people/?$',   views_logbooks.personindex, name="personindex"),
     
     
     #(r'^person/(?P<person_id>\d*)/?$', views_logbooks.person),
@@ -23,6 +24,7 @@ urlpatterns = patterns('',
     #url(r'^person/(\w+_\w+)$',       views_logbooks.person,      name="person"),
     
     url(r'^expedition/(\d+)$',  views_logbooks.expedition,  name="expedition"),
+    url(r'^expeditions/?$',  object_list,  {'queryset':Expedition.objects.all(),'template_name':'expeditions.html'},name="expeditionlist"),
     url(r'^personexpedition/(?P<first_name>[A-Z]*[a-z]*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z]*)/(?P<year>\d+)/?$', views_logbooks.personexpedition, name="personexpedition"),
     url(r'^logbookentry/(?P<date>.*)/(?P<slug>.*)/?$', views_logbooks.logbookentry,name="logbookentry"),
     
