@@ -126,5 +126,8 @@ def parseSurveys(logfile=None):
 
 def isInterlacedPNG(filePath): #We need to check for interlaced PNGs because the thumbnail engine can't handle them (uses PIL)
     file=Image.open(filePath)
-    return file.info['interlace']
-    
+    print filePath
+    if 'interlace' in file.info:
+        return file.info['interlace']
+    else:
+        return False
