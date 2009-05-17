@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 
 import csv
-import settings
+from django.conf import settings
 from expo.models import QM, LogbookEntry, Cave
 from datetime import *
 from troggle.save_carefully import save_carefully
-import re
+import re, os
 
 def deleteQMs():
     QM.objects.all().delete()
@@ -23,15 +23,14 @@ def parseCaveQMs(cave,inputFile):
         try:
             hauchHl=Cave.objects.get(official_name="Hauchh&ouml;hle")
         except Cave.DoesNotExist:
-            print "Steinbruckenhoehle is not in the database. Please run parsers.cavetab first."
+            print "Hauchhoele is not in the database. Please run parsers.cavetab first."
             return
     elif cave =='kh':
         try:
             kh=Cave.objects.get(official_name="Kaninchenh&ouml;hle")
         except Cave.DoesNotExist:
-            print "Steinbruckenhoehle is not in the database. Please run parsers.cavetab first."
-        for file in inputFile:
-            parse_KH_QMs(kh, inputFile=file) 
+            print "KH is not in the database. Please run parsers.cavetab first."
+        parse_KH_QMs(kh, inputFile=inputFile) 
         return
 
     qmPath = settings.EXPOWEB+inputFile
@@ -108,13 +107,10 @@ def parse_KH_QMs(kh, inputFile):
                 'nearest_station':res['nearest_station'],
                 'location_description':res['description']
                 }
-            
-            if 
-            
+ 
             save_carefully(QM,lookupArgs,nonLookupArgs)
         
 
-parseCaveQMs(cave='kh', inputFile=r"smkridge/161/qmtodo.htm")
 parseCaveQMs(cave='stein',inputFile=r"smkridge/204/qm.csv")
 parseCaveQMs(cave='hauch',inputFile=r"smkridge/234/qm.csv")
-
+parseCaveQMs(cave='kh', inputFile="smkridge/161/qmtodo.htm")

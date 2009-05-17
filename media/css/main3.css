@@ -230,6 +230,12 @@ a.redtext:link {
 	border-bottom-width: thin;
 	border-left-width: thin;
 }
+
+.menuBarItem : hover {
+	background: "rgb(125, 125, 125)";
+}
+
+
 .behind {
 	display: none;
 }

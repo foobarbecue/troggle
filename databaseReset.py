@@ -65,10 +65,6 @@ def export_cavetab():
     tocavetab.writeCaveTab(outfile)
     outfile.close()
     
-def export_qms(): #finish this. need cave chooser
-    from export import toqms
-    outfile=file(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"),'w')
-    outfile.close()
 
 
     

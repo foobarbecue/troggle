@@ -38,7 +38,6 @@ urlpatterns = patterns('',
     url(r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     #(r'^cavesearch', caveSearch),
-    url(r'^cave/(?P<cave_id>[^/]+)(?P<subcave>/.*)/?$', subcave, name="subcave"),
 
     url(r'^survex/(.*?)\.index$', views_survex.index, name="survexindex"),
     
@@ -60,7 +59,11 @@ urlpatterns = patterns('',
     url(r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey, name="survey"),
 
     url(r'^controlpanel/?$', views_other.controlPanel, name="controlpanel"),
-    url(r'^cavetab/?$', views_other.downloadCavetab, name="downloadcavetab"),    
+    url(r'^CAVETAB2\.CSV/?$', views_other.downloadCavetab, name="downloadcavetab"),    
+    url(r'^Surveys\.csv/?$', views_other.downloadSurveys, name="downloadsurveys"),    
+    url(r'^cave/(?P<cave_id>[^/]+)/qm\.csv/?$', views_other.downloadQMs, name="downloadqms"),        
+    (r'^downloadqms$', views_other.downloadQMs),      
+    url(r'^cave/(?P<cave_id>[^/]+)(?P<subcave>/.*)/?$', subcave, name="subcave"),    
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),

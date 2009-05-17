@@ -8,6 +8,7 @@ import randSent
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
+from expo.models import *
 
 def showrequest(request):
     return HttpResponse(request.GET)
@@ -69,12 +70,32 @@ def controlPanel(request):
         else:
             return HttpResponseRedirect(reverse('auth_login'))
 
-    return render_response(request,'controlPanel.html', )
+    return render_response(request,'controlPanel.html', {'caves':Cave.objects.all()} )
 
 def downloadCavetab(request):
     from export import tocavetab
     response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=CAVEETAB2.CSV'
+    response['Content-Disposition'] = 'attachment; filename=CAVETAB2.CSV'
     tocavetab.writeCaveTab(response)
     return response
-    
+
+def downloadSurveys(request):
+    from export import tosurveys
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=Surveys.csv'
+    tosurveys.writeCaveTab(response)
+    return response
+
+def downloadQMs(request):
+    if request.method=='GET':
+        try:
+            cave=Cave.objects.get(kataster_number=request.GET['cave_id'])
+        except Cave.DoesNotExist:
+            cave=Cave.objects.get(name=cave_id)
+
+    from export import toqms
+
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=qm.csv'
+    toqms.writeQmTable(response,cave)
+    return response
