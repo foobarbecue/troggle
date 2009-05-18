@@ -3,10 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main3.css" />
+<link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/dropdownNavStyle.css" />
 <title>{% block title %}Troggle{% endblock %}</title>
 <script src="{{ settings.MEDIA_URL }}js/jquery.js" type="text/javascript"></script>
 <script src="{{ settings.MEDIA_URL }}js/jquery.quicksearch.js" type="text/javascript"></script>
 <script src="{{ settings.MEDIA_URL }}js/base.js" type="text/javascript"></script>
+<script src="{{ settings.MEDIA_URL }}js/jquery.dropdown.js" type="text/javascript"></script>
 <script language="javascript">
 window.onload = contentHeight;
 </script>
@@ -59,7 +61,31 @@ window.onload = contentHeight;
 {% endblock margins %}
 
 
-<div id="footerLinks"> 
+	<ul class="dropdown" id="footerLinks">
+
+		<li><a href="#">External links</a>
+                <ul class="sub_menu">
+                    <li><a id="cuccLink" href="http://cucc.survex.com">CUCC website</a></li>
+                    <li><a id="expoWebsiteLink" href="http://cucc.survex.com/expo">Expedition website</a></li>
+                </ul>
+        </li>
+        <li><a href="{% url frontpage %}">Troggle front page</a></li>
+        <li><a id="cavesLink" href="{% url caveindex %}">caves</a></li>
+        <li><a id="caversLink" href="{% url personindex %}">cavers</a></li>
+        <li><a id="surveyBinderLink" href="{% url survey %}">survey binder</a></li>
+        <li><a href="{% url stats %}">statistics</a></li>
+        <li><a href="{% url calendar 2008 %}">expedition calendar</a></li>
+		<li><a href="#">admin</a>
+                <ul class="sub_menu">
+                    <li><a id="cuccLink" href="{% url controlpanel %}">Import / export data</a></li>
+                    <li><a id="expoWebsiteLink" href="{{ settings.URL_ROOT }}/admin">Troggle administration pages</a></li>
+                </ul>
+        <li class="toggleMenu"><a href="#">hide menu</a></li> 
+
+	</ul>
+        <div class="toggleMenu" style="display:none; position:fixed; bottom:0; right:130px"><a href="#">Show menu</a></li> 
+
+<!--
 	<a id="cuccLink" href="http://cucc.survex.com">CUCC website</a> | 
     <a id="expoWebsiteLink" href="http://cucc.survex.com/expo">Expedition website</a> | 
     External links | 
@@ -70,6 +96,6 @@ window.onload = contentHeight;
     <a href="{% url stats %}"> Statistics</a> | 
     <a href="{% url calendar 2008 %}">Expedition calendar</a>
 </div> 
-
+-->
 </body>
 </html>
