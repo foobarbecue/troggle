@@ -25,18 +25,22 @@ def saveMugShot(mugShotPath, mugShotFilename, person):
         mugShotFilename=mugShotFilename[2:]
     else:
         mugShotFilename=mugShotFilename # just in case one doesn't
-
-    mugShotObj = models.Photo(
-        caption="Mugshot for "+person.first_name+" "+person.last_name,
-        is_mugshot=True,
-        file=mugShotFilename,
+    
+    dummyObj=models.Photo(file=mugShotFilename)
+    
+    #Put a copy of the file in the right place. mugShotObj.file.path is determined by the django filesystemstorage specified in models.py
+    if not os.path.exists(dummyObj.file.path):
+        shutil.copy(mugShotPath, dummyObj.file.path)
+    
+    mugShotObj, created = save_carefully(
+        models.Photo,
+        lookupAttribs={'is_mugshot':True, 'file':mugShotFilename},
+        nonLookupAttribs={'caption':"Mugshot for "+person.first_name+" "+person.last_name}
         )
     
-    shutil.copy(mugShotPath, mugShotObj.file.path) #Put a copy of the file in the right place. mugShotObj.file.path is determined by the django filesystemstorage specified in models.py
-    
-    mugShotObj.save()
-    mugShotObj.contains_person.add(person)
-    mugShotObj.save()	
+    if created:
+        mugShotObj.contains_person.add(person)
+        mugShotObj.save()	
 
 def parseMugShotAndBlurb(personline, header, person):
     #create mugshot Photo instance
@@ -46,10 +50,11 @@ def parseMugShotAndBlurb(personline, header, person):
         saveMugShot(mugShotPath=mugShotPath, mugShotFilename=mugShotFilename, person=person)
     elif mugShotPath[-3:]=='htm': #if person has an html page, find the image(s) and add it. Also, add the text from the html page to the "blurb" field in his model instance.
         personPageOld=open(mugShotPath,'r').read()
-        person.blurb=re.search('<body>.*<hr',personPageOld,re.DOTALL).group() #this needs to be refined, take care of the HTML and make sure it doesn't match beyond the blurb
-        for mugShotFilename in re.findall('i/.*?jpg',personPageOld,re.DOTALL):
-            mugShotPath = os.path.join(settings.EXPOWEB, "folk", mugShotFilename)
-            saveMugShot(mugShotPath=mugShotPath, mugShotFilename=mugShotFilename, person=person)
+        if not person.blurb:
+            person.blurb=re.search('<body>.*<hr',personPageOld,re.DOTALL).group() #this needs to be refined, take care of the HTML and make sure it doesn't match beyond the blurb
+            for mugShotFilename in re.findall('i/.*?jpg',personPageOld,re.DOTALL):
+                mugShotPath = os.path.join(settings.EXPOWEB, "folk", mugShotFilename)
+                saveMugShot(mugShotPath=mugShotPath, mugShotFilename=mugShotFilename, person=person)
     person.save()
 
 def LoadPersonsExpos():
@@ -61,18 +66,17 @@ def LoadPersonsExpos():
     
     # make expeditions
     print "Loading expeditions"
-    models.Expedition.objects.all().delete()
     years = headers[5:]
     
     for year in years:
-        expedition = models.Expedition(year = year, name = "CUCC expo %s" % year)
-        expedition.save()
+        lookupAttribs = {'year':year}
+        nonLookupAttribs = {'name':"CUCC expo %s" % year}
+        
+        save_carefully(models.Expedition, lookupAttribs, nonLookupAttribs)
 
     
     # make persons
     print "Loading personexpeditions"
-    models.Person.objects.all().delete()
-    models.PersonExpedition.objects.all().delete()
     #expoers2008 = """Edvin Deadman,Kathryn Hopkins,Djuke Veldhuis,Becka Lawson,Julian Todd,Natalie Uomini,Aaron Curtis,Tony Rooke,Ollie Stevens,Frank Tully,Martin Jahnke,Mark Shinwell,Jess Stirrups,Nial Peters,Serena Povia,Olly Madge,Steve Jones,Pete Harley,Eeva Makiranta,Keith Curtis""".split(",")
     #expomissing = set(expoers2008)
 
@@ -84,7 +88,7 @@ def LoadPersonsExpos():
 	
         lookupAttribs={'first_name':mname.group(1), 'last_name':(mname.group(2) or "")}
         nonLookupAttribs={'is_vfho':personline[header["VfHO member"]],}
-        person, created = save_carefully(models.Person, lookupAttribs=lookupAttribs, nonLookupAttribs=nonLookupAttribs)
+        person, created = save_carefully(models.Person, lookupAttribs, nonLookupAttribs)
 	
         parseMugShotAndBlurb(personline=personline, header=header, person=person)
     
@@ -92,8 +96,9 @@ def LoadPersonsExpos():
         for year, attended in zip(headers, personline)[5:]:
             expedition = models.Expedition.objects.get(year=year)
             if attended == "1" or attended == "-1":
-                personexpedition = models.PersonExpedition(person=person, expedition=expedition, nickname=nickname, is_guest=(personline[header["Guest"]] == "1"))
-                personexpedition.save()
+                lookupAttribs = {'person':person, 'expedition':expedition}
+                nonLookupAttribs = {'nickname':nickname, 'is_guest':(personline[header["Guest"]] == "1")}
+                save_carefully(models.PersonExpedition, lookupAttribs, nonLookupAttribs)
 
 
     # this fills in those people for whom 2008 was their first expo

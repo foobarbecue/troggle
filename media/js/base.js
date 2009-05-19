@@ -16,7 +16,7 @@ function setMaxHeight(group, target) {
 }
 
 
-/*This is the jquery comment stuff */
+/*This is the jquery stuff */
 $(document).ready(function() { 
 
 $('.searchable li').quicksearch({
@@ -42,12 +42,13 @@ $(".toggleMenu").click(function () {
 		  $(".toggleMenu").toggle();
  });
 
-$(".nav").css('opacity','7')
 $(".footer").hide();
 $(".fadeIn").hide();
 setTimeout("$('.leftMargin.fadeIn').fadeIn(3000);",1000);
 setTimeout("$('.rightMargin.fadeIn').fadeIn(3000);",2000);
-
+$("a.closeDiv").click(function () {
+		  $(this).parent().hide();
+		});
 
 /*$("#footerLinks").hover(
 		  function() {$(".footer").fadeIn("slow")},

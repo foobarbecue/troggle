@@ -20,7 +20,7 @@ ul.dropdown li.hover a              { color: black; background:gray;}
 */
 ul.dropdown ul 						{ width: 220px; visibility: hidden; position: absolute; bottom: 100%; left: 0px; margin-left:0px; padding-left: 0px; background:none}
 ul.dropdown ul li 					{ font-weight: normal; color: black; background: none; border-bottom: 1px solid #ccc; float: none; padding:0px; margin:0px}
-									  
+ul.dropdown ul li:hover, ul.dropdown ul li a:hover				{ color:white;}									  
                                     /* IE 6 & 7 Needs Inline Block */
 ul.dropdown ul li a					{ border-right: none; width: 100%; display: inline-block; color: black;} 
 

@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     #url(r'^person/(\w+_\w+)$',       views_logbooks.person,      name="person"),
     
     url(r'^expedition/(\d+)$',  views_logbooks.expedition,  name="expedition"),
-    url(r'^expeditions/?$',  object_list,  {'queryset':Expedition.objects.all(),'template_name':'expeditions.html'},name="expeditionlist"),
+    url(r'^expeditions/?$',  object_list,  {'queryset':Expedition.objects.all(),'template_name':'object_list.html'},name="expeditions"),
     url(r'^personexpedition/(?P<first_name>[A-Z]*[a-z]*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z]*)/(?P<year>\d+)/?$', views_logbooks.personexpedition, name="personexpedition"),
     url(r'^logbookentry/(?P<date>.*)/(?P<slug>.*)/?$', views_logbooks.logbookentry,name="logbookentry"),
     
@@ -72,8 +72,7 @@ urlpatterns = patterns('',
     (r'^accounts/', include('registration.urls')),
     (r'^profiles/', include('profiles.urls')),
     
-#    (r'^personform/(.*)$', personForm),
-
+#   (r'^personform/(.*)$', personForm),
 
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),

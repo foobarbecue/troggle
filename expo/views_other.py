@@ -60,17 +60,20 @@ def calendar(request,year):
     return render_response(request,'calendar.html', locals())
 
 def controlPanel(request):
-    message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
+    jobs_completed=[]
     if request.method=='POST':
         if request.user.is_superuser:
-            for item in request.POST:
-                if item!='item':
+            importlist=['import_people', 'import_cavetab', 'import_logbooks', 'import_surveys', 'import_QMs']
+            databaseReset.make_dirs()
+            for item in importlist:
+                if item in request.POST:
                     print "running"+ " databaseReset."+item+"()"
                     exec "databaseReset."+item+"()"
+                    jobs_completed.append(item)
         else:
             return HttpResponseRedirect(reverse('auth_login'))
 
-    return render_response(request,'controlPanel.html', {'caves':Cave.objects.all()} )
+    return render_response(request,'controlPanel.html', {'caves':Cave.objects.all(),'jobs_completed':jobs_completed})
 
 def downloadCavetab(request):
     from export import tocavetab
@@ -99,3 +102,8 @@ def downloadQMs(request):
     response['Content-Disposition'] = 'attachment; filename=qm.csv'
     toqms.writeQmTable(response,cave)
     return response
+    
+def ajax_test(request):
+    post_text = request.POST['post_data']
+    return HttpResponse("{'response_text': '"+post_text+" recieved.'}", 
+                                   mimetype="application/json")

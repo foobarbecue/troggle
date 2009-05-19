@@ -199,24 +199,7 @@ a.redtext:link {
 	
 }
 
-.redtext
 
-.menuBarItem {
-	font-variant: small-caps;
-	text-align: right;
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	border-top-width: thin;
-	border-right-width: thin;
-	border-bottom-width: thin;
-	border-left-width: thin;
-}
-
-.menuBarItem : hover {
-	background: "rgb(125, 125, 125)";
-}
 
 
 .behind {
@@ -327,9 +310,11 @@ h1 {
 #footerLinks{
 	position:fixed;
 	bottom:0px;
-	padding: 0;
-	margin-left:130px;
-	margin-right:130px;
+	padding: 0px;
+	margin-left: 130px;
+	margin-right: 130px;
+	margin-bottom: 0px;
+	
 }
 
 /*.fadeIn {

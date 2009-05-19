@@ -34,7 +34,7 @@ def parseCaveQMs(cave,inputFile):
         return
 
     qmPath = settings.EXPOWEB+inputFile
-    qmCSVContents = open(qmPath,'r')
+    qmCSVContents = open(qmPath,'rU')
     dialect=csv.Sniffer().sniff(qmCSVContents.read())
     qmCSVContents.seek(0,0)
     qmReader = csv.reader(qmCSVContents,dialect=dialect)

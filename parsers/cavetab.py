@@ -137,7 +137,7 @@ def html_to_wiki(text):
     return out
 
 def LoadCaveTab(logfile=None):
-    cavetab = open(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"))
+    cavetab = open(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"),'rU')
     caveReader = csv.reader(cavetab)
     caveReader.next() # Strip out column headers
 

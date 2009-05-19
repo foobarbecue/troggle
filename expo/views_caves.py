@@ -93,4 +93,3 @@ def survey(request,year,wallet_number):
 	    elevationSketches=current_survey.scannedimage_set.filter(contents='elevation')
     
     return render_response(request,'survey.html', locals())
-    

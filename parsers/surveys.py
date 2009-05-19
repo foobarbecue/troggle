@@ -115,7 +115,7 @@ def parseSurveyScans(year, logfile=None):
             #print "Added scanned image at " + str(scanObj)
             if scanFormat=="png":
                 if isInterlacedPNG(os.path.join(settings.SURVEY_SCANS,file)):
-                    print file + "is an interlaced PNG. No can do."
+                    print file + " is an interlaced PNG. No can do."
                 continue
             scanObj.save()
 

@@ -11,8 +11,27 @@
 	blankColor = "rgb(153, 153, 153)"
 	highlightedColor = "rgb(125, 125, 125)"
 	chosenColor = "rgb(255, 255, 255)"
-
+	
+	$(document).ready(function() { 
+		$(".menuBarItem").click(function() {
+			$("#"+this.id+"Content").toggle();
+			if ($(this).hasClass('on')){
+				$(this).removeClass('on');}
+			else {
+				$(this).addClass('on');
+			}
+			});
+	});
+	
+	function redirectSurvey(){
+		window.location = "{% url survey %}" + '/' + document.getElementById("expeditionChooser").value + "%23" + document.getElementById("surveyChooser").value;
+	}
+	
+	function redirectYear(){
+		window.location = "{% url survey %}" + '/' + document.getElementById("expeditionChooser").value + "%23";
+	}
 </script>
+
 {% endblock %}
 
 <div id="currentLocation">
@@ -45,7 +64,7 @@
 
   <div>
 <!--  	<h4>Click to toggle:</h4>-->
-    <div id="progressTable" class="menuBarItem" > {% if current_expedition.survey_set.all %}&#10003;{% endif %}
+    <div id="progressTable" class="menuBarItem"> {% if current_expedition.survey_set.all %}&#10003;{% endif %}
       survey progress table </div>
   </div>      
     
@@ -70,16 +89,16 @@
   </center>
 <!--      	<h4>Click to toggle:</h4>-->
   <div id="surveyWalletNav">
-    <div id="notes" class="menuBarItem" > {% if notes %}&#10003;{% endif %}
+    <div id="notes" class="menuBarItem" "> {% if notes %}&#10003;{% endif %}
       scanned notes </div>
-    <div id="survexFile" class="menuBarItem" > {% if current_survey.survex_file %}&#10003;{% endif %}
+    <div id="survexFile" class="menuBarItem" "> {% if current_survey.survex_file %}&#10003;{% endif %}
       survex file </div>
-    <div id="printedCentreline" class="menuBarItem" > {% if current_survey.centreline_printed_on %}&#10003;{% endif %}
+    <div id="printedCentreline" class="menuBarItem" "> {% if current_survey.centreline_printed_on %}&#10003;{% endif %}
       printed centreline </div>
-    <div id="scannedPassageSketch" class="menuBarItem" > {% if planSketches %}&#10003;{% endif %}
+    <div id="scannedPassageSketch" class="menuBarItem" "> {% if planSketches %}&#10003;{% endif %}
       scanned passage sketch </div>
-    <div id="tunnelXMLfile" class="menuBarItem" >tunnel xml file</div>
-    <div id="mainSketchIntegration" class="menuBarItem" >add to main sketch</div>
+    <div id="tunnelXMLfile" class="menuBarItem" ">tunnel xml file</div>
+    <div id="mainSketchIntegration" class="menuBarItem" ">add to main sketch</div>
   </div>
  </div>
 {% endblock %}
@@ -141,7 +160,7 @@
       </p>
     </div>
     {% endfor %}
-    <div class="figure"> <a href="{{ settings.URL_ROOT }}admin/expo/scannedimage/add/" target="_blank"> <img src="{{ settings.URL_ROOT }}{{ settings.ADMIN_MEDIA_PREFIX }}img/admin/icon_addlink.gif" /> Add a new scanned notes page. </a>  </div>
+    <div class="figure"> <a href="{{ settings.URL_ROOT }}admin/expo/scannedimage/add/"> <img src="{{ settings.URL_ROOT }}{{ settings.ADMIN_MEDIA_PREFIX }}img/admin/icon_addlink.gif" /> Add a new scanned notes page. </a>  </div>
   </div>
   <br class="clearfloat" />
   <div id="survexFileContent" class="behind"> survex file editor, keeping file in original structure <br />

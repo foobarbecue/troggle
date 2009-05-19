@@ -1,12 +1,37 @@
 div#nav {
 	position:fixed;
 	width: 12em;
-	background: rgb(153, 153, 153);
+	background: none;
 	margin-top: 0px;
-	margin-left: 120px;
-	border-top: thin black solid;
+	margin-left: 130px;
+	border-right: thin black solid;
+	border-left: thin black solid;	
+	border-bottom: thin black solid;
+	border-top: none;	
 }
 
 div#content {
 	padding-left:240px;
+}
+
+.menuBarItem {
+	font-variant: small-caps;
+	text-align: right;
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	border-top-width: thin;
+	border-right-width: thin;
+	border-bottom-width: thin;
+	border-left-width: thin;
+}
+
+.menuBarItem:hover {
+	background:#333;
+}
+
+.menuBarItem.on {
+	background:#333;
+	color:#999;
 }

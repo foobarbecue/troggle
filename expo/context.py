@@ -1,4 +1,5 @@
 from django.conf import settings
+from expo.models import Expedition
 
-def settings_context(request):
-    return { 'settings':settings }
+def troggle_context(request):
+    return { 'settings':settings, 'Expedition':Expedition }

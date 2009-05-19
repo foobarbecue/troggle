@@ -65,15 +65,25 @@ window.onload = contentHeight;
 
 		<li><a href="#">External links</a>
                 <ul class="sub_menu">
-                    <li><a id="cuccLink" href="http://cucc.survex.com">CUCC website</a></li>
+                    <li><a id="cuccLink" href="http://www.srcf.ucam.org/caving/wiki/Main_Page">CUCC website</a></li>
                     <li><a id="expoWebsiteLink" href="http://cucc.survex.com/expo">Expedition website</a></li>
                 </ul>
         </li>
         <li><a href="{% url frontpage %}">Troggle front page</a></li>
         <li><a id="cavesLink" href="{% url caveindex %}">caves</a></li>
         <li><a id="caversLink" href="{% url personindex %}">cavers</a></li>
+        <li><a href="#">expeditions</a>
+        		<ul class="sub_menu">
+                    <li><a id="expeditionsLink" href="{{ Expedition.objects.latest.get_absolute_url }}">newest</a></li>
+                	<li><a id="expeditionsLink" href="{% url expeditions %}">list all</a></li>
+                </ul>
+        </li>
         <li><a id="surveyBinderLink" href="{% url survey %}">survey binder</a></li>
-        <li><a href="{% url stats %}">statistics</a></li>
+        <li><a href="#">diversions</a>
+        		<ul class="sub_menu">
+                	<li><a href="{% url stats %}">statistics</a></li>
+                </ul>
+        </li>
         <li><a href="{% url calendar 2008 %}">expedition calendar</a></li>
 		<li><a href="#">admin</a>
                 <ul class="sub_menu">
@@ -84,18 +94,5 @@ window.onload = contentHeight;
 
 	</ul>
         <div class="toggleMenu" style="display:none; position:fixed; bottom:0; right:130px"><a href="#">Show menu</a></li> 
-
-<!--
-	<a id="cuccLink" href="http://cucc.survex.com">CUCC website</a> | 
-    <a id="expoWebsiteLink" href="http://cucc.survex.com/expo">Expedition website</a> | 
-    External links | 
-    <a href="{% url frontpage %}">Troggle front page</a> | 
-    <a href="{% url caveindex %}">Caves</a> | 
-    <a id="caversLink" href="{% url personindex %}">Cavers</a> | 
-    <a id="surveyBinderLink" href="{% url survey %}"> Survey binder</a> | 
-    <a href="{% url stats %}"> Statistics</a> | 
-    <a href="{% url calendar 2008 %}">Expedition calendar</a>
-</div> 
--->
 </body>
 </html>
