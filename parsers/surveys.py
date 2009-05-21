@@ -12,6 +12,19 @@ from PIL import Image
 import csv
 import re
 import datetime
+from save_carefully import save_carefully
+
+def get_or_create_placeholder(year):
+    """ All surveys must be related to a logbookentry. We don't have a way to
+        automatically figure out which survey went with which logbookentry,
+        so we create a survey placeholder logbook entry for each year. This
+        function always returns such a placeholder, and creates it if it doesn't
+        exist yet.
+    """
+    lookupAttribs={'date__year':int(year),  'title':"placeholder for surveys",}
+    nonLookupAttribs={'text':"surveys temporarily attached to this should be re-attached to their actual trips", 'date':datetime.date(int(year),1,1)}
+    placeholder_logbook_entry, newly_created = save_carefully(LogbookEntry, lookupAttribs, nonLookupAttribs)
+    return placeholder_logbook_entry
 
 def readSurveysFromCSV(logfile=None):
     try:
@@ -42,13 +55,16 @@ def readSurveysFromCSV(logfile=None):
         logfile.write("Beginning to import surveys from "+str(os.path.join(settings.SURVEYS, "Surveys.csv"))+"\n"+"-"*60+"\n")
     
     for survey in surveyreader:
-        walletNumberLetter = re.match(r'(?P<number>\d*)(?P<letter>[a-zA-Z]*)',survey[header['Survey Number']]) #I hate this, but some surveys have a letter eg 2000#34a. This line deals with that.
+        #I hate this, but some surveys have a letter eg 2000#34a. The next line deals with that.
+        walletNumberLetter = re.match(r'(?P<number>\d*)(?P<letter>[a-zA-Z]*)',survey[header['Survey Number']]) 
     #    print walletNumberLetter.groups()
+        year=survey[header['Year']]
 
+        
         surveyobj = Survey(
-            expedition = Expedition.objects.filter(year=survey[header['Year']])[0],
+            expedition = Expedition.objects.filter(year=year)[0],
             wallet_number = walletNumberLetter.group('number'),
-
+            logbook_entry = get_or_create_placeholder(year),
             comments = survey[header['Comments']],
             location = survey[header['Location']]
             )
@@ -101,7 +117,8 @@ def parseSurveyScans(year, logfile=None):
             if type(surveyNumber)==types.TupleType:
                 surveyNumber=surveyNumber[0]
             try:
-                survey=Survey.objects.get_or_create(wallet_number=surveyNumber, expedition=year)[0]
+                placeholder=get_or_create_placeholder(year=int(year.year))
+                survey=Survey.objects.get_or_create(wallet_number=surveyNumber, expedition=year, defaults={'logbook_entry':placeholder})[0]
             except Survey.MultipleObjectsReturned:
                 survey=Survey.objects.filter(wallet_number=surveyNumber, expedition=year)[0]
             file=os.path.join(year.year, surveyFolder, scan)

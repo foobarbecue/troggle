@@ -1,5 +1,6 @@
 from troggle.expo.models import *
 from django.contrib import admin
+from feincms.admin import editor
 from django.forms import ModelForm
 import django.forms as forms
 from expo.forms import LogbookEntryForm
@@ -69,10 +70,12 @@ class CaveAdmin(TroggleModelAdmin):
     #inlines = (QMInline,)
     extra = 4
 
+class SubcaveAdmin(editor.TreeEditorMixin,TroggleModelAdmin):
+    pass
 
 
 admin.site.register(Photo)
-admin.site.register(Subcave)
+admin.site.register(Subcave, SubcaveAdmin)
 admin.site.register(Cave, CaveAdmin)
 admin.site.register(Area)
 admin.site.register(OtherCaveName)
@@ -91,3 +94,7 @@ admin.site.register(QM, QMAdmin)
 admin.site.register(Survey, SurveyAdmin)
 admin.site.register(ScannedImage)
 
+try:
+    mptt.register(Subcave, order_insertion_by=['name'])
+except mptt.AlreadyRegistered:
+    print "mptt already registered"

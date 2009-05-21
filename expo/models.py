@@ -1,4 +1,5 @@
 import urllib, urlparse, string, os, datetime
+import troggle.mptt as mptt
 from django.forms import ModelForm
 from django.db import models
 from django.contrib import admin
@@ -463,31 +464,35 @@ class Entrance(TroggleModel):
                 return f[1]
                 
 class Subcave(TroggleModel):
-    description = models.TextField()
-    name = models.CharField(max_length=200, )
+    description = models.TextField(blank=True, null=True)
+    title = models.CharField(max_length=200, )
     cave = models.ForeignKey('Cave', blank=True, null=True, help_text="Only the top-level subcave should be linked to a cave")
-    parent= models.ForeignKey('Subcave', blank=True, null=True, related_name='children')
-    adjoining = models.ManyToManyField('Subcave',blank=True, null=True,)
-    survex_file = models.CharField(max_length=200, blank=True, null=True,)
-    
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children')
+    #adjoining = models.ManyToManyField('Subcave',blank=True, null=True,)
+    legacy_description_path = models.CharField(max_length=600, blank=True, null=True)
     def __unicode__(self):
-        return self.name
+        return self.title
     
-    def get_absolute_url(self):
-        urlString=self.name
-        if self.parent:
-            parent=self.parent
-            while parent: #recursively walk up the tree, adding parents to the left of the URL
-                urlString=parent.name+'/'+urlString
-                if parent.cave:
-                    cave=parent.cave
-                parent=parent.parent
-            urlString='cave/'+unicode(cave.kataster_number)+'/'+urlString
-        else:
-            urlString='cave/'+unicode(self.cave.kataster_number)+'/'+urlString
+
+#    def get_absolute_url(self):
+#        urlString=self.name
+#        if self.parent:
+#            parent=self.parent
+#            while parent: #recursively walk up the tree, adding parents to the left of the URL
+#                urlString=parent.name+'/'+urlString
+#                if parent.cave:
+#                    cave=parent.cave
+#                parent=parent.parent
+#            urlString='cave/'+unicode(cave.kataster_number)+'/'+urlString
+#        else:
+#            urlString='cave/'+unicode(self.cave.kataster_number)+'/'+urlString
             
             
-        return urlparse.urljoin(settings.URL_ROOT, urlString)
+#        return urlparse.urljoin(settings.URL_ROOT, urlString)
+try:
+    mptt.register(Subcave, order_insertion_by=['title'])
+except mptt.AlreadyRegistered:
+    print "mptt already registered"
 
 class QM(TroggleModel):
     #based on qm.csv in trunk/expoweb/smkridge/204 which has the fields:
@@ -592,13 +597,15 @@ class ScannedImage(TroggleImageModel):
         return get_scan_path(self,'')
 
 class Survey(TroggleModel):
-    expedition = models.ForeignKey('Expedition')
+    expedition = models.ForeignKey('Expedition') #REDUNDANT (logbook_entry)
     wallet_number = models.IntegerField(blank=True,null=True)
     wallet_letter = models.CharField(max_length=1,blank=True,null=True)
     comments = models.TextField(blank=True,null=True)
-    location = models.CharField(max_length=400,blank=True,null=True)
+    location = models.CharField(max_length=400,blank=True,null=True) #REDUNDANT
+    subcave = models.ForeignKey('Subcave', blank=True, null=True)
     #notes_scan = models.ForeignKey('ScannedImage',related_name='notes_scan',blank=True, null=True)  	#Replaced by contents field of ScannedImage model
-    survex_block  = models.ForeignKey('SurvexBlock',blank=True, null=True)
+    survex_block  = models.OneToOneField('SurvexBlock',blank=True, null=True)
+    logbook_entry = models.ForeignKey('LogbookEntry')
     centreline_printed_on = models.DateField(blank=True, null=True)
     centreline_printed_by = models.ForeignKey('Person',related_name='centreline_printed_by',blank=True,null=True)
     #sketch_scan = models.ForeignKey(ScannedImage,blank=True, null=True) 					#Replaced by contents field of ScannedImage model
@@ -608,7 +615,7 @@ class Survey(TroggleModel):
     integrated_into_main_sketch_by = models.ForeignKey('Person' ,related_name='integrated_into_main_sketch_by', blank=True,null=True)
     rendered_image = models.ImageField(upload_to='renderedSurveys',blank=True,null=True)
     def __str__(self):
-        return self.expedition.year+"#"+"%02d" % self.wallet_number
+        return self.expedition.year+"#"+"%02d" % int(self.wallet_number)
 
     def notes(self):
 	    return self.scannedimage_set.filter(contents='notes')
@@ -618,5 +625,3 @@ class Survey(TroggleModel):
 
     def elevations(self):
 	    return self.scannedimage_set.filter(contents='elevation')
-    
-    

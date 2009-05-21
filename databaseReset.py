@@ -14,7 +14,7 @@ def reload_db():
     cursor.execute("create database %s" % settings.DATABASE_NAME)
     cursor.execute("ALTER DATABASE %s CHARACTER SET=utf8" % settings.DATABASE_NAME)
     cursor.execute("USE %s" % settings.DATABASE_NAME)
-    management.call_command('syncdb')
+    management.call_command('syncdb', interactive=False)
     user = User.objects.create_user('m', 'm@m.com', 'm')
     user.is_staff = True
     user.is_superuser = True
@@ -50,6 +50,8 @@ def import_surveys():
     parsers.surveys.parseSurveys(logfile=settings.LOGFILE)
 
 def reset():
+    """ Wipe the troggle database and import everything from legacy data
+    """
     reload_db()
     make_dirs()
     import_cavetab()

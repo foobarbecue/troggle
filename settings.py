@@ -86,6 +86,8 @@ INSTALLED_APPS = (
     'troggle.profiles',
     'troggle.expo',
     'troggle.imagekit', 
+    'mptt', #This is django-mptt (modifed preorder tree traversal) which allows the tree structure of subcaves.
+    'feincms' #This is a little content management app that does the javascript admin page for mptt.
 )
 
 from localsettings import * #localsettings needs to take precedence. Call it to override any existing vars.
