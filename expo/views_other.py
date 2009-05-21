@@ -63,7 +63,10 @@ def controlPanel(request):
     jobs_completed=[]
     if request.method=='POST':
         if request.user.is_superuser:
-            importlist=['import_people', 'import_cavetab', 'import_logbooks', 'import_surveys', 'import_QMs']
+    
+            #importlist is mostly here so that things happen in the correct order.
+            #http post data seems to come in an unpredictable order, we do it this way.
+            importlist=['reload_db', 'import_people', 'import_cavetab', 'import_logbooks', 'import_surveys', 'import_QMs']
             databaseReset.make_dirs()
             for item in importlist:
                 if item in request.POST:
