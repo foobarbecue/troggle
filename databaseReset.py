@@ -22,12 +22,13 @@ def reload_db():
 
 def make_dirs():
     """Make directories that troggle requires"""
+    #should also deal with permissions here.
     if not os.path.isdir(settings.PHOTOS_ROOT):
         os.mkdir(settings.PHOTOS_ROOT)
 
 def import_cavetab():
     import parsers.cavetab
-    parsers.cavetab.LoadCaveTab(logfile=settings.LOGFILE)
+    parsers.cavetab.LoadCaveTab()
 
 def import_people():
     import parsers.people
