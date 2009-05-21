@@ -8,7 +8,7 @@ from django.db import connection
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
-logfile=settings.LOGFILE
+
 
 def reload_db():
     cursor = connection.cursor()
@@ -37,7 +37,7 @@ def import_people():
     parsers.people.LoadPersonsExpos()
 
 def import_logbooks():
-    logfile.write('\nBegun importing logbooks at ' + time.asctime() +'\n'+'-'*60)
+    settings.LOGFILE.write('\nBegun importing logbooks at ' + time.asctime() +'\n'+'-'*60)
     import parsers.logbooks
     parsers.logbooks.LoadLogbooks()
 
