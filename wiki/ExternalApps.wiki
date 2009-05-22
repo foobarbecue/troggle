@@ -1,0 +1,22 @@
+#labels Phase-Implementation,Phase-Deploy
+#discussion of the third party libraries Troggle uses
+
+In addition to Python and Django, Troggle uses a few other, "third party" apps. It is sometimes tempting to add lots more, but we should try and keep them to a minimum or at least set up Troggle so that included third party apps are optional.
+
+== How things are included ==
+
+If the projects use SVN, we can include external repositories using the svn:external property. This is how django-mptt is currently installed. However, most apps have been simply copied into the troggle repository. Another option is to leave them out of troggle and tell the user that they are dependencies which must be installed to use troggle.
+
+== All included apps ==
+
+django-registration: for user registration with confirmation email
+
+django-profiles: for extending the user model
+
+django-imagekit: for thumbnail generation
+
+feincms: a little CMS which we use just for it's javascript tree-management admin for subcaves. Also may be useful for fine-grained permissions, eg disallowing access / editing for particular caves. Requires django-mptt.
+
+django-mptt: Required by feincms. Does the business logic for maintaining trees and provides methods like .get_ancestors() and .get_root() .
+
+
