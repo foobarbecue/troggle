@@ -1,8 +1,16 @@
 #labels Phase-Design
 #troggle's appearance
 
-Is it over the top? Is 500kb too big for a default front page? Does anyone mind if we get rid of the green {{{<h1>}}} style?
+=== Overall ===
 
-= Individual user preferences =
+Is it too high tech? Is 500kb too big for a default front page? Does anyone mind if we get rid of the green {{{<h1>}}} style?
+
+=== Main menu ===
+
+Are the transparent links ok? Or is the clash with page text a problem?
+
+The fade in images will be improved; eg the surveys one will appear under the surveys link when I get around to doing that.
+
+=== Individual user preferences ===
 
 We could store preferences in the user model so that for example, the mouseover images wouldn't load when people who don't like them log in.
