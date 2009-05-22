@@ -1,0 +1,8 @@
+#labels Phase-Design
+#troggle's appearance
+
+Is it over the top? Is 500kb too big for a default front page? Does anyone mind if we get rid of the green <h1> style?
+
+= Individual user preferences =
+
+We could store preferences in the user model so that for example, the mouseover images wouldn't load when people who don't like them log in.
