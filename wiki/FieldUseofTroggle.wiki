@@ -1,0 +1,15 @@
+#labels Phase-Requirements
+#Concerns and methods for using troggle on an expedition
+
+= No internet =
+
+Troggle does not and should never require the internet for basic function. Currently the only issue with having no internet is that users can not create new accounts (email is used for verification) but this is ok because a) people can sign up before the expedition and b) an administrator can always manually add accounts.
+
+
+= Top camp troggle and merging data =
+
+We will probably need to be able to merge troggle databases. Two scenarios where this is necessary:
+    * data is entered into a laptop at top camp
+    * the expedition data needs to be merged into the web server (although it could possibly just replace the online server database as long as no editing on the web server happens during expo)
+
+Ideas are welcome for this. Using django's "fixtures" (JSON or XML dumping and loading) is one possibility. We may need to use unique random primary keys instead of the built in automatic ones.
