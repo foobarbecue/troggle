@@ -1,4 +1,4 @@
-import urllib, urlparse, string, os, datetime
+import urllib, urlparse, string, os, datetime, logging
 import troggle.mptt as mptt
 from django.forms import ModelForm
 from django.db import models
@@ -13,6 +13,10 @@ from imagekit.models import ImageModel
 getcontext().prec=2 #use 2 significant figures for decimal calculations
 
 from models_survex import *
+
+logging.basicConfig(level=logging.DEBUG,
+                           filename=settings.LOGFILE,
+                           filemode='w')
 
 #This class is for adding fields and methods which all of our models will have.
 class TroggleModel(models.Model):

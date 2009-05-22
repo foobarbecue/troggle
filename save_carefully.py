@@ -1,4 +1,4 @@
-from settings import LOGFILE
+import logging
 
 def save_carefully(objectType, lookupAttribs={}, nonLookupAttribs={}):
     """Looks up instance using lookupAttribs and carries out the following:
@@ -18,14 +18,12 @@ def save_carefully(objectType, lookupAttribs={}, nonLookupAttribs={}):
             setattr(instance, k, v)
         instance.save()
     
-    if LOGFILE:
-        if created:
-            LOGFILE.write(unicode(instance)+u' was just added to the database for the first time. \n')
-        
-        if not created and instance.new_since_parsing:
-            LOGFILE.write(unicode(instance)+" has been modified using Troggle, so the current script left it as is. \n")
+    if created:
+        logging.info(unicode(instance)+u' was just added to the database for the first time. \n')
+    
+    if not created and instance.new_since_parsing:
+        logging.info(unicode(instance)+" has been modified using Troggle, so the current script left it as is. \n")
 
-        if not created and not instance.new_since_parsing:
-            LOGFILE.write(unicode(instance)+" existed in the database unchanged since last parse. It was overwritten by the current script. \n")
-        LOGFILE.flush()
+    if not created and not instance.new_since_parsing:
+        logging.info(unicode(instance)+" existed in the database unchanged since last parse. It was overwritten by the current script. \n")
     return (instance, created)

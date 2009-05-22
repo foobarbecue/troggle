@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 import troggle.expo.models as models
 from django.conf import settings
-import csv
-import time
-
-import re
-import os
-
+import csv, time, re, os, logging
 from troggle.save_carefully import save_carefully
 
 ##format of CAVETAB2.CSV is
@@ -136,20 +131,18 @@ def html_to_wiki(text):
             text2 = ""
     return out
 
-def LoadCaveTab(logfile=settings.LOGFILE):
+def LoadCaveTab():
     cavetab = open(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"),'rU')
     caveReader = csv.reader(cavetab)
     caveReader.next() # Strip out column headers
 
-    if logfile:
-        logfile.write("Beginning to import caves from "+str(cavetab)+"\n"+"-"*60+"\n")
+    logging.info("Beginning to import caves from "+str(cavetab)+"\n"+"-"*60+"\n")
 
     for katArea in ['1623', '1626']:
         if not models.Area.objects.filter(short_name = katArea):
             newArea = models.Area(short_name = katArea)
             newArea.save()
-            if logfile:
-                logfile.write("Added area "+str(newArea.short_name)+"\n")
+            logging.info("Added area "+str(newArea.short_name)+"\n")
     area1626 = models.Area.objects.filter(short_name = '1626')[0]
     area1623 = models.Area.objects.filter(short_name = '1623')[0]
     
@@ -190,8 +183,7 @@ def LoadCaveTab(logfile=settings.LOGFILE):
             addToDefaultArgs(Notes, "notes")
 
             newCave, created=save_carefully(models.Cave, lookupAttribs=args, nonLookupAttribs=defaultArgs)
-            if logfile:
-                logfile.write("Added cave "+str(newCave)+"\n")
+            logging.info("Added cave "+str(newCave)+"\n")
 
             #If we created a new cave, add the area to it. This does mean that if a cave's identifying features have not changed, areas will not be updated from csv.
             if created and line[Area]:
@@ -209,14 +201,14 @@ def LoadCaveTab(logfile=settings.LOGFILE):
                 newCave.area.add(area1623)
 
             newCave.save()
-            if logfile:
-                logfile.write("Added area "+line[Area]+" to cave "+str(newCave)+"\n")
+            
+            logging.info("Added area "+line[Area]+" to cave "+str(newCave)+"\n")
 
             if created and line[UnofficialName]:
                 newUnofficialName = models.OtherCaveName(cave = newCave, name = line[UnofficialName])
                 newUnofficialName.save()
-                if logfile:
-                    logfile.write("Added unofficial name "+str(newUnofficialName)+" to cave "+str(newCave)+"\n")
+                
+                logging.info("Added unofficial name "+str(newUnofficialName)+" to cave "+str(newCave)+"\n")
 
         if created and line[MultipleEntrances] == '' or \
             line[MultipleEntrances] == 'entrance' or \
@@ -277,8 +269,8 @@ def LoadCaveTab(logfile=settings.LOGFILE):
             addToArgs(Bearings, 'bearings')
             newEntrance = models.Entrance(**args)
             newEntrance.save()
-            if logfile:
-                logfile.write("Added entrance "+str(newEntrance)+"\n")            
+            
+            logging.info("Added entrance "+str(newEntrance)+"\n")            
     
             if line[Entrances]:
                 entrance_letter = line[Entrances]
@@ -287,8 +279,8 @@ def LoadCaveTab(logfile=settings.LOGFILE):
     
             newCaveAndEntrance = models.CaveAndEntrance(cave = newCave, entrance = newEntrance, entrance_letter = entrance_letter)
             newCaveAndEntrance.save()
-            if logfile:
-                logfile.write("Added CaveAndEntrance "+str(newCaveAndEntrance)+"\n")
+            
+            logging.info("Added CaveAndEntrance "+str(newCaveAndEntrance)+"\n")
 
 
 # lookup function modelled on GetPersonExpeditionNameLookup

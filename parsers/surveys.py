@@ -1,6 +1,4 @@
-import sys
-import os
-import types
+import sys, os, types, logging
 #sys.path.append('C:\\Expo\\expoweb')
 #from troggle import *
 #os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
@@ -26,7 +24,7 @@ def get_or_create_placeholder(year):
     placeholder_logbook_entry, newly_created = save_carefully(LogbookEntry, lookupAttribs, nonLookupAttribs)
     return placeholder_logbook_entry
 
-def readSurveysFromCSV(logfile=None):
+def readSurveysFromCSV():
     try:
         surveytab = open(os.path.join(settings.SURVEYS, "Surveys.csv"))
     except IOError:
@@ -43,16 +41,16 @@ def readSurveysFromCSV(logfile=None):
         print "There are no expeditions in the database. Please run the logbook parser."
         sys.exit()
 
-    if logfile:
-        logfile.write("Deleting all scanned images")
+    
+    logging.info("Deleting all scanned images")
     ScannedImage.objects.all().delete()
     
-    if logfile:
-        logfile.write("Deleting all survey objects")
+    
+    logging.info("Deleting all survey objects")
     Survey.objects.all().delete()
     
-    if logfile:
-        logfile.write("Beginning to import surveys from "+str(os.path.join(settings.SURVEYS, "Surveys.csv"))+"\n"+"-"*60+"\n")
+    
+    logging.info("Beginning to import surveys from "+str(os.path.join(settings.SURVEYS, "Surveys.csv"))+"\n"+"-"*60+"\n")
     
     for survey in surveyreader:
         #I hate this, but some surveys have a letter eg 2000#34a. The next line deals with that.
@@ -74,8 +72,8 @@ def readSurveysFromCSV(logfile=None):
             pass
         surveyobj.save()
 
-        if logfile:
-            logfile.write("added survey " + survey[header['Year']] + "#" + surveyobj.wallet_number + "\r")
+        
+        logging.info("added survey " + survey[header['Year']] + "#" + surveyobj.wallet_number + "\r")
 
 def listdir(*directories):
     try:

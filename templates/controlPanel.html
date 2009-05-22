@@ -10,7 +10,7 @@
                     <li>{{ job }}</li>
                 {% endfor %}
                 </ul>
-            {% if settings.LOGFILE %}See the logfile at {{settings.LOGFILE.path}} for more information.{% endif %}
+            {% if settings.LOGFILE %}See the logfile at {{settings.LOGFILE}} for more information.{% endif %}
             <a href="#" class="closeDiv">dismiss this message</a>
     </div>
 {% endif %}
