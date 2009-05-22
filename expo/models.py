@@ -466,13 +466,25 @@ class Entrance(TroggleModel):
 class Subcave(TroggleModel):
     description = models.TextField(blank=True, null=True)
     title = models.CharField(max_length=200, )
-    cave = models.ForeignKey('Cave', blank=True, null=True, help_text="Only the top-level subcave should be linked to a cave")
+    cave = models.ForeignKey('Cave', blank=True, null=True, help_text="Only the top-level subcave should be linked to a cave!")
     parent = models.ForeignKey('self', null=True, blank=True, related_name='children')
     #adjoining = models.ManyToManyField('Subcave',blank=True, null=True,)
     legacy_description_path = models.CharField(max_length=600, blank=True, null=True)
     def __unicode__(self):
         return self.title
-    
+
+    def get_absolute_url(self):
+        
+        ancestor_titles='/'.join([subcave.title for subcave in self.get_ancestors()])
+        if ancestor_titles:
+            res = '/'.join((self.get_root().cave.get_absolute_url(), ancestor_titles, self.title))
+        
+        else:
+            res = '/'.join((self.get_root().cave.get_absolute_url(), self.title))
+            
+        return res
+            
+# This was the old way, before we were using django-mptt
 
 #    def get_absolute_url(self):
 #        urlString=self.name
@@ -524,7 +536,7 @@ class QM(TroggleModel):
 
     def get_absolute_url(self):
         #return settings.URL_ROOT + '/cave/' + self.found_by.cave.kataster_number + '/' + str(self.found_by.date.year) + '-' + '%02d' %self.number
-        return settings.URL_ROOT + reverse('qm',kwargs={'cave_id':self.cave.kataster_number,'year':self.found_by.date.year,'qm_id':self.number,'grade':self.grade})
+        return settings.URL_ROOT + reverse('qm',kwargs={'cave_id':self.found_by.cave.kataster_number,'year':self.found_by.date.year,'qm_id':self.number,'grade':self.grade})
 
     def get_next_by_id(self):
         return QM.objects.get(id=self.id+1)

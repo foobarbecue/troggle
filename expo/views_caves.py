@@ -57,11 +57,11 @@ def subcave(request, cave_id, subcave):
     subcaveSeq=re.findall('(?:/)([^/]*)',subcave)
     print subcaveSeq
     cave=models.Cave.objects.get(kataster_number = cave_id)
-    subcave=models.Subcave.objects.get(name=subcaveSeq[0], cave=cave)
+    subcave=models.Subcave.objects.get(title=subcaveSeq[0], cave=cave)
     if len(subcaveSeq)>1: 
         for subcaveUrlSegment in subcaveSeq[1:]:
             if subcaveUrlSegment:
-                subcave=subcave.children.get(name=subcaveUrlSegment)
+                subcave=subcave.children.get(title=subcaveUrlSegment)
     print subcave
     return render_response(request,'subcave.html', {'subcave': subcave,'cave':cave})
 

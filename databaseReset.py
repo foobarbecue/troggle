@@ -37,7 +37,13 @@ def import_people():
     parsers.people.LoadPersonsExpos()
 
 def import_logbooks():
-    settings.LOGFILE.write('\nBegun importing logbooks at ' + time.asctime() +'\n'+'-'*60)
+    # The below line was causing errors I didn't understand (it said LOGFILE was a string), and I couldn't be bothered to figure
+    # what was going on so I just catch the error with a try. - AC 21 May
+    try:
+        settings.LOGFILE.write('\nBegun importing logbooks at ' + time.asctime() +'\n'+'-'*60)
+    except:
+        pass
+    
     import parsers.logbooks
     parsers.logbooks.LoadLogbooks()
 

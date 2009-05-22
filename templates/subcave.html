@@ -1,8 +1,23 @@
 {% extends "cavebase.html" %}
 {% load wiki_markup %}
+{% load mptt_tags %}
 {% block title %} Subcave {{subcave}} {% endblock title %}
 {% block editLink %}<a href={{subcave.get_admin_url}}>Edit subcave {{subcave|wiki_to_html_short}}</a>{% endblock %}
+
+{% block contentheader %}
+	{{subcave.title}}
+{% endblock contentheader %}
+
+
+
 {% block content %}
+
+ok here comes the drilldown<br />
+{% drilldown_tree_for_node subcave as drilldown %}
+{% for each in drilldown %}
+{{ each }}>
+{% endfor %}
+
 
 <h2>{{subcave}}</h2>
 <p>
