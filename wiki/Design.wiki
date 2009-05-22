@@ -1,7 +1,7 @@
 #labels Phase-Design
 #troggle's appearance
 
-Is it over the top? Is 500kb too big for a default front page? Does anyone mind if we get rid of the green <h1> style?
+Is it over the top? Is 500kb too big for a default front page? Does anyone mind if we get rid of the green {{{<h1>}}} style?
 
 = Individual user preferences =
 
