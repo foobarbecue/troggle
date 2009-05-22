@@ -1,7 +1,7 @@
 import datetime
 import random
 import re
-import sha
+import hashlib
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -117,7 +117,8 @@ class RegistrationManager(models.Manager):
         registration_profile = self.create_profile(new_user)
         
         if send_email:
-            from django.core.mail import send_mail
+            from django.core.mail import send_mail, EmailMultiAlternatives
+
             current_site = Site.objects.get_current()
             
             subject = render_to_string('registration/activation_email_subject.txt',
@@ -125,12 +126,18 @@ class RegistrationManager(models.Manager):
             # Email subject *must not* contain newlines
             subject = ''.join(subject.splitlines())
             
-            message = render_to_string('registration/activation_email.txt',
+            text_content = render_to_string('registration/activation_email.txt',
                                        { 'activation_key': registration_profile.activation_key,
                                          'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
                                          'site': settings.URL_ROOT })
-            
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [new_user.email])
+            html_content = render_to_string('registration/activation_email.html',
+                                       { 'activation_key': registration_profile.activation_key,
+                                         'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
+                                         'site': settings.URL_ROOT })
+            msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [new_user.email])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+#            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [new_user.email])
         user_registered.send(sender=self.model, user=new_user)
         return new_user
     create_inactive_user = transaction.commit_on_success(create_inactive_user)
@@ -145,8 +152,8 @@ class RegistrationManager(models.Manager):
         username and a random salt.
         
         """
-        salt = sha.new(str(random.random())).hexdigest()[:5]
-        activation_key = sha.new(salt+user.username).hexdigest()
+        salt = hashlib.sha1(str(random.random())).hexdigest()[:5]
+        activation_key = hashlib.sha1(salt+user.username).hexdigest()
         return self.create(user=user,
                            activation_key=activation_key)
         
