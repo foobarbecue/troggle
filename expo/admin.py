@@ -101,14 +101,11 @@ def export_as_json(modeladmin, request, queryset):
     serializers.serialize("json", queryset, stream=response)
     return response
 
-admin.site.add_action(export_as_json)
 
 def export_as_xml(modeladmin, request, queryset):
     response = HttpResponse(mimetype="text/xml")
     response['Content-Disposition'] = 'attachment; filename=troggle_output.xml'
     return response
-
-admin.site.add_action(export_as_xml)
 
 def export_as_python(modeladmin, request, queryset):
     response = HttpResponse(mimetype="text/python")
@@ -116,7 +113,10 @@ def export_as_python(modeladmin, request, queryset):
     serializers.serialize("json", queryset, stream=response)
     return response
 
-admin.site.add_action(export_as_python)
+#These require django newer than 1.0 (SVN version) so we'll have to wait.
+#admin.site.add_action(export_as_xml)
+#admin.site.add_action(export_as_json)
+#admin.site.add_action(export_as_python)
 
 try:
     mptt.register(Subcave, order_insertion_by=['name'])
