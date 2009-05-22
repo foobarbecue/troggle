@@ -50,8 +50,8 @@
 	<center>
   <select id="expeditionChooser" class="centre" onChange="redirectYear()">
     
+	<option value=""/>
 	{% for expedition in expeditions %}   	
-	    
     <option label="{{ expedition }}" value="{{ expedition }}" {% ifequal expedition current_expedition %}selected{% endifequal %}>
     
 	    {{ expedition }}
@@ -72,8 +72,10 @@
    <center>
      <select id="surveyChooser" class="centre" onChange="redirectSurvey()">
     <option label="show all" value="">
-     {% for survey in current_expedition.survey_set.all %}
+
     </option>
+         {% for survey in current_expedition.survey_set.all %}
+         
     <option label="{{ survey }}" value="{{ survey.wallet_number }}" 
     		{% ifequal survey current_survey %}
     			selected
