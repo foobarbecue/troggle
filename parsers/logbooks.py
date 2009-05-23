@@ -1,10 +1,10 @@
 #.-*- coding: utf-8 -*-
 
-import troggle.settings as settings
-import troggle.expo.models as models
+from django.conf import settings
+import expo.models as models
 
-from troggle.parsers.people import GetPersonExpeditionNameLookup
-from troggle.parsers.cavetab import GetCaveLookup
+from parsers.people import GetPersonExpeditionNameLookup
+from parsers.cavetab import GetCaveLookup
 
 from django.template.defaultfilters import slugify
 
@@ -82,8 +82,8 @@ def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_
         cave=GetCaveLookup().get(lplace)
 
     #Check for an existing copy of the current entry, and save
-    lookupAttribs={'date':date, 'title':title[:50]} 
-    nonLookupAttribs={'place':place, 'text':text, 'author':author, 'expedition':expedition, 'cave':cave}
+    lookupAttribs={'date':date, 'title':title} 
+    nonLookupAttribs={'place':place, 'text':text, 'author':author, 'expedition':expedition, 'cave':cave, 'slug':slugify(title)[:50]}
     lbo, created=save_carefully(models.LogbookEntry, lookupAttribs, nonLookupAttribs)
 
     for tripperson, time_underground in trippersons:
