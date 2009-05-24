@@ -341,3 +341,7 @@ h1 {
 #quicksearch {
 	margin-left:40px;
 }
+
+.noticeBox {
+	border:thin black solid; width: 40%; color:#F00; margin-left:auto; margin-right:auto
+}

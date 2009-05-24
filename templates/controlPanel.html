@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 {% if jobs_completed %}
-    <div style="border:thin black solid; width: 40%; color:#F00; margin-left:auto; margin-right:auto">
+    <div class="noticeBox">
             Just finished running:
                 <ul>
                 {% for job in jobs_completed %}
@@ -11,6 +10,13 @@
                 {% endfor %}
                 </ul>
             {% if settings.LOGFILE %}See the logfile at {{settings.LOGFILE}} for more information.{% endif %}
+            <a href="#" class="closeDiv">dismiss this message</a>
+    </div>
+{% endif %}
+
+{% if error %}
+    <div class="noticeBox">
+			{{ error }}
             <a href="#" class="closeDiv">dismiss this message</a>
     </div>
 {% endif %}

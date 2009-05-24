@@ -65,7 +65,7 @@ def controlPanel(request):
         if request.user.is_superuser:
     
             #importlist is mostly here so that things happen in the correct order.
-            #http post data seems to come in an unpredictable order, we do it this way.
+            #http post data seems to come in an unpredictable order, so we do it this way.
             importlist=['reload_db', 'import_people', 'import_cavetab', 'import_logbooks', 'import_surveys', 'import_QMs']
             databaseReset.make_dirs()
             for item in importlist:
@@ -74,7 +74,10 @@ def controlPanel(request):
                     exec "databaseReset."+item+"()"
                     jobs_completed.append(item)
         else:
-            return HttpResponseRedirect(reverse('auth_login'))
+            if request.user.is_authenticated(): #The user is logged in, but is not a superuser.
+                return render_response(request,'controlPanel.html', {'caves':Cave.objects.all(),'error':'You must be a superuser to use that feature.'})
+            else:
+                return HttpResponseRedirect(reverse('auth_login'))
 
     return render_response(request,'controlPanel.html', {'caves':Cave.objects.all(),'jobs_completed':jobs_completed})
 
