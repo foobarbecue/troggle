@@ -10,6 +10,9 @@ registration_form.html | {{ block.super }}
 
 {% block content %}
 <form action="{% url registration_register %}" method="POST">
+        {% for error in form.non_field_errors %}
+        <span style="color:red">{{ error }}</span>
+        {% endfor %}
 <table>
 <tr>
     <td align="right" valign="top">Username:</td>
