@@ -58,7 +58,7 @@ class Expedition(TroggleModel):
     
     def get_absolute_url(self):
         #return settings.URL_ROOT + "/expedition/%s" % self.year
-        return settings.URL_ROOT + reverse('expedition',args=[self.year])
+        return urlparse.urljoin(settings.URL_ROOT, reverse('expedition',args=[self.year]))
     
     
     # lose these two functions (inelegant, and we may create a file with the dates that we can load from)
@@ -107,7 +107,7 @@ class Person(TroggleModel):
     #bisnotable  = models.BooleanField()
     user	= models.OneToOneField(User, null=True, blank=True)
     def get_absolute_url(self):
-        return settings.URL_ROOT + reverse('person',kwargs={'first_name':self.first_name,'last_name':self.last_name})
+        return urlparse.urljoin(settings.URL_ROOT,reverse('person',kwargs={'first_name':self.first_name,'last_name':self.last_name}))
 
     class Meta:
 	    verbose_name_plural = "People"
@@ -194,8 +194,11 @@ class PersonExpedition(TroggleModel):
         return sorted(res.items())
 
     # possibly not useful functions anyway -JT
-        # if you can find a better way to make the expo calendar table, be my guest. It isn't possible to do this logic in a django template without writing custom tags.
+        # if you can find a better way to make the expo calendar table, be my guest. It isn't possible to do this logic in a django template without writing custom tags.-AC
     def ListDays(self):
+        """
+        Returns a list of the days the person was on the expedition (i.e. the days that the PersonExpedition was in existance). Needed for expedition calendar.
+        """
 	if self.date_from and self.date_to:
 		res=[]
 		date=self.date_from
@@ -205,6 +208,9 @@ class PersonExpedition(TroggleModel):
 		return res
 
     def ListDaysTF(self):
+        """
+        Returns a list of true / false values. Each value corresponds to one day on the expedition; True means the person was there, False means they weren't.
+        """
 	if self.date_from and self.date_to:
 		res=[]
 		for date in self.expedition.ListDays():
@@ -224,7 +230,7 @@ class PersonExpedition(TroggleModel):
 
     def get_absolute_url(self):
         #return settings.URL_ROOT + '/personexpedition/' + str(self.person.first_name) + '_' + str(self.person.last_name) + '/' +self.expedition.year
-	return settings.URL_ROOT + reverse('personexpedition',kwargs={'first_name':self.person.first_name,'last_name':self.person.last_name,'year':self.expedition.year})
+	return urlparse.urljoin(settings.URL_ROOT, reverse('personexpedition',kwargs={'first_name':self.person.first_name,'last_name':self.person.last_name,'year':self.expedition.year}))
 	
 class LogbookEntry(TroggleModel):
     date    = models.DateField()
@@ -248,7 +254,7 @@ class LogbookEntry(TroggleModel):
         ordering = ('-date',)
 
     def get_absolute_url(self):
-        return settings.URL_ROOT + reverse('logbookentry',kwargs={'date':self.date,'slug':self.slug})
+        return urlparse.urljoin(settings.URL_ROOT, reverse('logbookentry',kwargs={'date':self.date,'slug':self.slug}))
 
     def __unicode__(self):
         return "%s: (%s)" % (self.date, self.title)
@@ -348,7 +354,7 @@ class Cave(TroggleModel):
         else:
             href = official_name.lower()
         #return settings.URL_ROOT + '/cave/' + href + '/'
-	return settings.URL_ROOT + reverse('cave',kwargs={'cave_id':href,})
+	return urlparse.urljoin(settings.URL_ROOT, reverse('cave',kwargs={'cave_id':href,}))
 
             
         
@@ -540,7 +546,7 @@ class QM(TroggleModel):
 
     def get_absolute_url(self):
         #return settings.URL_ROOT + '/cave/' + self.found_by.cave.kataster_number + '/' + str(self.found_by.date.year) + '-' + '%02d' %self.number
-        return settings.URL_ROOT + reverse('qm',kwargs={'cave_id':self.found_by.cave.kataster_number,'year':self.found_by.date.year,'qm_id':self.number,'grade':self.grade})
+        return urlparse.urljoin(settings.URL_ROOT, reverse('qm',kwargs={'cave_id':self.found_by.cave.kataster_number,'year':self.found_by.date.year,'qm_id':self.number,'grade':self.grade}))
 
     def get_next_by_id(self):
         return QM.objects.get(id=self.id+1)
