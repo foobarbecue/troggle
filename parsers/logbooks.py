@@ -87,12 +87,13 @@ def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_
     lbo, created=save_carefully(models.LogbookEntry, lookupAttribs, nonLookupAttribs)
 
     for tripperson, time_underground in trippersons:
-        lookupAttribs={'person_expedition':tripperson, 'date':date}
-        nonLookupAttribs={'place':place,'time_underground':time_underground,'logbook_entry':lbo,'is_logbook_entry_author':(tripperson == author)}
+        lookupAttribs={'person_expedition':tripperson, 'logbook_entry':lbo}
+        nonLookupAttribs={'time_underground':time_underground,'is_logbook_entry_author':(tripperson == author)}
         save_carefully(models.PersonTrip, lookupAttribs, nonLookupAttribs)
 
 
 def ParseDate(tripdate, year):
+    """ Interprets dates in the expo logbooks and returns a correct datetime.date object  """
     mdatestandard = re.match("(\d\d\d\d)-(\d\d)-(\d\d)", tripdate)
     mdategoof = re.match("(\d\d?)/0?(\d)/(20|19)?(\d\d)", tripdate)
     if mdatestandard:
@@ -256,10 +257,14 @@ yearlinks = [
             ]
 
 def SetDatesFromLogbookEntries(expedition):
+    """
+    Sets the date_from and date_to field for an expedition based on persontrips.
+    Then sets the expedition date_from and date_to based on the personexpeditions.
+    """
     for personexpedition in expedition.personexpedition_set.all():
-        persontrips = personexpedition.persontrip_set.order_by('date')
-        personexpedition.date_from = min([persontrip.date  for persontrip in persontrips] or [None])
-        personexpedition.date_to = max([persontrip.date  for persontrip in persontrips] or [None])
+        persontrips = personexpedition.persontrip_set.order_by('logbook_entry__date')
+        personexpedition.date_from = min([persontrip.logbook_entry.date  for persontrip in persontrips] or [None])
+        personexpedition.date_to = max([persontrip.logbook_entry.date  for persontrip in persontrips] or [None])
         personexpedition.save()
 
 # The below is all unnecessary, just use the built in get_previous_by_date and get_next_by_date

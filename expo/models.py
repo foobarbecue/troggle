@@ -238,7 +238,7 @@ class LogbookEntry(TroggleModel):
     author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip
     title   = models.CharField(max_length=200)
     cave    = models.ForeignKey('Cave',blank=True,null=True)
-    place   = models.CharField(max_length=100,blank=True,null=True)  
+    place   = models.CharField(max_length=100,blank=True,null=True,help_text="Only use this if you haven't chosen a cave")
     text    = models.TextField()
     slug    = models.SlugField(max_length=50)
     #href    = models.CharField(max_length=100)
@@ -270,28 +270,36 @@ class PersonTrip(TroggleModel):
     
         # this will be a foreign key of the place(s) the trip went through
         # possibly a trip has a plurality of triplets pointing into it
-    place           = models.CharField(max_length=100)  
-    # should add cave thing here (copied from logbook maybe)
-    date            = models.DateField()    
-    time_underground = models.FloatField()  
+    #place           = models.CharField(max_length=100)  
+    #date            = models.DateField()    
+    time_underground = models.FloatField(help_text="In decimal hours")
     logbook_entry    = models.ForeignKey(LogbookEntry)
     is_logbook_entry_author = models.BooleanField()
     
+    def date(self):
+        return self.logbook_entry.date
+
+    def place(self):
+        if self.logbook_entry.cave:
+            return self.logbook_entry.cave
+        else:
+            return self.logbook_entry.place
+
     #persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
     #persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
 
     def __unicode__(self):
-        return "%s %s (%s)" % (self.person_expedition, self.place, self.date)
+        return "%s %s (%s)" % (self.person_expedition, self.place(), self.date())
 
     def get_persons_next_trip(self):
 	try:
-            return PersonTrip.objects.filter(person_expedition__person=self.person_expedition.person, date__gt=self.date)[0]
+            return PersonTrip.objects.filter(person_expedition__person=self.person_expedition.person, person_expedition__date__gt=self.date)[0]
         except:
 	    return
 
     def get_persons_previous_trip(self):
 	try:
-            return PersonTrip.objects.filter(person_expedition__person=self.person_expedition.person, date__lt=self.date)[0]
+            return PersonTrip.objects.filter(person_expedition__person=self.person_expedition.person, person_expedition__date__lt=self.date)[0]
         except:
 	    return
 
