@@ -1,0 +1,16 @@
+#summary A guide to setting up a troggle username and password.
+#labels HowTo
+
+== Introduction: why Troggle has user accounts ==
+
+Troggle keeps track of users for several reasons. First and foremost is access control; only expedition members should be able to edit things and view protected data. So why don't we just have one "expo login"? Troggle has a lot of person-specific data (who went where when stuff) which is linked to a person's profile. When you create an account, you can also create a profile (or link to an existing one). Also, whenever a change is made in Troggle, it records who made that change. This way, when something breaks we like to know who broke it so that the we can find said person and throw him in the river.
+
+== Setting up an account over the internet ==
+
+In the upper right hand corner of your Troggle window, click "sign up". Fill in the information and Troggle will send an email to your inbox, from cuccexpo@gmail.com . Follow the instructions in the email to activate your account, and to link your account to a profile.
+
+== Setting up an account without internet access ==
+
+If you are running Troggle locally, the best way to set up an account is to find someone who already has an account.
+
+Your privileged friend then needs go to admin / Troggle administration on the main menu, and click "add" next to "users."
