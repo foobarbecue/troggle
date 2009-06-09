@@ -337,3 +337,12 @@ img.thumbnail {
 br.clearfloat {
   clear:both;
 }
+
+div.codeframebit
+{
+    border:thin black dotted;
+}
+.CodeMirror-line-numbers
+{
+    background-color: #bbb;
+}

@@ -166,7 +166,7 @@ def Parseloghtml01(year, expedition, txt):
     tripparas = re.findall("<hr[\s/]*>([\s\S]*?)(?=<hr)", txt)
     for trippara in tripparas:
         s = re.match(u"(?s)\s*(?:<p>)?(.*?)</?p>(.*)$(?i)", trippara)
-        assert s, trippara[:100]
+        assert s, trippara[:300]
         tripheader, triptext = s.group(1), s.group(2)
         mtripid = re.search('<a id="(.*?)"', tripheader)
         tripid = mtripid and mtripid.group(1) or ""
@@ -177,7 +177,7 @@ def Parseloghtml01(year, expedition, txt):
 
         tripdate, triptitle, trippeople = tripheader.split("|")
         ldate = ParseDate(tripdate.strip(), year)
-
+    
         mtu = re.search('<p[^>]*>(T/?U.*)', triptext)
         if mtu:
             tu = mtu.group(1)
@@ -203,9 +203,9 @@ def Parseloghtml01(year, expedition, txt):
         ltriptext = re.sub("</?b>", "'''", ltriptext)
         
 
-        #print ldate, trippeople.strip()
+        print ldate, trippeople.strip()
             # could includ the tripid (url link for cross referencing)
-        EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
+        EnterLogIntoDbase(date=ldate, place=tripcave, title=triptitle, text=ltriptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
 
 
 def Parseloghtml03(year, expedition, txt):
@@ -254,6 +254,7 @@ yearlinks = [
                 ("1995", "1995/log.htm", Parseloghtml01), 
                 ("1994", "1994/log.htm", Parseloghtml01), 
                 ("1993", "1993/log.htm", Parseloghtml01), 		
+                ("1992", "1992/log.htm", Parseloghtml01), 		
             ]
 
 def SetDatesFromLogbookEntries(expedition):

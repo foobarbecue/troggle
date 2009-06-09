@@ -39,10 +39,11 @@ urlpatterns = patterns('',
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     #(r'^cavesearch', caveSearch),
 
-    url(r'^survex/(.*?)\.index$', views_survex.index, name="survexindex"),
     
     url(r'^cave/(?P<cave_id>[^/]+)/(?P<year>\d\d\d\d)-(?P<qm_id>\d\d)(?P<grade>[ABCDX]?)?$', views_caves.qm, name="qm"),
-    (r'^survex/(?P<survex_file>.*)\.svx$', svx),
+    
+    #url(r'^survex/(.*?)\.index$', views_survex.index, name="survexindex"),
+    url(r'^survex/(?P<survex_file>.*?)\.svx$', svx, name="svx"),
     (r'^survex/(?P<survex_file>.*)\.3d$', threed),
     (r'^survex/(?P<survex_file>.*)\.log$', log),
     (r'^survex/(?P<survex_file>.*)\.err$', err),
