@@ -345,3 +345,20 @@ h1 {
 .noticeBox {
 	border:thin black solid; width: 40%; color:#F00; margin-left:auto; margin-right:auto
 }
+
+div.codeframebit
+{
+    border:thin black solid;
+    background-color: #ffffdf;
+}
+CodeMirror-line-numbers
+{
+    background-color: #bbb;
+}
+div#difflistajax
+{
+    margin-left: 5px;
+    background-color: #dfffdf;
+    border: thin green solid;
+}
+
