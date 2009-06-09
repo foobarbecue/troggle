@@ -1,0 +1,17 @@
+#summary One-sentence summary of this page.
+#labels HowTo
+
+== Introduction ==
+
+So you've just come down the hill from an exhausting week of top camp faffing. Time to immortalize your tales of great "finds". So let's put an entry in for stomping passage you found -- the 204 Hilde's beer cellar connection.
+
+== The Troggle administrative interface  ==
+
+First thing is to get behind the pretty Troggle facade and into the administrative interface. On the main menu, hover over 'admin' and then click 'Troggle administrative interface.' Login with your username and password which you got from HowToRegisterAnAccount.
+
+== Adding a LogbookEntry ==
+
+The LogbookEntry model is probably the most important in troggle. It represents a trips of all types; cave surveying trips, cave rigging and derigging trips, surface prospecting trips, car rides to expo, and the crazy trip you had after eating a slice of Djuke's nut bread. QMs, Surveys, Photos, and PersonTrips are all attached to LogbookEntries.
+
+To make a new one, click on "LogbookEntries" and then "Add a LogbookEntry." Fill in the Date, Expedition, Author (that's probably you!), and Title. If your trip was in a real cave, then choose it from the drop down list unless you just found a brand new cave in which case you can add it by clicking the little plus icon next to Cave and following the instructions in HowToEnterACave. If you were on a trip that wasn't in a Cave, briefly describe the location of the trip, for example "Journey" or "Loser Plateau".
+
