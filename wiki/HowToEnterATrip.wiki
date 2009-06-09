@@ -11,7 +11,22 @@ First thing is to get behind the pretty Troggle facade and into the administrati
 
 == Adding a LogbookEntry ==
 
-The LogbookEntry model is probably the most important in troggle. It represents a trips of all types; cave surveying trips, cave rigging and derigging trips, surface prospecting trips, car rides to expo, and the crazy trip you had after eating a slice of Djuke's nut bread. QMs, Surveys, Photos, and PersonTrips are all attached to LogbookEntries.
+The LogbookEntry model is probably the most important in Troggle. It represents a trips of all types; cave surveying trips, cave rigging and derigging trips, surface prospecting trips, car rides to expo, and the crazy trip you had after eating a slice of Djuke's nut bread. QMs, Surveys, Photos, and PersonTrips are all attached to LogbookEntries.
 
 To make a new one, click on "LogbookEntries" and then "Add a LogbookEntry." Fill in the Date, Expedition, Author (that's probably you!), and Title. If your trip was in a real cave, then choose it from the drop down list unless you just found a brand new cave in which case you can add it by clicking the little plus icon next to Cave and following the instructions in HowToEnterACave. If you were on a trip that wasn't in a Cave, briefly describe the location of the trip, for example "Journey" or "Loser Plateau".
 
+When you fill out the text, you can use the Troggle WikiSyntax. Check it out. Troggle gives you some recommended links to include for items which are related to your entry. You may want to put this off until later, because a) you are a lazy bastard and b) you will be creating some objects in the rest of this HowTo which you might want to link to.
+
+== Peopling your LogbookEntry ==
+
+In Troggle, when a particular person goes on a particular trip, that event is called a PersonTrip. We store information such as the time underground, whether or not they were the author of the LogbookEntry, and the role that person had on the trip (FIXTHIS there is no role in persontrip).
+
+To add some friends to your lonely trip, scroll down to "Person trips" and choose a Person expedition from the drop down list, and fill in their time underground. If you need more PersonTrip boxes, hit "Save and continue editing" at the bottom right of the page, and Troggle will give you space for more friends.
+
+== Adding QMs ==
+
+(FIXTHIS finish implementation and then finish this section)
+
+== Adding Photos ==
+
+Photos can be added in the same way you put your Person trips in. This time, you get to upload a file. Troggle will store that file wherever your settings has the photos directory.
