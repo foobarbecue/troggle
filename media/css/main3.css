@@ -33,6 +33,7 @@ div.logbookentry p
     margin:10px;
 }
 
+
 div#content div#col2
 {
     float:right; 
@@ -46,7 +47,6 @@ div#content h2
     font-size:200%;
     padding-bottom:30px;
 }
-
 
 table.prevnextexpeditions
 {
@@ -117,7 +117,7 @@ hr{
 div.centre img			{ vertical-align: middle; }
 
 h1				{ text-align: center; font-size: 210%; display: inline;}
-h2				{ color: #009900; }
+h2				{ }
 h3				{ color: #000 text-align:left; border-bottom:thin solid black; margin-bottom:1em; margin-top:1em; font-weight:bold}
 h4				{ color: #0d664c; }
 h4.navbar {line-height: 0px;}
@@ -360,5 +360,48 @@ div#difflistajax
     margin-left: 5px;
     background-color: #dfffdf;
     border: thin green solid;
+}
+
+}
+
+/*The below are stolen from django admin css*/
+.addlink {
+	background:transparent url("../icon_addlink.gif") no-repeat scroll 0 0.2em;
+	padding-left:12px;
+}
+
+.quiet, a.quiet:link, a.quiet:visited {
+	color:#999999 !important;
+	font-weight:normal !important;
+}
+
+.mini {
+	font-size:9px;
+}
+
+/*this is for the related objects box on the right hand side, formerly called "col2." transition is in progress.*/
+
+ul.actionlist li
+{
+	list-style-type:none;	
+}
+
+div#related h2
+{
+	padding-bottom:0px;
+	font-size:100%;
+	text-align:left;
+	background:#EEEEEE url(../nav-bg.gif) repeat-x scroll left bottom;
+	color:#666666;
+	margin: 0px;
+}
+
+div#related
+{
+	width:200px;
+	float:right;
+	border: thin solid black;
+	background:#EEEEEE;
+	color:#666666;
 }
 

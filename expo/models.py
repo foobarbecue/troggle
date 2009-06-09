@@ -529,7 +529,7 @@ class QM(TroggleModel):
     #"Number","Grade","Area","Description","Page reference","Nearest station","Completion description","Comment"
     found_by = models.ForeignKey(LogbookEntry, related_name='QMs_found',blank=True, null=True )
     ticked_off_by = models.ForeignKey(LogbookEntry, related_name='QMs_ticked_off',null=True,blank=True)
-    number = models.IntegerField()
+    number = models.IntegerField(help_text="this is the sequential number in the year")
     GRADE_CHOICES=(
 	('A', 'A: Large obvious lead'),
 	('B', 'B: Average lead'),
@@ -548,7 +548,7 @@ class QM(TroggleModel):
     #the below are unneeded- instead use the date fields of the QM's trips
     #dateFound = models.DateField(blank=True)
     #dateKilled = models.DateField(blank=True)
-    def __str__(self):
+    def __unicode__(self):
 	QMnumber=str(self.found_by.cave)+'-'+str(self.found_by.date.year)+"-"+str(self.number)+self.grade
 	return str(QMnumber)
 
@@ -591,7 +591,7 @@ class Photo(TroggleImageModel):
     #object_id = models.PositiveIntegerField()
     #location = generic.GenericForeignKey('content_type', 'object_id')
 
-    def __str__(self):
+    def __unicode__(self):
         return self.caption
 
 scansFileStorage = FileSystemStorage(location=settings.SURVEY_SCANS, base_url=settings.SURVEYS_URL)
@@ -623,7 +623,7 @@ class ScannedImage(TroggleImageModel):
     def correctURL(self):
 	return string.replace(self.file.url,r'#',r'%23')
     
-    def __str__(self):
+    def __unicode__(self):
         return get_scan_path(self,'')
 
 class Survey(TroggleModel):
@@ -644,7 +644,7 @@ class Survey(TroggleModel):
     integrated_into_main_sketch_on = models.DateField(blank=True,null=True)
     integrated_into_main_sketch_by = models.ForeignKey('Person' ,related_name='integrated_into_main_sketch_by', blank=True,null=True)
     rendered_image = models.ImageField(upload_to='renderedSurveys',blank=True,null=True)
-    def __str__(self):
+    def __unicode__(self):
         return self.expedition.year+"#"+"%02d" % int(self.wallet_number)
 
     def notes(self):

@@ -35,6 +35,7 @@ def frontpage(request):
     logbookentry = LogbookEntry
     cave = Cave
     photo = Photo
+    from django.contrib.admin.templatetags import log
     return render_response(request,'frontpage.html', locals())
 
 def todo(request):

@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from models import Cave, Person, LogbookEntry
+from models import Cave, Person, LogbookEntry, QM
 import django.forms as forms
 from django.forms.formsets import formset_factory
 from django.contrib.admin.widgets import AdminDateWidget
@@ -38,3 +38,14 @@ class LogbookEntryForm(ModelForm):
     def __init__(self, *args, **kwargs):
 	super(LogbookEntryForm, self).__init__(*args, **kwargs)
         self.fields['text'].help_text=self.wikiLinkHints()
+        
+class QMsFoundInlineForm(ModelForm):
+    class Meta:
+        model = QM
+        exclude = 'ticked_off_by'
+
+    def __init__(self, *args, **kwargs):
+	super(QMsFoundInlineForm, self).__init__(*args, **kwargs)
+        #self.fields['number'].initial=nextQMinyear()#work on that one
+        
+        

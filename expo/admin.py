@@ -3,7 +3,7 @@ from django.contrib import admin
 from feincms.admin import editor
 from django.forms import ModelForm
 import django.forms as forms
-from expo.forms import LogbookEntryForm
+from expo.forms import LogbookEntryForm, QMsFoundInlineForm
 from django.http import HttpResponse
 from django.core import serializers
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
@@ -29,13 +29,18 @@ class SurveyAdmin(TroggleModelAdmin):
     inlines = (ScannedImageInline,)
     search_fields = ('expedition__year','wallet_number')    
 
-class QMInline(admin.TabularInline):
-	model=QM
-	extra = 4
+class QMsFoundInline(admin.TabularInline):
+        #form=QMsFoundInlineForm
+        model=QM
+        fk_name='found_by'
+
+class QMsTickedOffInline(admin.TabularInline):
+        model=QM
+        fk_name='ticked_off_by'
 
 class PhotoInline(admin.TabularInline):
     model = Photo
-    exclude = ['is_mugshot', ]
+    exclude = ['is_mugshot' ]
     extra = 1
 
 class PersonTripInline(admin.TabularInline):
@@ -47,22 +52,24 @@ class PersonTripInline(admin.TabularInline):
 class LogbookEntryAdmin(TroggleModelAdmin):
     prepopulated_fields = {'slug':("title",)}
     search_fields = ('title','expedition__year')
-    inlines = (PersonTripInline, PhotoInline)
+    date_heirarchy = ('date')
+    inlines = (PersonTripInline, PhotoInline, QMsFoundInline, QMsTickedOffInline)
     form = LogbookEntryForm
-    #inlines = (QMInline,) #doesn't work because QM has two foreignkeys to Logbookentry- need workaround
 
 class PersonExpeditionInline(admin.TabularInline):
     model = PersonExpedition
     extra = 1
-    
-
 
 class PersonAdmin(TroggleModelAdmin):
     search_fields = ('first_name','last_name')
     inlines = (PersonExpeditionInline,)
 
 class QMAdmin(TroggleModelAdmin):
-    search_fields = ('found_by__cave__kataster_number','number')
+    search_fields = ('found_by__cave__kataster_number','number','found_by__date__year')
+    list_display = ('__unicode__','grade','found_by','ticked_off_by')
+    list_display_links = ('__unicode__',)
+    list_editable = ('found_by','ticked_off_by','grade')
+    list_per_page = 20
 
 class PersonExpeditionAdmin(TroggleModelAdmin):
     search_fields = ('person__first_name','expedition__year')
