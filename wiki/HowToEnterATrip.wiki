@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Instructions for entering a trip into the Troggle database
 #labels HowTo
 
 == Introduction ==
