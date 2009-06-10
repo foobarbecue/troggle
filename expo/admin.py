@@ -3,7 +3,7 @@ from django.contrib import admin
 from feincms.admin import editor
 from django.forms import ModelForm
 import django.forms as forms
-from expo.forms import LogbookEntryForm, QMsFoundInlineForm
+from expo.forms import LogbookEntryForm
 from django.http import HttpResponse
 from django.core import serializers
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
@@ -30,13 +30,12 @@ class SurveyAdmin(TroggleModelAdmin):
     search_fields = ('expedition__year','wallet_number')    
 
 class QMsFoundInline(admin.TabularInline):
-        #form=QMsFoundInlineForm
-        model=QM
-        fk_name='found_by'
+    model=QM
+    fk_name='found_by'
 
 class QMsTickedOffInline(admin.TabularInline):
-        model=QM
-        fk_name='ticked_off_by'
+    model=QM
+    fk_name='ticked_off_by'
 
 class PhotoInline(admin.TabularInline):
     model = Photo

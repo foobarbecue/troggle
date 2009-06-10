@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
 from django.http import HttpResponseRedirect
 from django.conf import settings
-import re
+import re, urlparse
 
 def getCave(cave_id):
     """Returns a cave object when given a cave name or number. It is used by views including cavehref, ent, and qm."""
@@ -30,13 +30,13 @@ def qm(request,cave_id,qm_id,year,grade=None):
     year=int(year)
     try:
         qm=getCave(cave_id).get_QMs().get(number=qm_id,found_by__date__year=year)
-	return render_response(request,'qm.html',locals())
+        return render_response(request,'qm.html',locals())
 
     except QM.DoesNotExist:
-	url= settings.URL_ROOT + r'/admin/expo/qm/add/?'+  r'number=' + qm_id
-	if grade:
-	    url += r'&grade=' + grade
-	return HttpResponseRedirect(url)
+        url=urlparse.urljoin(settings.URL_ROOT, r'/admin/expo/qm/add/'+'?'+  r'number=' + qm_id)
+        if grade:
+            url += r'&grade=' + grade
+        return HttpResponseRedirect(url)
     
 
 def ent(request, cave_id, ent_letter):
@@ -87,9 +87,9 @@ def survey(request,year,wallet_number):
     current_expedition=Expedition.objects.filter(year=year)[0]
     
     if wallet_number!='':
-	    current_survey=Survey.objects.filter(expedition=current_expedition,wallet_number=wallet_number)[0]
-	    notes=current_survey.scannedimage_set.filter(contents='notes')
-	    planSketches=current_survey.scannedimage_set.filter(contents='plan')
-	    elevationSketches=current_survey.scannedimage_set.filter(contents='elevation')
+            current_survey=Survey.objects.filter(expedition=current_expedition,wallet_number=wallet_number)[0]
+            notes=current_survey.scannedimage_set.filter(contents='notes')
+            planSketches=current_survey.scannedimage_set.filter(contents='plan')
+            elevationSketches=current_survey.scannedimage_set.filter(contents='elevation')
     
     return render_response(request,'survey.html', locals())

@@ -57,24 +57,33 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub("&#39;&#39;([^']+)&#39;&#39;", r"<i>\1</i>", value, re.DOTALL)
     #make cave links
     value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/cave/\1/">\1</a>' % settings.URL_ROOT, value, re.DOTALL)
+    #make people links
     
     
-    #function for replacing wikicode qm links with html qm links
+    qmMatchPattern="\[\[\s*cave:([^\s]+)\s*\s*\QM:(\d*)-(\d*)([ABCDX]?)\]\]"
+    
     def qmrepl(matchobj):
-	if len(matchobj.groups())==4:
-		grade=matchobj.groups()[3]
-	else:
-		grade=''
+        """
+        A function for replacing wikicode qm links with html qm links.
+        Given a matchobj matching a wikilink in the format 
+        [[cave:204 QM:1999-24C]] where the grade (C) is optional.
+        If the QM does not exist, the function will return a link for creating it.
+        """
+        if len(matchobj.groups())==4:
+            # if there are four matched groups, then 
+            grade=matchobj.groups()[3]
+        else:
+            grade=''
         qmdict={'urlroot':settings.URL_ROOT,'cave':matchobj.groups()[0],'year':matchobj.groups()[1],'number':matchobj.groups()[2],'grade':grade}
-	try:
-	    qm=QM.objects.get(found_by__cave__kataster_number=qmdict['cave'],found_by__date__year=qmdict['year'], number=qmdict['number'])
-	    url=r'<a href=' + str(qm.get_absolute_url()) +'>' + str(qm) + '</a>'
-	except QM.DoesNotExist:
-	    url = r'<a class="redtext" href="%(urlroot)s/cave/%(cave)s/%(year)s-%(number)s%(grade)s">%(cave)s:%(year)s-%(number)s%(grade)s</a>' % qmdict
+        try:
+            qm=QM.objects.get(found_by__cave__kataster_number=qmdict['cave'],found_by__date__year=qmdict['year'], number=qmdict['number'])
+            url=r'<a href=' + str(qm.get_absolute_url()) +'>' + str(qm) + '</a>'
+        except QM.DoesNotExist:
+            url = r'<a class="redtext" href="%(urlroot)s/cave/%(cave)s/%(year)s-%(number)s%(grade)s">%(cave)s:%(year)s-%(number)s%(grade)s</a>' % qmdict
         return url 
 
     #make qm links
-    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\QM:(\d*)-(\d*)([ABCDX]?)\]\]",qmrepl, value, re.DOTALL)
+    value = re.sub(qmMatchPattern,qmrepl, value, re.DOTALL)
     
     #qms=qmfinder.search(value)
     #for qm in qms:

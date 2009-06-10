@@ -405,3 +405,26 @@ div#related
 	color:#666666;
 }
 
+.addlink {
+    padding-left: 12px;
+    background: url(../icon_addlink.gif) 0 .2em no-repeat;
+}
+
+.changelink {
+    padding-left: 12px;
+    background: url(../icon_changelink.gif) 0 .2em no-repeat;
+}
+
+.deletelink {
+    padding-left: 12px;
+    background: url(../icon_deletelink.gif) 0 .25em no-repeat;
+}
+
+a.deletelink:link, a.deletelink:visited {
+    color: #CC3434;
+}
+
+a.deletelink:hover {
+    color: #993333;
+}
+

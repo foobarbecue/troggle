@@ -26,7 +26,7 @@ class TroggleModel(models.Model):
         return self._meta.object_name
 
     def get_admin_url(self):
-        return settings.URL_ROOT + "/admin/expo/" + self.object_name().lower() + "/" + str(self.pk)
+        return urlparse.urljoin(settings.URL_ROOT, "/admin/expo/" + self.object_name().lower() + "/" + str(self.pk))
 
     class Meta:
 	    abstract = True
@@ -362,10 +362,8 @@ class Cave(TroggleModel):
         else:
             href = official_name.lower()
         #return settings.URL_ROOT + '/cave/' + href + '/'
-	return urlparse.urljoin(settings.URL_ROOT, reverse('cave',kwargs={'cave_id':href,}))
+        return urlparse.urljoin(settings.URL_ROOT, reverse('cave',kwargs={'cave_id':href,}))
 
-            
-        
     def __unicode__(self):
         if self.kataster_number:
             if self.kat_area():
@@ -385,8 +383,10 @@ class Cave(TroggleModel):
         for a in self.area.all():
             if a.kat_area():
                 return a.kat_area()
+    
     def entrances(self):
         return CaveAndEntrance.objects.filter(cave=self)
+    
     def entrancelist(self):
         rs = []
         res = ""
@@ -415,7 +415,12 @@ class Cave(TroggleModel):
             res += "&ndash;" + prevR
         return res
 
-
+    def nextQMnumber(self, year=datetime.date.today().year):
+        """
+        Given a cave and the current year, returns the next QM number.
+        """
+        res=QM.objects.filter(found_by__date__year=year, found_by__cave=self).order_by('-number')[0]
+        return res.number+1
 
 class OtherCaveName(TroggleModel):
     name = models.CharField(max_length=160)

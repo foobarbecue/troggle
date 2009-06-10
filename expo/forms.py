@@ -4,6 +4,7 @@ import django.forms as forms
 from django.forms.formsets import formset_factory
 from django.contrib.admin.widgets import AdminDateWidget
 import string
+from datetime import date
 
 class CaveForm(ModelForm):
     class Meta:
@@ -18,6 +19,13 @@ class LogbookEntryForm(ModelForm):
         model = LogbookEntry
 
     def wikiLinkHints(LogbookEntry=None):
+        """
+        This function returns html-formatted paragraphs for each of the
+        wikilink types that are related to this logbookentry. Each paragraph
+        contains a list of all of the related wikilinks.
+        
+        Perhaps an admin javascript solution would be better.
+        """
         res = ["Please use the following wikilinks, which are related to this logbook entry:"]
 	
         res.append(r'</p><p style="float: left;"><b>QMs found:</b>')
@@ -38,14 +46,3 @@ class LogbookEntryForm(ModelForm):
     def __init__(self, *args, **kwargs):
 	super(LogbookEntryForm, self).__init__(*args, **kwargs)
         self.fields['text'].help_text=self.wikiLinkHints()
-        
-class QMsFoundInlineForm(ModelForm):
-    class Meta:
-        model = QM
-        exclude = 'ticked_off_by'
-
-    def __init__(self, *args, **kwargs):
-	super(QMsFoundInlineForm, self).__init__(*args, **kwargs)
-        #self.fields['number'].initial=nextQMinyear()#work on that one
-        
-        
