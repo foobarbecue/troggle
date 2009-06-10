@@ -47,6 +47,9 @@ def wiki_to_html(value, autoescape=None):
 @register.filter()
 @stringfilter
 def wiki_to_html_short(value, autoescape=None):
+    """
+    This is the tag which turns wiki syntax into html. Aaron wonders why it is called "short." It is long, and it operates on long things.
+    """
     if autoescape:
         value = conditional_escape(value)
     #deescape doubly escaped characters
@@ -58,10 +61,10 @@ def wiki_to_html_short(value, autoescape=None):
     #make cave links
     value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/cave/\1/">\1</a>' % settings.URL_ROOT, value, re.DOTALL)
     #make people links
+    value = re.sub("\[\[\s*person:(.+)\]\]",r'<a href="%s/person/\1/">\1</a>' % settings.URL_ROOT, value, re.DOTALL)
     
-    
+    #make qm links. this takes a little doing
     qmMatchPattern="\[\[\s*cave:([^\s]+)\s*\s*\QM:(\d*)-(\d*)([ABCDX]?)\]\]"
-    
     def qmrepl(matchobj):
         """
         A function for replacing wikicode qm links with html qm links.

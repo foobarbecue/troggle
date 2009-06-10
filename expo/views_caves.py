@@ -24,7 +24,11 @@ def caveindex(request):
     return render_response(request,'caveindex.html', {'caves': caves, 'notablecaves':notablecaves})
 
 def cave(request, cave_id='', offical_name=''):
-    return render_response(request,'cave.html', {'cave': getCave(cave_id),})
+    cave=getCave(cave_id)
+    if cave.non_public:
+        return render_response(request,'nonpublic.html', {'instance': cave})
+    else:
+        return render_response(request,'cave.html', {'cave': cave})
     
 def qm(request,cave_id,qm_id,year,grade=None):
     year=int(year)

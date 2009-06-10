@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.DEBUG,
 #This class is for adding fields and methods which all of our models will have.
 class TroggleModel(models.Model):
     new_since_parsing = models.BooleanField(default=False, editable=False)
-    
+    non_public = models.BooleanField(default=False)
     def object_name(self):
         return self._meta.object_name
 
