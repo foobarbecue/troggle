@@ -1,0 +1,3 @@
+#summary Information about the LogbookEntry model
+
+For now, please see HowToEnterATrip. A more detailed description may be available here in the future.
