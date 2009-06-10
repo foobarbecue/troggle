@@ -182,6 +182,11 @@ def LoadCaveTab():
             addToDefaultArgs(SurvexFile, "survex_file")
             addToDefaultArgs(Notes, "notes")
 
+            #The following checks if this cave is non-public i.e. we don't have rights to display it online.
+            #Noinfo was the name of the old password protected directory, so if it has that then we will
+            #set the non_public field of the model instance to true.
+            defaultArgs["non_public"]=line[AutogenFile].startswith('noinfo') or line[LinkFile].startswith('noinfo')
+
             newCave, created=save_carefully(models.Cave, lookupAttribs=args, nonLookupAttribs=defaultArgs)
             logging.info("Added cave "+str(newCave)+"\n")
 
