@@ -33,10 +33,6 @@ class QMsFoundInline(admin.TabularInline):
     model=QM
     fk_name='found_by'
 
-class QMsTickedOffInline(admin.TabularInline):
-    model=QM
-    fk_name='ticked_off_by'
-
 class PhotoInline(admin.TabularInline):
     model = Photo
     exclude = ['is_mugshot' ]
@@ -52,7 +48,7 @@ class LogbookEntryAdmin(TroggleModelAdmin):
     prepopulated_fields = {'slug':("title",)}
     search_fields = ('title','expedition__year')
     date_heirarchy = ('date')
-    inlines = (PersonTripInline, PhotoInline, QMsFoundInline, QMsTickedOffInline)
+    inlines = (PersonTripInline, PhotoInline, QMsFoundInline)
     form = LogbookEntryForm
 
 class PersonExpeditionInline(admin.TabularInline):
@@ -64,7 +60,7 @@ class PersonAdmin(TroggleModelAdmin):
     inlines = (PersonExpeditionInline,)
 
 class QMAdmin(TroggleModelAdmin):
-    search_fields = ('found_by__cave__kataster_number','number','found_by__date__year')
+    search_fields = ('found_by__cave__kataster_number','number','found_by__date')
     list_display = ('__unicode__','grade','found_by','ticked_off_by')
     list_display_links = ('__unicode__',)
     list_editable = ('found_by','ticked_off_by','grade')
