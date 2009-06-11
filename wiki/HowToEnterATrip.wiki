@@ -23,10 +23,20 @@ In Troggle, when a particular person goes on a particular trip, that event is ca
 
 To add some friends to your lonely trip, scroll down to "Person trips" and choose a Person expedition from the drop down list, and fill in their time underground. If you need more PersonTrip boxes, hit "Save and continue editing" at the bottom right of the page, and Troggle will give you space for more friends.
 
-== Adding QMs ==
+== If you create or tick off a QM ==
 
-(FIXTHIS finish implementation and then finish this section)
+To add QMs to your trip, scroll down and fill in the fields. If you need more, use the "Save and continue editing button," as described above for entering Person trips.
 
-== Adding Photos ==
+The first set of QM input boxes is for the QMs that were found on this trip. There is a "ticked off by" box which should almost certainly be left blank. The way to "tick off" a QM in troggle is to add a trip in the QM's "ticked off by" field.
+
+Currently, the easiest way to tick off a QM is to go back to the Troggle administration page, click on QM, and search for your QM using the search box at the top. Using this interface, you can tick off many QMs at once. Alternatively, navigate directly to the QM by going directly to its URL, which would be something like http://troggle.cavingexpedition.com/cave/204/1999-99C, and then click on "edit QM:1999-99C" in the upper right hand corner. Once you are there, choose your logbook entry from the "ticked off by" drop down box.
+
+A way to do this from the edit page for the logbook entry which ticked off the QM itself is in the works.
+
+== If you find a new cave ==
+
+Click the little green plus sign next to the cave drop down box. In the new window that pops up, enter details of the new cave.
+
+== If you took photos ==
 
 Photos can be added in the same way you put your Person trips in. This time, you get to upload a file. Troggle will store that file wherever your settings has the photos directory.
