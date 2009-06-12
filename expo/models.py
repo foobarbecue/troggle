@@ -38,7 +38,8 @@ class TroggleImageModel(ImageModel):
         return self._meta.object_name
 
     def get_admin_url(self):
-        return settings.URL_ROOT + "/admin/expo/" + self.object_name.lower() + "/" + str(self.pk)
+        return urlparse.urljoin(settings.URL_ROOT, "/admin/expo/" + self.object_name().lower() + "/" + str(self.pk))
+
 
     class Meta:
 	    abstract = True

@@ -98,9 +98,13 @@ def newQMlink(logbookentry):
     return settings.URL_ROOT + r'/admin/expo/qm/add/?' + r'found_by=' + str(logbookentry.pk) +'&number=' + str(nextQMnumber)
 
 def logbookentry(request, date, slug):
-    logbookentry = LogbookEntry.objects.get(date=date, slug=slug)
-    
-    return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry, 'newQMlink':newQMlink(logbookentry)})
+    logbookentry = LogbookEntry.objects.filter(date=date, slug=slug)
+
+    if len(logbookentry)>1:
+        return render_response(request, 'object_list.html',{'object_list':logbookentry})
+    else:
+        logbookentry=logbookentry[0]
+        return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry, 'newQMlink':newQMlink(logbookentry)})
 
 def logbookSearch(request, extra):
     query_string = ''

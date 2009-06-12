@@ -67,7 +67,7 @@ urlpatterns = patterns('',
     url(r'^cave/(?P<cave_id>[^/]+)(?P<subcave>/.*)/?$', subcave, name="subcave"),    
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/(.*)/?', admin.site.root),
     #url(r'^admin/', include(admin.site.urls),name="admin"),
 
     (r'^accounts/', include('registration.urls')),

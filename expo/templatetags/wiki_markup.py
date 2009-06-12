@@ -4,10 +4,12 @@ from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from expo.models import QM
-import re
+import re, urlparse
 
 register = template.Library()
-
+if settings.URL_ROOT.endswith('/'):
+    url_root=settings.URL_ROOT[:-1]
+                
 def wiki_list(line, listdepth):
         l = ""
         for d in listdepth:
@@ -48,7 +50,9 @@ def wiki_to_html(value, autoescape=None):
 @stringfilter
 def wiki_to_html_short(value, autoescape=None):
     """
-    This is the tag which turns wiki syntax into html. Aaron wonders why it is called "short." It is long, and it operates on long things.
+    This is the tag which turns wiki syntax into html. Aaron wonders
+    why it is called "short." It is long, and it operates on long things.
+    It even has a long name itself.
     """
     if autoescape:
         value = conditional_escape(value)
@@ -59,9 +63,9 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub("&#39;&#39;&#39;([^']+)&#39;&#39;&#39;", r"<b>\1</b>", value, re.DOTALL)
     value = re.sub("&#39;&#39;([^']+)&#39;&#39;", r"<i>\1</i>", value, re.DOTALL)
     #make cave links
-    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/cave/\1/">\1</a>' % settings.URL_ROOT, value, re.DOTALL)
+    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/cave/\1/">\1</a>' % url_root, value, re.DOTALL)
     #make people links
-    value = re.sub("\[\[\s*person:(.+)\]\]",r'<a href="%s/person/\1/">\1</a>' % settings.URL_ROOT, value, re.DOTALL)
+    value = re.sub("\[\[\s*person:(.+)\]\]",r'<a href="%s/person/\1/">\1</a>' % url_root, value, re.DOTALL)
     
     #make qm links. this takes a little doing
     qmMatchPattern="\[\[\s*cave:([^\s]+)\s*\s*\QM:(\d*)-(\d*)([ABCDX]?)\]\]"
@@ -77,7 +81,7 @@ def wiki_to_html_short(value, autoescape=None):
             grade=matchobj.groups()[3]
         else:
             grade=''
-        qmdict={'urlroot':settings.URL_ROOT,'cave':matchobj.groups()[0],'year':matchobj.groups()[1],'number':matchobj.groups()[2],'grade':grade}
+        qmdict={'urlroot':url_root,'cave':matchobj.groups()[0],'year':matchobj.groups()[1],'number':matchobj.groups()[2],'grade':grade}
         try:
             qm=QM.objects.get(found_by__cave__kataster_number=qmdict['cave'],found_by__date__year=qmdict['year'], number=qmdict['number'])
             url=r'<a href=' + str(qm.get_absolute_url()) +'>' + str(qm) + '</a>'

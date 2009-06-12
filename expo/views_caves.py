@@ -25,7 +25,7 @@ def caveindex(request):
 
 def cave(request, cave_id='', offical_name=''):
     cave=getCave(cave_id)
-    if cave.non_public:
+    if cave.non_public and not request.user.is_authenticated():
         return render_response(request,'nonpublic.html', {'instance': cave})
     else:
         return render_response(request,'cave.html', {'cave': cave})

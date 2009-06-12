@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load link %}
-{% block title %}Troggle: all {{object_list.1.meta.object_name}} objects{%endblock%}
+{% block title %}Troggle: {{object_list.1.meta.object_name}} objects{%endblock%}
 
 {% block contentheader %}
-<h1>All {{object_list.0.object_name}} objects</h1>
+<h1>{{object_list.0.object_name}} objects</h1>
 {% endblock contentheader %}
 
 {% block content %}
