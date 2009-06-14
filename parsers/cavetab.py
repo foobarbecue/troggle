@@ -181,6 +181,13 @@ def LoadCaveTab():
             addToDefaultArgs(Extent, "extent")
             addToDefaultArgs(SurvexFile, "survex_file")
             addToDefaultArgs(Notes, "notes")
+            
+            #The following adds the legacy_file_path.  This is always in either Autogen file or Link file
+            for header in (AutogenFile,LinkFile):
+                if line[header]:
+                    addToDefaultArgs(header,"description_file")
+                    break
+                    
 
             #The following checks if this cave is non-public i.e. we don't have rights to display it online.
             #Noinfo was the name of the old password protected directory, so if it has that then we will

@@ -351,7 +351,8 @@ class Cave(TroggleModel):
     length = models.CharField(max_length=100,blank=True,null=True)
     depth = models.CharField(max_length=100,blank=True,null=True)
     extent = models.CharField(max_length=100,blank=True,null=True)
-    survex_file = models.CharField(max_length=100,blank=True,null=True) #should be filefield, need to fix parser first
+    survex_file = models.CharField(max_length=100,blank=True,null=True)
+    description_file = models.CharField(max_length=200,blank=True,null=True)
     
     #href    = models.CharField(max_length=100)
     
