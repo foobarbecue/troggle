@@ -1,0 +1,26 @@
+<html>
+<head><title>{{logbook_entries.0.expedition}} Expo Logbook</title></head>
+<link rel="stylesheet" type="text/css" href="../../css/main2.css" />
+<style type="text/css">
+.tripdate	{ float: left;}
+.trippeople	{ float: right;}
+.triptitle	{ font-size: 120%; text-align: center; font-weight: bold; clear: both }
+.timeug		{ text-align: right; font-weight: bold }
+p		{ clear: both }
+</style>
+<body>
+
+<h1>Expo {{logbook_entries.0.expedition}}</h1>
+
+{%for logbook_entry in logbook_entries%}
+<hr />
+
+<div class="tripdate" id="t{{logbook_entry.date}}A">{{logbook_entry.date}}</div>
+<div class="trippeople"><u>{{logbook_entry.author.person}}</u>
+{% for persontrip in logbook_entry.persontrip_set.all %}{{ persontrip.person_expedition.person }} {{ persontrip.person_expedition.time_underground }}, {% endfor %}
+</div>
+
+<div class="triptitle">{{logbook_entry.place}} - {{logbook_entry.title}}</div>
+
+{{logbook_entry.text|safe}}
+{% endfor %}

@@ -1,9 +1,7 @@
 import troggle.expo.models as models
 from django.conf import settings
 
-import csv
-import re
-import os
+import csv, re, os
 
 #format of CAVETAB2.CSV is
 headers=['KatasterNumber','KatStatusCode','Entrances','UnofficialNumber','MultipleEntrances','AutogenFile','LinkFile','LinkEntrance','Name','UnofficialName',

@@ -6,6 +6,7 @@ import django.forms as forms
 from expo.forms import LogbookEntryForm
 from django.http import HttpResponse
 from django.core import serializers
+from expo.views_other import downloadLogbook
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
 
 #overriding admin save so we have the new since parsing field
@@ -50,6 +51,16 @@ class LogbookEntryAdmin(TroggleModelAdmin):
     date_heirarchy = ('date')
     inlines = (PersonTripInline, PhotoInline, QMsFoundInline)
     form = LogbookEntryForm
+    
+    actions=('export_logbook_entries_as_html','export_logbook_entries_as_txt')
+    
+    def export_logbook_entries_as_html(modeladmin, request, queryset):
+        response=downloadLogbook(request=request, queryset=queryset, extension='html')
+        return response
+        
+    def export_logbook_entries_as_txt(modeladmin, request, queryset):
+        response=downloadLogbook(request=request, queryset=queryset, extension='txt')
+        return response
 
 class PersonExpeditionInline(admin.TabularInline):
     model = PersonExpedition

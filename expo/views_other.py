@@ -1,6 +1,7 @@
 from troggle.expo.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, Photo
 import troggle.settings as settings
 from django import forms
+from django.template import loader, Context
 from django.db.models import Q
 import databaseReset
 import re
@@ -80,7 +81,7 @@ def controlPanel(request):
             else:
                 return HttpResponseRedirect(reverse('auth_login'))
 
-    return render_response(request,'controlPanel.html', {'caves':Cave.objects.all(),'jobs_completed':jobs_completed})
+    return render_response(request,'controlPanel.html', {'caves':Cave.objects.all(),'expeditions':Expedition.objects.all(),'jobs_completed':jobs_completed})
 
 def downloadCavetab(request):
     from export import tocavetab
@@ -96,7 +97,42 @@ def downloadSurveys(request):
     tosurveys.writeCaveTab(response)
     return response
 
+def downloadLogbook(request,year=None,extension=None,queryset=None):
+    
+    if year:
+        expedition=Expedition.objects.get(year=year)
+        logbook_entries=LogbookEntry.objects.filter(expedition=expedition)
+        filename='logbook'+year
+    elif queryset:
+        logbook_entries=queryset
+        filename='logbook'
+    else:
+        return response(r"Error: Logbook downloader doesn't know what year you want")
+    
+    if 'year' in request.GET:
+        year=request.GET['year']
+    if 'extension' in request.GET:
+        extension=request.GET['extension']
+    
+    
+    
+    if extension =='txt':
+        response = HttpResponse(mimetype='text/plain')
+        style='2008'
+    elif extension == 'html':
+        response = HttpResponse(mimetype='text/html')
+        style='2005'
+        
+    template='logbook'+style+'style.'+extension
+    response['Content-Disposition'] = 'attachment; filename='+filename+'.'+extension 
+    t=loader.get_template(template)
+    c=Context({'logbook_entries':logbook_entries})
+    response.write(t.render(c))
+    return response
+    
+
 def downloadQMs(request):
+    # Note to self: use get_cave method for the below
     if request.method=='GET':
         try:
             cave=Cave.objects.get(kataster_number=request.GET['cave_id'])
