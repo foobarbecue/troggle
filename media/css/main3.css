@@ -227,7 +227,7 @@ img.thumbnail {
 }
 
 div#header {
-	position:fixed;
+	position:absolute;
 	left:100px;
 	right:100px;
 	top:0;
@@ -427,4 +427,3 @@ a.deletelink:link, a.deletelink:visited {
 a.deletelink:hover {
     color: #993333;
 }
-
