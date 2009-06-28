@@ -261,9 +261,9 @@ div#content {
 	margin-left: 20px;
 	margin-right: 20px;
 	padding-top: 10px;
-	padding-left: 5em;
-	padding-right: 5em;
-	padding-bottom:5em;
+	padding-left: 1em;
+	padding-right: 1em;
+	padding-bottom:1em;
 	background:#fff;
 }
 
@@ -277,7 +277,7 @@ div#content {
 
 body {
 	background-color:#fff;
-	padding-bottom:100px;
+	padding-bottom:10px;
 
 }
 

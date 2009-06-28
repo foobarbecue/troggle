@@ -47,12 +47,8 @@ $(".toggleMenu").click(function () {
 		  $("ul.dropdown li:not(.toggleMenu)").toggle();
 		  $(".toggleMenu").toggle();
  });
-
-$(".footer").hide();
-$(".fadeIn").hide();
-setTimeout("$('.leftMargin.fadeIn').fadeIn(3000);",1000);
-setTimeout("$('.rightMargin.fadeIn').fadeIn(3000);",2000);
-$("a.closeDiv").click(function () {
+ 
+ $("a.closeDiv").click(function () {
 		  $(this).parent().hide();
 		});
 
@@ -79,7 +75,7 @@ $(hoverLink).bind('mouseout',
 
 };
 
-function showEyeCandy(){    
+function showEyeCandy(){
 switchStylestyle("eyeCandy");
 $("#eyeCandyFooterPopUps").load("/eyecandy");
 $(".leftMargin,.rightMargin").show();
@@ -88,9 +84,11 @@ $(".killEyeCandy").show();
 linkHover("#cavesLink","#richardBanner");
 linkHover("#caversLink","#timeMachine");
 linkHover("#surveyBinderLink","#surveyHover");
-linkHover("#troggle","#timeMachine");};
+linkHover("#troggle","#timeMachine");
+contentHeight();};
 
 function killEyeCandy(){
+$("#content").removeAttr("style")
 switchStylestyle("plain");
 $(".leftMargin,.rightMargin").hide();
 $(".showEyeCandy").show();
@@ -104,7 +102,12 @@ $("#troggle").unbind('mouseover').unbind('mouseout');
 if (getCookie("eyeCandy") == "False")
     {killEyeCandy();}
 else
-    {showEyeCandy();}
+    {showEyeCandy();
+     $(".footer").hide();
+     $(".fadeIn").hide();
+     setTimeout("$('.leftMargin.fadeIn').fadeIn(3000);",1000);
+     setTimeout("$('.rightMargin.fadeIn').fadeIn(3000);",2000);
+     }
 
 /*dropdown (well, up actually) menu code from http://css-tricks.com/simple-jquery-dropdowns/*/
 $("ul.dropdown li").hover(
@@ -115,7 +118,7 @@ $("ul.dropdown li").hover(
 
 	function(){
         $(this).removeClass("hover");
-        $('ul:first',this).css('visibility', 'hidden');		
+        $('ul:first',this).css('visibility', 'hidden');
 	});
 
 	$("ul.dropdown li ul li:has(ul)").find("a:first").append(" &raquo; ");
