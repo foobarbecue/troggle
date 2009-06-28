@@ -150,3 +150,6 @@ def ajax_test(request):
     post_text = request.POST['post_data']
     return HttpResponse("{'response_text': '"+post_text+" recieved.'}", 
                                    mimetype="application/json")
+                                   
+def eyecandy(request):
+    return render_response(request,'eyecandy.html', {})

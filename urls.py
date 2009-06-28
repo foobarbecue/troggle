@@ -65,8 +65,9 @@ urlpatterns = patterns('',
     url(r'^logbook(?P<year>\d\d\d\d)\.(?P<extension>.*)/?$',views_other.downloadLogbook),
     url(r'^logbook/?$',views_other.downloadLogbook, name="downloadlogbook"),
     url(r'^cave/(?P<cave_id>[^/]+)/qm\.csv/?$', views_other.downloadQMs, name="downloadqms"),        
-    (r'^downloadqms$', views_other.downloadQMs),      
-    url(r'^cave/(?P<cave_id>[^/]+)(?P<subcave>/.*)/?$', subcave, name="subcave"),    
+    (r'^downloadqms$', views_other.downloadQMs),
+    url(r'^cave/(?P<cave_id>[^/]+)(?P<subcave>/.*)/?$', subcave, name="subcave"),
+    url(r'^eyecandy$', views_other.eyecandy),
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)/?', admin.site.root),
@@ -74,7 +75,7 @@ urlpatterns = patterns('',
 
     (r'^accounts/', include('registration.urls')),
     (r'^profiles/', include('profiles.urls')),
-    
+
 #   (r'^personform/(.*)$', personForm),
 
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',

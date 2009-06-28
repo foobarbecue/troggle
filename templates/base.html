@@ -27,9 +27,9 @@ window.onload = contentHeight;
         {% endif %}.
     | <a href="{% url auth_logout %}">Log out</a> {% else %} <a href="{% url registration_register %}">Sign up</a> | <a href="{% url auth_login %}">Log in</a> {% endif %}
     {% endblock%}
-    | <a href="{{ settings.URL_ROOT }}">Home</a> | <a class="toggleEyeCandy">Kill Eyecandy</a><a class="toggleEyeCandy" style="display: none;">Show Eyecandy</a>
+    | <a href="{{ settings.URL_ROOT }}">Home</a> | <a class="killEyeCandy">Kill Eyecandy</a><a class="showEyeCandy" style="display: none;">Show Eyecandy</a>
     {% block editLink %}
-    
+
     {% endblock %}
    </div>
 </div>
@@ -42,19 +42,18 @@ window.onload = contentHeight;
  
  
   <div id="content" >
-  
+
   	{% block contentheader %}
     {% endblock %}
-    
+
     {% block content %}
     REPLACE : The content
     {% endblock %}
-    
-  </div>
 
-<img id="richardBanner" class="footer eyeCandy" src="{{ settings.MEDIA_URL }}expoBanner.gif"/>
-<img id="timeMachine" class="footer eyeCandy" src="{{ settings.MEDIA_URL }}timemachine.gif"/>
-<img id="surveyHover" class="footer eyeCandy" src="{{ settings.MEDIA_URL }}surveyHover.gif"/>
+  </div>
+<div id="eyeCandyFooterPopUps" class = "eyeCandy">
+
+</div>
 {% block margins %}
 <img class="leftMargin eyeCandy" src="{{ settings.MEDIA_URL }}eieshole.jpg">
 <img class="rightMargin eyeCandy" src="{{ settings.MEDIA_URL }}goesser.jpg">
@@ -90,9 +89,9 @@ window.onload = contentHeight;
                     <li><a id="cuccLink" href="{% url controlpanel %}">Import / export data</a></li>
                     <li><a id="expoWebsiteLink" href="{{ settings.URL_ROOT }}admin">Troggle administration pages</a></li>
                 </ul>
-        <li class="toggleMenu"><a href="#">hide menu</a></li> 
+        <li class="toggleMenu"><a href="#">hide menu</a></li>
 
 	</ul>
-        <div class="toggleMenu" style="display:none; position:fixed; bottom:0; right:130px"><a href="#">Show menu</a></li> 
+        <div class="toggleMenu" style="display:none; position:fixed; bottom:0; right:130px"><a href="#">Show menu</a></li>
 </body>
 </html>
