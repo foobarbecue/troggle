@@ -76,6 +76,12 @@ def export_cavetab():
     tocavetab.writeCaveTab(outfile)
     outfile.close()
     
+if __name__ == "__main__": 
+    import sys
+    if "reset" in sys.argv:
+        reset()
+    else:
+        print "Do 'python databaseReset.py reset'"
 
 
     
