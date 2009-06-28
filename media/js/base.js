@@ -79,7 +79,8 @@ $(hoverLink).bind('mouseout',
 
 };
 
-function showEyeCandy(){
+function showEyeCandy(){    
+switchStylestyle("eyeCandy");
 $("#eyeCandyFooterPopUps").load("/eyecandy");
 $(".leftMargin,.rightMargin").show();
 $(".showEyeCandy").hide();
@@ -90,13 +91,15 @@ linkHover("#surveyBinderLink","#surveyHover");
 linkHover("#troggle","#timeMachine");};
 
 function killEyeCandy(){
+switchStylestyle("plain");
 $(".leftMargin,.rightMargin").hide();
 $(".showEyeCandy").show();
 $(".killEyeCandy").hide();
 $("#cavesLink").unbind('mouseover').unbind('mouseout');
 $("#caversLink").unbind('mouseover').unbind('mouseout');
 $("#surveyBinderLink").unbind('mouseover').unbind('mouseout');
-$("#troggle").unbind('mouseover').unbind('mouseout');};
+$("#troggle").unbind('mouseover').unbind('mouseout');
+};
 
 if (getCookie("eyeCandy") == "False")
     {killEyeCandy();}
@@ -145,3 +148,13 @@ if (document.cookie.length>0)
   }
 return "";
 };
+
+/* Style Sheet Switcher */
+   function switchStylestyle(styleName)
+   {
+      $('link[@rel*=style][title]').each(function(i)
+      {
+         this.disabled = true;
+         if (this.getAttribute('title') == styleName) this.disabled = false;
+      });
+   }
