@@ -1,12 +1,8 @@
 #.-*- coding: utf-8 -*-
 
-import troggle.settings as settings
-import troggle.expo.models as models
-import csv
-import re
-import datetime
-import os
-import shutil
+from django.conf import settings
+import core.models as models
+import csv, re, datetime, os, shutil
 from troggle.save_carefully import save_carefully
 
 #   Julian: the below code was causing errors and it seems like a duplication of the above. Hope I haven't broken anything by commenting it. -Aaron

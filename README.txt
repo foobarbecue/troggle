@@ -25,7 +25,15 @@ If you want to work on the source code and be able to commit, you will need to u
 
 Next, you need to fill in your local settings. Copy either localsettingsubuntu.py or localsettingsserver.py to a new file called localsettings.py. Follow the instructions contained in the file to fill out your settings.
 
+Setting up tables and importing legacy data
+------------------------------------------
+Run "python databaseReset.py reset" from the troggle directory.
 
-Importing legacy data
----------------------
-Once troggle is running, log in and then go to "Import / export" data under "admin" on the menu
+Once troggle is running, you can also log in and then go to "Import / export" data under "admin" on the menu.
+
+Running a Troggle server
+------------------------
+For high volume use, Troggle should be run using a web server like apache. However, a quick way to get started is to use the development server built into Django.
+
+To do this, run "python manage.py runserver" from the troggle directory.
+
