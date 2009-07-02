@@ -236,7 +236,7 @@ class PersonExpedition(TroggleModel):
 class LogbookEntry(TroggleModel):
     date    = models.DateField()
     expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
-      = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip.
+    author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip.
     # Re: the above- so this field should be "typist" or something, not "author". - AC 15 jun 09
     title   = models.CharField(max_length=200)
     cave    = models.ForeignKey('Cave',blank=True,null=True)
