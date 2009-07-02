@@ -82,9 +82,9 @@ def parseCaveQMs(cave,inputFile):
                 
         except KeyError: #check on this one
             continue
-#        except IndexError:
-#            print "Index error in " + str(line)
-#           continue
+        except IndexError:
+            print "Index error in " + str(line)
+            continue
 
 def parse_KH_QMs(kh, inputFile):
     """import QMs from the 1623-161 (Kaninchenhöhle) html pages

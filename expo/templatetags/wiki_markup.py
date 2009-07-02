@@ -3,7 +3,7 @@ from django.utils.html import conditional_escape
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.conf import settings
-from expo.models import QM
+from expo.models import QM, Photo
 import re, urlparse
 
 register = template.Library()
@@ -76,30 +76,51 @@ def wiki_to_html_short(value, autoescape=None):
         [[cave:204 QM:1999-24C]] where the grade (C) is optional.
         If the QM does not exist, the function will return a link for creating it.
         """
+        # if there are four matched groups, the fourth one should be the QM grade 
         if len(matchobj.groups())==4:
-            # if there are four matched groups, then 
             grade=matchobj.groups()[3]
         else:
             grade=''
         qmdict={'urlroot':url_root,'cave':matchobj.groups()[0],'year':matchobj.groups()[1],'number':matchobj.groups()[2],'grade':grade}
         try:
             qm=QM.objects.get(found_by__cave__kataster_number=qmdict['cave'],found_by__date__year=qmdict['year'], number=qmdict['number'])
-            url=r'<a href=' + str(qm.get_absolute_url()) +'>' + str(qm) + '</a>'
+            res=r'<a href=' + str(qm.get_absolute_url()) +'>' + str(qm) + '</a>'
         except QM.DoesNotExist:
-            url = r'<a class="redtext" href="%(urlroot)s/cave/%(cave)s/%(year)s-%(number)s%(grade)s">%(cave)s:%(year)s-%(number)s%(grade)s</a>' % qmdict
-        return url 
-
-    #make qm links
+            res = r'<a class="redtext" href="%(urlroot)s/cave/%(cave)s/%(year)s-%(number)s%(grade)s">%(cave)s:%(year)s-%(number)s%(grade)s</a>' % qmdict
+        return res 
     value = re.sub(qmMatchPattern,qmrepl, value, re.DOTALL)
     
-    #qms=qmfinder.search(value)
-    #for qm in qms:
-        #if QM.objects.filter(cave__kataster_number=qm[0], found_by__year=qm[1], number=qm[2]).count >= 1: # If there is at lesat one QM matching this query
-	#replace qm with link in red
-        #else 
-	 #replace qm with link in blue
-	 
-    #turn qm links red if nonexistant
+    #make photo links for [[photo:filename]] or [[photo:filename linktext]], and
+    #insert photos for [[display:left photo:filename]]
+    photoLinkPattern="\[\[\s*photo:(?P<photoName>[^\s]+)\s*(?P<linkText>.*)\]\]"
+    photoSrcPattern="\[\[\s*display:(?P<style>[^\s]+) photo:(?P<photoName>[^\s]+)\s*\]\]"
+    def photoLinkRepl(matchobj):
+        matchdict=matchobj.groupdict()
+        try:
+            linkText=matchdict['linkText']
+        except KeyError:
+            linkText=None
+        
+        try:
+            photo=Photo.objects.get(file=matchdict['photoName'])
+            if not linkText:
+                linkText=str(photo)
+            res=r'<a href=' + photo.get_admin_url() +'>' + linkText + '</a>'
+        except Photo.DoesNotExist:
+            res = r'<a class="redtext" href="">make new photo</a>'
+        return res
+
+    def photoSrcRepl(matchobj):
+        matchdict=matchobj.groupdict()
+        style=matchdict['style']
+        try:
+            photo=Photo.objects.get(file=matchdict['photoName'])
+            res=r'<a href='+photo.file.url+'><img src=' + photo.thumbnail_image.url +' class='+style+' /></a>'
+        except Photo.DoesNotExist:
+            res = r'<a class="redtext" href="">make new photo</a>'
+        return res
+    value = re.sub(photoLinkPattern,photoLinkRepl, value, re.DOTALL)
+    value = re.sub(photoSrcPattern,photoSrcRepl, value, re.DOTALL)
     
     #Make lists from lines starting with lists of [stars and hashes]
     outValue = ""

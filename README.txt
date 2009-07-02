@@ -24,3 +24,8 @@ svn co http://troggle.googlecode.com/svn/
 If you want to work on the source code and be able to commit, you will need to use https instead of http, and your google account will need to be added to the troggle project members list. Contact aaron dot curtis at cantab dot net to get this set up.
 
 Next, you need to fill in your local settings. Copy either localsettingsubuntu.py or localsettingsserver.py to a new file called localsettings.py. Follow the instructions contained in the file to fill out your settings.
+
+
+Importing legacy data
+---------------------
+Once troggle is running, log in and then go to "Import / export" data under "admin" on the menu
