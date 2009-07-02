@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load wiki_markup %}
+{% load link %}
 
 {% block title %}Person {{personexpedition.person|wiki_to_html_short}} for {{personexpedition.expedition}}{% endblock %}
 
@@ -18,7 +19,7 @@
 {% ifequal otherpersonexpedition personexpedition %}
   | <b>{{otherpersonexpedition.expedition.year}}</b>
 {% else %}
-  | <a href="{{ otherpersonexpedition.get_absolute_url }}">{{otherpersonexpedition.expedition.year}}</a>
+  | {{ otherpersonexpedition|link }}
 {% endifequal %}
 {% endfor %}
 </p>

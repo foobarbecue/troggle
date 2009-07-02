@@ -18,18 +18,14 @@
 </table>
 {% endblock %}
 
-{% block content %}
+{% block related %}
 
-
-<div id="col2">
-
-  <h2>Related items</h2>
+{% endblock %}
+<h2>Related items</h2>
   
 Parent cave: {{qm.found_by.cave|link}}
 (todo: add parent survey and parent subcave)
-
-
-</div>
+{% block content %}
 
 <h3>Location</h3>
 {{qm.location_description}}

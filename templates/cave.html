@@ -1,10 +1,9 @@
 {% extends "cavebase.html" %}
 {% load wiki_markup %}
 {% block editLink %}| <a href={{cave.get_admin_url}}>Edit cave {{cave|wiki_to_html_short}}</a>{% endblock %}
-{% block content %}
 
-<div id="col2">
-  <h3>All logbook entries regarding this cave ({{cave.logbookentry_set.count}})</h3>
+{% block related %}
+  <h2>All logbook entries regarding this cave ({{cave.logbookentry_set.count}})</h2>
   <table>
   {% for logbookentry in cave.logbookentry_set.all %}
   {% if logbookentry.title %}
@@ -15,7 +14,9 @@
   {% endif %}
   {% endfor %}
   </table>
-</div>
+{% endblock %}
+
+{% block content %}
 
 {% if cave.entrances %}
     <h2>Entrances</h2>

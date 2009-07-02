@@ -405,6 +405,11 @@ div#related
 	color:#666666;
 }
 
+div#related table
+{
+	border-collapse:separate
+}
+
 .addlink {
     padding-left: 12px;
     background: url(../icon_addlink.gif) 0 .2em no-repeat;

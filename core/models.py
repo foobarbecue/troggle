@@ -180,7 +180,7 @@ class PersonExpedition(TroggleModel):
     def GetPersonChronology(self):
         res = { }
         for persontrip in self.persontrip_set.all():
-            a = res.setdefault(persontrip.date, { })
+            a = res.setdefault(persontrip.date(), { })
             a.setdefault("persontrips", [ ]).append(persontrip)
         for personrole in self.personrole_set.all():
             a = res.setdefault(personrole.survex_block.date, { })
@@ -236,7 +236,7 @@ class PersonExpedition(TroggleModel):
 class LogbookEntry(TroggleModel):
     date    = models.DateField()
     expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
-    author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip.
+      = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip.
     # Re: the above- so this field should be "typist" or something, not "author". - AC 15 jun 09
     title   = models.CharField(max_length=200)
     cave    = models.ForeignKey('Cave',blank=True,null=True)
@@ -286,9 +286,6 @@ class PersonTrip(TroggleModel):
             return self.logbook_entry.cave
         else:
             return self.logbook_entry.place
-
-    #persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
-    #persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
 
     def __unicode__(self):
         return "%s %s (%s)" % (self.person_expedition, self.place(), self.date())

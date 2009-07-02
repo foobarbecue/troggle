@@ -3,11 +3,7 @@
 
 {% block title %}Cambridge Expeditions to Austria{% endblock %}
 
-
-
-{% block content %}
-
-    <div id="related">
+	{% block related %}
         <h2>Recent Actions</h2>
             {% load log %}
             {% get_admin_log 10 as admin_log %}
@@ -32,7 +28,11 @@
             {% endfor %}
             </ul>
             {% endif %}
-    </div>
+	{% endblock %}
+
+{% block content %}
+
+
 
 
 <div id="col1">

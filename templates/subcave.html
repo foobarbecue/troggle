@@ -11,20 +11,7 @@
 
 
 {% block content %}
-
-ok here comes the drilldown<br />
-{% drilldown_tree_for_node subcave as drilldown %}
-{% for each in drilldown %}
-{{ each }}>
-{% endfor %}
-
-
-<h2>{{subcave}}</h2>
-<p>
-	{{subcave.description}}
-</p>
-
-<div id="col2">
+{% block related %}
 
   <h2>Related places</h2>
   
@@ -55,6 +42,18 @@ ok here comes the drilldown<br />
   </ul>
 
 
-</div>
+{% endblock %}
+
+ok here comes the drilldown<br />
+{% drilldown_tree_for_node subcave as drilldown %}
+{% for each in drilldown %}
+{{ each }}>
+{% endfor %}
+
+
+<h2>{{subcave}}</h2>
+<p>
+	{{subcave.description}}
+</p>
 
 {% endblock content %}
