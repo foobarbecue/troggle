@@ -1,12 +1,12 @@
-from troggle.expo.models import *
+from troggle.core.models import *
 from django.contrib import admin
 from feincms.admin import editor
 from django.forms import ModelForm
 import django.forms as forms
-from expo.forms import LogbookEntryForm
+from core.forms import LogbookEntryForm
 from django.http import HttpResponse
 from django.core import serializers
-from expo.views_other import downloadLogbook
+from core.views_other import downloadLogbook
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
 
 #overriding admin save so we have the new since parsing field

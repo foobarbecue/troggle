@@ -14,7 +14,7 @@ from django.template import RequestContext
 from django.views.generic.list_detail import object_list
 from django import forms
 
-from expo.models import Person
+from core.models import Person
 
 from troggle.alwaysUseRequestContext import render_response
 

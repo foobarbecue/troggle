@@ -1,10 +1,10 @@
 from django.shortcuts import render_to_response
-from troggle.expo.models import Expedition, Person, PersonExpedition, PersonTrip, LogbookEntry
+from troggle.core.models import Expedition, Person, PersonExpedition, PersonTrip, LogbookEntry
 import troggle.settings as settings
 from django.db import models
 from troggle.parsers.logbooks import LoadLogbookForExpedition
 from troggle.parsers.people import GetPersonExpeditionNameLookup
-from troggle.expo.forms import PersonForm
+from troggle.core.forms import PersonForm
 from  django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 

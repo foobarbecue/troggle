@@ -1,5 +1,5 @@
-from troggle.expo.models import Cave, CaveAndEntrance, Survey, Expedition, QM
-import troggle.expo.models as models
+from troggle.core.models import Cave, CaveAndEntrance, Survey, Expedition, QM
+import troggle.core.models as models
 import troggle.settings as settings
 from django.forms.models import formset_factory
 import search

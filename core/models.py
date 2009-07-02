@@ -591,7 +591,7 @@ class Photo(TroggleImageModel):
     lat_utm = models.FloatField(blank=True,null=True)
     
     class IKOptions:
-        spec_module = 'expo.imagekit_specs'
+        spec_module = 'core.imagekit_specs'
         cache_dir = 'thumbs'
         image_field = 'file'
         
@@ -620,7 +620,7 @@ class ScannedImage(TroggleImageModel):
     lat_utm = models.FloatField(blank=True,null=True)
 
     class IKOptions:
-        spec_module = 'expo.imagekit_specs'
+        spec_module = 'core.imagekit_specs'
         cache_dir = 'thumbs'
         image_field = 'file'
     #content_type = models.ForeignKey(ContentType)

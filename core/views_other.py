@@ -1,4 +1,4 @@
-from troggle.expo.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, Photo
+from troggle.core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, Photo
 import troggle.settings as settings
 from django import forms
 from django.template import loader, Context
@@ -9,7 +9,7 @@ import randSent
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
-from expo.models import *
+from core.models import *
 
 def showrequest(request):
     return HttpResponse(request.GET)

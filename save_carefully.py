@@ -7,7 +7,7 @@ def save_carefully(objectType, lookupAttribs={}, nonLookupAttribs={}):
             -if instance exists in DB and was not modified using Troggle: overwrite instance, return (instance, False)
             
         The checking is accomplished using Django's get_or_create and the new_since_parsing boolean field
-        defined in expo.models.TroggleModel.
+        defined in core.models.TroggleModel.
     
     """
     

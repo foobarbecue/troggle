@@ -3,7 +3,7 @@ from django.utils.html import conditional_escape
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.conf import settings
-from expo.models import QM, Photo
+from core.models import QM, Photo
 import re, urlparse
 
 register = template.Library()

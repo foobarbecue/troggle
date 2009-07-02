@@ -1,6 +1,6 @@
 import troggle.settings as settings
 from django import forms
-from troggle.expo.models import LogbookEntry
+from troggle.core.models import LogbookEntry
 import random
 import re
 

@@ -4,14 +4,9 @@ This module is the part of troggle that parses descriptions of cave parts (subca
 
 import sys, os
 
-sys.path.append('C:\\troggle')
-sys.path.append('C:\\')
-os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
-import troggle.expo as expo
-
 import os, re, logging
 from django.conf import settings
-from expo.models import Subcave, Cave
+from core.models import Subcave, Cave
 from troggle.save_carefully import save_carefully
 
 def getLinksInCaveDescription(cave):

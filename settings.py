@@ -54,7 +54,7 @@ TEMPLATE_LOADERS = (
 #   'django.template.loaders.eggs.load_template_source',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = ( "django.core.context_processors.auth", "expo.context.troggle_context", ) 
+TEMPLATE_CONTEXT_PROCESSORS = ( "django.core.context_processors.auth", "core.context.troggle_context", ) 
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -70,7 +70,7 @@ ROOT_URLCONF = 'troggle.urls'
 
 ACCOUNT_ACTIVATION_DAYS=3
 
-AUTH_PROFILE_MODULE = 'expo.person'
+AUTH_PROFILE_MODULE = 'core.person'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -84,7 +84,7 @@ INSTALLED_APPS = (
     #'django_evolution',
     'troggle.registration',
     'troggle.profiles',
-    'troggle.expo',
+    'troggle.core',
     'troggle.imagekit', 
     'mptt', #This is django-mptt (modifed preorder tree traversal) which allows the tree structure of subcaves.
     'feincms' #This is a little content management app that does the javascript admin page for mptt.

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import troggle.expo.models as models
+import troggle.core.models as models
 from django.conf import settings
 import csv, time, re, os, logging
 from troggle.save_carefully import save_carefully

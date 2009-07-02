@@ -3,10 +3,10 @@ import sys, os, types, logging
 #from troggle import *
 #os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
 import troggle.settings as settings
-from troggle.expo.models import *
+from troggle.core.models import *
 from PIL import Image
 #import settings
-#import expo.models as models
+#import core.models as models
 import csv
 import re
 import datetime

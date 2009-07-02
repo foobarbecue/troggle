@@ -1,10 +1,10 @@
 from django.conf.urls.defaults import *
 import troggle.settings as settings
 
-from expo.views import *  # flat import
-from expo.views_caves import *
-from expo.views_survex import *
-from expo.models import *
+from core.views import *  # flat import
+from core.views_caves import *
+from core.views_survex import *
+from core.models import *
 from django.views.generic.create_update import create_object
 from django.contrib import admin
 from django.views.generic.list_detail import object_list

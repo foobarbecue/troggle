@@ -2,7 +2,7 @@
 
 import csv
 from django.conf import settings
-from expo.models import QM, LogbookEntry, Cave
+from core.models import QM, LogbookEntry, Cave
 from datetime import *
 from troggle.save_carefully import save_carefully
 import re, os

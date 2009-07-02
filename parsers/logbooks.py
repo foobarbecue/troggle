@@ -1,7 +1,7 @@
 #.-*- coding: utf-8 -*-
 
 from django.conf import settings
-import expo.models as models
+import core.models as models
 
 from parsers.people import GetPersonExpeditionNameLookup
 from parsers.cavetab import GetCaveLookup
