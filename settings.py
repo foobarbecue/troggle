@@ -90,4 +90,6 @@ INSTALLED_APPS = (
     'feincms' #This is a little content management app that does the javascript admin page for mptt.
 )
 
+FEINCMS_ADMIN_MEDIA=MEDIA_URL
+
 from localsettings import * #localsettings needs to take precedence. Call it to override any existing vars.
