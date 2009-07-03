@@ -2,7 +2,6 @@ from troggle.core.models import Cave, CaveAndEntrance, Survey, Expedition, QM
 import troggle.core.models as models
 import troggle.settings as settings
 from django.forms.models import formset_factory
-import search
 from django.core.urlresolvers import reverse
 from utils import render_with_context # see views_logbooks for explanation on this.
 from django.http import HttpResponseRedirect
@@ -68,17 +67,6 @@ def subcave(request, cave_id, subcave):
                 subcave=subcave.children.get(title=subcaveUrlSegment)
     print subcave
     return render_with_context(request,'subcave.html', {'subcave': subcave,'cave':cave})
-
-def caveSearch(request):
-    query_string = ''
-    found_entries = None
-    if ('q' in request.GET) and request.GET['q'].strip():
-        query_string = request.GET['q']
-        entry_query = search.get_query(query_string, ['underground_description','official_name',])
-        found_entries = Cave.objects.filter(entry_query)
-
-    return render_with_context(request,'cavesearch.html',
-                          { 'query_string': query_string, 'found_entries': found_entries,})
 
 def surveyindex(request):
     surveys=Survey.objects.all()
