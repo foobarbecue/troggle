@@ -11,7 +11,6 @@ from django.http import HttpResponseRedirect
 
 from utils import render_with_context
 
-import search
 import re
 
 @models.permalink #this allows the nice get_absolute_url syntax we are using
