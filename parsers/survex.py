@@ -23,8 +23,8 @@ roles = {"Insts": "Insts",
          "Tape": "Tape",
          "tape": "Tape"}
 
-re_include_extension = re.compile(r"^\s*\*include\s+([^\s]*).svx$", re.IGNORECASE)
-re_include_no_extension = re.compile(r"^\s*\*include\s+([^\s]*)$", re.IGNORECASE)
+re_include_extension = re.compile(r"^\s*\*include\s+([^\s]*).svx\s*$", re.IGNORECASE)
+re_include_no_extension = re.compile(r"^\s*\*include\s+([^\s]*)\s*$", re.IGNORECASE)
 flags = {"begin": re.compile(r"^\s*\*begin\s+(.*?)\s*$", re.IGNORECASE),
          "end": re.compile(r"^\s*\*end\s+(.*?)\s*$", re.IGNORECASE),
          "date": re.compile(r"^\s*\*date\s+(.*?)\s*$", re.IGNORECASE),
@@ -94,12 +94,12 @@ def make_model(name, parent, iter_lines, sf, c, l):
 
           m.end_file = survex_file
           m.end_char = count
-          
+
           if m.start_day:
               m.date = "%04d-%02d-%02d" % (int(m.start_year), int(m.start_month), int(m.start_day))
-          
+
           m.save()
-    
+
     team = []
     file_year = None
     for survex_file, count, line in iter_lines:
