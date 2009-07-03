@@ -76,6 +76,7 @@ $(hoverLink).bind('mouseout',
 };
 
 function showEyeCandy(){
+contentHeight();
 switchStylestyle("eyeCandy");
 $("#eyeCandyFooterPopUps").load("/eyecandy");
 $(".leftMargin,.rightMargin").show();
@@ -85,7 +86,7 @@ linkHover("#cavesLink","#richardBanner");
 linkHover("#caversLink","#timeMachine");
 linkHover("#surveyBinderLink","#surveyHover");
 linkHover("#troggle","#timeMachine");
-contentHeight();};
+};
 
 function killEyeCandy(){
 $("#content").removeAttr("style")

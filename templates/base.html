@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main3.css" title="eyeCandy"/>
-<link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/mainplain.css" title="plain"/>
+<link rel="alternate stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/mainplain.css" title="plain"/>
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/dropdownNavStyle.css" />
 <title>{% block title %}Troggle{% endblock %}</title>
 <script src="{{ settings.MEDIA_URL }}js/jquery.js" type="text/javascript"></script>
@@ -13,7 +13,7 @@
 
 {% block head %}{% endblock %}
 </head>
-<body onLoad="contentHeight();">
+<body>
 
 <div id="header"> 
   <h1>CUCC Expeditions to Austria: 1976 - 2009</h1>
