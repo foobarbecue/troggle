@@ -8,7 +8,7 @@ import re
 import randSent
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from troggle.alwaysUseRequestContext import render_response # see views_logbooks for explanation on this.
+from utils import render_with_context
 from core.models import *
 
 def showrequest(request):
@@ -20,7 +20,7 @@ def stats(request):
     statsDict['caveCount'] = int(Cave.objects.count())
     statsDict['personCount'] = int(Person.objects.count())
     statsDict['logbookEntryCount'] = int(LogbookEntry.objects.count())
-    return render_response(request,'statistics.html', statsDict)
+    return render_with_context(request,'statistics.html', statsDict)
 
 def frontpage(request):
     message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
@@ -37,7 +37,7 @@ def frontpage(request):
     cave = Cave
     photo = Photo
     from django.contrib.admin.templatetags import log
-    return render_response(request,'frontpage.html', locals())
+    return render_with_context(request,'frontpage.html', locals())
 
 def todo(request):
     message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
@@ -51,7 +51,7 @@ def todo(request):
     #'randSent':randSent.randomLogbookSentence(),
     expeditions =  Expedition.objects.order_by("-year")
     totallogbookentries = LogbookEntry.objects.count()
-    return render_response(request,'index.html', {'expeditions':expeditions, 'all':'all', 'totallogbookentries':totallogbookentries, "message":message})
+    return render_with_context(request,'index.html', {'expeditions':expeditions, 'all':'all', 'totallogbookentries':totallogbookentries, "message":message})
 
 def calendar(request,year):
     week=['S','S','M','T','W','T','F']
@@ -59,7 +59,7 @@ def calendar(request,year):
         expedition=Expedition.objects.get(year=year)
         PersonExpeditions=expedition.personexpedition_set.all()
     
-    return render_response(request,'calendar.html', locals())
+    return render_with_context(request,'calendar.html', locals())
 
 def controlPanel(request):
     jobs_completed=[]
@@ -77,11 +77,11 @@ def controlPanel(request):
                     jobs_completed.append(item)
         else:
             if request.user.is_authenticated(): #The user is logged in, but is not a superuser.
-                return render_response(request,'controlPanel.html', {'caves':Cave.objects.all(),'error':'You must be a superuser to use that feature.'})
+                return render_with_context(request,'controlPanel.html', {'caves':Cave.objects.all(),'error':'You must be a superuser to use that feature.'})
             else:
                 return HttpResponseRedirect(reverse('auth_login'))
 
-    return render_response(request,'controlPanel.html', {'caves':Cave.objects.all(),'expeditions':Expedition.objects.all(),'jobs_completed':jobs_completed})
+    return render_with_context(request,'controlPanel.html', {'caves':Cave.objects.all(),'expeditions':Expedition.objects.all(),'jobs_completed':jobs_completed})
 
 def downloadCavetab(request):
     from export import tocavetab
@@ -152,4 +152,4 @@ def ajax_test(request):
                                    mimetype="application/json")
                                    
 def eyecandy(request):
-    return render_response(request,'eyecandy.html', {})
+    return render_with_context(request,'eyecandy.html', {})

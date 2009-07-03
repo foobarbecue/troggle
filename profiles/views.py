@@ -16,8 +16,6 @@ from django import forms
 
 from core.models import Person
 
-from troggle.alwaysUseRequestContext import render_response
-
 from profiles import utils
 
 from django.conf import settings

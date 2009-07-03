@@ -47,6 +47,10 @@
 
 <div id="related"> 
 {% block related %}
+<script language="javascript">
+	$('#related').remove()
+	/*This is a hack to stop a line appearing because of the empty div border*/
+</script>
 {% endblock %}
 </div>
 

@@ -3,18 +3,7 @@
 from django.conf import settings
 import core.models as models
 import csv, re, datetime, os, shutil
-from troggle.save_carefully import save_carefully
-
-#   Julian: the below code was causing errors and it seems like a duplication of the above. Hope I haven't broken anything by commenting it. -Aaron
-#
-#        if name in expoers2008:
-#            print "2008:", name
-#            expomissing.discard(name) # I got an error which I think was caused by this -- python complained that a set changed size during iteration.
-#            yo = models.Expedition.objects.filter(year = "2008")[0]
-#            pyo = models.PersonExpedition(person = pObject, expedition = yo, is_guest=is_guest)
-#            pyo.save()
-
-
+from utils import save_carefully
 
 def saveMugShot(mugShotPath, mugShotFilename, person):
     if mugShotFilename.startswith(r'i/'): #if filename in cell has the directory attached (I think they all do), remove it
@@ -39,7 +28,7 @@ def saveMugShot(mugShotPath, mugShotFilename, person):
         mugShotObj.save()	
 
 def parseMugShotAndBlurb(personline, header, person):
-    #create mugshot Photo instance
+    """create mugshot Photo instance"""
     mugShotFilename=personline[header["Mugshot"]]
     mugShotPath = os.path.join(settings.EXPOWEB, "folk", mugShotFilename)
     if mugShotPath[-3:]=='jpg': #if person just has an image, add it

@@ -2,7 +2,7 @@
 import troggle.core.models as models
 from django.conf import settings
 import csv, time, re, os, logging
-from troggle.save_carefully import save_carefully
+from utils import save_carefully
 
 ##format of CAVETAB2.CSV is
 KatasterNumber = 0

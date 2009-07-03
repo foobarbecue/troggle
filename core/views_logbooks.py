@@ -5,11 +5,11 @@ from django.db import models
 from troggle.parsers.logbooks import LoadLogbookForExpedition
 from troggle.parsers.people import GetPersonExpeditionNameLookup
 from troggle.core.forms import PersonForm
-from  django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
-# Django uses Context, not RequestContext when you call render_to_response. We always want to use RequestContext, so that django adds the context from settings.TEMPLATE_CONTEXT_PROCESSORS. This way we automatically get necessary settings variables passed to each template. So we use a custom method, render_response instead of render_to_response. Hopefully future Django releases will make this unnecessary.
-from troggle.alwaysUseRequestContext import render_response
+
+from utils import render_with_context
 
 import search
 import re
@@ -37,7 +37,7 @@ def personindex(request):
             if person.bisnotable():
                 notablepersons.append(person)
 
-    return render_response(request,'personindex.html', {'persons': persons, 'personss':personss, 'notablepersons':notablepersons, })
+    return render_with_context(request,'personindex.html', {'persons': persons, 'personss':personss, 'notablepersons':notablepersons, })
 
 def expedition(request, expeditionname):
     year = int(expeditionname)
@@ -49,7 +49,7 @@ def expedition(request, expeditionname):
         message = LoadLogbookForExpedition(expedition)
     #message = str(GetPersonExpeditionNameLookup(expedition).keys())
     logbookentries = expedition.logbookentry_set.order_by('date')
-    return render_response(request,'expedition.html', {'expedition': expedition, 'expedition_next':expedition_next, 'expedition_prev':expedition_prev, 'logbookentries':logbookentries, 'message':message, })
+    return render_with_context(request,'expedition.html', {'expedition': expedition, 'expedition_next':expedition_next, 'expedition_prev':expedition_prev, 'logbookentries':logbookentries, 'message':message, })
 
     def get_absolute_url(self):
         return ('expedition', (expedition.year))
@@ -64,7 +64,7 @@ def person(request, first_name='', last_name='', ):
             person.save()
             return HttpResponseRedirect(reverse('profiles_select_profile'))
     
-    return render_response(request,'person.html', {'person': person, })
+    return render_with_context(request,'person.html', {'person': person, })
     
     def get_absolute_url(self):
         return settings.URL_ROOT + self.first_name + '_' + self.last_name
@@ -77,7 +77,7 @@ def personexpedition(request, first_name='',  last_name='', year=''):
     person = Person.objects.get(first_name = first_name, last_name = last_name)
     expedition = Expedition.objects.get(year=year)
     personexpedition = person.personexpedition_set.get(expedition=expedition)
-    return render_response(request,'personexpedition.html', {'personexpedition': personexpedition, })
+    return render_with_context(request,'personexpedition.html', {'personexpedition': personexpedition, })
 
 def newQMlink(logbookentry):
     biggestQMnumber=0
@@ -101,10 +101,10 @@ def logbookentry(request, date, slug):
     logbookentry = LogbookEntry.objects.filter(date=date, slug=slug)
 
     if len(logbookentry)>1:
-        return render_response(request, 'object_list.html',{'object_list':logbookentry})
+        return render_with_context(request, 'object_list.html',{'object_list':logbookentry})
     else:
         logbookentry=logbookentry[0]
-        return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry, 'newQMlink':newQMlink(logbookentry)})
+        return render_with_context(request, 'logbookentry.html', {'logbookentry': logbookentry, 'newQMlink':newQMlink(logbookentry)})
 
 def logbookSearch(request, extra):
     query_string = ''
@@ -114,11 +114,11 @@ def logbookSearch(request, extra):
     entry_query = search.get_query(query_string, ['text','title',])
     found_entries = LogbookEntry.objects.filter(entry_query)
 
-    return render_response(request,'logbooksearch.html',
+    return render_with_context(request,'logbooksearch.html',
                           { 'query_string': query_string, 'found_entries': found_entries, })
                           #context_instance=RequestContext(request))
 
 def personForm(request,pk):
     person=Person.objects.get(pk=pk)
     form=PersonForm(instance=person)
-    return render_response(request,'personform.html', {'form':form,})
+    return render_with_context(request,'personform.html', {'form':form,})

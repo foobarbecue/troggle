@@ -18,8 +18,8 @@ logging.basicConfig(level=logging.DEBUG,
                            filename=settings.LOGFILE,
                            filemode='w')
 
-#This class is for adding fields and methods which all of our models will have.
 class TroggleModel(models.Model):
+    """This class is for adding fields and methods which all of our models will have."""
     new_since_parsing = models.BooleanField(default=False, editable=False)
     non_public = models.BooleanField(default=False)
     def object_name(self):
@@ -29,22 +29,10 @@ class TroggleModel(models.Model):
         return urlparse.urljoin(settings.URL_ROOT, "/admin/core/" + self.object_name().lower() + "/" + str(self.pk))
 
     class Meta:
-	    abstract = True
-
-class TroggleImageModel(ImageModel):
-    new_since_parsing = models.BooleanField(default=False, editable=False)
-    
-    def object_name(self):
-        return self._meta.object_name
-
-    def get_admin_url(self):
-        return urlparse.urljoin(settings.URL_ROOT, "/admin/core/" + self.object_name().lower() + "/" + str(self.pk))
-
-
-    class Meta:
-	    abstract = True
+        abstract = True
 
 class Expedition(TroggleModel):
+    """Represents a caving expedition"""
     year        = models.CharField(max_length=20, unique=True)
     name        = models.CharField(max_length=100)
     date_from  = models.DateField(blank=True,null=True)
@@ -61,15 +49,16 @@ class Expedition(TroggleModel):
         #return settings.URL_ROOT + "/expedition/%s" % self.year
         return urlparse.urljoin(settings.URL_ROOT, reverse('expedition',args=[self.year]))
     
-    
     # lose these two functions (inelegant, and we may create a file with the dates that we can load from)
     def GuessDateFrom(self):
+        """Returns the date of the first logbook entry in the expedition"""
 	try:
 		return self.logbookentry_set.order_by('date')[0].date
 	except IndexError:
 		pass
 
-    def GuessDateTo(self):		# returns the date of the last logbook entry in the expedition
+    def GuessDateTo(self):
+        """Returns the date of the last logbook entry in the expedition"""
 	try:
 		return self.logbookentry_set.order_by('date')[-1].date
 	except IndexError:
@@ -90,42 +79,27 @@ class Expedition(TroggleModel):
 			date+=datetime.timedelta(days=1)
 		return res
 
-    
-
-
 class Person(TroggleModel):
+    """Represents a person, also used as the profile model"""
     first_name  = models.CharField(max_length=100)
     last_name   = models.CharField(max_length=100)
     is_vfho     = models.BooleanField(help_text="VFHO is the Vereines f&uuml;r H&ouml;hlenkunde in Obersteier, a nearby Austrian caving club.")    
-    mug_shot    = models.CharField(max_length=100, blank=True,null=True)
+    mug_shot    = models.CharField(max_length=100, blank=True,null=True) #obsolete, remove soon
     blurb = models.TextField(blank=True,null=True)
+    orderref    = models.CharField(max_length=200)  # for alphabetic
     
-    #href        = models.CharField(max_length=200)
-    orderref    = models.CharField(max_length=200)  # for alphabetic 
-    
-    #the below have been removed and made methods. I'm not sure what the b in bisnotable stands for. - AC 16 Feb
-    #notability  = models.FloatField()               # for listing the top 20 people
-    #bisnotable  = models.BooleanField()
     user	= models.OneToOneField(User, null=True, blank=True)
     def get_absolute_url(self):
         return urlparse.urljoin(settings.URL_ROOT,reverse('person',kwargs={'first_name':self.first_name,'last_name':self.last_name}))
 
     class Meta:
-	    verbose_name_plural = "People"
-    class Meta:
+        verbose_name_plural = "People"
         ordering = ('orderref',)  # "Wookey" makes too complex for: ('last_name', 'first_name') 
     
     def __unicode__(self):
         if self.last_name:
             return "%s %s" % (self.first_name, self.last_name)
         return self.first_name
-
-# Below are no longer needed. Use {{ person.personexpedition_set.all.0.expedition }} for Firstexpedition, and {{ person.personexpedition_set.latest.expedition }} for Lastexpedition
-    # these ought to be possible by piping through |min in the template, or getting the first of an ordered list
-#    def Firstexpedition(self):
-#        return self.personexpedition_set.order_by('expedition')[0]
-#    def Lastexpedition(self):
-#        return self.personexpedition_set.order_by('-expedition')[0]
     
     def notability(self):
         notability = Decimal(0)
@@ -136,18 +110,9 @@ class Person(TroggleModel):
 
     def bisnotable(self):
         return self.notability() > Decimal(1)/Decimal(3)
-    
-    #def Sethref(self):
-        #if self.last_name:
-            #self.href = self.first_name.lower() + "_" + self.last_name.lower()
-            #self.orderref = self.last_name + " " + self.first_name
-        #else:
-          #  self.href = self.first_name.lower()
-            #self.orderref = self.first_name
-        #self.notability = 0.0  # set temporarily
-        
 
 class PersonExpedition(TroggleModel):
+    """"""
     expedition  = models.ForeignKey(Expedition)
     person      = models.ForeignKey(Person)
     date_from   = models.DateField(blank=True,null=True)
@@ -234,8 +199,9 @@ class PersonExpedition(TroggleModel):
 	return urlparse.urljoin(settings.URL_ROOT, reverse('personexpedition',kwargs={'first_name':self.person.first_name,'last_name':self.person.last_name,'year':self.expedition.year}))
 	
 class LogbookEntry(TroggleModel):
+    """Represents trips of all kinds. This is the central model of Troggle."""
     date    = models.DateField()
-    expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
+    expedition  = models.ForeignKey(Expedition,blank=True,null=True)
     author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip.
     # Re: the above- so this field should be "typist" or something, not "author". - AC 15 jun 09
     title   = models.CharField(max_length=200)
@@ -243,16 +209,9 @@ class LogbookEntry(TroggleModel):
     place   = models.CharField(max_length=100,blank=True,null=True,help_text="Only use this if you haven't chosen a cave")
     text    = models.TextField()
     slug    = models.SlugField(max_length=50)
-    #href    = models.CharField(max_length=100)
-    
-    
-    #logbookentry_next  = models.ForeignKey('LogbookEntry', related_name='pnext', blank=True,null=True)
-    #logbookentry_prev  = models.ForeignKey('LogbookEntry', related_name='pprev', blank=True,null=True)
 
     class Meta:
-	   verbose_name_plural = "Logbook Entries"
-        # several PersonTrips point in to this object
-    class Meta:
+        verbose_name_plural = "Logbook Entries"
         ordering = ('-date',)
 
     def get_absolute_url(self):
@@ -302,7 +261,6 @@ class PersonTrip(TroggleModel):
         except:
 	    return
 
-#    def get_persons_previous_trip(self):
 #
 # move following classes into models_cave
 #
@@ -574,7 +532,7 @@ class QM(TroggleModel):
 	return res
 
 photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
-class Photo(TroggleImageModel): 
+class Photo(ImageModel, TroggleModel): 
     caption = models.CharField(max_length=1000,blank=True,null=True)
     contains_logbookentry = models.ForeignKey(LogbookEntry,blank=True,null=True)
     contains_person = models.ManyToManyField(Person,blank=True,null=True)
@@ -606,7 +564,7 @@ def get_scan_path(instance, filename):
     number="%02d" % instance.survey.wallet_number + str(instance.survey.wallet_letter) #using %02d string formatting because convention was 2009#01
     return os.path.join('./',year,year+r'#'+number,instance.contents+str(instance.number_in_wallet)+r'.jpg')
 
-class ScannedImage(TroggleImageModel): 
+class ScannedImage(ImageModel, TroggleModel): 
     file = models.ImageField(storage=scansFileStorage, upload_to=get_scan_path)
     scanned_by = models.ForeignKey(Person,blank=True, null=True)
     scanned_on = models.DateField(null=True)

@@ -10,7 +10,7 @@ from PIL import Image
 import csv
 import re
 import datetime
-from save_carefully import save_carefully
+from utils import save_carefully
 
 def get_or_create_placeholder(year):
     """ All surveys must be related to a logbookentry. We don't have a way to
