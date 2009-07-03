@@ -28,7 +28,8 @@ re_include_no_extension = re.compile(r"^\s*\*include\s+([^\s]*)\s*$", re.IGNOREC
 flags = {"begin": re.compile(r"^\s*\*begin\s+(.*?)\s*$", re.IGNORECASE),
          "end": re.compile(r"^\s*\*end\s+(.*?)\s*$", re.IGNORECASE),
          "date": re.compile(r"^\s*\*date\s+(.*?)\s*$", re.IGNORECASE),
-         "team": re.compile(r"^\s*\*team\s+(.*?)\s*$", re.IGNORECASE)}
+         "team": re.compile(r"^\s*\*team\s+(.*?)\s*$", re.IGNORECASE),
+         "title": re.compile(r"^\s*\*title\s+(.*?)\s*$", re.IGNORECASE)}
 
 def fileIterator(directory, filename):
     survex_file = os.path.join(directory, filename + ".svx")
@@ -132,6 +133,9 @@ def make_model(name, parent, iter_lines, sf, c, l):
               team.append((survex_file, h.groups()))
           else:
               print ("Role not found: " +  line + " in: " + sf).encode('ascii', 'xmlcharrefreplace')
+      elif res["title"]:
+          nsb, success = models.NewSubCave.objects.get_or_create(name = res["title"].groups()[0])
+
     m.text = m.text + line
     saveEnd(survex_file, count)
 

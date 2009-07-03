@@ -479,13 +479,27 @@ class Subcave(TroggleModel):
 #            urlString='cave/'+unicode(cave.kataster_number)+'/'+urlString
 #        else:
 #            urlString='cave/'+unicode(self.cave.kataster_number)+'/'+urlString
-            
+
             
 #        return urlparse.urljoin(settings.URL_ROOT, urlString)
 try:
     mptt.register(Subcave, order_insertion_by=['title'])
 except mptt.AlreadyRegistered:
     print "mptt already registered"
+    
+class CaveDescription(TroggleModel):
+    name = models.CharField(max_length=50)
+    description = models.TextField(blank=True,null=True)
+    linked_subcaves = models.ManyToManyField("Subcave")
+    linked_entrances = models.ManyToManyField("Entrance")
+    linked_qms = models.ManyToManyField("QM")
+    def __unicode__(self):
+        return unicode(self.name)
+
+class NewSubCave(TroggleModel):
+    name = models.CharField(max_length=200)
+    def __unicode__(self):
+        return unicode(self.name)
 
 class QM(TroggleModel):
     #based on qm.csv in trunk/expoweb/smkridge/204 which has the fields:
