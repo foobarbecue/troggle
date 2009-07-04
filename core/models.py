@@ -512,7 +512,7 @@ class CaveDescription(TroggleModel):
     short_name = models.CharField(max_length=50, unique = True)
     long_name = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(blank=True,null=True)
-    linked_subcaves = models.ManyToManyField("Subcave")
+    linked_subcaves = models.ManyToManyField("NewSubCave")
     linked_entrances = models.ManyToManyField("Entrance")
     linked_qms = models.ManyToManyField("QM")
     def __unicode__(self):
