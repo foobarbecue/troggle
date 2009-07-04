@@ -141,7 +141,7 @@ def LoadCaveTab():
             if created and line[UnofficialName]:
                 newUnofficialName = models.OtherCaveName(cave = newCave, name = line[UnofficialName])
                 newUnofficialName.save()
-                
+
                 logging.info("Added unofficial name "+str(newUnofficialName)+" to cave "+str(newCave)+"\n")
 
         if created and line[MultipleEntrances] == '' or \
@@ -189,7 +189,7 @@ def LoadCaveTab():
                 if line[CSVname]:
                     surveyPoint = models.SurveyStation(name = line[CSVname])
                     surveyPoint.save()
-                    args[modelName] = html_to_wiki(surveyPoint)
+                    args[modelName] = surveyPoint
             addToArgsSurveyStation(TagPoint, 'tag_station')
             addToArgsSurveyStation(ExactEntrance, 'exact_station')
             addToArgsSurveyStation(OtherPoint, 'other_station')
@@ -203,8 +203,8 @@ def LoadCaveTab():
             addToArgs(Bearings, 'bearings')
             newEntrance = models.Entrance(**args)
             newEntrance.save()
-            
-            logging.info("Added entrance "+str(newEntrance)+"\n")            
+
+            logging.info("Added entrance "+str(newEntrance)+"\n")
     
             if line[Entrances]:
                 entrance_letter = line[Entrances]
