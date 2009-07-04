@@ -38,6 +38,10 @@ def wiki_list(line, listdepth):
 @register.filter()
 @stringfilter
 def wiki_to_html(value, autoescape=None):
+    """
+    This is the tag which turns wiki syntax into html. It is intended for long pieces of wiki.
+    Hence it splits the wiki into paragraphs double line feeds.
+    """
     #find paragraphs
     outValue = ""
     for paragraph in re.split("\n\s*?\n", value, re.DOTALL):
@@ -50,9 +54,8 @@ def wiki_to_html(value, autoescape=None):
 @stringfilter
 def wiki_to_html_short(value, autoescape=None):
     """
-    This is the tag which turns wiki syntax into html. Aaron wonders
-    why it is called "short." It is long, and it operates on long things.
-    It even has a long name itself.
+    This is the tag which turns wiki syntax into html. It is intended for short pieces of wiki.
+    Hence it is not split the wiki into paragraphs using where it find double line feeds.
     """
     if autoescape:
         value = conditional_escape(value)
@@ -60,36 +63,33 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub("&amp;(.*?);", r"&\1;", value, re.DOTALL)
     #italics and bold
     value = re.sub("&#39;&#39;&#39;&#39;([^']+)&#39;&#39;&#39;&#39;", r"<b><i>\1</i></b>", value, re.DOTALL)
-    value = re.sub("&#39;&#39;&#39;([^']+)&#39;&#39;&#39;", r"<b>\1</b>", value, re.DOTALL)
+    value = re.sub("&#39;b&#39;&#39;([^']+)&#39;&#39;&#39;", r"<b>\1</b>", value, re.DOTALL)
     value = re.sub("&#39;&#39;([^']+)&#39;&#39;", r"<i>\1</i>", value, re.DOTALL)
     #make cave links
     value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/cave/\1/">\1</a>' % url_root, value, re.DOTALL)
     #make people links
     value = re.sub("\[\[\s*person:(.+)\]\]",r'<a href="%s/person/\1/">\1</a>' % url_root, value, re.DOTALL)
-    
+
     #make qm links. this takes a little doing
-    qmMatchPattern="\[\[\s*cave:([^\s]+)\s*\s*\QM:(\d*)-(\d*)([ABCDX]?)\]\]"
+    qmMatchPattern="\[\[\s*QM:([ABC]?)(\d*)-(\d{4})-(\d*)\]\]"
     def qmrepl(matchobj):
         """
         A function for replacing wikicode qm links with html qm links.
-        Given a matchobj matching a wikilink in the format 
-        [[cave:204 QM:1999-24C]] where the grade (C) is optional.
+        Given a matchobj matching a wikilink in the format
+        [[QM:C204-1999-24]]
         If the QM does not exist, the function will return a link for creating it.
         """
-        # if there are four matched groups, the fourth one should be the QM grade 
-        if len(matchobj.groups())==4:
-            grade=matchobj.groups()[3]
-        else:
-            grade=''
-        qmdict={'urlroot':url_root,'cave':matchobj.groups()[0],'year':matchobj.groups()[1],'number':matchobj.groups()[2],'grade':grade}
+        qmdict={'urlroot':url_root,'cave':matchobj.groups()[2],'year':matchobj.groups()[1],'number':matchobj.groups()[3]}
         try:
-            qm=QM.objects.get(found_by__cave__kataster_number=qmdict['cave'],found_by__date__year=qmdict['year'], number=qmdict['number'])
-            res=r'<a href=' + str(qm.get_absolute_url()) +'>' + str(qm) + '</a>'
+            qm=QM.objects.get(found_by__cave__kataster_number = qmdict['cave'],
+                              found_by__date__year = qmdict['year'],
+                              number = qmdict['number'])
+            return r'<a href="%s" id="q%s">%s %s</a>' % ("insert url lookup here", qm.code, unicode(qm))
         except QM.DoesNotExist:
-            res = r'<a class="redtext" href="%(urlroot)s/cave/%(cave)s/%(year)s-%(number)s%(grade)s">%(cave)s:%(year)s-%(number)s%(grade)s</a>' % qmdict
-        return res 
+            return r'<a class="redtext" href="%(urlroot)s/cave/%(cave)s/%(year)s-%(number)s%(grade)s">%(cave)s:%(year)s-%(number)s%(grade)s</a>' % qmdict
+
     value = re.sub(qmMatchPattern,qmrepl, value, re.DOTALL)
-    
+
     #make photo links for [[photo:filename]] or [[photo:filename linktext]], and
     #insert photos for [[display:left photo:filename]]
     photoLinkPattern="\[\[\s*photo:(?P<photoName>[^\s]+)\s*(?P<linkText>.*)\]\]"
@@ -100,7 +100,7 @@ def wiki_to_html_short(value, autoescape=None):
             linkText=matchdict['linkText']
         except KeyError:
             linkText=None
-        
+
         try:
             photo=Photo.objects.get(file=matchdict['photoName'])
             if not linkText:

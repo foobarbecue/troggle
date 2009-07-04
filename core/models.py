@@ -546,8 +546,10 @@ class QM(TroggleModel):
     comment=models.TextField(blank=True,null=True)
 
     def __unicode__(self):
-	QMnumber=str(self.found_by.cave)+'-'+str(self.found_by.date.year)+"-"+str(self.number)+self.grade
-	return str(QMnumber)
+	return u"%s %s" % (self.code(), self.grade)
+
+    def code(self):
+	return u"%s-%s-%s" % (self.found_by.date.year, self.found_by.cave, self.number
 
     def get_absolute_url(self):
         #return settings.URL_ROOT + '/cave/' + self.found_by.cave.kataster_number + '/' + str(self.found_by.date.year) + '-' + '%02d' %self.number
