@@ -86,8 +86,6 @@ INSTALLED_APPS = (
     'troggle.profiles',
     'troggle.core',
     'troggle.imagekit', 
-    'mptt', #This is django-mptt (modifed preorder tree traversal) which allows the tree structure of subcaves.
-    'feincms' #This is a little content management app that does the javascript admin page for mptt.
 )
 
 FEINCMS_ADMIN_MEDIA=MEDIA_URL + 'feincms/'

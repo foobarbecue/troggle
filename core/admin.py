@@ -1,6 +1,5 @@
 from troggle.core.models import *
 from django.contrib import admin
-from feincms.admin import editor
 from django.forms import ModelForm
 import django.forms as forms
 from core.forms import LogbookEntryForm
@@ -30,6 +29,10 @@ class SurvexBlockAdmin(TroggleModelAdmin):
 class ScannedImageInline(admin.TabularInline):
     model = ScannedImage
     extra = 4
+
+class OtherCaveInline(admin.TabularInline):
+    model = OtherCaveName
+    extra = 1
 
 class SurveyAdmin(TroggleModelAdmin):
     inlines = (ScannedImageInline,)
@@ -90,17 +93,13 @@ class PersonExpeditionAdmin(TroggleModelAdmin):
 
 class CaveAdmin(TroggleModelAdmin):
     search_fields = ('official_name','kataster_number','unofficial_number')
-    #inlines = (QMInline,)
+    inlines = (OtherCaveInline,)
     extra = 4
 
-class SubcaveAdmin(editor.TreeEditorMixin,TroggleModelAdmin):
-    pass
-
 admin.site.register(Photo)
-admin.site.register(Subcave, SubcaveAdmin)
 admin.site.register(Cave, CaveAdmin)
 admin.site.register(Area)
-admin.site.register(OtherCaveName)
+#admin.site.register(OtherCaveName)
 admin.site.register(CaveAndEntrance)
 admin.site.register(SurveyStation)
 admin.site.register(NewSubCave)
@@ -132,8 +131,3 @@ def export_as_xml(modeladmin, request, queryset):
 
 admin.site.add_action(export_as_xml)
 admin.site.add_action(export_as_json)
-
-try:
-    mptt.register(Subcave, order_insertion_by=['name'])
-except mptt.AlreadyRegistered:
-    print "mptt already registered"

@@ -1,10 +1,4 @@
 import urllib, urlparse, string, os, datetime, logging
-try:
-    import mptt
-except ImportError:
-    #I think we should be having troggle directory as the base import place
-    #but I  am leaving the following line in to make sure I do not break anything
-    import troggle.mptt as mptt
 from django.forms import ModelForm
 from django.db import models
 from django.contrib import admin
@@ -502,15 +496,6 @@ class Entrance(TroggleModel):
             if f[0] == self.findability:
                 return f[1]
                 
-class Subcave(TroggleModel):
-    description = models.TextField(blank=True, null=True)
-    title = models.CharField(max_length=200, )
-    cave = models.ForeignKey('Cave', blank=True, null=True, help_text="Only the top-level subcave should be linked to a cave!")
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='children')
-    #adjoining = models.ManyToManyField('Subcave',blank=True, null=True,)
-    legacy_description_path = models.CharField(max_length=600, blank=True, null=True)
-    def __unicode__(self):
-        return self.title
 
     def get_absolute_url(self):
         
@@ -522,28 +507,6 @@ class Subcave(TroggleModel):
             res = '/'.join((self.get_root().cave.get_absolute_url(), self.title))
             
         return res
-            
-# This was the old way, before we were using django-mptt
-
-#    def get_absolute_url(self):
-#        urlString=self.name
-#        if self.parent:
-#            parent=self.parent
-#            while parent: #recursively walk up the tree, adding parents to the left of the URL
-#                urlString=parent.name+'/'+urlString
-#                if parent.cave:
-#                    cave=parent.cave
-#                parent=parent.parent
-#            urlString='cave/'+unicode(cave.kataster_number)+'/'+urlString
-#        else:
-#            urlString='cave/'+unicode(self.cave.kataster_number)+'/'+urlString
-
-            
-#        return urlparse.urljoin(settings.URL_ROOT, urlString)
-try:
-    mptt.register(Subcave, order_insertion_by=['title'])
-except mptt.AlreadyRegistered:
-    print "mptt already registered"
 
 class CaveDescription(TroggleModel):
     short_name = models.CharField(max_length=50, unique = True)
@@ -666,7 +629,7 @@ class Survey(TroggleModel):
     wallet_letter = models.CharField(max_length=1,blank=True,null=True)
     comments = models.TextField(blank=True,null=True)
     location = models.CharField(max_length=400,blank=True,null=True) #REDUNDANT
-    subcave = models.ForeignKey('Subcave', blank=True, null=True)
+    subcave = models.ForeignKey('NewSubCave', blank=True, null=True)
     #notes_scan = models.ForeignKey('ScannedImage',related_name='notes_scan',blank=True, null=True)  	#Replaced by contents field of ScannedImage model
     survex_block  = models.OneToOneField('SurvexBlock',blank=True, null=True)
     logbook_entry = models.ForeignKey('LogbookEntry')
