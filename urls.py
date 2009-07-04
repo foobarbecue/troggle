@@ -27,14 +27,15 @@ urlpatterns = patterns('',
     url(r'^expeditions/?$',  object_list,  {'queryset':Expedition.objects.all(),'template_name':'object_list.html'},name="expeditions"),
     url(r'^personexpedition/(?P<first_name>[A-Z]*[a-z]*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z]*)/(?P<year>\d+)/?$', views_logbooks.personexpedition, name="personexpedition"),
     url(r'^logbookentry/(?P<date>.*)/(?P<slug>.*)/?$', views_logbooks.logbookentry,name="logbookentry"),
-    
+
     url(r'^survexblock/(.+)$',  views_caves.survexblock,    name="survexblock"),
     url(r'^cave/(?P<cave_id>[^/]+)/?$', views_caves.cave, name="cave"),
+    url(r'^cavedescription/(?P<cavedescription_name>[^/]*)/$', views_caves.cave_description, name="cavedescription"),
     #url(r'^cavehref/(.+)$',     views_caves.cave,       name="cave"),url(r'cave'),
 
     url(r'^jgtfile/(.*)$',      view_surveys.jgtfile,       name="jgtfile"),
     url(r'^jgtuploadfile$',     view_surveys.jgtuploadfile, name="jgtuploadfile"),
- 
+
     url(r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     #(r'^cavesearch', caveSearch),

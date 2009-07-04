@@ -1,4 +1,4 @@
-from troggle.core.models import Cave, CaveAndEntrance, Survey, Expedition, QM
+from troggle.core.models import Cave, CaveAndEntrance, Survey, Expedition, QM, CaveDescription
 import troggle.core.models as models
 import troggle.settings as settings
 from django.forms.models import formset_factory
@@ -7,6 +7,7 @@ from utils import render_with_context # see views_logbooks for explanation on th
 from django.http import HttpResponseRedirect
 from django.conf import settings
 import re, urlparse
+from django.shortcuts import get_object_or_404
 
 def getCave(cave_id):
     """Returns a cave object when given a cave name or number. It is used by views including cavehref, ent, and qm."""
@@ -83,5 +84,10 @@ def survey(request,year,wallet_number):
             notes=current_survey.scannedimage_set.filter(contents='notes')
             planSketches=current_survey.scannedimage_set.filter(contents='plan')
             elevationSketches=current_survey.scannedimage_set.filter(contents='elevation')
-    
+
     return render_with_context(request,'survey.html', locals())
+
+def cave_description(request, cavedescription_name):
+    cave_description = get_object_or_404(CaveDescription, short_name = cavedescription_name)
+    print cave_description.long_name
+    return render_with_context(request,'cave_description.html', locals())

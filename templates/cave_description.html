@@ -1,0 +1,20 @@
+{% extends "cavebase.html" %}
+{% load wiki_markup %}
+{% load mptt_tags %}
+{% block title %} {{cave_description.short_name}} {% endblock title %}
+{% block editLink %}<a href={{cave_description.get_admin_url}}>Edit description {{cave_description}}</a>{% endblock %}
+
+{% block contentheader %}
+	{{cave_description.long_name}}
+{% endblock contentheader %}
+
+
+
+{% block content %}
+
+<h1>{{cave_description.long_name}}</h1>
+<p>
+	{{cave_description.description|wiki_to_html}}
+</p>
+
+{% endblock content %}
