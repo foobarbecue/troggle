@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load link %}
+
+{% block title %}Cambridge Expeditions to Austria{% endblock %}
+
+{% block content %}
+<h2>Expo member tasks</h2>
+
+<h3>Add new data</h3>
+
+<li><a href="{% url admin_core_photo_add %}">Upload a photo</a></li>
+<li><a href="{% url admin_core_logbookentry_add %}">Record a new trip</a></li>
+
+<h3>Your unfinished business</h3>
+    {% for survey in surveys_unfinished %}
+    	<li>{{survey|link}}</li>
+    {% endfor %}
+
+<h3>General unfinished business</h3>
+add wikilinks
+
+<h3>Caving recommendations</h3>
+    {% for qm in qms_recommended %}
+    	<li>{{qm|link}}</li>
+    {% endfor %}
+
+<h3>Profile tasks</h3>
+
+<li>Dates present on expo</li>
+<li>Mugshot</li>
+<li>Blurb</li>
+
+{% endblock content %}
+
+{% block margins %}
+<img class="leftMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}eieshole.jpg">
+<img class="rightMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}goesser.jpg">
+{% endblock margins %}
