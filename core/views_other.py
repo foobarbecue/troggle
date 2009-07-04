@@ -23,15 +23,9 @@ def stats(request):
     return render_with_context(request,'statistics.html', statsDict)
 
 def frontpage(request):
-    message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
-    if "reloadexpos" in request.GET:
-        message = LoadPersonsExpos()
-        message = "Reloaded personexpos"
-    if "reloadsurvex" in request.POST:
-        message = LoadAllSurvexBlocks()
-        message = "Reloaded survexblocks"
+    if request.user.is_authenticated:
+        return render_with_context(request,'tasks.html')
 
-    #'randSent':randSent.randomLogbookSentence(),
     expeditions =  Expedition.objects.order_by("-year")
     logbookentry = LogbookEntry
     cave = Cave
@@ -153,3 +147,13 @@ def ajax_test(request):
                                    
 def eyecandy(request):
     return render_with_context(request,'eyecandy.html', {})
+
+def ajax_QM_number(request):
+    if request.method=='POST':
+        cave=Cave.objects.get(id=request.POST['cave'])
+        print cave
+        exp=Expedition.objects.get(pk=request.POST['year'])
+        print exp
+        res=cave.new_QM_number(exp.year)
+
+    return HttpResponse(res)

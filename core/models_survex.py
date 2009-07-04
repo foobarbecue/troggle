@@ -31,7 +31,10 @@ class SurvexBlock(models.Model):
         ordering = ('date', 'survexpath')
 
     def __unicode__(self):
-        return unicode(self.name)
+        if self.name:
+            return unicode(self.name)
+        else:
+            return 'no name'
     
     def filecontents(self):
         f = os.path.join(settings.SURVEX_DATA, self.begin_file)

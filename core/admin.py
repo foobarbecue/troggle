@@ -9,11 +9,16 @@ from django.core import serializers
 from core.views_other import downloadLogbook
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
 
-#overriding admin save so we have the new since parsing field
+
 class TroggleModelAdmin(admin.ModelAdmin):
+    
     def save_model(self, request, obj, form, change):
+        """overriding admin save to fill the new_since parsing_field"""
 	obj.new_since_parsing=True
 	obj.save()
+    
+    class Media:
+        js = ('js/jquery.js','js/QM_helper.js')
 
 class RoleInline(admin.TabularInline):
     model = PersonRole
@@ -33,7 +38,8 @@ class SurveyAdmin(TroggleModelAdmin):
 class QMsFoundInline(admin.TabularInline):
     model=QM
     fk_name='found_by'
-
+    fields=('number','grade','location_description','comment')#need to add foreignkey to cave part
+    
 class PhotoInline(admin.TabularInline):
     model = Photo
     exclude = ['is_mugshot' ]
@@ -61,6 +67,8 @@ class LogbookEntryAdmin(TroggleModelAdmin):
     def export_logbook_entries_as_txt(modeladmin, request, queryset):
         response=downloadLogbook(request=request, queryset=queryset, extension='txt')
         return response
+    
+    
 
 class PersonExpeditionInline(admin.TabularInline):
     model = PersonExpedition

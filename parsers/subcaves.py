@@ -37,7 +37,20 @@ def importSubcaves(cave):
             logging.info("Added " + unicode(newSubcave) + " to " + unicode(cave))            
         except IOError:
             logging.info("Subcave import couldn't open "+subcaveFilePath)
-    
+
+def getLinksInSubcaveDescription(subcave):
+    pattern='<a href=\"(.*?)\">(.*?)</a>'
+    if subcave.description:
+        return re.findall(pattern,subcave.description)
+    else:
+        return []
+
+def getLinksInAllSubcaves():
+    bigList=[]
+    for subcave in Subcave.objects.all():
+        bigList+=getLinksInSubcaveDescription(subcave)
+        return bigList
+
 def importAllSubcaves():
     for cave in Cave.objects.all():
         importSubcaves(cave)

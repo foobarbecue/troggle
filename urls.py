@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-import troggle.settings as settings
+from django.conf import settings
 
 from core.views import *  # flat import
 from core.views_caves import *
@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     url(r'^caves/?$',     views_caves.caveindex,      name="caveindex"),
     url(r'^people/?$',   views_logbooks.personindex, name="personindex"),
     
-    
+    url(r'^newqmnumber/?$',              views_other.ajax_QM_number,  ),
     #(r'^person/(?P<person_id>\d*)/?$', views_logbooks.person),
     url(r'^person/(?P<first_name>[A-Z]*[a-z\-\']*)[^a-zA-Z]*(?P<last_name>[a-z\-\']*[^a-zA-Z]*[A-Z]*[a-z\-]*)/?', views_logbooks.person, name="person"),
     #url(r'^person/(\w+_\w+)$',       views_logbooks.person,      name="person"),
@@ -70,8 +70,7 @@ urlpatterns = patterns('',
     url(r'^eyecandy$', views_other.eyecandy),
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
-    (r'^admin/(.*)/?', admin.site.root),
-    #url(r'^admin/', include(admin.site.urls),name="admin"),
+    (r'^admin/', include(admin.site.urls)),
 
     (r'^accounts/', include('registration.urls')),
     (r'^profiles/', include('profiles.urls')),
