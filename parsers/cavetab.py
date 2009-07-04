@@ -3,6 +3,7 @@ import troggle.core.models as models
 from django.conf import settings
 import csv, time, re, os, logging
 from utils import save_carefully
+from utils import html_to_wiki
 
 ##format of CAVETAB2.CSV is
 KatasterNumber = 0
@@ -51,85 +52,6 @@ Marking = 42
 MarkingComment = 43
 Findability = 44
 FindabilityComment = 45
-
-
-def html_to_wiki(text):
-    if type(text) != str:
-        return text
-    text = unicode(text, "utf-8")
-    #Characters
-    #text = re.sub("&uuml;", u"\xfc", text)
-    #text = re.sub("&ouml;", u"\xf6", text)
-    #text = re.sub("&auml;", u"\xe4", text)
-    #text = re.sub("&deg;", u"\xb0", text)
-    #text = re.sub("&copy;", u"\xa9", text)
-    #text = re.sub("&amp;", u"\x26", text)
-    #text = re.sub("&szlig;", u"\xdf", text)
-    #text = re.sub("&szlig;", u"\xdf", text)
-    #text = re.sub("&lt;", u"<", text)
-    #text = re.sub("&gt;", u">", text)
-    #text = re.sub("&egrave;", u"\xe8", text)
-    #text = re.sub("&eacute;", u"\xe9", text)
-    #text = re.sub("&quote;", u'"', text)
-    #text = re.sub("&quot;", u'"', text)
-    #text = re.sub("&Ouml;", u'\xd6', text)
-    #text = re.sub("&times;", u'"', text)
-
-    #text = re.sub("&(.*);", "/1", text)
-    #if s:
-    #    print s.groups()
-    #Lists
-    text = re.sub("</p>", r"", text)
-    text = re.sub("<p>$", r"", text)
-    text = re.sub("<p>", r"\n\n", text)
-    out = ""
-    lists = ""
-    while text:
-        mstar = re.match("^(.*?)<ul>\s*<li[^>]*>(.*?)</li>(.*)$", text, re.DOTALL)
-        munstar = re.match("^(\s*)</ul>(.*)$", text, re.DOTALL)
-        mhash = re.match("^(.*?)<ol>\s*<li[^>]*>(.*?)</li>(.*)$", text, re.DOTALL)
-        munhash = re.match("^(\s*)</ol>(.*)$", text, re.DOTALL)
-        mitem = re.match("^(\s*)<li[^>]*>(.*?)</li>(.*)$", text, re.DOTALL)
-        ms = [len(m.groups()[0]) for m in [mstar, munstar, mhash, munhash, mitem] if m]
-        def min_(i, l):
-            try:
-                v = i.groups()[0]
-                l.remove(len(v))
-                return len(v) < min(l, 1000000000)
-            except:
-                return False
-        if min_(mstar, ms):
-            lists += "*"
-            pre, val, post = mstar.groups()
-            out += pre + "\n" + lists + " " + val
-            text = post
-        elif min_(mhash, ms):
-            lists += "#"
-            pre, val, post = mhash.groups()
-            out += pre + "\n" + lists + " " + val
-            text = post
-        elif min_(mitem, ms):
-            pre, val, post = mitem.groups()
-            out += "\n" + lists + " " + val
-            text = post
-        elif min_(munstar, ms):
-            lists = lists[:-1]
-            text = munstar.groups()[1]
-        elif min_(munhash, ms):
-            lists.pop()
-            text = munhash.groups()[1]
-        else:
-            out += text
-            text = ""
-    text2 = out
-    while text2:
-        mtag = re.match("^(.*?)<(.*?)>(.*)$", text, re.DOTALL)
-        if mtag:
-            text2 = mtag.groups()[2]
-            print mtag.groups()[1]
-        else:
-            text2 = ""
-    return out
 
 def LoadCaveTab():
     cavetab = open(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"),'rU')

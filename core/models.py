@@ -1,5 +1,10 @@
 import urllib, urlparse, string, os, datetime, logging
-import troggle.mptt as mptt
+try:
+    import mptt
+except ImportError:
+    #I think we should be having troggle directory as the base import place
+    #but I  am leaving the following line in to make sure I do not break anything
+    import troggle.mptt as mptt
 from django.forms import ModelForm
 from django.db import models
 from django.contrib import admin
@@ -539,18 +544,19 @@ try:
     mptt.register(Subcave, order_insertion_by=['title'])
 except mptt.AlreadyRegistered:
     print "mptt already registered"
-    
+
 class CaveDescription(TroggleModel):
-    name = models.CharField(max_length=50)
+    short_name = models.CharField(max_length=50, unique = True)
+    long_name = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(blank=True,null=True)
     linked_subcaves = models.ManyToManyField("Subcave")
     linked_entrances = models.ManyToManyField("Entrance")
     linked_qms = models.ManyToManyField("QM")
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(self.short_name)
 
 class NewSubCave(TroggleModel):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique = True)
     def __unicode__(self):
         return unicode(self.name)
 

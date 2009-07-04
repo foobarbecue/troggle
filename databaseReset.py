@@ -58,6 +58,14 @@ def import_surveys():
     import parsers.surveys
     parsers.surveys.parseSurveys(logfile=settings.LOGFILE)
 
+def import_descriptions():
+    import parsers.descriptions
+    parsers.descriptions.getDescriptions()
+
+def parse_descriptions():
+    import parsers.descriptions
+    parsers.descriptions.parseDescriptions()
+
 def reset():
     """ Wipe the troggle database and import everything from legacy data
     """
@@ -69,16 +77,29 @@ def reset():
     import_survex()
     import_QMs()
     import_surveys()
+    import_descriptions()
+    parse_descriptions()
 
+def resetdesc():
+    """ Wipe the troggle database and import descriptions
+    """
+    import core.models
+    for desc in core.models.CaveDescription.objects.all():
+        desc.delete()
+    import_descriptions()
+    parse_descriptions()
+    
 def export_cavetab():
     from export import tocavetab
     outfile=file(os.path.join(settings.EXPOWEB, "noinfo", "CAVETAB2.CSV"),'w')
     tocavetab.writeCaveTab(outfile)
     outfile.close()
-    
-if __name__ == "__main__": 
+
+if __name__ == "__main__":
     import sys
-    if "reset" in sys.argv:
+    if "desc" in sys.argv:
+        resetdesc()
+    elif "reset" in sys.argv:
         reset()
     else:
         print "Do 'python databaseReset.py reset'"
