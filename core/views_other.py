@@ -165,7 +165,7 @@ def logbook_entry_suggestions(request):
     """
     unwiki_QM_pattern=r"(?P<whole>(?P<explorer_code>[ABC]?)(?P<cave>\d*)-?(?P<year>\d\d\d?\d?)-(?P<number>\d\d)(?P<grade>[ABCDXV]?)(?=\s))"
     unwiki_QM_pattern=re.compile(unwiki_QM_pattern)
-    wikilink_QM_pattern=settings.QM_PATTERN
+    #wikilink_QM_pattern=settings.QM_PATTERN
     
     slug=request.POST['slug']
     date=request.POST['date']
@@ -192,7 +192,7 @@ def logbook_entry_suggestions(request):
     print unwiki_QMs
     
     
-    wikilink_QMs=re.findall(wikilink_QM_pattern,lbo.text)
+    #wikilink_QMs=re.findall(wikilink_QM_pattern,lbo.text)
     attached_QMs=lbo.QMs_found.all()
     unmentioned_attached_QMs=''#not implemented, fill this in by subtracting wiklink_QMs from attached_QMs
     
