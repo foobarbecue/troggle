@@ -2,7 +2,6 @@ from troggle.core.models import *
 from django.contrib import admin
 from django.forms import ModelForm
 import django.forms as forms
-from core.forms import LogbookEntryForm
 from django.http import HttpResponse
 from django.core import serializers
 from core.views_other import downloadLogbook
@@ -42,6 +41,7 @@ class QMsFoundInline(admin.TabularInline):
     model=QM
     fk_name='found_by'
     fields=('number','grade','location_description','comment')#need to add foreignkey to cave part
+    extra=1
     
 class PhotoInline(admin.TabularInline):
     model = Photo
@@ -51,6 +51,7 @@ class PhotoInline(admin.TabularInline):
 class PersonTripInline(admin.TabularInline):
     model = PersonTrip
     exclude = ['persontrip_next','Delete']
+    raw_id_fields = ('person_expedition',)
     extra = 1
 
 #class LogbookEntryAdmin(VersionAdmin):
@@ -59,8 +60,10 @@ class LogbookEntryAdmin(TroggleModelAdmin):
     search_fields = ('title','expedition__year')
     date_heirarchy = ('date')
     inlines = (PersonTripInline, PhotoInline, QMsFoundInline)
-    form = LogbookEntryForm
-    
+    class Media:
+        css = {
+            "all": ("css/troggleadmin.css",)
+        }
     actions=('export_logbook_entries_as_html','export_logbook_entries_as_txt')
     
     def export_logbook_entries_as_html(modeladmin, request, queryset):
@@ -87,6 +90,7 @@ class QMAdmin(TroggleModelAdmin):
     list_display_links = ('__unicode__',)
     list_editable = ('found_by','ticked_off_by','grade')
     list_per_page = 20
+    raw_id_fields=('found_by','ticked_off_by')
 
 class PersonExpeditionAdmin(TroggleModelAdmin):
     search_fields = ('person__first_name','expedition__year')

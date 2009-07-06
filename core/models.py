@@ -549,7 +549,7 @@ class QM(TroggleModel):
 	return u"%s %s" % (self.code(), self.grade)
 
     def code(self):
-	return u"%s-%s-%s" % (self.found_by.date.year, self.found_by.cave, self.number
+	return u"%s-%s-%s" % (unicode(self.found_by.cave)[6:], self.found_by.date.year, self.number)
 
     def get_absolute_url(self):
         #return settings.URL_ROOT + '/cave/' + self.found_by.cave.kataster_number + '/' + str(self.found_by.date.year) + '-' + '%02d' %self.number
@@ -562,10 +562,7 @@ class QM(TroggleModel):
         return QM.objects.get(id=self.id-1)
 
     def wiki_link(self):
-        res = '[[cave:' + str(self.found_by.cave.kataster_number) + ' '
-        res += 'QM:' + str(self.found_by.date.year) + '-'
-        res += str(self.number) + self.grade + ']]'
-	return res
+	return u"%s%s%s" % ('[[QM:',self.code(),']]')
 
 photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
 class Photo(TroggleImageModel): 

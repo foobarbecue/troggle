@@ -1,5 +1,5 @@
-from troggle.core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, Photo
-import troggle.settings as settings
+from troggle.core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, Photo, QM
+from django.conf import settings
 from django import forms
 from django.template import loader, Context
 from django.db.models import Q
@@ -146,7 +146,7 @@ def ajax_test(request):
                                    mimetype="application/json")
                                    
 def eyecandy(request):
-    return render_with_context(request,'eyecandy.html', {})
+    return 
 
 def ajax_QM_number(request):
     if request.method=='POST':
@@ -157,3 +157,54 @@ def ajax_QM_number(request):
         res=cave.new_QM_number(exp.year)
 
     return HttpResponse(res)
+
+def logbook_entry_suggestions(request):
+    """
+    Generates a html box with suggestions about what to do with QMs
+    in logbook entry text.
+    """
+    unwiki_QM_pattern=r"(?P<whole>(?P<explorer_code>[ABC]?)(?P<cave>\d*)-?(?P<year>\d\d\d?\d?)-(?P<number>\d\d)(?P<grade>[ABCDXV]?)(?=\s))"
+    unwiki_QM_pattern=re.compile(unwiki_QM_pattern)
+    wikilink_QM_pattern=settings.QM_PATTERN
+    
+    slug=request.POST['slug']
+    date=request.POST['date']
+    lbo=LogbookEntry.objects.get(slug=slug, date=date)
+    
+    #unwiki_QMs=re.findall(unwiki_QM_pattern,lbo.text)
+    unwiki_QMs=[m.groupdict() for m in unwiki_QM_pattern.finditer(lbo.text)]
+    
+    print unwiki_QMs
+    for qm in unwiki_QMs:
+        if len(qm['year'])==2:
+            if int(qm['year'])<50:
+                qm['year']='20'+qm['year']
+            else:
+                qm['year']='19'+qm['year']
+
+        temp_QM=QM(found_by=lbo,number=qm['number'],grade=qm['grade'])
+        try:
+            temp_QM.grade=unwiki_QM['grade']
+        except:
+            pass
+        qm['wikilink']=temp_QM.wiki_link()
+
+    print unwiki_QMs
+    
+    
+    wikilink_QMs=re.findall(wikilink_QM_pattern,lbo.text)
+    attached_QMs=lbo.QMs_found.all()
+    unmentioned_attached_QMs=''#not implemented, fill this in by subtracting wiklink_QMs from attached_QMs
+    
+    #Find unattached_QMs. We only look at the QMs with a proper wiki link.
+    #for qm in wikilink_QMs:
+        #Try to look up the QM. 
+        
+    print 'got 208'
+    any_suggestions=True
+    print 'got 210'
+    return render_with_context(request,'suggestions.html',
+        {
+        'unwiki_QMs':unwiki_QMs,
+        'any_suggestions':any_suggestions
+        })

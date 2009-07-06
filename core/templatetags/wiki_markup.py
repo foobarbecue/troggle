@@ -3,7 +3,7 @@ from django.utils.html import conditional_escape
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.conf import settings
-from core.models import QM, Photo
+from core.models import QM, Photo, LogbookEntry, Cave
 import re, urlparse
 
 register = template.Library()
@@ -79,14 +79,23 @@ def wiki_to_html_short(value, autoescape=None):
         [[QM:C204-1999-24]]
         If the QM does not exist, the function will return a link for creating it.
         """
-        qmdict={'urlroot':url_root,'cave':matchobj.groups()[2],'year':matchobj.groups()[1],'number':matchobj.groups()[3]}
+        qmdict={'urlroot':url_root,'cave':matchobj.groups()[1],'year':matchobj.groups()[2],'number':matchobj.groups()[3]}
         try:
             qm=QM.objects.get(found_by__cave__kataster_number = qmdict['cave'],
                               found_by__date__year = qmdict['year'],
                               number = qmdict['number'])
-            return r'<a href="%s" id="q%s">%s %s</a>' % ("insert url lookup here", qm.code, unicode(qm))
-        except QM.DoesNotExist:
-            return r'<a class="redtext" href="%(urlroot)s/cave/%(cave)s/%(year)s-%(number)s%(grade)s">%(cave)s:%(year)s-%(number)s%(grade)s</a>' % qmdict
+            return r'<a href="%s" id="q%s">%s</a>' % (qm.get_absolute_url(), qm.code, unicode(qm))
+        except QM.DoesNotExist: #bother aaron to make him clean up the below code
+            try:
+                placeholder=LogbookEntry.objects.get(date__year=qmdict['year'],cave__kataster_number=qmdict['cave'], title__icontains='placeholder')
+            except LogbookEntry.DoesNotExist:
+                placeholder=LogbookEntry(
+                    date='01-01'+qmdict['year'],
+                    cave=Cave.objects.get(kataster_number=qmdict['cave']),
+                    title='placeholder'
+                    )
+            qm=QM(found_by = placeholder, number = qmdict['number'])
+            return r'<a class="redtext" href="%s" id="q%s">%s %s</a>' % (qm.get_absolute_url, qm.code, unicode(qm))
 
     value = re.sub(qmMatchPattern,qmrepl, value, re.DOTALL)
 
