@@ -512,11 +512,18 @@ class CaveDescription(TroggleModel):
     short_name = models.CharField(max_length=50, unique = True)
     long_name = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(blank=True,null=True)
-    linked_subcaves = models.ManyToManyField("NewSubCave")
-    linked_entrances = models.ManyToManyField("Entrance")
-    linked_qms = models.ManyToManyField("QM")
+    linked_subcaves = models.ManyToManyField("NewSubCave", blank=True,null=True)
+    linked_entrances = models.ManyToManyField("Entrance", blank=True,null=True)
+    linked_qms = models.ManyToManyField("QM", blank=True,null=True)
+
     def __unicode__(self):
-        return unicode(self.short_name)
+        if self.long_name:
+            return unicode(self.long_name)
+        else:
+            return unicode(self.short_name)
+    
+    def get_absolute_url(self):
+        return urlparse.urljoin(settings.URL_ROOT, reverse('cavedescription', args=(self.short_name,)))
 
 class NewSubCave(TroggleModel):
     name = models.CharField(max_length=200, unique = True)

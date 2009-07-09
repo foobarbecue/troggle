@@ -71,7 +71,7 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub("\[\[\s*person:(.+)\]\]",r'<a href="%s/person/\1/">\1</a>' % url_root, value, re.DOTALL)
 
     #make qm links. this takes a little doing
-    qmMatchPattern="\[\[\s*QM:([ABC]?)(\d*)-(\d{4})-(\d*)\]\]"
+    qmMatchPattern="\[\[\s*[Qq][Mm]:([ABC]?)(\d{4})-(\d*)-(\d*)\]\]"
     def qmrepl(matchobj):
         """
         A function for replacing wikicode qm links with html qm links.
@@ -79,7 +79,7 @@ def wiki_to_html_short(value, autoescape=None):
         [[QM:C204-1999-24]]
         If the QM does not exist, the function will return a link for creating it.
         """
-        qmdict={'urlroot':url_root,'cave':matchobj.groups()[1],'year':matchobj.groups()[2],'number':matchobj.groups()[3]}
+        qmdict={'urlroot':url_root,'cave':matchobj.groups()[2],'year':matchobj.groups()[1],'number':matchobj.groups()[3]}
         try:
             qm=QM.objects.get(found_by__cave__kataster_number = qmdict['cave'],
                               found_by__date__year = qmdict['year'],
@@ -95,7 +95,7 @@ def wiki_to_html_short(value, autoescape=None):
                     title='placeholder'
                     )
             qm=QM(found_by = placeholder, number = qmdict['number'])
-            return r'<a class="redtext" href="%s" id="q%s">%s %s</a>' % (qm.get_absolute_url, qm.code, unicode(qm))
+            return r'<a class="redtext" href="%s" id="q%s">%s</a>' % (qm.get_absolute_url(), qm.code, unicode(qm))
 
     value = re.sub(qmMatchPattern,qmrepl, value, re.DOTALL)
 
