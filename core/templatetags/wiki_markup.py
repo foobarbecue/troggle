@@ -40,7 +40,7 @@ def wiki_list(line, listdepth):
 def wiki_to_html(value, autoescape=None):
     """
     This is the tag which turns wiki syntax into html. It is intended for long pieces of wiki.
-    Hence it splits the wiki into paragraphs double line feeds.
+    Hence it splits the wiki into HTML paragraphs based on double line feeds.
     """
     #find paragraphs
     outValue = ""
@@ -55,7 +55,7 @@ def wiki_to_html(value, autoescape=None):
 def wiki_to_html_short(value, autoescape=None):
     """
     This is the tag which turns wiki syntax into html. It is intended for short pieces of wiki.
-    Hence it is not split the wiki into paragraphs using where it find double line feeds.
+    Hence it is not split the wiki into paragraphs using where it finds double line feeds.
     """
     if autoescape:
         value = conditional_escape(value)
@@ -71,7 +71,7 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub("\[\[\s*person:(.+)\]\]",r'<a href="%s/person/\1/">\1</a>' % url_root, value, re.DOTALL)
 
     #make qm links. this takes a little doing
-    qmMatchPattern="\[\[\s*[Qq][Mm]:([ABC]?)(\d{4})-(\d*)-(\d*)\]\]"
+    qmMatchPattern=settings.QM_PATTERN
     def qmrepl(matchobj):
         """
         A function for replacing wikicode qm links with html qm links.

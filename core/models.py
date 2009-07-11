@@ -1,4 +1,4 @@
-import urllib, urlparse, string, os, datetime, logging
+import urllib, urlparse, string, os, datetime, logging, re
 from django.forms import ModelForm
 from django.db import models
 from django.contrib import admin
@@ -12,6 +12,21 @@ from imagekit.models import ImageModel
 getcontext().prec=2 #use 2 significant figures for decimal calculations
 
 from models_survex import *
+
+def get_related_by_wikilinks(wiki_text):
+    found=re.findall(settings.QM_PATTERN,wiki_text)
+    res=[]
+    for wikilink in found:
+        qmdict={'urlroot':settings.URL_ROOT,'cave':wikilink[2],'year':wikilink[1],'number':wikilink[3]}
+        try:
+            qm=QM.objects.get(found_by__cave__kataster_number = qmdict['cave'],
+                              found_by__date__year = qmdict['year'],
+                              number = qmdict['number'])
+            res.append(qm)         
+        except QM.DoesNotExist:
+            print 'fail on '+str(wikilink)
+    
+    return res
 
 logging.basicConfig(level=logging.DEBUG,
                            filename=settings.LOGFILE,
@@ -524,6 +539,14 @@ class CaveDescription(TroggleModel):
     
     def get_absolute_url(self):
         return urlparse.urljoin(settings.URL_ROOT, reverse('cavedescription', args=(self.short_name,)))
+    
+    def save(self):
+        super(CaveDescription, self).save()
+        qm_list=get_related_by_wikilinks(self.description)
+        print qm_list
+        for qm in qm_list:
+            self.linked_qms.add(qm)
+        super(CaveDescription, self).save()
 
 class NewSubCave(TroggleModel):
     name = models.CharField(max_length=200, unique = True)

@@ -88,6 +88,6 @@ INSTALLED_APPS = (
     'troggle.imagekit', 
 )
 
-FEINCMS_ADMIN_MEDIA=MEDIA_URL + 'feincms/'
+QM_PATTERN="\[\[\s*[Qq][Mm]:([ABC]?)(\d{4})-(\d*)-(\d*)\]\]"
 
 from localsettings import * #localsettings needs to take precedence. Call it to override any existing vars.

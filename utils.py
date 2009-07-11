@@ -1,8 +1,5 @@
 from django.conf import settings
-try:
-    from django.db import models
-except:#We want to get rid of this try statement if possible
-    from troggle.core.models import LogbookEntry
+    
 import random, re, logging
 
 def weighted_choice(lst):
@@ -14,16 +11,17 @@ def weighted_choice(lst):
 	return item
 
 def randomLogbookSentence():
+    from troggle.core.models import LogbookEntry
     randSent={}
 
     # needs to handle empty logbooks without crashing
 
     #Choose a random logbook entry
-    randSent['entry']=models.LogbookEntry.objects.order_by('?')[0]
+    randSent['entry']=LogbookEntry.objects.order_by('?')[0]
 
     #Choose again if there are no sentances (this happens if it is a placeholder entry)
     while len(re.findall('[A-Z].*?\.',randSent['entry'].text))==0:
-        randSent['entry']=models.LogbookEntry.objects.order_by('?')[0]
+        randSent['entry']=LogbookEntry.objects.order_by('?')[0]
     
     #Choose a random sentence from that entry. Store the sentence as randSent['sentence'], and the number of that sentence in the entry as randSent['number']
     sentenceList=re.findall('[A-Z].*?\.',randSent['entry'].text)
@@ -158,3 +156,5 @@ def html_to_wiki(text, codec = "utf-8"):
     for regex, repl in re_subs:
         out = regex.sub(repl, out)
     return out
+
+
