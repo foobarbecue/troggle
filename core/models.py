@@ -541,9 +541,11 @@ class CaveDescription(TroggleModel):
         return urlparse.urljoin(settings.URL_ROOT, reverse('cavedescription', args=(self.short_name,)))
     
     def save(self):
+        """
+        Overridden save method which stores wikilinks in text as links in database.
+        """
         super(CaveDescription, self).save()
         qm_list=get_related_by_wikilinks(self.description)
-        print qm_list
         for qm in qm_list:
             self.linked_qms.add(qm)
         super(CaveDescription, self).save()

@@ -65,10 +65,7 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub("&#39;&#39;&#39;&#39;([^']+)&#39;&#39;&#39;&#39;", r"<b><i>\1</i></b>", value, re.DOTALL)
     value = re.sub("&#39;b&#39;&#39;([^']+)&#39;&#39;&#39;", r"<b>\1</b>", value, re.DOTALL)
     value = re.sub("&#39;&#39;([^']+)&#39;&#39;", r"<i>\1</i>", value, re.DOTALL)
-    #make cave links
-    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/cave/\1/">\1</a>' % url_root, value, re.DOTALL)
-    #make people links
-    value = re.sub("\[\[\s*person:(.+)\]\]",r'<a href="%s/person/\1/">\1</a>' % url_root, value, re.DOTALL)
+
     #make headers
     def headerrepl(matchobj):
         number=len(matchobj.groups()[0])
@@ -78,8 +75,7 @@ def wiki_to_html_short(value, autoescape=None):
         else:
             print 'morethanone'
             return matchobj.group()
-    value = re.sub(r"(=+)([^=]+)(=+)",headerrepl,value)
-        
+    value = re.sub(r"(?m)^(=+)([^=]+)(=+)$",headerrepl,value)
     
     #make qm links. this takes a little doing
     qmMatchPattern=settings.QM_PATTERN
@@ -141,7 +137,17 @@ def wiki_to_html_short(value, autoescape=None):
         return res
     value = re.sub(photoLinkPattern,photoLinkRepl, value, re.DOTALL)
     value = re.sub(photoSrcPattern,photoSrcRepl, value, re.DOTALL)
+
+    #make cave links
+    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/cave/\1/">\1</a>' % url_root, value, re.DOTALL)
+    #make people links
+    value = re.sub("\[\[\s*person:(.+)\|(.+)\]\]",r'<a href="%s/person/\1/">\2</a>' % url_root, value, re.DOTALL)
+    #make subcave links
+    value = re.sub("\[\[\s*subcave:(.+)\|(.+)\]\]",r'<a href="%s/subcave/\1/">\2</a>' % url_root, value, re.DOTALL)
+    #make cavedescription links
+    value = re.sub("\[\[\s*cavedescription:(.+)\|(.+)\]\]",r'<a href="%s/cavedescription/\2/">\1</a>' % url_root, value, re.DOTALL)
     
+
     #Make lists from lines starting with lists of [stars and hashes]
     outValue = ""
     listdepth = []

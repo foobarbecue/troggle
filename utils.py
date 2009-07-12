@@ -99,7 +99,7 @@ re_subs = [(re.compile(r"\<b[^>]*\>(.*?)\</b\>", re.DOTALL), r"'''\1'''"),
            (re.compile(r"\<h4[^>]*\>(.*?)\</h4\>", re.DOTALL), r"====\1===="),
            (re.compile(r"\<h5[^>]*\>(.*?)\</h5\>", re.DOTALL), r"=====\1====="),
            (re.compile(r"\<h6[^>]*\>(.*?)\</h6\>", re.DOTALL), r"======\1======"),
-           (re.compile(r"\<a\s+id=['\"]([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[subcave:\1|\2]"),
+           (re.compile(r"\<a\s+id=['\"]([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[subcave:\1|\2]]"),
            #interpage link needed
            (re.compile(r"\<a\s+href=['\"]#([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[cavedescription:\1|\2]]"),
            (re.compile(r"\[\<a\s+href=['\"][^'\"]*['\"]\s+id=['\"][^'\"]*['\"]\s*\>([^\s]*).*?\</a\>\]", re.DOTALL), r"[[qm:\1]]"),
