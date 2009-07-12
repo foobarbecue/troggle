@@ -69,7 +69,18 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%s/cave/\1/">\1</a>' % url_root, value, re.DOTALL)
     #make people links
     value = re.sub("\[\[\s*person:(.+)\]\]",r'<a href="%s/person/\1/">\1</a>' % url_root, value, re.DOTALL)
-
+    #make headers
+    def headerrepl(matchobj):
+        number=len(matchobj.groups()[0])
+        num=str(number)
+        if number>1:
+            return '<h'+num+'>'+matchobj.groups()[1]+'</h'+num+'>'
+        else:
+            print 'morethanone'
+            return matchobj.group()
+    value = re.sub(r"(=+)([^=]+)(=+)",headerrepl,value)
+        
+    
     #make qm links. this takes a little doing
     qmMatchPattern=settings.QM_PATTERN
     def qmrepl(matchobj):
@@ -85,7 +96,7 @@ def wiki_to_html_short(value, autoescape=None):
                               found_by__date__year = qmdict['year'],
                               number = qmdict['number'])
             return r'<a href="%s" id="q%s">%s</a>' % (qm.get_absolute_url(), qm.code, unicode(qm))
-        except QM.DoesNotExist: #bother aaron to make him clean up the below code
+        except QM.DoesNotExist: #bother aaron to make him clean up the below code - AC 
             try:
                 placeholder=LogbookEntry.objects.get(date__year=qmdict['year'],cave__kataster_number=qmdict['cave'], title__icontains='placeholder')
             except LogbookEntry.DoesNotExist:
