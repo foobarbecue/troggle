@@ -23,7 +23,7 @@ def stats(request):
     return render_with_context(request,'statistics.html', statsDict)
 
 def frontpage(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         return render_with_context(request,'tasks.html')
 
     expeditions =  Expedition.objects.order_by("-year")
