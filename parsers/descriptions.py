@@ -22,6 +22,7 @@ pages = [(["smkridge", "204", "ariston-rigging.html"], "ariston-rigging"),
 
 
 def getDescriptions():
+    """Creates objects in the database for each item in the list 'pages' . """
     for filelocation, name in pages:
         f = open(os.path.join(settings.EXPOWEB, *filelocation), "r")
         html = f.read()
@@ -32,7 +33,13 @@ def getDescriptions():
         cd.save()
 
 def parseDescriptions():
+    """Turns the HTML in each cave description into wikicode"""
     for cd in models.CaveDescription.objects.all():
         cd.description = html_to_wiki(cd.description)
 
         cd.save()
+
+def parseDescriptionsInCaveObjects():
+    for cave in models.Cave.objects.all():
+        cave.underground_description=html_to_wiki(unicode(cave.underground_description))
+        cave.save()

@@ -1,6 +1,6 @@
 from django.conf import settings
-    
 import random, re, logging
+from core.models import CaveDescription
 
 def weighted_choice(lst):
 	n = random.uniform(0,1)
@@ -76,6 +76,7 @@ def render_with_context(req, *args, **kwargs):
     
 re_body = re.compile(r"\<body[^>]*\>(.*)\</body\>", re.DOTALL)
 re_title = re.compile(r"\<title[^>]*\>(.*)\</title\>", re.DOTALL)
+
 def get_html_body(text):
     return get_single_match(re_body, text)
 
@@ -90,6 +91,21 @@ def get_single_match(regex, text):
     else:
         return None
 
+def href_to_wikilinks(matchobj):
+    """
+    Given an html link, checks for possible valid wikilinks.
+    
+    Returns the first valid wikilink. Valid means the target
+    object actually exists.
+    """
+    res=CaveDescription.objects.filter(long_name__icontains=matchobj.groupdict()['text'])
+    if res:
+        return r'[[cavedescription:'+res[0].short_name+'|'+res[0].long_name+']]'
+    else:
+        return matchobj
+    #except:
+        #print 'fail'
+    
 
 re_subs = [(re.compile(r"\<b[^>]*\>(.*?)\</b\>", re.DOTALL), r"'''\1'''"),
            (re.compile(r"\<i\>(.*?)\</i\>", re.DOTALL), r"''\1''"),
@@ -99,10 +115,11 @@ re_subs = [(re.compile(r"\<b[^>]*\>(.*?)\</b\>", re.DOTALL), r"'''\1'''"),
            (re.compile(r"\<h4[^>]*\>(.*?)\</h4\>", re.DOTALL), r"====\1===="),
            (re.compile(r"\<h5[^>]*\>(.*?)\</h5\>", re.DOTALL), r"=====\1====="),
            (re.compile(r"\<h6[^>]*\>(.*?)\</h6\>", re.DOTALL), r"======\1======"),
-           (re.compile(r"\<a\s+id=['\"]([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[subcave:\1|\2]]"),
+           (re.compile(r"\<a\s+id=['\"]([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[subcave:\1|\2]]"), #assumes that all links with id attributes are subcaves. Not great.
            #interpage link needed
-           (re.compile(r"\<a\s+href=['\"]#([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[cavedescription:\1|\2]]"),
+           (re.compile(r"\<a\s+href=['\"]#([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[cavedescription:\1|\2]]"), #assumes that all links with target ids are subcaves. Not great.
            (re.compile(r"\[\<a\s+href=['\"][^'\"]*['\"]\s+id=['\"][^'\"]*['\"]\s*\>([^\s]*).*?\</a\>\]", re.DOTALL), r"[[qm:\1]]"),
+           (re.compile(r'<a\shref="?(?P<target>.*)"?>(?P<text>.*)</a>'),href_to_wikilinks)
 
            ]
 

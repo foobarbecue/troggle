@@ -65,6 +65,7 @@ def import_descriptions():
 def parse_descriptions():
     import parsers.descriptions
     parsers.descriptions.parseDescriptions()
+    parsers.descriptions.parseDescriptionsOnCaveObjects()
 
 def reset():
     """ Wipe the troggle database and import everything from legacy data

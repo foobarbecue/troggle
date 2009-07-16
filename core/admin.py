@@ -100,6 +100,9 @@ class CaveAdmin(TroggleModelAdmin):
     inlines = (OtherCaveInline,)
     extra = 4
 
+class EntranceAdmin(TroggleModelAdmin):
+    search_fields = ('caveandentrance__cave__kataster_number',)
+
 admin.site.register(Photo)
 admin.site.register(Cave, CaveAdmin)
 admin.site.register(Area)
@@ -108,7 +111,7 @@ admin.site.register(CaveAndEntrance)
 admin.site.register(SurveyStation)
 admin.site.register(NewSubCave)
 admin.site.register(CaveDescription)
-admin.site.register(Entrance)
+admin.site.register(Entrance, EntranceAdmin)
 admin.site.register(SurvexBlock, SurvexBlockAdmin)
 admin.site.register(Expedition)
 admin.site.register(Person,PersonAdmin)
