@@ -5,7 +5,6 @@ from django.template import loader, Context
 from django.db.models import Q
 import databaseReset
 import re
-import randSent
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from utils import render_with_context
@@ -42,7 +41,6 @@ def todo(request):
         message = LoadAllSurvexBlocks()
         message = "Reloaded survexblocks"
 
-    #'randSent':randSent.randomLogbookSentence(),
     expeditions =  Expedition.objects.order_by("-year")
     totallogbookentries = LogbookEntry.objects.count()
     return render_with_context(request,'index.html', {'expeditions':expeditions, 'all':'all', 'totallogbookentries':totallogbookentries, "message":message})
