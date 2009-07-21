@@ -50,13 +50,13 @@ def save_carefully(objectType, lookupAttribs={}, nonLookupAttribs={}):
         instance.save()
     
     if created:
-        logging.info(unicode(instance)+u' was just added to the database for the first time. \n')
+        logging.info(str(instance) + ' was just added to the database for the first time. \n')
     
     if not created and instance.new_since_parsing:
-        logging.info(unicode(instance)+" has been modified using Troggle, so the current script left it as is. \n")
+        logging.info(str(instance) + " has been modified using Troggle, so the current script left it as is. \n")
 
     if not created and not instance.new_since_parsing:
-        logging.info(unicode(instance)+" existed in the database unchanged since last parse. It was overwritten by the current script. \n")
+        logging.info(str(instance) + " existed in the database unchanged since last parse. It was overwritten by the current script. \n")
     return (instance, created)
 
 def render_with_context(req, *args, **kwargs):
@@ -119,7 +119,9 @@ re_subs = [(re.compile(r"\<b[^>]*\>(.*?)\</b\>", re.DOTALL), r"'''\1'''"),
            #interpage link needed
            (re.compile(r"\<a\s+href=['\"]#([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[cavedescription:\1|\2]]"), #assumes that all links with target ids are subcaves. Not great.
            (re.compile(r"\[\<a\s+href=['\"][^'\"]*['\"]\s+id=['\"][^'\"]*['\"]\s*\>([^\s]*).*?\</a\>\]", re.DOTALL), r"[[qm:\1]]"),
-           (re.compile(r'<a\shref="?(?P<target>.*)"?>(?P<text>.*)</a>'),href_to_wikilinks)
+
+# BUGGED!
+#           (re.compile(r'<a\shref="?(?P<target>.*)"?>(?P<text>.*)</a>'),href_to_wikilinks)
 
            ]
 
@@ -169,6 +171,7 @@ def html_to_wiki(text, codec = "utf-8"):
         else:
             out += text
             text = ""
+    
     #substitutions
     for regex, repl in re_subs:
         out = regex.sub(repl, out)
