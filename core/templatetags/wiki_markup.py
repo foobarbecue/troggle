@@ -145,7 +145,8 @@ def wiki_to_html_short(value, autoescape=None):
     #make subcave links
     value = re.sub("\[\[\s*subcave:(.+)\|(.+)\]\]",r'<a href="%s/subcave/\1/">\2</a>' % url_root, value, re.DOTALL)
     #make cavedescription links
-    value = re.sub("\[\[\s*cavedescription:(.+)\|(.+)\]\]",r'<a href="%s/cavedescription/\2/">\2</a>' % url_root, value, re.DOTALL)
+    value = re.sub("\[\[\s*cavedescription:(.+)\|(.+)\]\]",r'<a href="%s/cavedescription/\1/">\2</a>' % url_root, value, re.DOTALL)
+
 
 
     #Make lists from lines starting with lists of [stars and hashes]

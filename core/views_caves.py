@@ -37,7 +37,7 @@ def qm(request,cave_id,qm_id,year,grade=None):
         return render_with_context(request,'qm.html',locals())
 
     except QM.DoesNotExist:
-        url=urlparse.urljoin(settings.URL_ROOT, r'/admin/expo/qm/add/'+'?'+  r'number=' + qm_id)
+        url=urlparse.urljoin(settings.URL_ROOT, r'/admin/core/qm/add/'+'?'+  r'number=' + qm_id)
         if grade:
             url += r'&grade=' + grade
         return HttpResponseRedirect(url)
@@ -76,5 +76,4 @@ def survey(request,year,wallet_number):
 
 def cave_description(request, cavedescription_name):
     cave_description = get_object_or_404(CaveDescription, short_name = cavedescription_name)
-    print cave_description.long_name
     return render_with_context(request,'cave_description.html', locals())

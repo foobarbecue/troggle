@@ -1,6 +1,6 @@
 {% extends "cavebase.html" %}
 {% load wiki_markup %}
-{% block title %} {{cave_description.short_name}} {% endblock title %}
+{% block title %} {{cave_description}} {% endblock title %}
 {% block editLink %}<a href={{cave_description.get_admin_url}}>Edit description {{cave_description}}</a>{% endblock %}
 
 {% block contentheader %}

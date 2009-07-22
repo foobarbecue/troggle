@@ -32,7 +32,8 @@ urlpatterns = patterns('',
 
     url(r'^survexblock/(.+)$',  views_caves.survexblock,    name="survexblock"),
     url(r'^cave/(?P<cave_id>[^/]+)/?$', views_caves.cave, name="cave"),
-    url(r'^cavedescription/(?P<cavedescription_name>[^/]*)/$', views_caves.cave_description, name="cavedescription"),
+    url(r'^cavedescription/(?P<cavedescription_name>[^/]+)/?$', views_caves.cave_description, name="cavedescription"),
+    url(r'^cavedescription/?$', object_list, {'queryset':CaveDescription.objects.all(),'template_name':'object_list.html'}, name="cavedescriptions"),
     #url(r'^cavehref/(.+)$',     views_caves.cave,       name="cave"),url(r'cave'),
 
     url(r'^jgtfile/(.*)$',      view_surveys.jgtfile,       name="jgtfile"),

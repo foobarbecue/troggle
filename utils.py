@@ -102,7 +102,7 @@ def href_to_wikilinks(matchobj):
     if res:
         return r'[[cavedescription:'+res[0].short_name+'|'+res[0].long_name+']]'
     else:
-        return matchobj
+        return matchobj.group()
     #except:
         #print 'fail'
     
@@ -115,13 +115,15 @@ re_subs = [(re.compile(r"\<b[^>]*\>(.*?)\</b\>", re.DOTALL), r"'''\1'''"),
            (re.compile(r"\<h4[^>]*\>(.*?)\</h4\>", re.DOTALL), r"====\1===="),
            (re.compile(r"\<h5[^>]*\>(.*?)\</h5\>", re.DOTALL), r"=====\1====="),
            (re.compile(r"\<h6[^>]*\>(.*?)\</h6\>", re.DOTALL), r"======\1======"),
+           (re.compile(r'(<a href="?(?P<target>.*)"?>)?<img class="?(?P<class>\w*)"? src="?t/?(?P<source>[\w/\.]*)"?(?P<rest>></img>|\s/>(</a>)?)', re.DOTALL),r'[[display:\g<class> photo:\g<source>]]'), #
            (re.compile(r"\<a\s+id=['\"]([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[subcave:\1|\2]]"), #assumes that all links with id attributes are subcaves. Not great.
            #interpage link needed
-           (re.compile(r"\<a\s+href=['\"]#([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[cavedescription:\1|\2]]"), #assumes that all links with target ids are subcaves. Not great.
+           (re.compile(r"\<a\s+href=['\"]#([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[cavedescription:\1|\2]]"), #assumes that all links with target ids are cave descriptions. Not great.
            (re.compile(r"\[\<a\s+href=['\"][^'\"]*['\"]\s+id=['\"][^'\"]*['\"]\s*\>([^\s]*).*?\</a\>\]", re.DOTALL), r"[[qm:\1]]"),
-
-# BUGGED!
-#           (re.compile(r'<a\shref="?(?P<target>.*)"?>(?P<text>.*)</a>'),href_to_wikilinks)
+           
+           #BUGGED!
+           (re.compile(r'<a\shref="?(?P<target>.*)"?>(?P<text>.*)</a>'),href_to_wikilinks),
+           
 
            ]
 

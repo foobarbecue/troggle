@@ -39,7 +39,7 @@ def parseDescriptions():
 
         cd.save()
 
-def parseDescriptionsInCaveObjects():
+def parseDescriptionsOnCaveObjects():
     for cave in models.Cave.objects.all():
         cave.underground_description=html_to_wiki(unicode(cave.underground_description))
         cave.save()

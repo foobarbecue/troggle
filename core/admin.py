@@ -57,6 +57,7 @@ class PersonTripInline(admin.TabularInline):
 #class LogbookEntryAdmin(VersionAdmin):
 class LogbookEntryAdmin(TroggleModelAdmin):
     prepopulated_fields = {'slug':("title",)}
+    raw_id_fields = ('cave','author')    
     search_fields = ('title','expedition__year')
     date_heirarchy = ('date')
     inlines = (PersonTripInline, PhotoInline, QMsFoundInline)

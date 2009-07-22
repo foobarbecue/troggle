@@ -59,7 +59,7 @@
     		{% for personexpedition in expedition.personexpedition_set.all %}
             	<tr>
                       <td class="name">
-                          <a href="">{{ personexpedition.person }}</a>
+                          <a href="{{ personexpedition.person.get_absolute_url }}">{{ personexpedition.person }}</a>
                           
                       </td>
                       {% if personexpedition.ListDaysTF %}

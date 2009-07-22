@@ -161,7 +161,7 @@ def logbook_entry_suggestions(request):
     Generates a html box with suggestions about what to do with QMs
     in logbook entry text.
     """
-    unwiki_QM_pattern=r"(?P<whole>(?P<explorer_code>[ABC]?)(?P<cave>\d*)-?(?P<year>\d\d\d?\d?)-(?P<number>\d\d)(?P<grade>[ABCDXV]?)(?=\s))"
+    unwiki_QM_pattern=r"(?P<whole>(?P<explorer_code>[ABC]?)(?P<cave>\d*)-?(?P<year>\d\d\d?\d?)-(?P<number>\d\d)(?P<grade>[ABCDXV]?))"
     unwiki_QM_pattern=re.compile(unwiki_QM_pattern)
     #wikilink_QM_pattern=settings.QM_PATTERN
     
@@ -174,18 +174,24 @@ def logbook_entry_suggestions(request):
     
     print unwiki_QMs
     for qm in unwiki_QMs:
-        if len(qm['year'])==2:
-            if int(qm['year'])<50:
-                qm['year']='20'+qm['year']
-            else:
-                qm['year']='19'+qm['year']
+        #try:
+            if len(qm['year'])==2:
+                if int(qm['year'])<50:
+                    qm['year']='20'+qm['year']
+                else:
+                    qm['year']='19'+qm['year']
 
-        temp_QM=QM(found_by=lbo,number=qm['number'],grade=qm['grade'])
-        try:
-            temp_QM.grade=unwiki_QM['grade']
-        except:
-            pass
-        qm['wikilink']=temp_QM.wiki_link()
+            if lbo.date.year!=int(qm['year']):
+                try:
+                    lbo=LogbookEntry.objects.get(date__year=qm['year'],title__icontains="placeholder for QMs in")
+                except:
+                    print "failed to get placeholder for year "+str(qm['year'])
+            
+            temp_QM=QM(found_by=lbo,number=qm['number'],grade=qm['grade'])
+            temp_QM.grade=qm['grade']
+            qm['wikilink']=temp_QM.wiki_link()
+        #except:
+            #print 'failed'
 
     print unwiki_QMs
     

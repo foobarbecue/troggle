@@ -31,7 +31,7 @@
 <table>
 {% for personrole in survexblock.GetPersonroles %}
 <tr>
-  <td><a href="{{personrole.get_absolute_url}}">{{personrole.person}}</a></td>
+  <td><a href="{{personrole.person.get_absolute_url}}">{{personrole.person}}</a></td>
   <td>{{personrole.roles}}</td>
 </tr>
 {% endfor %}
