@@ -99,7 +99,7 @@ def href_to_wikilinks(matchobj):
     object actually exists.
     """
     res=CaveDescription.objects.filter(long_name__icontains=matchobj.groupdict()['text'])
-    if res:
+    if res[0]:
         return r'[[cavedescription:'+res[0].short_name+'|'+res[0].long_name+']]'
     else:
         return matchobj.group()
@@ -120,11 +120,8 @@ re_subs = [(re.compile(r"\<b[^>]*\>(.*?)\</b\>", re.DOTALL), r"'''\1'''"),
            #interpage link needed
            (re.compile(r"\<a\s+href=['\"]#([^'\"]*)['\"]\s*\>(.*?)\</a\>", re.DOTALL), r"[[cavedescription:\1|\2]]"), #assumes that all links with target ids are cave descriptions. Not great.
            (re.compile(r"\[\<a\s+href=['\"][^'\"]*['\"]\s+id=['\"][^'\"]*['\"]\s*\>([^\s]*).*?\</a\>\]", re.DOTALL), r"[[qm:\1]]"),
-           
-           #BUGGED!
            (re.compile(r'<a\shref="?(?P<target>.*)"?>(?P<text>.*)</a>'),href_to_wikilinks),
            
-
            ]
 
 def html_to_wiki(text, codec = "utf-8"):
@@ -173,7 +170,6 @@ def html_to_wiki(text, codec = "utf-8"):
         else:
             out += text
             text = ""
-    
     #substitutions
     for regex, repl in re_subs:
         out = regex.sub(repl, out)
