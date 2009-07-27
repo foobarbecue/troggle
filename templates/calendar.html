@@ -37,7 +37,7 @@
 	{% if expedition %}
     	<table>
         	<tr><td />
-            	{% for date in expedition.ListDays %}               	
+                    {% for date in listdays %}               	
         	        {% ifchanged date.month %}
     	                <td class="date">{{ date|date:"F" }}</td>
                     {% else %}
@@ -46,29 +46,24 @@
                 {% endfor %}                    
         	</tr>
             <tr><td />
-            	{% for date in expedition.ListDays %}               	
+            	{% for date in listdays %}               	
 					<td class="date">{{ date|date:"D" }}</td>
                 {% endfor %}
             </tr>
         	<tr><td />
-            	{% for date in expedition.ListDays %}               	
+            	{% for date in listdays %}               	
 					<td class="date">{{ date|date:"d" }}</td>
                 {% endfor %}
             </tr>
 
-    		{% for personexpedition in expedition.personexpedition_set.all %}
+    		{% for personexpedition, pelistdays in personexpeditiondays %}
             	<tr>
                       <td class="name">
                           <a href="{{ personexpedition.person.get_absolute_url }}">{{ personexpedition.person }}</a>
-                          
                       </td>
-                      {% if personexpedition.ListDaysTF %}
-                      {% for dateTF in personexpedition.ListDaysTF %}
-                      		<td {{ dateTF|yesno:"class='yes',class='no'"|safe }}></td>
+                      {% for peday in pelistdays %}
+                      		<td {{ peday|yesno:"class='yes',class='no'"|safe }}></td>
                       {% endfor %}
-                      {% else %}
-                      		<td colspan="{{ expedition.ListDays|length }}"><center>No data.</center></td>
-                      {% endif %}
                  </tr>
             {% endfor %}
 	    </table>

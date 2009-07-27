@@ -89,18 +89,18 @@
   </select>
 
   </center>
-<!--      	<h4>Click to toggle:</h4>-->
+      	<h4>Click to toggle:</h4>
   <div id="surveyWalletNav">
-    <div id="notes" class="menuBarItem" "> {% if notes %}&#10003;{% endif %}
+    <div id="notes" class="menuBarItem"> {% if notes %}&#10003;{% endif %}
       scanned notes </div>
-    <div id="survexFile" class="menuBarItem" "> {% if current_survey.survex_file %}&#10003;{% endif %}
+    <div id="survexFile" class="menuBarItem"> {% if current_survey.survex_file %}&#10003;{% endif %}
       survex file </div>
-    <div id="printedCentreline" class="menuBarItem" "> {% if current_survey.centreline_printed_on %}&#10003;{% endif %}
+    <div id="printedCentreline" class="menuBarItem"> {% if current_survey.centreline_printed_on %}&#10003;{% endif %}
       printed centreline </div>
-    <div id="scannedPassageSketch" class="menuBarItem" "> {% if planSketches %}&#10003;{% endif %}
+    <div id="scannedPassageSketch" class="menuBarItem"> {% if planSketches %}&#10003;{% endif %}
       scanned passage sketch </div>
-    <div id="tunnelXMLfile" class="menuBarItem" ">tunnel xml file</div>
-    <div id="mainSketchIntegration" class="menuBarItem" ">add to main sketch</div>
+    <div id="tunnelXMLfile" class="menuBarItem">tunnel xml file</div>
+    <div id="mainSketchIntegration" class="menuBarItem">add to main sketch</div>
   </div>
  </div>
 {% endif %}
@@ -108,9 +108,9 @@
 
 
 {% block content %}
-<div id="mainContent">
+<div id="mainContent" style="background:white">
 
-  <div id="progressTableContent" class="behind" style="overflow:auto">
+  <div id="progressTableContent" class="behind">
   <h3>Survey progress table for {{ current_expedition }}</h3>
   {% if current_expedition.survey_set.all %} <!-- if there are any surveys in the expedition, make the table -->
     <table class="centre">
@@ -152,7 +152,7 @@
 		<center>[ There are no surveys in the database for this year. Put link in to add one. ]</center>
 	{% endif %}
   </div>
-  <div id="notesContent" class="behind" style="overflow: auto">
+  <div id="notesContent" class="behind" >
     <h3>Scanned notes for {{ current_survey }}.</h3>
     {% for noteItem in notes %}
     <div class="figure">

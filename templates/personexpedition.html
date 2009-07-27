@@ -27,37 +27,24 @@
 <h3>Table of all trips and surveys aligned by date</h3>
 <div>
 <table class="survexcontibutions">
-<tr><th>Date</th><th>Trips</th><th>Surveys</th></tr>
-{% for persondate in personexpedition.GetPersonChronology %}
+<tr><th>Date</th><th colspan="2">Trips</th><th colspan="2">Surveys</th></tr>
+{% for persondate in personchronology %}
 <tr>
   <td class="date">{{persondate.0}}</td>
 
-  <td> 
-    <table>
-    {% for persontrip in persondate.1.persontrips %}
-      <tr>
-        <td class="trip"><a href="{{ persontrip.logbook_entry.get_absolute_url }}">{{persontrip.logbook_entry.title|safe}}</a></td>
+  {% if persondate.1 %}
+     <td class="trip"><a href="{{ persondate.1.logbook_entry.get_absolute_url }}">{{persondate.1.logbook_entry.title|safe}}</a></td>
+     <td><a href="{{ persondate.1.logbook_entry.cave.get_absolute_url }}">{{persondate.1.place|safe}}</a></td>
+  {% else %}
+     <td colspan="2"> </td>
+  {% endif %}
 
-        {% if persontrip.logbook_entry.cave %}
-          <td><a href="{{ persontrip.logbook_entry.cave.get_absolute_url }}">{{persontrip.place}}</a></td>
-        {% else %}
-          <td>{{persontrip.place}}</td>
-        {% endif %}
-      </tr>
-    {% endfor %}
-    </table>
-  </td>
-  
-  <td>
-    <table>
-    {% for personsurvexroles in persondate.1.personroles.items %}
-      <tr>
-        <td class="survexblock"><a href="{% url survexblock personsurvexroles.0 %}">{{personsurvexroles.0}}</a></td>
-        <td class="roles">{{personsurvexroles.1}}</td>
-      </tr>
-    {% endfor %}
-    </table>
-  </td>
+  {% if persondate.2 %}
+    <td class="survexblock"><a href="{% url survexblock persondate.2.0 %}">{{persondate.2.0}}</a></td>
+    <td class="roles">{{persondate.2.1}}</td>
+  {% else %}
+     <td colspan="2"> </td>
+  {% endif %}
 
 </tr>
 {% endfor %}

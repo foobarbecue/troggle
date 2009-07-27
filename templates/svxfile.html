@@ -39,15 +39,13 @@ $(document).ready(function()
 <h1>Survex File: {{ title }} .svx</h1>
 
 <form id="codewikiform" action="" method="POST">
+    <div class="codeframebit">{{form.code}}</div>
     <div style="display:none">{{form.filename}} {{form.dirname}} {{form.datetime}} {{form.outputtype}}</div>
     <input type="submit" name="diff" value="Diffy" />
     <input type="submit" name="save" value="Save"/>
     <input type="submit" name="process" value="Process" title="executes cavern"/>
     (Not implemented: <input type="submit" name="svncheckin" value="svn check-in"/>)
-    <div class="codeframebit">{{form.code}}</div>
 </form>
-
-<h4>Output</h4>
 
 <div id="difflistajax">
 <pre>
@@ -57,7 +55,7 @@ $(document).ready(function()
 
 {% if logmessage %}
 {% if has_3d %}
-<p><a href="{{ settings.SVX_URL }}{{ title }}.3d">3d file</a></p>
+<p><a href="{% url threed title %}">3d file</a></p>
 {% else %}
 <p><b>No 3d file</b></p>
 {% endif %}

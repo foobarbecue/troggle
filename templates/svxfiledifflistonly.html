@@ -6,7 +6,7 @@
 
 {% if logmessage %}
 {% if has_3d %}
-<p><a href="{{ settings.SVX_URL }}{{ title }}.3d">3d file</a></p>
+<p><a href="{% url threed title %}">3d file</a></p>
 {% else %}
 <p><b>No 3d file</b></p>
 {% endif %}

@@ -31,7 +31,10 @@
 <p>
 <ul>
 {% for personexpedition in person.personexpedition_set.all %}
-  <li> <a href="{{ personexpedition.get_absolute_url }}">{{personexpedition.expedition.year}}</a></li>
+  <li> <a href="{{ personexpedition.get_absolute_url }}">{{personexpedition.expedition.year}}</a>
+  <span style="padding-left:{{personexpedition.persontrip_set.all|length}}0px; background-color:red"></span> 
+      {{personexpedition.persontrip_set.all|length}} trips
+</li>
 {% endfor %}
 </ul>
 </p>

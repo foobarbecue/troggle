@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load link %}
+
+{% block title %}List of survex files{% endblock %}
+
+{% block content %}
+<h1>List of survex directories</h1>
+
+<p>{{message}}</p>
+
+<h2>Caves of multiple files</h2>
+
+<table>
+<tr><th>Primary file</th><th>Survex files</th></tr>
+{% for primarycavefile, subcavefiles in multifilecaves %}
+  <tr>
+  <td><a href="{% url svx primarycavefile.0 %}">{{primarycavefile.1}}</a></td>
+  <td>
+    {% for cavepath, cavename in subcavefiles %}
+       <a href="{% url svx cavepath %}">{{cavename}}</a>
+    {% endfor %}
+  </td>
+  </tr>
+{% endfor %}
+</table>
+
+<h2>Caves of one file</h2>
+<p>
+{% for cavepath, cavename in onefilecaves %}
+   <a href="{% url svx cavepath %}">{{cavename}}</a>
+{% endfor %}
+</p>
+
+{% endblock %}

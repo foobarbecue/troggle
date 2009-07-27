@@ -8,6 +8,8 @@
 {% block content %}
 <h2>Survex Block {{survexblock.survexpath}}</h2>
 
+<p>Link to <a href="{% url svx survexblock.filewithoutsvx %}">{{survexblock.begin_file}}</a></p>
+
 <p>Needs duplicates removed from right hand column</p>
 <p>Needs links to survex file presentation</p>
 <p>Needs to start dealing with misspellings of names (prob by editing the originals)</p>
