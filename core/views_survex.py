@@ -124,7 +124,8 @@ def svx(request, survex_file):
     if message:
         difflist.insert(0, message)
     
-    svxincludes = re.findall('\*include\s+"?(.*?)(?:\.svx)?"?\s*?\n(?i)', form.data['code'])
+    print [ form.data['code'] ]
+    svxincludes = re.findall('\*include\s+"?(.*?)(?:\.svx)?"?\s*?\n(?i)', form.data['code'] or "")
     
     vmap = {'settings': settings,
             'has_3d': os.path.isfile(settings.SURVEX_DATA + survex_file + ".3d"),
@@ -140,6 +141,16 @@ def svx(request, survex_file):
 def Dsvx(request, survex_file):
     svx = open(settings.SURVEX_DATA + survex_file + ".svx", "rb")
     return HttpResponse(svx, mimetype="text")
+
+
+
+# The cavern running function
+def process(survex_file):
+    cwd = os.getcwd()
+    os.chdir(os.path.split(settings.SURVEX_DATA + survex_file)[0])
+    os.system(settings.CAVERN + " --log " + settings.SURVEX_DATA + survex_file + ".svx")
+    os.chdir(cwd)
+
 
 def threed(request, survex_file):
     process(survex_file)
@@ -160,8 +171,61 @@ def err(request, survex_file):
     err = open(settings.SURVEX_DATA + survex_file + ".err", "rb")
     return HttpResponse(err, mimetype="text")
 
-def process(survex_file):
-    cwd = os.getcwd()
-    os.chdir(os.path.split(settings.SURVEX_DATA + survex_file)[0])
-    os.system(settings.CAVERN + " --log " + settings.SURVEX_DATA + survex_file + ".svx")
-    os.chdir(cwd)
+
+
+def identifycavedircontents(gcavedir):
+    name = os.path.split(gcavedir)[1]
+    subdirs = [ ]
+    subsvx = [ ]
+    primesvx = None
+    for f in os.listdir(gcavedir):
+        if os.path.isdir(os.path.join(gcavedir, f)):
+            if f[0] != ".":
+                subdirs.append(f)
+        elif f[-4:] == ".svx":
+            nf = f[:-4]
+            if nf == name:
+                assert not primesvx
+                primesvx = nf
+            else:
+                subsvx.append(nf)
+        else:
+            assert re.match(".*?(?:.3d|.log|.err|.txt|.espec|~)$", f), (gcavedir, f)
+    subsvx.sort()
+    if primesvx:
+        subsvx.insert(0, primesvx)
+    return subdirs, subsvx
+                
+    
+
+# direct local non-database browsing through the svx file repositories
+# perhaps should use the database and have a reload button for it
+def survexcaveslist(request):
+    cavesdir = os.path.join(settings.SURVEX_DATA, "caves")
+    cavesdircontents = { }
+    
+    onefilecaves = [ ]
+    multifilecaves = [ ]
+        
+    # first sort the file list
+    fnumlist = [ (int(re.match("\d*", f).group(0) or "99999"), f)  for f in os.listdir(cavesdir) ]
+    fnumlist.sort()
+    
+    # go through the list and identify the contents of each cave directory
+    for num, cavedir in fnumlist:
+        gcavedir = os.path.join(cavesdir, cavedir)
+        if os.path.isdir(gcavedir) and cavedir[0] != ".":
+            subdirs, subsvx = identifycavedircontents(gcavedir)
+            survdirobj = [ ]
+            for lsubsvx in subsvx:
+                survdirobj.append(("caves/"+cavedir+"/"+lsubsvx, lsubsvx))
+            if len(survdirobj) == 1:
+                onefilecaves.append(survdirobj[0])
+            else:
+                multifilecaves.append((survdirobj[0], survdirobj[1:]))
+    
+    return render_to_response('svxfilecavelist.html', {'settings': settings, "onefilecaves":onefilecaves, "multifilecaves":multifilecaves})
+    
+    
+    
+    

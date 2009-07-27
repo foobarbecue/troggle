@@ -181,11 +181,17 @@ table#cavepage th#status	{ text-align: right; width: 25%; }
 }
 
 table {
-	border: thin solid silver;
+	border: thin solid black;
 	border-collapse: collapse;
 }
 td {
 	padding:0px;
+	border: thin solid black;
+}
+th 
+{
+    color:white;
+    background-color:black; 
 	border: thin solid silver;
 }
 
@@ -258,8 +264,8 @@ div#editLinks a{
 
 div#content {
 	margin-top: 50px;
-	margin-left: 120px;
-	margin-right: 120px;
+	Zmargin-left: 120px;
+	Zmargin-right: 120px;
 	padding-top: 10px;
 	padding-left: 5em;
 	padding-right: 5em;
@@ -269,14 +275,14 @@ div#content {
 
 
 .footer {
-	position:fixed;
+	Dposition:fixed;
 	width:100%;
 	bottom:0;
 	left:0;
 }
 
 body {
-	background-color:#000;
+	Zbackground-color:#000;
 	padding-bottom:100px;
 
 }
@@ -309,7 +315,7 @@ h1 {
 }
 
 #footerLinks{
-	position:fixed;
+	Dposition:fixed;
 	bottom:0px;
 	padding: 0px;
 	margin-left: 130px;
@@ -398,7 +404,7 @@ div#related h2
 
 div#related
 {
-	width:200px;
+	Zwidth:200px;
 	float:right;
 	border: thin solid black;
 	background:#EEEEEE;
@@ -407,7 +413,7 @@ div#related
 
 div#related table
 {
-	border-collapse:separate
+	Zborder-collapse:separate;
 }
 
 .addlink {

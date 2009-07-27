@@ -99,7 +99,7 @@ def href_to_wikilinks(matchobj):
     object actually exists.
     """
     res=CaveDescription.objects.filter(long_name__icontains=matchobj.groupdict()['text'])
-    if res[0]:
+    if res and res[0]:
         return r'[[cavedescription:'+res[0].short_name+'|'+res[0].long_name+']]'
     else:
         return matchobj.group()

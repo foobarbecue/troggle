@@ -68,7 +68,10 @@ def make_model(name, parent, iter_lines, sf, c, l):
     def saveEnd(survex_file, count):
           if m.start_year and team:
               try:
-                  exp = models.Expedition.objects.get(year = str(m.start_year))
+                  explist = models.Expedition.objects.filter(year = str(m.start_year))
+                  if not explist:
+                      return   # help hack
+                  exp = explist[0]
                   for file_, (role, names) in team:
                       if names.strip("\t").strip(" ") == "both" or names.strip("\t").strip(" ") == "Both":
                           names = reduce(lambda x, y: x + u" & " + y,

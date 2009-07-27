@@ -88,7 +88,8 @@ def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_
 
     for tripperson, time_underground in trippersons:
         lookupAttribs={'person_expedition':tripperson, 'logbook_entry':lbo}
-        nonLookupAttribs={'time_underground':time_underground,'is_logbook_entry_author':(tripperson == author)}
+        nonLookupAttribs={'time_underground':time_underground, 'date':date, 'is_logbook_entry_author':(tripperson == author)}
+        print nonLookupAttribs
         save_carefully(models.PersonTrip, lookupAttribs, nonLookupAttribs)
 
 
@@ -100,7 +101,7 @@ def ParseDate(tripdate, year):
         assert mdatestandard.group(1) == year, (tripdate, year)
         year, month, day = int(mdatestandard.group(1)), int(mdatestandard.group(2)), int(mdatestandard.group(3))
     elif mdategoof:
-        assert not mdategoof.group(3) or mdategoof.group(3) == year[:2]
+        assert not mdategoof.group(3) or mdategoof.group(3) == year[:2], mdategoof.groups()
         yadd = int(year[:2]) * 100
         day, month, year = int(mdategoof.group(1)), int(mdategoof.group(2)), int(mdategoof.group(4)) + yadd
     else:
@@ -239,7 +240,7 @@ def Parseloghtml03(year, expedition, txt):
 
 yearlinks = [ 
                 ("2008", "2008/2008logbook.txt", Parselogwikitxt), 
-                #("2007", "2007/2007logbook.txt", Parselogwikitxt), 
+                ("2007", "2007/2007logbook.txt", Parselogwikitxt), 
                 ("2006", "2006/logbook/logbook_06.txt", Parselogwikitxt), 
                 ("2005", "2005/logbook.html", Parseloghtmltxt), 
                 ("2004", "2004/logbook.html", Parseloghtmltxt), 
@@ -268,16 +269,16 @@ def SetDatesFromLogbookEntries(expedition):
         personexpedition.date_to = max([persontrip.logbook_entry.date  for persontrip in persontrips] or [None])
         personexpedition.save()
 
-# The below is all unnecessary, just use the built in get_previous_by_date and get_next_by_date
-#        lprevpersontrip = None
-#        for persontrip in persontrips:
-#            persontrip.persontrip_prev = lprevpersontrip
-#            if lprevpersontrip:
-#                lprevpersontrip.persontrip_next = persontrip
-#                lprevpersontrip.save()
-#            persontrip.persontrip_next = None
-#            lprevpersontrip = persontrip
-#            persontrip.save()
+        # sequencing is difficult to do
+        lprevpersontrip = None
+        for persontrip in persontrips:
+            persontrip.persontrip_prev = lprevpersontrip
+            if lprevpersontrip:
+                lprevpersontrip.persontrip_next = persontrip
+                lprevpersontrip.save()
+            persontrip.persontrip_next = None
+            lprevpersontrip = persontrip
+            persontrip.save()
             
     # from trips rather than logbook entries, which may include events outside the expedition
     expedition.date_from = min([personexpedition.date_from  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_from] or [None])
@@ -344,7 +345,7 @@ def LoadLogbooks():
     for year, lloc, parsefunc in yearlinks:
         expedition = models.Expedition.objects.filter(year = year)[0]
         fin = open(os.path.join(expowebbase, lloc))
-        txt = fin.read()
+        txt = fin.read().decode("latin1")
         fin.close()
         parsefunc(year, expedition, txt)
         SetDatesFromLogbookEntries(expedition)

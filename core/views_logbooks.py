@@ -22,6 +22,7 @@ def getNotablePersons():
                 notablepersons.append(person)
     return notablepersons		
 
+
 def personindex(request):
     persons = Person.objects.all()
     # From what I can tell, "persons" seems to be the table rows, while "personss" is the table columns. - AC 16 Feb 09
@@ -38,6 +39,7 @@ def personindex(request):
 
     return render_response(request,'personindex.html', {'persons': persons, 'personss':personss, 'notablepersons':notablepersons, })
 
+
 def expedition(request, expeditionname):
     year = int(expeditionname)
     expedition = Expedition.objects.get(year=year)
@@ -53,6 +55,7 @@ def expedition(request, expeditionname):
     def get_absolute_url(self):
         return ('expedition', (expedition.year))
 
+
 def person(request, first_name='', last_name='', ):
     person = Person.objects.get(first_name = first_name, last_name = last_name)
     
@@ -65,11 +68,45 @@ def person(request, first_name='', last_name='', ):
     
     return render_response(request,'person.html', {'person': person, })
 
+
+def GetPersonChronology(personexpedition):
+    res = { }
+    for persontrip in personexpedition.persontrip_set.all():
+        a = res.setdefault(persontrip.date, { })
+        a.setdefault("persontrips", [ ]).append(persontrip)
+
+    for personrole in personexpedition.personrole_set.all():
+        a = res.setdefault(personrole.survex_block.date, { })
+        b = a.setdefault("personroles", { })
+        survexpath = personrole.survex_block.survexpath
+        
+        if b.get(survexpath):
+            b[survexpath] += ", " + str(personrole.role)
+        else:
+            b[survexpath] = str(personrole.role)
+    
+    # build up the tables
+    rdates = res.keys()
+    rdates.sort()
+    
+    
+    res2 = [ ]
+    for rdate in rdates:
+        persontrips = res[rdate].get("persontrips", [])
+        personroles = list(res[rdate].get("personroles", {}).items())
+        for n in range(max(len(persontrips), len(personroles))):
+            res2.append(((n == 0 and rdate or ""), (n < len(persontrips) and persontrips[n]), (n < len(personroles) and personroles[n])))
+            
+    return res2
+
+
 def personexpedition(request, first_name='',  last_name='', year=''):
     person = Person.objects.get(first_name = first_name, last_name = last_name)
     expedition = Expedition.objects.get(year=year)
     personexpedition = person.personexpedition_set.get(expedition=expedition)
-    return render_response(request,'personexpedition.html', {'personexpedition': personexpedition, })
+    personchronology = GetPersonChronology(personexpedition)
+    return render_response(request,'personexpedition.html', {'personexpedition': personexpedition, 'personchronology':personchronology})
+
 
 def logbookentry(request, date, slug):
     logbookentry = LogbookEntry.objects.filter(date=date, slug=slug)
@@ -79,6 +116,7 @@ def logbookentry(request, date, slug):
     else:
         logbookentry=logbookentry[0]
         return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry})
+
 
 def logbookSearch(request, extra):
     query_string = ''
@@ -96,3 +134,4 @@ def personForm(request,pk):
     person=Person.objects.get(pk=pk)
     form=PersonForm(instance=person)
     return render_response(request,'personform.html', {'form':form,})
+

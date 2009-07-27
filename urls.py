@@ -30,7 +30,6 @@ urlpatterns = patterns('',
     url(r'^personexpedition/(?P<first_name>[A-Z]*[a-z]*)[^a-zA-Z]*(?P<last_name>[A-Z]*[a-z]*)/(?P<year>\d+)/?$', views_logbooks.personexpedition, name="personexpedition"),
     url(r'^logbookentry/(?P<date>.*)/(?P<slug>.*)/?$', views_logbooks.logbookentry,name="logbookentry"),
 
-    url(r'^survexblock/(.+)$',  views_caves.survexblock,    name="survexblock"),
     url(r'^cave/(?P<cave_id>[^/]+)/?$', views_caves.cave, name="cave"),
     url(r'^cavedescription/(?P<cavedescription_name>[^/]+)/?$', views_caves.cave_description, name="cavedescription"),
     url(r'^cavedescription/?$', object_list, {'queryset':CaveDescription.objects.all(),'template_name':'object_list.html'}, name="cavedescriptions"),
@@ -46,12 +45,6 @@ urlpatterns = patterns('',
     
     url(r'^cave/(?P<cave_id>[^/]+)/(?P<year>\d\d\d\d)-(?P<qm_id>\d*)(?P<grade>[ABCDX]?)?$', views_caves.qm, name="qm"),
     
-    #url(r'^survex/(.*?)\.index$', views_survex.index, name="survexindex"),
-    url(r'^survex/(?P<survex_file>.*?)\.svx$', svx, name="svx"),
-    (r'^survex/(?P<survex_file>.*)\.3d$', threed),
-    (r'^survex/(?P<survex_file>.*)\.log$', log),
-    (r'^survex/(?P<survex_file>.*)\.err$', err),
-
     
     url(r'^logbooksearch/(.*)/?$', views_logbooks.logbookSearch),
 
@@ -84,11 +77,21 @@ urlpatterns = patterns('',
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
 
-    (r'^survey_files/listdir/(?P<path>.*)$', view_surveys.listdir),
-    (r'^survey_files/download/(?P<path>.*)$', view_surveys.download),
+        
+    url(r'^survexblock/(.+)$',                     views_caves.survexblock, name="survexblock"),
+    url(r'^survexfile/(?P<survex_file>.*?)\.svx$', views_survex.svx,        name="svx"),
+    url(r'^survexfile/(?P<survex_file>.*)\.3d$',   views_survex.threed,     name="threed"),
+    url(r'^survexfile/caves$',                     views_survex.survexcaveslist,name="survexcaveslist"),
+    (r'^survex/(?P<survex_file>.*)\.log$', log),
+    (r'^survex/(?P<survex_file>.*)\.err$', err),
+                
+    (r'^survey_files/listdir/(?P<path>.*)$',       view_surveys.listdir),
+    (r'^survey_files/download/(?P<path>.*)$',      view_surveys.download),
     #(r'^survey_files/upload/(?P<path>.*)$', view_surveys.upload),
 
-    (r'^survey_scans/(?P<path>.*)$', 'django.views.static.serve',
+    
+            
+     (r'^survey_scans/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.SURVEY_SCANS, 'show_indexes':True}),
 
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',

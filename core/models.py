@@ -58,11 +58,14 @@ class TroggleImageModel(ImageModel):
     class Meta:
 	    abstract = True
 
+# 
+# single Expedition, usually seen by year
+#
 class Expedition(TroggleModel):
     year        = models.CharField(max_length=20, unique=True)
     name        = models.CharField(max_length=100)
-    date_from  = models.DateField(blank=True,null=True)
-    date_to    = models.DateField(blank=True,null=True)
+    date_from   = models.DateField(blank=True,null=True)
+    date_to     = models.DateField(blank=True,null=True)
     
     def __unicode__(self):
         return self.year
@@ -72,41 +75,13 @@ class Expedition(TroggleModel):
         get_latest_by = 'date_from'
     
     def get_absolute_url(self):
-        #return settings.URL_ROOT + "/expedition/%s" % self.year
-        return urlparse.urljoin(settings.URL_ROOT, reverse('expedition',args=[self.year]))
-    
-    
-    # lose these two functions (inelegant, and we may create a file with the dates that we can load from)
-    def GuessDateFrom(self):
-	try:
-		return self.logbookentry_set.order_by('date')[0].date
-	except IndexError:
-		pass
-
-    def GuessDateTo(self):		# returns the date of the last logbook entry in the expedition
-	try:
-		return self.logbookentry_set.order_by('date')[-1].date
-	except IndexError:
-		pass
-
-    def ListDays(self):
-	if self.date_from and self.date_to:
-		res=[]
-		date=self.date_from
-		while date <= self.date_to:
-			res.append(date)
-			date+=datetime.timedelta(days=1)
-		return res
-	elif self.GuessDateFrom() and self.GuessDateTo(): 	# if we don't have the real dates, try it with the dates taken from the earliest and latest logbook entries
-		date=self.GuessDateFrom()
-		while date <= self.GuessDateTo():
-			res.append(date)
-			date+=datetime.timedelta(days=1)
-		return res
-
+        return urlparse.urljoin(settings.URL_ROOT, reverse('expedition', args=[self.year]))
     
 
 
+#
+# single Person, can go on many years
+#
 class Person(TroggleModel):
     first_name  = models.CharField(max_length=100)
     last_name   = models.CharField(max_length=100)
@@ -134,12 +109,6 @@ class Person(TroggleModel):
             return "%s %s" % (self.first_name, self.last_name)
         return self.first_name
 
-# Below are no longer needed. Use {{ person.personexpedition_set.all.0.expedition }} for Firstexpedition, and {{ person.personexpedition_set.latest.expedition }} for Lastexpedition
-    # these ought to be possible by piping through |min in the template, or getting the first of an ordered list
-#    def Firstexpedition(self):
-#        return self.personexpedition_set.order_by('expedition')[0]
-#    def Lastexpedition(self):
-#        return self.personexpedition_set.order_by('-expedition')[0]
     
     def notability(self):
         notability = Decimal(0)
@@ -161,6 +130,9 @@ class Person(TroggleModel):
         #self.notability = 0.0  # set temporarily
         
 
+#
+# Person's attenance to one Expo
+#
 class PersonExpedition(TroggleModel):
     expedition  = models.ForeignKey(Expedition)
     person      = models.ForeignKey(Person)
@@ -189,51 +161,11 @@ class PersonExpedition(TroggleModel):
     class Meta:
         ordering = ('expedition',)
         #order_with_respect_to = 'expedition'
-	get_latest_by = 'expedition'
-    
-    def GetPersonChronology(self):
-        res = { }
-        for persontrip in self.persontrip_set.all():
-            a = res.setdefault(persontrip.date(), { })
-            a.setdefault("persontrips", [ ]).append(persontrip)
-        for personrole in self.personrole_set.all():
-            a = res.setdefault(personrole.survex_block.date, { })
-            b = a.setdefault("personroles", { })
-            survexpath = personrole.survex_block.survexpath
-            
-            if b.get(survexpath):
-                b[survexpath] += ", " + str(personrole.role)
-            else:
-                b[survexpath] = str(personrole.role)
-# needs converting dict into list            
-        return sorted(res.items())
-
-    # possibly not useful functions anyway -JT
-        # if you can find a better way to make the expo calendar table, be my guest. It isn't possible to do this logic in a django template without writing custom tags.-AC
-    def ListDays(self):
-        """
-        Returns a list of the days the person was on the expedition (i.e. the days that the PersonExpedition was in existance). Needed for expedition calendar.
-        """
-	if self.date_from and self.date_to:
-		res=[]
-		date=self.date_from
-		while date <= self.date_to:
-			res.append(date)
-			date+=datetime.timedelta(days=1)
-		return res
-
-    def ListDaysTF(self):
-        """
-        Returns a list of true / false values. Each value corresponds to one day on the expedition; True means the person was there, False means they weren't.
-        """
-	if self.date_from and self.date_to:
-		res=[]
-		for date in self.expedition.ListDays():
-			res.append(date in self.ListDays())
-		return res
+    get_latest_by = 'expedition'
 
     def __unicode__(self):
         return "%s: (%s)" % (self.person, self.expedition)
+    
     
     #why is the below a function in personexpedition, rather than in person? - AC 14 Feb 09
     def name(self):
@@ -244,9 +176,12 @@ class PersonExpedition(TroggleModel):
         return self.person.first_name
 
     def get_absolute_url(self):
-        #return settings.URL_ROOT + '/personexpedition/' + str(self.person.first_name) + '_' + str(self.person.last_name) + '/' +self.expedition.year
-	return urlparse.urljoin(settings.URL_ROOT, reverse('personexpedition',kwargs={'first_name':self.person.first_name,'last_name':self.person.last_name,'year':self.expedition.year}))
+        return urlparse.urljoin(settings.URL_ROOT, reverse('personexpedition',kwargs={'first_name':self.person.first_name,'last_name':self.person.last_name,'year':self.expedition.year}))
 	
+    
+#
+# Single parsed entry from Logbook
+#    
 class LogbookEntry(TroggleModel):
     date    = models.DateField()
     expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
@@ -288,48 +223,35 @@ class LogbookEntry(TroggleModel):
         """Produces a link to a new QM with the next number filled in and this LogbookEntry set as 'found by' """
         return settings.URL_ROOT + r'/admin/core/qm/add/?' + r'found_by=' + str(self.pk) +'&number=' + str(self.new_QM_number())
 
+
+#
+# Single Person going on a trip, which may or may not be written up (accounts for different T/U for people in same logbook entry)
+#
 class PersonTrip(TroggleModel):
     person_expedition = models.ForeignKey(PersonExpedition,null=True)
     
-        # this will be a foreign key of the place(s) the trip went through
-        # possibly a trip has a plurality of triplets pointing into it
-    #place           = models.CharField(max_length=100)  
-    #date            = models.DateField()    
+    date             = models.DateField()    
     time_underground = models.FloatField(help_text="In decimal hours")
     logbook_entry    = models.ForeignKey(LogbookEntry)
     is_logbook_entry_author = models.BooleanField()
     
-    def date(self):
-        return self.logbook_entry.date
-
+    
+    # sequencing by person (difficult to solve locally)
+    persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
+    persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
+    
     def place(self):
-        if self.logbook_entry.cave:
-            return self.logbook_entry.cave
-        else:
-            return self.logbook_entry.place
-
-    #persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
-    #persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
+        return self.logbook_entry.cave and self.logbook_entry.cave or self.logbook_entry.place
 
     def __unicode__(self):
-        return "%s %s (%s)" % (self.person_expedition, self.place(), self.date())
+        return "%s (%s)" % (self.person_expedition, self.date)
 
-    def get_persons_next_trip(self):
-	try:
-            return PersonTrip.objects.filter(person_expedition__person=self.person_expedition.person, person_expedition__date__gt=self.date)[0]
-        except:
-	    return
 
-    def get_persons_previous_trip(self):
-	try:
-            return PersonTrip.objects.filter(person_expedition__person=self.person_expedition.person, person_expedition__date__lt=self.date)[0]
-        except:
-	    return
 
-#    def get_persons_previous_trip(self):
-#
+
+##########################################
 # move following classes into models_cave
-#
+##########################################
 
 class Area(TroggleModel):
     short_name = models.CharField(max_length=100)
