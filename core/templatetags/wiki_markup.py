@@ -7,9 +7,16 @@ from core.models import QM, Photo, LogbookEntry, Cave
 import re, urlparse
 
 register = template.Library()
+url_root=settings.URL_ROOT
 if settings.URL_ROOT.endswith('/'):
     url_root=settings.URL_ROOT[:-1]
                 
+
+@register.filter()
+def plusone(n):
+    return n + 1
+
+
 def wiki_list(line, listdepth):
         l = ""
         for d in listdepth:

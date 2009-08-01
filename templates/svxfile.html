@@ -18,7 +18,7 @@ $(document).ready(function()
         stylesheet: "{{settings.MEDIA_URL}}CodeMirror-0.62/css/survexcolors.css",
         path: "{{settings.MEDIA_URL}}CodeMirror-0.62/js/",
         textWrapping: false, 
-        lineNumbers: true, 
+        lineNumbers: false, 
         indentUnit: 4, 
         tabMode: "spaces"
     });
@@ -36,7 +36,15 @@ $(document).ready(function()
 {% endblock %}
 
 {% block content %}
-<h1>Survex File: {{ title }} .svx</h1>
+<h1>Survex File: {{ title }}</h1>
+
+{% if svxincludes %}
+<p><b>Included files:</b>
+{% for svxinclude in svxincludes %}
+ <a href="{{svxinclude}}.svx">{{svxinclude}}</a>
+{% endfor %}
+</p>
+{% endif %}
 
 <form id="codewikiform" action="" method="POST">
     <div class="codeframebit">{{form.code}}</div>
@@ -65,13 +73,5 @@ LOGMESSAGES
 </pre>
 {% endif %}
 </div>
-
-{% if svxincludes %}
-<p><b>Included files:</b>
-{% for svxinclude in svxincludes %}
- <a href="{{svxinclude}}.svx">{{svxinclude}}</a>
-{% endfor %}
-</p>
-{% endif %}
 
 {% endblock %}

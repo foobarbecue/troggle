@@ -30,6 +30,7 @@ def make_dirs():
 
 def import_cavetab():
     import parsers.cavetab
+    print "importing cavetab"
     parsers.cavetab.LoadCaveTab()
 
 def import_people():
@@ -74,8 +75,8 @@ def reset():
     make_dirs()
     import_cavetab()
     import_people()
-    import_logbooks()
     import_survex()
+    import_logbooks()
     import_QMs()
     import_surveys()
     import_descriptions()
@@ -97,11 +98,16 @@ def export_cavetab():
     outfile.close()
 
 if __name__ == "__main__":
+    import core.models
     import sys
     if "desc" in sys.argv:
         resetdesc()
     elif "reset" in sys.argv:
         reset()
+    elif "survex" in sys.argv:
+        management.call_command('syncdb', interactive=False)  # this sets the path so that import settings works in import_survex
+#        import_survex()
+        import_logbooks()
     else:
         print "Do 'python databaseReset.py reset'"
 

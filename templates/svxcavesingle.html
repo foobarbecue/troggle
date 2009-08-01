@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load link %}
+
+{% block title %}List of survex files{% endblock %}
+
+{% block content %}
+
+<h1>Surveys for {{cave}}</h1>
+
+<p>
+{% for survexdirectory in cave.survexdirectory_set.all %}
+  <a href="#T_{{survexdirectory.primarysurvexfile.path}}">{{survexdirectory.path}}</a>
+{% endfor %}
+</p>
+
+{% for survexdirectory in cave.survexdirectory_set.all %}
+<h3 id="T_{{survexdirectory.primarysurvexfile.path}}">{{survexdirectory.path}}</h3>
+
+<table>
+<tr><th>Survex file</th><th>Block</th><th>Date</th><th>Explorers</th><th>Titles</th><th>Scans</th></tr>
+
+{% for survexfile in survexdirectory.survexfile_set.all %}
+<tr>
+  {% if survexfile.exists %}
+    <td rowspan="{{survexfile.survexblock_set.all|length|plusone}}">
+  {% else %}
+    <td class="survexnewfile" rowspan="{{survexfile.survexblock_set.all|length|plusone}}">
+  {% endif %}
+
+  {% ifequal survexfile survexdirectory.primarysurvexfile %}
+    <a href="{% url svx survexfile.path %}"><b>{{survexfile.path}}</b></a>
+  {% else %}
+    <a href="{% url svx survexfile.path %}">{{survexfile.path}}</a>
+  {% endifequal %}
+  </td>
+</tr>
+
+{% for survexblock in survexfile.survexblock_set.all %}
+<tr>
+  <td>{{survexblock.name}}</td>
+  <td>
+  {% if survexblock.expedition %}
+    <a href="{{survexblock.expedition.get_absolute_url}}">{{survexblock.date}}</a>
+  {% else %}
+    {{survexblock.date}}
+  {% endif %} 
+  </td>
+
+  <td>
+  {% for personrole in survexblock.personrole_set.all %}
+    {% if personrole.personexpedition %}
+      <a href="{{personrole.personexpedition.get_absolute_url}}">{{personrole.personname}}</a>
+    {% else %}
+      {{personrole.personname}}
+    {% endif %}
+  {% endfor %}
+  </td>
+
+  <td>
+  {% for survextitle in survexblock.survextitle_set.all %}
+    {{survextitle.title}}
+  {% endfor %}
+  </td>
+
+  <td>
+  {% if survexblock.refscandir %}
+    <b>{{survexblock.refscandir}}</b>
+  {% endif %}
+  </td>
+</tr>
+{% endfor %}
+{% endfor %}
+</table>
+
+{% endfor %}
+
+{% endblock %}
+

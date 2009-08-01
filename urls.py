@@ -81,7 +81,10 @@ urlpatterns = patterns('',
     url(r'^survexblock/(.+)$',                     views_caves.survexblock, name="survexblock"),
     url(r'^survexfile/(?P<survex_file>.*?)\.svx$', views_survex.svx,        name="svx"),
     url(r'^survexfile/(?P<survex_file>.*)\.3d$',   views_survex.threed,     name="threed"),
-    url(r'^survexfile/caves$',                     views_survex.survexcaveslist,name="survexcaveslist"),
+    url(r'^survexfile/caves$',                     views_survex.survexcaveslist,  name="survexcaveslist"),
+    url(r'^survexfile/caves/(?P<survex_cave>.*)$', views_survex.survexcavesingle, name="survexcavessingle"),
+    url(r'^survexfileraw/(?P<survex_file>.*?)\.svx$', views_survex.svxraw,        name="svxraw"),
+            
     (r'^survex/(?P<survex_file>.*)\.log$', log),
     (r'^survex/(?P<survex_file>.*)\.err$', err),
                 

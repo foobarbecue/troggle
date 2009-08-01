@@ -7,8 +7,39 @@ import os
 import datetime
 import difflib
 
-import troggle.settings as settings
+from troggle.core.models import Expedition, Person, PersonExpedition, PersonTrip, LogbookEntry, Cave
+from troggle.core.models import SurvexBlock, PersonRole, SurvexFile, SurvexDirectory, SurvexTitle
+from parsers.people import GetPersonExpeditionNameLookup
 
+import troggle.settings as settings
+import parsers.survex
+
+survextemplatefile = """; Locn: Totes Gebirge, Austria - Loser/Augst-Eck Plateau (kataster group 1623)
+; Cave: 
+
+*begin [surveyname]
+
+*export [connecting stations]
+
+*title "area title"
+*date 2999.99.99
+*team Insts [Caver]
+*team Insts [Caver]
+*team Notes [Caver]
+*instrument [set number]
+
+;ref.: 2009#NN
+
+*calibrate tape +0.0   ; +ve if tape was too short, -ve if too long
+
+*data normal from to tape compass clino
+1   2   3.90    298 -20
+
+*data passage station left right up down ignoreall
+1   [L]    [R]    [U]   [D]    comment
+
+*end [surveyname]"""        
+        
         
 def ReplaceTabs(stext):
     res = [ ]
@@ -36,7 +67,7 @@ class SvxForm(forms.Form):
     def GetDiscCode(self):
         fname = settings.SURVEX_DATA + self.data['filename'] + ".svx"
         if not os.path.isfile(fname):
-            return None
+            return survextemplatefile
         fin = open(fname, "rb")
         svxtext = fin.read().decode("latin1")   # unicode(a, "latin1")
         svxtext = ReplaceTabs(svxtext).strip()
@@ -52,11 +83,19 @@ class SvxForm(forms.Form):
     def SaveCode(self, rcode):
         fname = settings.SURVEX_DATA + self.data['filename'] + ".svx"
         if not os.path.isfile(fname):
-            return False
+            # only save if appears valid
+            if re.search("\[|\]", rcode):   
+                return "Error: clean up all []s from the text"
+            mbeginend = re.search("(?s)\*begin\s+(\w+).*?\*end\s+(\w+)", rcode)
+            if not mbeginend:
+                return "Error: no begin/end block here"
+            if mbeginend.group(1) != mbeginend.group(2):
+                return "Error: mismatching beginend"
+                
         fout = open(fname, "w")
         res = fout.write(rcode.encode("latin1"))
         fout.close()
-        return True
+        return "SAVED"
 
     def Process(self):
         print "....\n\n\n....Processing\n\n\n"
@@ -91,7 +130,7 @@ def svx(request, survex_file):
             rcode = rform.cleaned_data['code']
             outputtype = rform.cleaned_data['outputtype']
             difflist = form.DiffCode(rcode)
-            print "ssss", rform.data
+            #print "ssss", rform.data
             
             if "revert" in rform.data:
                 pass
@@ -105,11 +144,8 @@ def svx(request, survex_file):
                     form.data['code'] = rcode
             if "save" in rform.data:
                 print "sssavvving"
-                if form.SaveCode(rcode):
-                    message = "SAVVVED"
-                    # we will reload later
-                else:
-                    message = "FAILED TO SAVE"
+                message = form.SaveCode(rcode)
+                if message != "SAVED":
                     form.data['code'] = rcode
             if "diff" in rform.data:
                 form.data['code'] = rcode
@@ -124,8 +160,8 @@ def svx(request, survex_file):
     if message:
         difflist.insert(0, message)
     
-    print [ form.data['code'] ]
-    svxincludes = re.findall('\*include\s+"?(.*?)(?:\.svx)?"?\s*?\n(?i)', form.data['code'] or "")
+    #print [ form.data['code'] ]
+    svxincludes = re.findall('\*include\s+(\S+)(?i)', form.data['code'] or "")
     
     vmap = {'settings': settings,
             'has_3d': os.path.isfile(settings.SURVEX_DATA + survex_file + ".3d"),
@@ -138,10 +174,9 @@ def svx(request, survex_file):
         return render_to_response('svxfiledifflistonly.html', vmap)
     return render_to_response('svxfile.html', vmap)
 
-def Dsvx(request, survex_file):
-    svx = open(settings.SURVEX_DATA + survex_file + ".svx", "rb")
+def svxraw(request, survex_file):
+    svx = open(os.path.join(settings.SURVEX_DATA, survex_file+".svx"), "rb")
     return HttpResponse(svx, mimetype="text")
-
 
 
 # The cavern running function
@@ -179,19 +214,34 @@ def identifycavedircontents(gcavedir):
     subsvx = [ ]
     primesvx = None
     for f in os.listdir(gcavedir):
-        if os.path.isdir(os.path.join(gcavedir, f)):
+        if name == "204" and (f in ["skel.svx", "template.svx", "204withents.svx"]):
+            pass
+        elif name == "136" and (f in ["136-noents.svx"]):
+            pass
+        elif name == "115" and (f in ["115cufix.svx", "115fix.svx"]):
+            pass
+        
+        elif os.path.isdir(os.path.join(gcavedir, f)):
             if f[0] != ".":
                 subdirs.append(f)
         elif f[-4:] == ".svx":
             nf = f[:-4]
-            if nf == name:
-                assert not primesvx
-                primesvx = nf
+            
+            if nf.lower() == name.lower() or nf[:3] == "all" or (name, nf) in [("144arge", "144"), ("resurvey2005", "145-2005"), ("cucc", "cu115")]:
+                if primesvx:
+                    if nf[:3] == "all":
+                        assert primesvx[:3] != "all", (name, nf, primesvx, gcavedir, subsvx)
+                        primesvx = nf
+                    else:
+                        assert primesvx[:3] == "all", (name, nf, primesvx, gcavedir, subsvx)
+                else:
+                    primesvx = nf
             else:
                 subsvx.append(nf)
         else:
-            assert re.match(".*?(?:.3d|.log|.err|.txt|.espec|~)$", f), (gcavedir, f)
+            assert re.match(".*?(?:.3d|.log|.err|.txt|.tmp|.diff|.e?spec|~)$", f), (gcavedir, f)
     subsvx.sort()
+    assert primesvx, (gcavedir, subsvx)
     if primesvx:
         subsvx.insert(0, primesvx)
     return subdirs, subsvx
@@ -206,25 +256,58 @@ def survexcaveslist(request):
     
     onefilecaves = [ ]
     multifilecaves = [ ]
-        
+    subdircaves = [ ]
+    
     # first sort the file list
-    fnumlist = [ (int(re.match("\d*", f).group(0) or "99999"), f)  for f in os.listdir(cavesdir) ]
+    fnumlist = [ (-int(re.match("\d*", f).group(0) or "0"), f)  for f in os.listdir(cavesdir) ]
     fnumlist.sort()
     
     # go through the list and identify the contents of each cave directory
     for num, cavedir in fnumlist:
+        if cavedir in ["144", "40"]:
+            continue
+            
         gcavedir = os.path.join(cavesdir, cavedir)
         if os.path.isdir(gcavedir) and cavedir[0] != ".":
             subdirs, subsvx = identifycavedircontents(gcavedir)
             survdirobj = [ ]
+            
             for lsubsvx in subsvx:
                 survdirobj.append(("caves/"+cavedir+"/"+lsubsvx, lsubsvx))
-            if len(survdirobj) == 1:
-                onefilecaves.append(survdirobj[0])
-            else:
+            
+            # caves with subdirectories
+            if subdirs:
+                subsurvdirs = [ ]
+                for subdir in subdirs:
+                    dsubdirs, dsubsvx = identifycavedircontents(os.path.join(gcavedir, subdir))
+                    assert not dsubdirs
+                    lsurvdirobj = [ ]
+                    for lsubsvx in dsubsvx:
+                        lsurvdirobj.append(("caves/"+cavedir+"/"+subdir+"/"+lsubsvx, lsubsvx))
+                    subsurvdirs.append((lsurvdirobj[0], lsurvdirobj[1:]))
+                subdircaves.append((cavedir, (survdirobj[0], survdirobj[1:]), subsurvdirs))
+            
+            # multifile caves
+            elif len(survdirobj) > 1:
                 multifilecaves.append((survdirobj[0], survdirobj[1:]))
+            # single file caves
+            else:
+                onefilecaves.append(survdirobj[0])
     
-    return render_to_response('svxfilecavelist.html', {'settings': settings, "onefilecaves":onefilecaves, "multifilecaves":multifilecaves})
+    return render_to_response('svxfilecavelist.html', {'settings': settings, "onefilecaves":onefilecaves, "multifilecaves":multifilecaves, "subdircaves":subdircaves })
+    
+
+        
+
+
+
+# parsing all the survex files of a single cave and showing that it's consistent and can find all the files and people
+# doesn't use recursion.  just writes it twice
+def survexcavesingle(request, survex_cave):
+    cave = Cave.objects.get(kataster_number=survex_cave)
+    parsers.survex.ReloadSurvexCave(survex_cave)
+    return render_to_response('svxcavesingle.html', {'settings': settings, "cave":cave })
+
     
     
     

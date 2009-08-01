@@ -51,6 +51,8 @@ def ent(request, cave_id, ent_letter):
                                                 'letter': cave_and_ent.entrance_letter,})
 
 def survexblock(request, survexpath):
+    survexpath = re.sub("/", ".", survexpath)
+    print "jjjjjj", survexpath
     survexblock = models.SurvexBlock.objects.get(survexpath=survexpath)
     #ftext = survexblock.filecontents()
     ftext = survexblock.text

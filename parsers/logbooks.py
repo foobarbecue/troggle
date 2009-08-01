@@ -89,7 +89,7 @@ def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_
     for tripperson, time_underground in trippersons:
         lookupAttribs={'person_expedition':tripperson, 'logbook_entry':lbo}
         nonLookupAttribs={'time_underground':time_underground, 'date':date, 'is_logbook_entry_author':(tripperson == author)}
-        print nonLookupAttribs
+        #print nonLookupAttribs
         save_carefully(models.PersonTrip, lookupAttribs, nonLookupAttribs)
 
 
@@ -326,7 +326,7 @@ def LoadLogbookForExpedition(expedition):
         if lyear == year:
             break
     fin = open(os.path.join(expowebbase, lloc))
-    txt = fin.read()
+    txt = fin.read().decode("latin1")
     fin.close()
     parsefunc(year, expedition, txt)
     SetDatesFromLogbookEntries(expedition)

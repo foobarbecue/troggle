@@ -6,57 +6,69 @@ import os
 ###########################################################
 # These will allow browsing and editing of the survex data
 ###########################################################
-
-
 # Needs to add: 
-#   SurvexFile
 #   Equates
 #   reloading
+
+class SurvexDirectory(models.Model):
+    path = models.CharField(max_length=200)
+    cave = models.ForeignKey('Cave', blank=True, null=True)
+    primarysurvexfile = models.ForeignKey('SurvexFile', related_name='primarysurvexfile', blank=True, null=True)
+    # could also include files in directory but not referenced
+    
+    class Meta:
+        ordering = ('id',)
+    
+class SurvexFile(models.Model):
+    path = models.CharField(max_length=200)
+    survexdirectory = models.ForeignKey("SurvexDirectory", blank=True, null=True)
+    cave = models.ForeignKey('Cave', blank=True, null=True)
+    
+    class Meta:
+        ordering = ('id',)
+    
+    def exists(self):
+        fname = os.path.join(settings.SURVEX_DATA, self.path + ".svx")
+        return os.path.isfile(fname)
+    
+    def OpenFile(self):
+        fname = os.path.join(settings.SURVEX_DATA, self.path + ".svx")
+        return open(fname)
+    
+    def SetDirectory(self):
+        dirpath = os.path.split(self.path)[0]
+        survexdirectorylist = SurvexDirectory.objects.filter(cave=self.cave, path=dirpath)
+        if survexdirectorylist:
+            self.survexdirectory = survexdirectorylist[0]
+        else:
+            survexdirectory = SurvexDirectory(path=dirpath, cave=self.cave, primarysurvexfile=self)
+            survexdirectory.save()
+            self.survexdirectory = survexdirectory
+        self.save()
 
 #
 # Single SurvexBlock 
 # 
 class SurvexBlock(models.Model):
-    name = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(max_length=100)
     parent = models.ForeignKey('SurvexBlock', blank=True, null=True)
     text = models.TextField()
-    
-    # non-useful representation of incomplete data
-    start_year = models.IntegerField(blank=True, null=True)
-    start_month = models.IntegerField(blank=True, null=True)
-    start_day = models.IntegerField(blank=True, null=True)
-    end_year = models.IntegerField(blank=True, null=True)
-    end_month = models.IntegerField(blank=True, null=True)
-    end_day = models.IntegerField(blank=True, null=True)
+    cave = models.ForeignKey('Cave', blank=True, null=True)
     
     date    = models.DateField(blank=True, null=True)
-    survexpath  = models.CharField(max_length=100)
-    
-    # superfluous
-    person  = models.ManyToManyField('Person', through='PersonRole', blank=True, null=True)
-   
-    # code for where in the survex data files this block sits
-    begin_file = models.CharField(max_length=200)
-    begin_char = models.IntegerField()
-    end_file = models.CharField(max_length=200, blank=True, null=True)
-    end_char = models.IntegerField(blank=True, null=True)
+    expedition = models.ForeignKey('Expedition', blank=True, null=True)
+        
+    survexfile  = models.ForeignKey("SurvexFile", blank=True, null=True)
+    begin_char = models.IntegerField()  # code for where in the survex data files this block sits
+    survexpath = models.CharField(max_length=200)   # the path for the survex stations
+    refscandir = models.CharField(max_length=100)
     
     class Meta:
-        ordering = ('date', 'survexpath')
+        ordering = ('id',)
 
     def __unicode__(self):
         return self.name and unicode(self.name) or 'no name'
     
-    def filewithoutsvx(self):
-        return self.begin_file[:-4]
-    
-    def filecontents(self):
-        f = os.path.join(settings.SURVEX_DATA, self.begin_file)
-        fin = open(f, "rb")
-        res = fin.read().decode("latin1")
-        fin.close()
-        return res
-        
     def GetPersonroles(self):
         res = [ ]
         for personrole in self.personrole_set.order_by('personexpedition'):
@@ -66,22 +78,16 @@ class SurvexBlock(models.Model):
                 res.append({'person':personrole.personexpedition.person, 'expeditionyear':personrole.personexpedition.expedition.year, 'roles':str(personrole.role)})
         return res
 
-
-#
-# Replace this with a choice string in PersonRole
-#
-class Role(models.Model):
-    name = models.CharField(max_length=50)
-    def __unicode__(self):
-        return unicode(self.name)
-
+class SurvexTitle(models.Model):
+    survexblock = models.ForeignKey('SurvexBlock')
+    title = models.CharField(max_length=200)
+    cave = models.ForeignKey('Cave', blank=True, null=True)
 
 #
 # member of a SurvexBlock
 #
 class PersonRole(models.Model):
     survex_block        = models.ForeignKey('SurvexBlock')
-    role                = models.ForeignKey('Role')  # to go
     
     ROLE_CHOICES = (
         ('insts','Instruments'),
@@ -89,15 +95,20 @@ class PersonRole(models.Model):
         ('notes','Notes'),
         ('pics','Pictures'),
         ('tape','Tape measure'),
+        ('useless','Useless'),
+        ('helper','Helper'),
+        ('disto','Disto'),
+        ('consultant','Consultant'),
         )
     nrole = models.CharField(choices=ROLE_CHOICES, max_length=200, blank=True, null=True)
 
     # increasing levels of precision
-    person              = models.ForeignKey('Person')
-    personexpedition    = models.ForeignKey('PersonExpedition')
+    personname          = models.CharField(max_length=100)
+    person              = models.ForeignKey('Person', blank=True, null=True)
+    personexpedition    = models.ForeignKey('PersonExpedition', blank=True, null=True)
     persontrip          = models.ForeignKey('PersonTrip', blank=True, null=True)  
-    
+
     def __unicode__(self):
-        return unicode(self.person) + " - " + unicode(self.survex_block) + " - " + unicode(self.role)
+        return unicode(self.person) + " - " + unicode(self.survex_block) + " - " + unicode(self.nrole)
         
     

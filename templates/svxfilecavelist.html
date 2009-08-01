@@ -5,27 +5,56 @@
 {% block title %}List of survex files{% endblock %}
 
 {% block content %}
-<h1>List of survex directories</h1>
+<p><a href="#cdir">caves with subdirectories</a> | <a href="#cmult">caves with multiple files</a> | <a href="#csing">caves with single files</a></p>
 
-<p>{{message}}</p>
+<h2 id="cdir">Caves with subdirectories</h2>
 
-<h2>Caves of multiple files</h2>
-
+{% for subdircave, cavefiles, subsurvdirs in subdircaves %}
+<h3>{{cavefiles.0.1}} - <a href="{% url survexcavessingle cavefiles.0.1 %}">dates and explorers</a></h3>
 <table>
-<tr><th>Primary file</th><th>Survex files</th></tr>
-{% for primarycavefile, subcavefiles in multifilecaves %}
-  <tr>
+<tr>
+  <td><b><a href="{% url svx cavefiles.0.0 %}">{{cavefiles.0.1}}</a></b></td>
+  <td>
+  {% for cavepath, cavename in cavefiles.1 %}
+    <a href="{% url svx cavepath %}">{{cavename}}</a>
+  {% endfor %}
+  </td>
+</tr>
+
+{% for primarycavefile, subcavefiles in subsurvdirs %}
+<tr>
   <td><a href="{% url svx primarycavefile.0 %}">{{primarycavefile.1}}</a></td>
   <td>
     {% for cavepath, cavename in subcavefiles %}
        <a href="{% url svx cavepath %}">{{cavename}}</a>
     {% endfor %}
   </td>
-  </tr>
+</tr>  
 {% endfor %}
 </table>
 
-<h2>Caves of one file</h2>
+{% endfor %}
+
+
+<h2 id="cmult">Caves of multiple files</h2>
+<table>
+<tr><th>Dates and explorers</th><th>Survex files</th></tr>
+{% for primarycavefile, subcavefiles in multifilecaves %}
+<tr>
+  <td>
+     <a href="{% url survexcavessingle primarycavefile.1 %}">{{primarycavefile.1}}</a>
+  </td>
+  <td>
+    <a href="{% url svx primarycavefile.0 %}">{{primarycavefile.1}}</a> - 
+    {% for cavepath, cavename in subcavefiles %}
+       <a href="{% url svx cavepath %}">{{cavename}}</a>
+    {% endfor %}
+  </td>
+</tr>
+{% endfor %}
+</table>
+
+<h2 id="csing">Caves of one file</h2>
 <p>
 {% for cavepath, cavename in onefilecaves %}
    <a href="{% url svx cavepath %}">{{cavename}}</a>

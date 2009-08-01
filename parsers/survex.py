@@ -2,158 +2,107 @@ import troggle.settings as settings
 import troggle.core.models as models
 
 from troggle.parsers.people import GetPersonExpeditionNameLookup
-
 import re
 import os
 
-roles = {"Insts": "Insts",
-         "insts": "Insts",
-         "Instruments": "Insts",
-         "instruments": "Insts",
-         "Inst": "Insts",
-         "inst": "Insts",
-         "dog": "Other",
-         "Dog": "Other",
-         "other": "Other",
-         "Other": "Other",
-         "Notes": "Notes",
-         "notes": "notes",
-         "pics": "Pics",
-         "Pics": "Pics",
-         "Tape": "Tape",
-         "tape": "Tape"}
 
-re_include_extension = re.compile(r"^\s*\*include\s+([^\s]*).svx\s*$", re.IGNORECASE)
-re_include_no_extension = re.compile(r"^\s*\*include\s+([^\s]*)\s*$", re.IGNORECASE)
-flags = {"begin": re.compile(r"^\s*\*begin\s+(.*?)\s*$", re.IGNORECASE),
-         "end": re.compile(r"^\s*\*end\s+(.*?)\s*$", re.IGNORECASE),
-         "date": re.compile(r"^\s*\*date\s+(.*?)\s*$", re.IGNORECASE),
-         "team": re.compile(r"^\s*\*team\s+(.*?)\s*$", re.IGNORECASE),
-         "title": re.compile(r"^\s*\*title\s+(.*?)\s*$", re.IGNORECASE)}
+def RecursiveLoad(survexblock, survexfile, fin, textlines):
+    iblankbegins = 0
+    text = [ ]
+    teammembers = [ ]
+    while True:
+        svxline = fin.readline().decode("latin1")
+        if not svxline:
+            return
+        textlines.append(svxline)
+        mstar = re.match('\s*\*(\w+)\s+(.*?)\s*(?:;.*)?$', svxline)
+        
+        #;ref.: 2008#18
+        mref = re.match('.*?ref.*?(\d+#\d+)', svxline)
+        if mref:
+            survexblock.refscandir = mref.group(1)
+            survexblock.save()
+             
+        if mstar:
+            cmd, line = mstar.groups()
+            
+            if re.match("include$(?i)", cmd):
+                includepath = os.path.join(os.path.split(survexfile.path)[0], re.sub("\.svx$", "", line))
+                includesurvexfile = models.SurvexFile(path=includepath, cave=survexfile.cave)
+                includesurvexfile.save()
+                includesurvexfile.SetDirectory()
+                if includesurvexfile.exists():
+                    fininclude = includesurvexfile.OpenFile()
+                    RecursiveLoad(survexblock, includesurvexfile, fininclude, textlines)
+            
+            elif re.match("begin$(?i)", cmd):
+                if line: 
+                    name = line.lower()
+                    survexblockdown = models.SurvexBlock(name=name, begin_char=fin.tell(), parent=survexblock, survexpath=survexblock.survexpath+"."+name, cave=survexblock.cave, survexfile=survexfile)
+                    survexblockdown.save()
+                    textlinesdown = [ ]
+                    RecursiveLoad(survexblockdown, survexfile, fin, textlinesdown)
+                else:
+                    iblankbegins += 1
+            
+            elif re.match("end$(?i)", cmd):
+                if iblankbegins:
+                    iblankbegins -= 1
+                else:
+                    survexblock.text = "".join(textlines)
+                    survexblock.save()
+                    return
+            
+            elif re.match("date$(?i)", cmd):
+                if len(line) == 10:
+                    survexblock.date = re.sub("\.", "-", line)
+                    expeditions = models.Expedition.objects.filter(year=line[:4])
+                    if expeditions:
+                        survexblock.expedition = expeditions[0]
+            
+            elif re.match("team$(?i)", cmd):
+                mteammember = re.match("(Insts|Notes|Tape|Dog|Useless|Pics|Helper|Disto|Consultant)\s+(.*)$(?i)", line)
+                if mteammember:
+                    for tm in re.split(" and | / |, | & | \+ |^both$|^none$(?i)", mteammember.group(2)):
+                        if tm:
+                            personexpedition = survexblock.expedition and GetPersonExpeditionNameLookup(survexblock.expedition).get(tm.lower())
+                            if (personexpedition, tm) not in teammembers:
+                                teammembers.append((personexpedition, tm))
+                                personrole = models.PersonRole(survex_block=survexblock, nrole=mteammember.group(1).lower(), personexpedition=personexpedition, personname=tm)
+                                personrole.save()
+                                
+            elif cmd == "title":
+                survextitle = models.SurvexTitle(survexblock=survexblock, title=line.strip('"'), cave=survexblock.cave)
+                survextitle.save()
+                
+            else:
+                assert cmd.lower() in [ "sd", "equate", "include", "units", "entrance", "fix", "data", "flags", "title", "export", "instrument", "calibrate", ], (cmd, line, survexblock)
+        
 
-def fileIterator(directory, filename):
-    survex_file = os.path.join(directory, filename + ".svx")
-    try:
-        f = open(os.path.join(settings.SURVEX_DATA, survex_file), "rb")
-    except:
-        f = open(os.path.join(settings.SURVEX_DATA, survex_file).lower(), "rb")
-    char = 0
-    for line in f.readlines():
-        line = unicode(line, "latin1")
-        include_extension = re_include_extension.match(line)
-        include_no_extension = re_include_no_extension.match(line)
-        def a(include):
-            link = re.split(r"/|\\", include)
-            return fileIterator(os.path.join(directory, *link[:-1]), link[-1])
-        if include_extension:
-            for sf, c, l in a(include_extension.groups()[0]):
-                yield sf, c, l
-        elif include_no_extension:
-            for sf, c, l in a(include_no_extension.groups()[0]):
-                yield sf, c, l
-        else:
-            yield survex_file, char, line
-        char = char + len(line)
-
-
-def make_model(name, parent, iter_lines, sf, c, l):
-    m = models.SurvexBlock(name = name, begin_file = sf, begin_char = c, text = l)
-    m.survexpath = m.name
-    if parent:
-        m.parent = parent
-        m.survexpath = m.parent.survexpath + "." + m.name
-    m.save()
-
-    # horrible local function
-    def saveEnd(survex_file, count):
-          if m.start_year and team:
-              try:
-                  explist = models.Expedition.objects.filter(year = str(m.start_year))
-                  if not explist:
-                      return   # help hack
-                  exp = explist[0]
-                  for file_, (role, names) in team:
-                      if names.strip("\t").strip(" ") == "both" or names.strip("\t").strip(" ") == "Both":
-                          names = reduce(lambda x, y: x + u" & " + y,
-                                         [names for file_, (role, names) in team
-                                                if names.strip("\t").strip(" ") != "both"
-                                                   and names.strip("\t").strip(" ") != "Both"])
-                      for name in re.split("&|/|\+|,|;", names):
-                          sname = name.strip(". ").lower()
-                          try:
-                              personexpedition = GetPersonExpeditionNameLookup(exp).get(sname)
-                              if personexpedition:
-                                  models.PersonRole(personexpedition = personexpedition,
-                                                person = personexpedition.person,
-                                                survex_block = m,
-                                                role = models.Role.objects.get(name = roles[role])).save()
-                              else:
-                                  print ("no person", exp, sname, role)
-                          except AttributeError:
-                              print ("Person not found: " + name + " in " + file_ + "  " + role).encode('ascii', 'xmlcharrefreplace')
-              except AssertionError, inst:
-                  print (unicode(inst) + ": " + unicode(file_year[0])).encode('ascii', 'xmlcharrefreplace')
-              #except models.Expedition.DoesNotExist:
-              #    print "Expo"+str(file_year[1]).encode('ascii', 'xmlcharrefreplace')
-
-          m.end_file = survex_file
-          m.end_char = count
-
-          if m.start_day:
-              m.date = "%04d-%02d-%02d" % (int(m.start_year), int(m.start_month), int(m.start_day))
-
-          m.save()
-
-    team = []
-    file_year = None
-    for survex_file, count, line in iter_lines:
-      #Dictionary compreshension
-      res = dict([(key, regex.match(line.split(";")[0])) for key, regex in flags.iteritems()])
-      if res["begin"]:
-          make_model(res["begin"].groups()[0], m, iter_lines, survex_file, count, line)
-      else:
-          m.text = m.text + line
-      if res["end"]:
-          saveEnd(survex_file, count)
-          assert (res["end"].groups()[0]).lower() == (name).lower()
-          return None
-      elif res["date"]:
-          datere = re.match("(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-(\d+))?(?:\.(\d+))?(?:\.(\d+))?",
-                            res["date"].groups()[0])
-          if datere is not None:
-              startYear, startMonth, startDay, endYear, endMonth, endDay = datere.groups()
-              m.start_year = startYear
-              m.start_month = startMonth
-              m.start_day = startDay
-              m.end_year = endYear
-              m.end_month = endMonth
-              m.end_day = endDay
-          file_year = survex_file, startYear
-      elif res["team"]:
-          h = re.match("((?:[Ii]nst(?:s|ruments)?)|(?:[Pp]ics)|(?:[Tt]ape)|(?:[Nn]otes)|(?:[Oo]ther))\s*(.*)",
-                       res["team"].groups()[0])
-          if h:
-              team.append((survex_file, h.groups()))
-          else:
-              print ("Role not found: " +  line + " in: " + sf).encode('ascii', 'xmlcharrefreplace')
-      elif res["title"]:
-          nsb, success = models.NewSubCave.objects.get_or_create(name = res["title"].groups()[0])
-
-    m.text = m.text + line
-    saveEnd(survex_file, count)
-
-
-#def LoadSurvexBlocks():
-#    survex_file = os.path.join(directory, filename + ".svx")
-#    f = open(os.path.join(settings.SURVEX_DATA, survex_file), "rb")
-
+def ReloadSurvexCave(survex_cave):
+    cave = models.Cave.objects.get(kataster_number=survex_cave)
+    cave.survexblock_set.all().delete()
+    cave.survexfile_set.all().delete()
+    cave.survexdirectory_set.all().delete()
+    
+    survexfile = models.SurvexFile(path="caves/" + survex_cave + "/" + survex_cave, cave=cave)
+    survexfile.save()
+    survexfile.SetDirectory()
+    
+    survexblockroot = models.SurvexBlock(name="root", survexpath="caves", begin_char=0, cave=cave, survexfile=survexfile)
+    survexblockroot.save()
+    fin = survexfile.OpenFile()
+    textlines = [ ]
+    RecursiveLoad(survexblockroot, survexfile, fin, textlines)
+    survexblockroot.text = "".join(textlines)
+    survexblockroot.save()
 
 def LoadAllSurvexBlocks():
-    models.Role.objects.all().delete()
-    models.SurvexBlock.objects.all().delete()
-    for role in ["Insts", "Notes", "Pics", "Tape", "Other"]:
-        models.Role(name = role).save()
-    filename = "all"
-    make_model("all", None, fileIterator("", filename), filename, 0, "")
-
+    caves = models.Cave.objects.all()
+    for cave in caves:
+        if cave.kataster_number and os.path.isdir(os.path.join(settings.SURVEX_DATA, "caves", cave.kataster_number)):
+            if cave.kataster_number not in ['40']:
+                print "loading", cave
+                ReloadSurvexCave(cave.kataster_number)
+    
 

@@ -31,6 +31,15 @@
     {% endblock %}
    </div>
 </div>
+<div class="toolbarlinks">
+    <a href="{% url survexcaveslist %}">Cave Survex</a> | 
+    <a href="{% url survexcavessingle 161 %}">161</a> | 
+    <a href="{% url survexcavessingle 204 %}">204</a> | 
+    <a href="{% url survexcavessingle 258 %}">258</a> | 
+    <a href="{% url expedition 2008 %}">Expo2008</a> | 
+    <a href="{% url expedition 2009 %}">Expo2009</a> | 
+    <a href="/admin">Django admin</a>
+</div>
     
 <div id="nav">
   {% block nav %}
@@ -60,7 +69,7 @@
 
   </div>
 
-
+    <div class="footer">
 	<ul class="dropdown" id="footerLinks">
 
 		<li><a href="#">External links</a>
@@ -93,6 +102,6 @@
         <li class="toggleMenu"><a href="#">hide menu</a></li>
 
 	</ul>
-        <div class="toggleMenu" style="display:none; position:fixed; bottom:0; right:130px"><a href="#">Show menu</a></li>
+    </div>
 </body>
 </html>
