@@ -278,7 +278,10 @@ div#content {
 
 .toolbarlinks
 {
-    padding:0;
+    padding:5px;
+    background-color:#ff9;
+    text-align:center;
+    font-weight:bold; 
 }
 
 .footer {

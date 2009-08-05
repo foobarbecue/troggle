@@ -72,21 +72,24 @@ urlpatterns = patterns('',
     (r'^accounts/', include('registration.urls')),
     (r'^profiles/', include('profiles.urls')),
 
+        
 #   (r'^personform/(.*)$', personForm),
 
     (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-
+                
         
     url(r'^survexblock/(.+)$',                     views_caves.survexblock, name="survexblock"),
     url(r'^survexfile/(?P<survex_file>.*?)\.svx$', views_survex.svx,        name="svx"),
-    url(r'^survexfile/(?P<survex_file>.*)\.3d$',   views_survex.threed,     name="threed"),
-    url(r'^survexfile/caves$',                     views_survex.survexcaveslist,  name="survexcaveslist"),
+    url(r'^survexfile/(?P<survex_file>.*?)\.3d$',   views_survex.threed,     name="threed"),
+    url(r'^survexfile/(?P<survex_file>.*?)\.log$', views_survex.svxraw),
+    url(r'^survexfile/(?P<survex_file>.*?)\.err$', views_survex.err),
+    
+            
+    url(r'^survexfile/caves/$',                     views_survex.survexcaveslist,  name="survexcaveslist"),
     url(r'^survexfile/caves/(?P<survex_cave>.*)$', views_survex.survexcavesingle, name="survexcavessingle"),
     url(r'^survexfileraw/(?P<survex_file>.*?)\.svx$', views_survex.svxraw,        name="svxraw"),
             
-    (r'^survex/(?P<survex_file>.*)\.log$', log),
-    (r'^survex/(?P<survex_file>.*)\.err$', err),
                 
     (r'^survey_files/listdir/(?P<path>.*)$',       view_surveys.listdir),
     (r'^survey_files/download/(?P<path>.*)$',      view_surveys.download),
@@ -100,5 +103,8 @@ urlpatterns = patterns('',
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.PHOTOS_ROOT, 'show_indexes':True}),
 
-    #url(r'^trip_report/?$',views_other.tripreport,name="trip_report")
+    # for those silly ideas
+    url(r'^experimental.*$',                         views_logbooks.experimental,  name="experimental"),
+    
+            #url(r'^trip_report/?$',views_other.tripreport,name="trip_report")
 )

@@ -1,7 +1,8 @@
 from django.shortcuts import render_to_response
 from troggle.core.models import Expedition, Person, PersonExpedition, PersonTrip, LogbookEntry
+import troggle.core.models as models
 import troggle.settings as settings
-from django.db import models
+import django.db.models
 from troggle.parsers.logbooks import LoadLogbookForExpedition
 from troggle.parsers.people import GetPersonExpeditionNameLookup
 from troggle.core.forms import PersonForm
@@ -13,7 +14,7 @@ from troggle.alwaysUseRequestContext import render_response
 
 import re
 
-@models.permalink #this allows the nice get_absolute_url syntax we are using
+@django.db.models.permalink #this allows the nice get_absolute_url syntax we are using
 
 def getNotablePersons():
     notablepersons = []
@@ -27,7 +28,7 @@ def personindex(request):
     persons = Person.objects.all()
     # From what I can tell, "persons" seems to be the table rows, while "personss" is the table columns. - AC 16 Feb 09
     personss = [ ]
-    ncols = 5
+    ncols = 4
     nc = (len(persons) + ncols - 1) / ncols
     for i in range(ncols):
         personss.append(persons[i * nc: (i + 1) * nc])
@@ -76,9 +77,9 @@ def GetPersonChronology(personexpedition):
         a.setdefault("persontrips", [ ]).append(persontrip)
 
     for personrole in personexpedition.personrole_set.all():
-        a = res.setdefault(personrole.survex_block.date, { })
+        a = res.setdefault(personrole.survexblock.date, { })
         b = a.setdefault("personroles", { })
-        survexpath = personrole.survex_block.survexpath
+        survexpath = personrole.survexblock.survexpath
         
         if b.get(survexpath):
             b[survexpath] += ", " + str(personrole.nrole)
@@ -134,4 +135,21 @@ def personForm(request,pk):
     person=Person.objects.get(pk=pk)
     form=PersonForm(instance=person)
     return render_response(request,'personform.html', {'form':form,})
+
+
+def experimental(request):
+    legsbyexpo = [ ]
+    for expedition in Expedition.objects.all():
+        survexblocks = expedition.survexblock_set.all()
+        survexlegs = [ ]
+        survexleglength = 0.0
+        for survexblock in survexblocks:
+            survexlegs.extend(survexblock.survexleg_set.all())
+            survexleglength += survexblock.totalleglength
+        legsbyexpo.append((expedition, {"nsurvexlegs":len(survexlegs), "survexleglength":survexleglength}))
+    legsbyexpo.reverse()
+            
+    survexlegs = models.SurvexLeg.objects.all()
+    totalsurvexlength = sum([survexleg.tape  for survexleg in survexlegs])
+    return render_response(request, 'experimental.html', { "nsurvexlegs":len(survexlegs), "totalsurvexlength":totalsurvexlength, "legsbyexpo":legsbyexpo })
 

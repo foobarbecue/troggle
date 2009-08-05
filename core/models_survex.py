@@ -46,6 +46,22 @@ class SurvexFile(models.Model):
             self.survexdirectory = survexdirectory
         self.save()
 
+class SurvexEquate(models.Model):
+    cave = models.ForeignKey('Cave', blank=True, null=True)
+
+class SurvexStation(models.Model):
+    name = models.CharField(max_length=20)   
+    block = models.ForeignKey('SurvexBlock')
+    equate = models.ForeignKey('SurvexEquate', blank=True, null=True)
+
+class SurvexLeg(models.Model):
+    block = models.ForeignKey('SurvexBlock')
+    #title = models.ForeignKey('SurvexTitle')
+    stationfrom = models.ForeignKey('SurvexStation', related_name='stationfrom')
+    stationto = models.ForeignKey('SurvexStation', related_name='stationto')
+    tape = models.FloatField()
+    compass = models.FloatField()
+    clino = models.FloatField()
 #
 # Single SurvexBlock 
 # 
@@ -62,6 +78,7 @@ class SurvexBlock(models.Model):
     begin_char = models.IntegerField()  # code for where in the survex data files this block sits
     survexpath = models.CharField(max_length=200)   # the path for the survex stations
     refscandir = models.CharField(max_length=100)
+    totalleglength = models.FloatField()
     
     class Meta:
         ordering = ('id',)
@@ -78,6 +95,17 @@ class SurvexBlock(models.Model):
                 res.append({'person':personrole.personexpedition.person, 'expeditionyear':personrole.personexpedition.expedition.year, 'roles':str(personrole.role)})
         return res
 
+    def MakeSurvexStation(self, name):
+        ssl = self.survexstation_set.filter(name=name)
+        if ssl:
+            assert len(ssl) == 1
+            return ssl[0]
+        ss = SurvexStation(name=name, block=self)
+        ss.save()
+        return ss
+    
+    
+
 class SurvexTitle(models.Model):
     survexblock = models.ForeignKey('SurvexBlock')
     title = models.CharField(max_length=200)
@@ -87,7 +115,7 @@ class SurvexTitle(models.Model):
 # member of a SurvexBlock
 #
 class PersonRole(models.Model):
-    survex_block        = models.ForeignKey('SurvexBlock')
+    survexblock        = models.ForeignKey('SurvexBlock')
     
     ROLE_CHOICES = (
         ('insts','Instruments'),
@@ -109,6 +137,6 @@ class PersonRole(models.Model):
     persontrip          = models.ForeignKey('PersonTrip', blank=True, null=True)  
 
     def __unicode__(self):
-        return unicode(self.person) + " - " + unicode(self.survex_block) + " - " + unicode(self.nrole)
+        return unicode(self.person) + " - " + unicode(self.survexblock) + " - " + unicode(self.nrole)
         
     

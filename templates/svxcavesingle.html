@@ -18,7 +18,7 @@
 <h3 id="T_{{survexdirectory.primarysurvexfile.path}}">{{survexdirectory.path}}</h3>
 
 <table>
-<tr><th>Survex file</th><th>Block</th><th>Date</th><th>Explorers</th><th>Titles</th><th>Scans</th></tr>
+<tr><th>Survex file</th><th>Block</th><th>Date</th><th>Explorers</th><th>length</th><th>Titles</th><th>Scans</th></tr>
 
 {% for survexfile in survexdirectory.survexfile_set.all %}
 <tr>
@@ -57,6 +57,8 @@
   {% endfor %}
   </td>
 
+  <td>{{survexblock.totalleglength}}</td>
+
   <td>
   {% for survextitle in survexblock.survextitle_set.all %}
     {{survextitle.title}}
@@ -65,7 +67,7 @@
 
   <td>
   {% if survexblock.refscandir %}
-    <b>{{survexblock.refscandir}}</b>
+    <b><a href="/survey_scans/{{survexblock.refscandir}}/">scans</a></b>
   {% endif %}
   </td>
 </tr>

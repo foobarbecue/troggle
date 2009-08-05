@@ -11,8 +11,8 @@
 {% for person in notablepersons %}
 <tr>
   <td><a href="{{ person.get_absolute_url }}">{{person|wiki_to_html_short}}</a></td>
-  <td><a href="{{ person.personexpedition_set.all.0.get_absolute_url }}">{{ person.personexpedition_set.all.0.expedition.year }}</a></td> 
-  <td><a href="{{ person.personexpedition_set.latest.get_absolute_url }}">{{ person.personexpedition_set.latest.expedition.year }}</a></td> 
+  <td><a href="{{ person.first.get_absolute_url }}">{{ person.first.expedition.year }}</a></td> 
+  <td><a href="{{ person.last.get_absolute_url }}">{{ person.last.expedition.year }}</a></td> 
   <td>{{person.notability}}</td>
 </tr>
 {% endfor %}
@@ -26,12 +26,13 @@
 <td>
 
 <table>
-<tr><th>Person</th><th>First</th><th>Last</th></tr>
+<tr><th>Person</th><th>First</th><th>Last</th><th>Surveyed length</th></tr>
 {% for person in persons %}
 <tr>
   <td><a href="{{ person.get_absolute_url }}">{{person|wiki_to_html_short}}</a></td>
-  <td><a href="{{ person.personexpedition_set.all.0.get_absolute_url }}">{{person.personexpedition_set.all.0.expedition.year}}</a></td> 
-  <td><a href="{{ person.personexpedition_set.latest.get_absolute_url }}">{{person.personexpedition_set.latest.expedition.year}}</a></td> 
+  <td><a href="{{ person.first.get_absolute_url }}">{{person.first.expedition.year}}</a></td> 
+  <td><a href="{{ person.last.get_absolute_url }}">{{person.last.expedition.year}}</a></td> 
+  <td>{{ person.surveyedleglength }}</td>
 </tr>
 {% endfor %}
 </table>

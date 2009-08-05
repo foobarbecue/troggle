@@ -106,7 +106,10 @@ if __name__ == "__main__":
         reset()
     elif "survex" in sys.argv:
         management.call_command('syncdb', interactive=False)  # this sets the path so that import settings works in import_survex
-#        import_survex()
+        import_survex()
+    
+    elif "logbooks" in sys.argv:
+        management.call_command('syncdb', interactive=False)  # this sets the path so that import settings works in import_survex
         import_logbooks()
     else:
         print "Do 'python databaseReset.py reset'"

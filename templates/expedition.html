@@ -52,4 +52,18 @@
 </table>
 </div>
 
+<div>
+<h3 id="surveysdone">Surveys done</h3>
+<table class="survextrip">
+<tr><th>Date</th><th>Name</th><th>Length</th></tr>
+{% for survexblock in expedition.survexblock_set.all %}
+  <tr>
+    <td>{{survexblock.date}}</td>
+    <td><a href="{% url svx survexblock.survexfile.path %}">{{survexblock.name}}</a></td>
+    <td>{{survexblock.totalleglength}}</td>
+  </tr>
+{% endfor %}
+</table>
+</div>
+
 {% endblock %}

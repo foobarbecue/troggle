@@ -113,8 +113,7 @@ class SvxForm(forms.Form):
 def svx(request, survex_file):
     # get the basic data from the file given in the URL
     dirname = os.path.split(survex_file)[0]
-    if dirname:
-        dirname += "/"
+    dirname += "/"
     nowtime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     outputtype = "normal"
     form = SvxForm({'filename':survex_file, 'dirname':dirname, 'datetime':nowtime, 'outputtype':outputtype}) 

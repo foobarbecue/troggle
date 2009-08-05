@@ -13,6 +13,7 @@ getcontext().prec=2 #use 2 significant figures for decimal calculations
 
 from models_survex import *
 
+
 def get_related_by_wikilinks(wiki_text):
     found=re.findall(settings.QM_PATTERN,wiki_text)
     res=[]
@@ -120,6 +121,14 @@ class Person(TroggleModel):
     def bisnotable(self):
         return self.notability() > Decimal(1)/Decimal(3)
     
+    def surveyedleglength(self):
+        return sum([personexpedition.surveyedleglength()  for personexpedition in self.personexpedition_set.all()])
+    
+    def first(self):
+        return self.personexpedition_set.order_by('-expedition')[0]
+    def last(self):
+        return self.personexpedition_set.order_by('expedition')[0]
+    
     #def Sethref(self):
         #if self.last_name:
             #self.href = self.first_name.lower() + "_" + self.last_name.lower()
@@ -151,11 +160,11 @@ class PersonExpedition(TroggleModel):
     
     def GetPersonroles(self):
         res = [ ]
-        for personrole in self.personrole_set.order_by('survex_block'):
-            if res and res[-1]['survexpath'] == personrole.survex_block.survexpath:
+        for personrole in self.personrole_set.order_by('survexblock'):
+            if res and res[-1]['survexpath'] == personrole.survexblock.survexpath:
                 res[-1]['roles'] += ", " + str(personrole.role)
             else:
-                res.append({'date':personrole.survex_block.date, 'survexpath':personrole.survex_block.survexpath, 'roles':str(personrole.role)})
+                res.append({'date':personrole.survexblock.date, 'survexpath':personrole.survexblock.survexpath, 'roles':str(personrole.role)})
         return res
 
     class Meta:
@@ -178,6 +187,9 @@ class PersonExpedition(TroggleModel):
     def get_absolute_url(self):
         return urlparse.urljoin(settings.URL_ROOT, reverse('personexpedition',kwargs={'first_name':self.person.first_name,'last_name':self.person.last_name,'year':self.expedition.year}))
 	
+    def surveyedleglength(self):
+        survexblocks = [personrole.survexblock  for personrole in self.personrole_set.all() ]
+        return sum([survexblock.totalleglength  for survexblock in set(survexblocks)])
     
 #
 # Single parsed entry from Logbook

@@ -40,6 +40,8 @@ def GetTripPersons(trippeople, expedition, logtime_underground):
             if mul:
                 author = personyear
     if not author:
+        if not res:
+            return None, None
         author = res[-1][0]
     return res, author
 
@@ -75,6 +77,10 @@ noncaveplaces = [ "Journey", "Loser Plateau" ]
 def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_underground):
     """ saves a logbook entry and related persontrips """
     trippersons, author = GetTripPersons(trippeople, expedition, logtime_underground)
+    if not author:
+        print "skipping logentry", title
+        return
+    
 #    tripCave = GetTripCave(place)
     #
     lplace = place.lower()
@@ -135,15 +141,20 @@ def Parselogwikitxt(year, expedition, txt):
 def Parseloghtmltxt(year, expedition, txt):
     tripparas = re.findall("<hr\s*/>([\s\S]*?)(?=<hr)", txt)
     for trippara in tripparas:
-        s = re.match('''(?x)\s*(?:<a\s+id="(.*?)"\s*/>)?
-                            \s*<div\s+class="tripdate"\s*(?:id="(.*?)")?>(.*?)</div>
+        
+        s = re.match('''(?x)(?:\s*<div\sclass="tripdate"\sid=".*?">.*?</div>\s*<p>)?  # second date
+                            \s*(?:<a\s+id="(.*?)"\s*/>)?
+                            \s*<div\s+class="tripdate"\s*(?:id="(.*?)")?>(.*?)</div>(?:<p>)?
                             \s*<div\s+class="trippeople">\s*(.*?)</div>
                             \s*<div\s+class="triptitle">\s*(.*?)</div>
                             ([\s\S]*?)
                             \s*(?:<div\s+class="timeug">\s*(.*?)</div>)?
                             \s*$
                      ''', trippara)
-        assert s, trippara
+        if not s:
+            print "can't parse: ", trippara  # this is 2007 which needs editing
+            #assert s, trippara
+            continue
 
         tripid, tripid1, tripdate, trippeople, triptitle, triptext, tu = s.groups()
         ldate = ParseDate(tripdate.strip(), year)
@@ -240,7 +251,7 @@ def Parseloghtml03(year, expedition, txt):
 
 yearlinks = [ 
                 ("2008", "2008/2008logbook.txt", Parselogwikitxt), 
-                ("2007", "2007/2007logbook.txt", Parselogwikitxt), 
+                ("2007", "2007/logbook.html", Parseloghtmltxt), 
                 ("2006", "2006/logbook/logbook_06.txt", Parselogwikitxt), 
                 ("2005", "2005/logbook.html", Parseloghtmltxt), 
                 ("2004", "2004/logbook.html", Parseloghtmltxt), 
@@ -326,6 +337,7 @@ def LoadLogbookForExpedition(expedition):
         if lyear == year:
             break
     fin = open(os.path.join(expowebbase, lloc))
+    print "opennning", lloc
     txt = fin.read().decode("latin1")
     fin.close()
     parsefunc(year, expedition, txt)
