@@ -44,7 +44,7 @@ class QMsFoundInline(admin.TabularInline):
     extra=1
     
 class PhotoInline(admin.TabularInline):
-    model = Photo
+    model = DPhoto
     exclude = ['is_mugshot' ]
     extra = 1
 
@@ -104,7 +104,7 @@ class CaveAdmin(TroggleModelAdmin):
 class EntranceAdmin(TroggleModelAdmin):
     search_fields = ('caveandentrance__cave__kataster_number',)
 
-admin.site.register(Photo)
+admin.site.register(DPhoto)
 admin.site.register(Cave, CaveAdmin)
 admin.site.register(Area)
 #admin.site.register(OtherCaveName)
@@ -136,5 +136,5 @@ def export_as_xml(modeladmin, request, queryset):
     serializers.serialize("xml", queryset, stream=response)
     return response
 
-admin.site.add_action(export_as_xml)
-admin.site.add_action(export_as_json)
+#admin.site.add_action(export_as_xml)
+#admin.site.add_action(export_as_json)

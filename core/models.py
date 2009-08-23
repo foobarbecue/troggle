@@ -531,7 +531,7 @@ class QM(TroggleModel):
 	return u"%s%s%s" % ('[[QM:',self.code(),']]')
 
 photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
-class Photo(TroggleImageModel): 
+class DPhoto(TroggleImageModel): 
     caption = models.CharField(max_length=1000,blank=True,null=True)
     contains_logbookentry = models.ForeignKey(LogbookEntry,blank=True,null=True)
     contains_person = models.ManyToManyField(Person,blank=True,null=True)

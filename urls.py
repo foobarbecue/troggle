@@ -67,7 +67,7 @@ urlpatterns = patterns('',
     url(r'^eyecandy$', views_other.eyecandy),
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
-    (r'^admin/', include(admin.site.urls)),
+    #(r'^admin/', include(admin.site.urls)),
 
     (r'^accounts/', include('registration.urls')),
     (r'^profiles/', include('profiles.urls')),

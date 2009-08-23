@@ -1,4 +1,4 @@
-from troggle.core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, Photo, QM
+from troggle.core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, DPhoto, QM
 from django.conf import settings
 from django import forms
 from django.template import loader, Context
@@ -28,7 +28,7 @@ def frontpage(request):
     expeditions =  Expedition.objects.order_by("-year")
     logbookentry = LogbookEntry
     cave = Cave
-    photo = Photo
+    photo = DPhoto
     from django.contrib.admin.templatetags import log
     return render_with_context(request,'frontpage.html', locals())
 

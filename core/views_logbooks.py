@@ -10,7 +10,8 @@ from  django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 # Django uses Context, not RequestContext when you call render_to_response. We always want to use RequestContext, so that django adds the context from settings.TEMPLATE_CONTEXT_PROCESSORS. This way we automatically get necessary settings variables passed to each template. So we use a custom method, render_response instead of render_to_response. Hopefully future Django releases will make this unnecessary.
-from troggle.alwaysUseRequestContext import render_response
+from django.shortcuts import render_to_response as render_response
+#from troggle.alwaysUseRequestContext import render_response
 
 import re
 
