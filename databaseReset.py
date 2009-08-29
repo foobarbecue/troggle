@@ -29,6 +29,7 @@ def make_dirs():
         os.mkdir(settings.PHOTOS_ROOT)
 
 
+
 def import_cavetab():
     import parsers.cavetab
     print "importing cavetab"
