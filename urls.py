@@ -9,6 +9,7 @@ from core.models import *
 from django.views.generic.create_update import create_object
 from django.contrib import admin
 from django.views.generic.list_detail import object_list
+from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -67,7 +68,7 @@ urlpatterns = patterns('',
     url(r'^eyecandy$', views_other.eyecandy),
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
-    #(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/(.*)', admin.site.root, name="admin"),
 
     (r'^accounts/', include('registration.urls')),
     (r'^profiles/', include('profiles.urls')),
