@@ -7,10 +7,11 @@ from troggle.parsers.logbooks import LoadLogbookForExpedition
 from troggle.parsers.people import GetPersonExpeditionNameLookup
 from troggle.core.forms import PersonForm
 from  django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
+from utils import render_with_context
+
 
 # Django uses Context, not RequestContext when you call render_to_response. We always want to use RequestContext, so that django adds the context from settings.TEMPLATE_CONTEXT_PROCESSORS. This way we automatically get necessary settings variables passed to each template. So we use a custom method, render_response instead of render_to_response. Hopefully future Django releases will make this unnecessary.
-from django.shortcuts import render_to_response as render_response
 #from troggle.alwaysUseRequestContext import render_response
 
 import re
@@ -39,7 +40,7 @@ def personindex(request):
             if person.bisnotable():
                 notablepersons.append(person)
 
-    return render_response(request,'personindex.html', {'persons': persons, 'personss':personss, 'notablepersons':notablepersons, })
+    return render_with_context(request,'personindex.html', {'persons': persons, 'personss':personss, 'notablepersons':notablepersons, })
 
 
 def expedition(request, expeditionname):
@@ -52,7 +53,7 @@ def expedition(request, expeditionname):
         message = LoadLogbookForExpedition(expedition)
     #message = str(GetPersonExpeditionNameLookup(expedition).keys())
     logbookentries = expedition.logbookentry_set.order_by('date')
-    return render_response(request,'expedition.html', {'expedition': expedition, 'expedition_next':expedition_next, 'expedition_prev':expedition_prev, 'logbookentries':logbookentries, 'message':message, })
+    return render_with_context(request,'expedition.html', {'expedition': expedition, 'expedition_next':expedition_next, 'expedition_prev':expedition_prev, 'logbookentries':logbookentries, 'message':message, 'settings':settings })
 
     def get_absolute_url(self):
         return ('expedition', (expedition.year))
@@ -68,7 +69,7 @@ def person(request, first_name='', last_name='', ):
             person.save()
             return HttpResponseRedirect(reverse('profiles_select_profile'))
     
-    return render_response(request,'person.html', {'person': person, })
+    return render_with_context(request,'person.html', {'person': person, })
 
 
 def GetPersonChronology(personexpedition):
@@ -107,17 +108,17 @@ def personexpedition(request, first_name='',  last_name='', year=''):
     expedition = Expedition.objects.get(year=year)
     personexpedition = person.personexpedition_set.get(expedition=expedition)
     personchronology = GetPersonChronology(personexpedition)
-    return render_response(request,'personexpedition.html', {'personexpedition': personexpedition, 'personchronology':personchronology})
+    return render_with_context(request,'personexpedition.html', {'personexpedition': personexpedition, 'personchronology':personchronology})
 
 
 def logbookentry(request, date, slug):
     logbookentry = LogbookEntry.objects.filter(date=date, slug=slug)
 
     if len(logbookentry)>1:
-        return render_response(request, 'object_list.html',{'object_list':logbookentry})
+        return render_with_context(request, 'object_list.html',{'object_list':logbookentry})
     else:
         logbookentry=logbookentry[0]
-        return render_response(request, 'logbookentry.html', {'logbookentry': logbookentry})
+        return render_with_context(request, 'logbookentry.html', {'logbookentry': logbookentry})
 
 
 def logbookSearch(request, extra):
@@ -128,14 +129,14 @@ def logbookSearch(request, extra):
     entry_query = search.get_query(query_string, ['text','title',])
     found_entries = LogbookEntry.objects.filter(entry_query)
 
-    return render_response(request,'logbooksearch.html',
+    return render_with_context(request,'logbooksearch.html',
                           { 'query_string': query_string, 'found_entries': found_entries, })
                           #context_instance=RequestContext(request))
 
 def personForm(request,pk):
     person=Person.objects.get(pk=pk)
     form=PersonForm(instance=person)
-    return render_response(request,'personform.html', {'form':form,})
+    return render_with_context(request,'personform.html', {'form':form,})
 
 
 def experimental(request):
@@ -152,5 +153,5 @@ def experimental(request):
             
     survexlegs = models.SurvexLeg.objects.all()
     totalsurvexlength = sum([survexleg.tape  for survexleg in survexlegs])
-    return render_response(request, 'experimental.html', { "nsurvexlegs":len(survexlegs), "totalsurvexlength":totalsurvexlength, "legsbyexpo":legsbyexpo })
+    return render_with_context(request, 'experimental.html', { "nsurvexlegs":len(survexlegs), "totalsurvexlength":totalsurvexlength, "legsbyexpo":legsbyexpo })
 
