@@ -142,8 +142,11 @@ def svx(request, survex_file):
                     message = "SAVE FILE FIRST"
                     form.data['code'] = rcode
             if "save" in rform.data:
-                print "sssavvving"
-                message = form.SaveCode(rcode)
+                if request.user.is_authenticated():
+                    #print "sssavvving"
+                    message = form.SaveCode(rcode)
+                else:
+                    message = "You do not have authority to save this file"
                 if message != "SAVED":
                     form.data['code'] = rcode
             if "diff" in rform.data:
