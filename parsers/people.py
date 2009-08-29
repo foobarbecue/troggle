@@ -11,14 +11,14 @@ def saveMugShot(mugShotPath, mugShotFilename, person):
     else:
         mugShotFilename=mugShotFilename # just in case one doesn't
     
-    dummyObj=models.Photo(file=mugShotFilename)
+    dummyObj=models.DPhoto(file=mugShotFilename)
     
     #Put a copy of the file in the right place. mugShotObj.file.path is determined by the django filesystemstorage specified in models.py
     if not os.path.exists(dummyObj.file.path):
         shutil.copy(mugShotPath, dummyObj.file.path)
     
     mugShotObj, created = save_carefully(
-        models.Photo,
+        models.DPhoto,
         lookupAttribs={'is_mugshot':True, 'file':mugShotFilename},
         nonLookupAttribs={'caption':"Mugshot for "+person.first_name+" "+person.last_name}
         )

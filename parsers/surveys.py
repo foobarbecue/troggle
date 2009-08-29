@@ -25,11 +25,11 @@ def get_or_create_placeholder(year):
     return placeholder_logbook_entry
 
 def readSurveysFromCSV():
-    try:
-        surveytab = open(os.path.join(settings.SURVEYS, "Surveys.csv"))
+    try:   # could probably combine these two
+        surveytab = open(os.path.join(settings.SURVEY_SCANS, "Surveys.csv"))
     except IOError:
-        import cStringIO, urllib
-        surveytab = cStringIO.StringIO(urllib.urlopen(settings.SURVEYS + "download/Surveys.csv").read())
+        import cStringIO, urllib  
+        surveytab = cStringIO.StringIO(urllib.urlopen(settings.SURVEY_SCANS + "/Surveys.csv").read())
     dialect=csv.Sniffer().sniff(surveytab.read())
     surveytab.seek(0,0)
     surveyreader = csv.reader(surveytab,dialect=dialect)
@@ -87,7 +87,7 @@ def listdir(*directories):
 # add survey scans
 def parseSurveyScans(year, logfile=None):
 #    yearFileList = listdir(year.year)
-    yearPath=os.path.join(settings.SURVEY_SCANS, year.year)
+    yearPath=os.path.join(settings.SURVEY_SCANS, "years", year.year)
     yearFileList=os.listdir(yearPath)
     print yearFileList
     for surveyFolder in yearFileList:

@@ -69,6 +69,10 @@ urlpatterns = patterns('',
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root, name="admin"),
+    
+    # don't know why this needs troggle/ in here.  nice to get it out
+    url(r'^troggle/media-admin/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ADMIN_DIR, 'show_indexes':True}),
+
 
     (r'^accounts/', include('registration.urls')),
     (r'^profiles/', include('profiles.urls')),
