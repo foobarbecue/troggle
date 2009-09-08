@@ -119,6 +119,7 @@ def Parselogwikitxt(year, expedition, txt):
     trippara = re.findall("===(.*?)===([\s\S]*?)(?====)", txt)
     for triphead, triptext in trippara:
         tripheadp = triphead.split("|")
+        #print tripheadp
         assert len(tripheadp) == 3, (tripheadp, triptext)
         tripdate, tripplace, trippeople = tripheadp
         tripsplace = tripplace.split(" - ")
@@ -133,6 +134,7 @@ def Parselogwikitxt(year, expedition, txt):
             tu = ""
             #assert tripcave == "Journey", (triphead, triptext)
 
+        print tripdate
         ldate = ParseDate(tripdate.strip(), year)
         #print "\n", tripcave, "---   ppp", trippeople, len(triptext)
         EnterLogIntoDbase(date = ldate, place = tripcave, title = tripplace, text = triptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
@@ -250,6 +252,7 @@ def Parseloghtml03(year, expedition, txt):
         EnterLogIntoDbase(date = ldate, place = tripcave, title = triptitle, text = ltriptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
 
 yearlinks = [ 
+                ("2009", "2009/2009logbook.txt", Parselogwikitxt), 
                 ("2008", "2008/2008logbook.txt", Parselogwikitxt), 
                 ("2007", "2007/logbook.html", Parseloghtmltxt), 
                 ("2006", "2006/logbook/logbook_06.txt", Parselogwikitxt), 
@@ -267,6 +270,7 @@ yearlinks = [
                 ("1994", "1994/log.htm", Parseloghtml01), 
                 ("1993", "1993/log.htm", Parseloghtml01), 		
                 ("1992", "1992/log.htm", Parseloghtml01), 		
+                #("1991", "1991/log.htm", Parseloghtml01), 		
             ]
 
 def SetDatesFromLogbookEntries(expedition):
