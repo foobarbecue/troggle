@@ -22,10 +22,10 @@
 {% endif %}
 
 {% if survexblock.survexblock_set.all %}
-    <p>Survey blocks below:</p>
-{% for survexblockdown in survexblock.survexblock_set.all %}
+  <p>Survey blocks below:</p>
+  {% for survexblockdown in survexblock.survexblock_set.all %}
     <p class="indent"><a href="{% url survexblock survexblockdown.survexpath %}">{{survexblockdown.survexpath}}</a></p>
-{% endfor %}
+  {% endfor %}
 {% endif %}
 
 <p>Date: {{survexblock.date}}</p>
@@ -43,7 +43,7 @@
 </div>
 
 <div class="survexblock">
-{{ftext|survex_to_html}}
+  {{ftext|survex_to_html}}
 </div>
 
 {% endblock %}

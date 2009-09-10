@@ -19,7 +19,7 @@ class TroggleModelAdmin(admin.ModelAdmin):
         js = ('js/jquery.js','js/QM_helper.js')
 
 class RoleInline(admin.TabularInline):
-    model = PersonRole
+    model = SurvexPersonRole
     extra = 4
 
 class SurvexBlockAdmin(TroggleModelAdmin):
@@ -116,13 +116,16 @@ admin.site.register(Entrance, EntranceAdmin)
 admin.site.register(SurvexBlock, SurvexBlockAdmin)
 admin.site.register(Expedition)
 admin.site.register(Person,PersonAdmin)
-admin.site.register(PersonRole)
+admin.site.register(SurvexPersonRole)
 admin.site.register(PersonExpedition,PersonExpeditionAdmin)
 admin.site.register(LogbookEntry, LogbookEntryAdmin)
 #admin.site.register(PersonTrip)
 admin.site.register(QM, QMAdmin)
 admin.site.register(Survey, SurveyAdmin)
 admin.site.register(ScannedImage)
+
+admin.site.register(SurvexScansFolder)
+admin.site.register(SurvexScanSingle)
 
 def export_as_json(modeladmin, request, queryset):
     response = HttpResponse(mimetype="text/json")

@@ -8,7 +8,7 @@ import datetime
 import difflib
 
 from troggle.core.models import Expedition, Person, PersonExpedition, PersonTrip, LogbookEntry, Cave
-from troggle.core.models import SurvexBlock, PersonRole, SurvexFile, SurvexDirectory, SurvexTitle
+from troggle.core.models import SurvexBlock, SurvexPersonRole, SurvexFile, SurvexDirectory, SurvexTitle
 from parsers.people import GetPersonExpeditionNameLookup
 
 import troggle.settings as settings
@@ -306,8 +306,10 @@ def survexcaveslist(request):
 # parsing all the survex files of a single cave and showing that it's consistent and can find all the files and people
 # doesn't use recursion.  just writes it twice
 def survexcavesingle(request, survex_cave):
+    breload = False
     cave = Cave.objects.get(kataster_number=survex_cave)
-    parsers.survex.ReloadSurvexCave(survex_cave)
+    if breload:
+        parsers.survex.ReloadSurvexCave(survex_cave)
     return render_to_response('svxcavesingle.html', {'settings': settings, "cave":cave })
 
     

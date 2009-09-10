@@ -4,9 +4,11 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
 import os
 import re
+from troggle.core.models import SurvexScansFolder, SurvexScanSingle, SurvexBlock
 
 # inline fileabstraction into here if it's not going to be useful anywhere else 
 # keep things simple and ignore exceptions everywhere for now
+
 
 def getMimeType(extension):
     try:
@@ -159,3 +161,18 @@ def jgtuploadfile(request):
     print "gothere"
     return render_to_response('fileupload.html', {'message':message, 'filesuploaded':filesuploaded, 'settings': settings})
 
+def surveyscansfolder(request, path):
+    #print [ s.walletname  for s in SurvexScansFolder.objects.all() ]
+    survexscansfolder = SurvexScansFolder.objects.get(walletname=path)
+    return render_to_response('survexscansfolder.html', { 'survexscansfolder':survexscansfolder, 'settings': settings })
+
+def surveyscansingle(request, path, file):
+    survexscansfolder = SurvexScansFolder.objects.get(walletname=path)
+    survexscansingle = SurvexScanSingle.objects.get(survexscansfolder=survexscansfolder, name=file)
+    return HttpResponse(content=open(survexscansingle.ffile), mimetype="image/png")
+    #return render_to_response('survexscansfolder.html', { 'survexscansfolder':survexscansfolder, 'settings': settings })
+    
+def surveyscansfolders(request):
+    survexscansfolders = SurvexScansFolder.objects.all()
+    return render_to_response('survexscansfolders.html', { 'survexscansfolders':survexscansfolders, 'settings': settings })
+    

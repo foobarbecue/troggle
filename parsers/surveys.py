@@ -2,8 +2,8 @@ import sys, os, types, logging
 #sys.path.append('C:\\Expo\\expoweb')
 #from troggle import *
 #os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
-import troggle.settings as settings
-from troggle.core.models import *
+import settings
+from core.models import *
 from PIL import Image
 #import settings
 #import core.models as models
@@ -146,3 +146,56 @@ def isInterlacedPNG(filePath): #We need to check for interlaced PNGs because the
         return file.info['interlace']
     else:
         return False
+
+
+# handles url or file
+def GetListDir(sdir):
+    res = [ ]
+    if sdir[:7] == "http://":
+        s = urllib.urlopen(sdir)
+    else:
+        for f in os.listdir(sdir):
+            if f[0] != ".":
+                ff = os.path.join(sdir, f)
+                res.append((f, ff, os.path.isdir(ff)))
+    return res
+        
+# this iterates through the scans directories (either here or on the remote server)
+# and builds up the models we can access later
+def LoadListScans(surveyscansdir):
+    SurvexScanSingle.objects.all().delete()
+    SurvexScansFolder.objects.all().delete()
+
+    for f, ff, fisdir in GetListDir(surveyscansdir):
+        if not fisdir:
+            continue
+        
+        # do the year folders
+        if re.match("\d\d\d\d$", f):
+            for fy, ffy, fisdiry in GetListDir(ff):
+                assert fisdiry, ffy
+                survexscansfolder = SurvexScansFolder(fpath=ffy, walletname=fy)
+                survexscansfolder.save()
+                for fyf, ffyf, fisdiryf in GetListDir(ffy):
+                    assert not fisdiryf, ffyf
+                    survexscansingle = SurvexScanSingle(ffile=ffyf, name=fyf, survexscansfolder=survexscansfolder)
+                    survexscansingle.save()
+        elif f != "thumbs":
+            survexscansfolder = SurvexScansFolder(fpath=ff, walletname=f)
+            survexscansfolder.save()
+            gld = [ ]
+            
+            # flatten out any directories in these book files
+            for (fyf, ffyf, fisdiryf) in GetListDir(ff):
+                if fisdiryf:
+                    gld.extend(GetListDir(ffyf))
+                else:
+                    gld.append((fyf, ffyf, fisdiryf))
+            
+            for (fyf, ffyf, fisdiryf) in gld:
+                assert not fisdiryf, ffyf
+                survexscansingle = SurvexScanSingle(ffile=ffyf, name=fyf, survexscansfolder=survexscansfolder)
+                survexscansingle.save()
+            
+            
+        

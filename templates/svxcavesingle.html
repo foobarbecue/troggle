@@ -66,8 +66,8 @@
   </td>
 
   <td>
-  {% if survexblock.refscandir %}
-    <b><a href="/survey_scans/{{survexblock.refscandir}}/">scans</a></b>
+  {% if survexblock.survexscansfolder %}
+    <b><a href="{{survexblock.survexscansfolder.get_absolute_url}}">{{survexblock.survexscansfolder.walletname}}</a></b>
   {% endif %}
   </td>
 </tr>

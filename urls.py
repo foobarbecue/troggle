@@ -12,6 +12,9 @@ from django.views.generic.list_detail import object_list
 from django.contrib import admin
 admin.autodiscover()
 
+
+# type url probably means it's used.
+
 urlpatterns = patterns('',
     
     url(r'^$',              views_other.frontpage,      name="frontpage"),
@@ -86,14 +89,14 @@ urlpatterns = patterns('',
         
     url(r'^survexblock/(.+)$',                     views_caves.survexblock, name="survexblock"),
     url(r'^survexfile/(?P<survex_file>.*?)\.svx$', views_survex.svx,        name="svx"),
-    url(r'^survexfile/(?P<survex_file>.*?)\.3d$',   views_survex.threed,     name="threed"),
+    url(r'^survexfile/(?P<survex_file>.*?)\.3d$',  views_survex.threed,     name="threed"),
     url(r'^survexfile/(?P<survex_file>.*?)\.log$', views_survex.svxraw),
     url(r'^survexfile/(?P<survex_file>.*?)\.err$', views_survex.err),
     
             
     url(r'^survexfile/caves/$',                     views_survex.survexcaveslist,  name="survexcaveslist"),
-    url(r'^survexfile/caves/(?P<survex_cave>.*)$', views_survex.survexcavesingle, name="survexcavessingle"),
-    url(r'^survexfileraw/(?P<survex_file>.*?)\.svx$', views_survex.svxraw,        name="svxraw"),
+    url(r'^survexfile/caves/(?P<survex_cave>.*)$',  views_survex.survexcavesingle, name="survexcavessingle"),
+    url(r'^survexfileraw/(?P<survex_file>.*?)\.svx$', views_survex.svxraw,         name="svxraw"),
             
                 
     (r'^survey_files/listdir/(?P<path>.*)$',       view_surveys.listdir),
@@ -102,8 +105,11 @@ urlpatterns = patterns('',
 
     
             
-     (r'^survey_scans/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': settings.SURVEY_SCANS, 'show_indexes':True}),
+    #(r'^survey_scans/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.SURVEY_SCANS, 'show_indexes':True}),
+    url(r'^survey_scans/$',                        view_surveys.surveyscansfolders, name="surveyscansfolders"), 
+    url(r'^survey_scans/(?P<path>[^/]+)/$',        view_surveys.surveyscansfolder,  name="surveyscansfolder"), 
+    url(r'^survey_scans/(?P<path>[^/]+)/(?P<file>[^/]+(?:png|jpg))$', 
+                                                   view_surveys.surveyscansingle,   name="surveyscansingle"), 
 
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.PHOTOS_ROOT, 'show_indexes':True}),

@@ -68,8 +68,13 @@ def RecursiveLoad(survexblock, survexfile, fin, textlines):
         # detect ref line pointing to the scans directory
         mref = comment and re.match('.*?ref.*?(\d+)\s*#\s*(\d+)', comment)
         if mref:
-            survexblock.refscandir = "%s/%s%%23%s" % (mref.group(1), mref.group(1), mref.group(2))
-            survexblock.save()   
+            refscan = "%s#%s" % (mref.group(1), mref.group(2))
+            print refscan
+            survexscansfolders = models.SurvexScansFolder.objects.filter(walletname=refscan)
+            if survexscansfolders:
+                survexblock.survexscansfolder = survexscansfolders[0]
+                #survexblock.refscandir = "%s/%s%%23%s" % (mref.group(1), mref.group(1), mref.group(2))
+                survexblock.save()   
             continue
         
         if not sline:
@@ -128,7 +133,7 @@ def RecursiveLoad(survexblock, survexfile, fin, textlines):
                         personexpedition = survexblock.expedition and GetPersonExpeditionNameLookup(survexblock.expedition).get(tm.lower())
                         if (personexpedition, tm) not in teammembers:
                             teammembers.append((personexpedition, tm))
-                            personrole = models.PersonRole(survexblock=survexblock, nrole=mteammember.group(1).lower(), personexpedition=personexpedition, personname=tm)
+                            personrole = models.SurvexPersonRole(survexblock=survexblock, nrole=mteammember.group(1).lower(), personexpedition=personexpedition, personname=tm)
                             if personexpedition:
                                 personrole.person=personexpedition.person
                             personrole.save()

@@ -1,6 +1,9 @@
 from django.db import models
 from django.conf import settings
 import os
+import urlparse
+import re
+from django.core.urlresolvers import reverse
 
 
 ###########################################################
@@ -47,37 +50,42 @@ class SurvexFile(models.Model):
         self.save()
 
 class SurvexEquate(models.Model):
-    cave = models.ForeignKey('Cave', blank=True, null=True)
+    cave        = models.ForeignKey('Cave', blank=True, null=True)
 
 class SurvexStation(models.Model):
-    name = models.CharField(max_length=20)   
-    block = models.ForeignKey('SurvexBlock')
-    equate = models.ForeignKey('SurvexEquate', blank=True, null=True)
+    name        = models.CharField(max_length=20)   
+    block       = models.ForeignKey('SurvexBlock')
+    equate      = models.ForeignKey('SurvexEquate', blank=True, null=True)
 
 class SurvexLeg(models.Model):
-    block = models.ForeignKey('SurvexBlock')
+    block       = models.ForeignKey('SurvexBlock')
     #title = models.ForeignKey('SurvexTitle')
     stationfrom = models.ForeignKey('SurvexStation', related_name='stationfrom')
-    stationto = models.ForeignKey('SurvexStation', related_name='stationto')
-    tape = models.FloatField()
-    compass = models.FloatField()
-    clino = models.FloatField()
+    stationto   = models.ForeignKey('SurvexStation', related_name='stationto')
+    tape        = models.FloatField()
+    compass     = models.FloatField()
+    clino       = models.FloatField()
+
+
 #
 # Single SurvexBlock 
 # 
 class SurvexBlock(models.Model):
-    name = models.CharField(max_length=100)
-    parent = models.ForeignKey('SurvexBlock', blank=True, null=True)
-    text = models.TextField()
-    cave = models.ForeignKey('Cave', blank=True, null=True)
+    name       = models.CharField(max_length=100)
+    parent     = models.ForeignKey('SurvexBlock', blank=True, null=True)
+    text       = models.TextField()
+    cave       = models.ForeignKey('Cave', blank=True, null=True)
     
-    date    = models.DateField(blank=True, null=True)
+    date       = models.DateField(blank=True, null=True)
     expedition = models.ForeignKey('Expedition', blank=True, null=True)
         
-    survexfile  = models.ForeignKey("SurvexFile", blank=True, null=True)
+    survexfile = models.ForeignKey("SurvexFile", blank=True, null=True)
     begin_char = models.IntegerField()  # code for where in the survex data files this block sits
     survexpath = models.CharField(max_length=200)   # the path for the survex stations
-    refscandir = models.CharField(max_length=100)
+    
+    survexscansfolder = models.ForeignKey("SurvexScansFolder", null=True)  
+    #refscandir = models.CharField(max_length=100)
+    
     totalleglength = models.FloatField()
     
     class Meta:
@@ -108,16 +116,13 @@ class SurvexBlock(models.Model):
 
 class SurvexTitle(models.Model):
     survexblock = models.ForeignKey('SurvexBlock')
-    title = models.CharField(max_length=200)
-    cave = models.ForeignKey('Cave', blank=True, null=True)
+    title       = models.CharField(max_length=200)
+    cave        = models.ForeignKey('Cave', blank=True, null=True)
 
 #
 # member of a SurvexBlock
 #
-class PersonRole(models.Model):
-    survexblock        = models.ForeignKey('SurvexBlock')
-    
-    ROLE_CHOICES = (
+ROLE_CHOICES = (
         ('insts','Instruments'),
         ('dog','Other'),
         ('notes','Notes'),
@@ -128,9 +133,11 @@ class PersonRole(models.Model):
         ('disto','Disto'),
         ('consultant','Consultant'),
         )
-    nrole = models.CharField(choices=ROLE_CHOICES, max_length=200, blank=True, null=True)
 
-    # increasing levels of precision
+class SurvexPersonRole(models.Model):
+    survexblock         = models.ForeignKey('SurvexBlock')
+    nrole               = models.CharField(choices=ROLE_CHOICES, max_length=200, blank=True, null=True)
+        # increasing levels of precision
     personname          = models.CharField(max_length=100)
     person              = models.ForeignKey('Person', blank=True, null=True)
     personexpedition    = models.ForeignKey('PersonExpedition', blank=True, null=True)
@@ -138,5 +145,22 @@ class PersonRole(models.Model):
 
     def __unicode__(self):
         return unicode(self.person) + " - " + unicode(self.survexblock) + " - " + unicode(self.nrole)
+        
+    
+class SurvexScansFolder(models.Model):
+    fpath               = models.CharField(max_length=200)
+    walletname          = models.CharField(max_length=200)
+    
+    def get_absolute_url(self):
+        return urlparse.urljoin(settings.URL_ROOT, reverse('surveyscansfolder', kwargs={"path":re.sub("#", "%23", self.walletname)}))
+    
+class SurvexScanSingle(models.Model):
+    ffile               = models.CharField(max_length=200)
+    name                = models.CharField(max_length=200)
+    survexscansfolder   = models.ForeignKey("SurvexScansFolder", null=True)
+    
+    def get_absolute_url(self):
+        return urlparse.urljoin(settings.URL_ROOT, reverse('surveyscansingle', kwargs={"path":re.sub("#", "%23", self.survexscansfolder.walletname), "file":self.name}))
+    
         
     

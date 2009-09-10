@@ -61,6 +61,11 @@ def import_surveys():
     import parsers.surveys
     parsers.surveys.parseSurveys(logfile=settings.LOGFILE)
 
+def import_surveyscans():
+    import parsers.surveys
+    parsers.surveys.LoadListScans(settings.SURVEY_SCANS)
+
+    
 def import_descriptions():
     import parsers.descriptions
     parsers.descriptions.getDescriptions()
@@ -77,6 +82,7 @@ def reset():
     make_dirs()
     import_cavetab()
     import_people()
+    import_surveyscans()
     import_survex()
     import_logbooks()
     import_QMs()
@@ -104,6 +110,8 @@ if __name__ == "__main__":
     import sys
     if "desc" in sys.argv:
         resetdesc()
+    elif "scans" in sys.argv:
+        import_surveyscans()
     elif "reset" in sys.argv:
         reset()
     elif "survex" in sys.argv:
