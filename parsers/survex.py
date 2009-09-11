@@ -123,8 +123,9 @@ def RecursiveLoad(survexblock, survexfile, fin, textlines):
                 survexblock.date = re.sub("\.", "-", line)
                 expeditions = models.Expedition.objects.filter(year=line[:4])
                 if expeditions:
+                    assert len(expeditions) == 1
                     survexblock.expedition = expeditions[0]
-        
+                    survexblock.expeditiondate = survexblock.expedition.get_expedition_day(survexblock.date)
         elif re.match("team$(?i)", cmd):
             mteammember = re.match("(Insts|Notes|Tape|Dog|Useless|Pics|Helper|Disto|Consultant)\s+(.*)$(?i)", line)
             if mteammember:

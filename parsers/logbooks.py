@@ -91,10 +91,11 @@ def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_
     lookupAttribs={'date':date, 'title':title} 
     nonLookupAttribs={'place':place, 'text':text, 'author':author, 'expedition':expedition, 'cave':cave, 'slug':slugify(title)[:50]}
     lbo, created=save_carefully(models.LogbookEntry, lookupAttribs, nonLookupAttribs)
-
+    expeditiondate = expedition.get_expedition_date(date)
+    
     for tripperson, time_underground in trippersons:
         lookupAttribs={'person_expedition':tripperson, 'logbook_entry':lbo}
-        nonLookupAttribs={'time_underground':time_underground, 'date':date, 'is_logbook_entry_author':(tripperson == author)}
+        nonLookupAttribs={'time_underground':time_underground, 'date':date, 'expeditiondate':expeditiondate, 'is_logbook_entry_author':(tripperson == author)}
         #print nonLookupAttribs
         save_carefully(models.PersonTrip, lookupAttribs, nonLookupAttribs)
 
@@ -186,7 +187,7 @@ def Parseloghtml01(year, expedition, txt):
         tripid = mtripid and mtripid.group(1) or ""
         tripheader = re.sub("</?(?:[ab]|span)[^>]*>", "", tripheader)
 
-        #print [tripheader]
+        #print "   ", [tripheader]
         #continue
 
         tripdate, triptitle, trippeople = tripheader.split("|")
@@ -270,7 +271,7 @@ yearlinks = [
                 ("1994", "1994/log.htm", Parseloghtml01), 
                 ("1993", "1993/log.htm", Parseloghtml01), 		
                 ("1992", "1992/log.htm", Parseloghtml01), 		
-                #("1991", "1991/log.htm", Parseloghtml01), 		
+                ("1991", "1991/log.htm", Parseloghtml01), 		
             ]
 
 def SetDatesFromLogbookEntries(expedition):

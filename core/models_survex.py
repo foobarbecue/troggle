@@ -77,6 +77,7 @@ class SurvexBlock(models.Model):
     cave       = models.ForeignKey('Cave', blank=True, null=True)
     
     date       = models.DateField(blank=True, null=True)
+    expeditionday = models.ForeignKey("ExpeditionDay", null=True)
     expedition = models.ForeignKey('Expedition', blank=True, null=True)
         
     survexfile = models.ForeignKey("SurvexFile", blank=True, null=True)

@@ -6,21 +6,20 @@
 
 
 {% block content %}
-<h2>{{personexpedition.person}}: {{personexpedition.expedition}} ({{personexpedition.date_from}} - {{personexpedition.date_to}})</h2>
+<h1>
+  <a href="{{personexpedition.person.get_absolute_url}}">{{personexpedition.person}}</a> : 
+  <a href="{{personexpedition.expedition.get_absolute_url}}">{{personexpedition.expedition}}</a>
+</h1>
 
-<h3>{{message}}</h3>
+<p>{{message}}</p>
 
-<p><b><a href="{{ personexpedition.expedition.get_absolute_url }}">Main page for expedition: {{personexpedition.expedition}}</a></b></p>
-<p><b><a href="{{ personexpedition.person.get_absolute_url }}">Main page for person: {{personexpedition.person}}</a></b></p>
-
-<p>List of other expos by this person</p>
-<p>
+<p><b>Other years:</b>
 {% for otherpersonexpedition in personexpedition.person.personexpedition_set.all %}
-{% ifequal otherpersonexpedition personexpedition %}
+  {% ifequal otherpersonexpedition personexpedition %}
   | <b>{{otherpersonexpedition.expedition.year}}</b>
-{% else %}
-  | {{ otherpersonexpedition|link }}
-{% endifequal %}
+  {% else %}
+  | <a href="{{otherpersonexpedition.get_absolute_url}}">{{ otherpersonexpedition.expedition.year }}</a>
+  {% endifequal %}
 {% endfor %}
 </p>
 
@@ -40,8 +39,12 @@
   {% endif %}
 
   {% if persondate.2 %}
-    <td class="survexblock"><a href="{% url survexblock persondate.2.0 %}">{{persondate.2.0}}</a></td>
-    <td class="roles">{{persondate.2.1}}</td>
+    <td class="survexblock"><a href="{% url svx persondate.2.survexfile.path %}">{{persondate.2}}</a></td>
+    <td class="roles">
+    {% for survexpersonrole in persondate.2.survexpersonrole_set.all %}
+      {{survexpersonrole.nrole}}
+    {% endfor %}
+    </td>
   {% else %}
     <td colspan="2"> </td>
   {% endif %}

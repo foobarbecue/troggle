@@ -78,15 +78,9 @@ def GetPersonChronology(personexpedition):
         a = res.setdefault(persontrip.date, { })
         a.setdefault("persontrips", [ ]).append(persontrip)
 
-    for personrole in personexpedition.personrole_set.all():
+    for personrole in personexpedition.survexpersonrole_set.all():
         a = res.setdefault(personrole.survexblock.date, { })
-        b = a.setdefault("personroles", { })
-        survexpath = personrole.survexblock.survexpath
-        
-        if b.get(survexpath):
-            b[survexpath] += ", " + str(personrole.nrole)
-        else:
-            b[survexpath] = str(personrole.nrole)
+        a.setdefault("personroles", [ ]).append(personrole.survexblock)
     
     # build up the tables
     rdates = res.keys()
@@ -96,7 +90,7 @@ def GetPersonChronology(personexpedition):
     res2 = [ ]
     for rdate in rdates:
         persontrips = res[rdate].get("persontrips", [])
-        personroles = list(res[rdate].get("personroles", {}).items())
+        personroles = res[rdate].get("personroles", [])
         for n in range(max(len(persontrips), len(personroles))):
             res2.append(((n == 0 and rdate or "--"), (n < len(persontrips) and persontrips[n]), (n < len(personroles) and personroles[n])))
             

@@ -65,6 +65,8 @@ class TroggleImageModel(ImageModel):
 class Expedition(TroggleModel):
     year        = models.CharField(max_length=20, unique=True)
     name        = models.CharField(max_length=100)
+    
+    # these will become min and max dates
     date_from   = models.DateField(blank=True,null=True)
     date_to     = models.DateField(blank=True,null=True)
     
@@ -78,7 +80,19 @@ class Expedition(TroggleModel):
     def get_absolute_url(self):
         return urlparse.urljoin(settings.URL_ROOT, reverse('expedition', args=[self.year]))
     
-
+    def get_expedition_day(self, date):
+        expeditiondays = self.expeditionday_set.filter(date=date)
+        if expeditiondays:
+            assert len(expeditiondays) == 1
+            return expeditiondays[0]
+        res = ExpeditionDay(expedition=self, date=date)
+        res.save()
+        return res
+        
+        
+class ExpeditionDay(TroggleModel):
+    expedition  = models.ForeignKey("Expedition")
+    date        = models.DateField()
 
 #
 # single Person, can go on many years
@@ -168,7 +182,7 @@ class PersonExpedition(TroggleModel):
         return res
 
     class Meta:
-        ordering = ('expedition',)
+        ordering = ('-expedition',)
         #order_with_respect_to = 'expedition'
     get_latest_by = 'expedition'
 
@@ -242,6 +256,7 @@ class LogbookEntry(TroggleModel):
 class PersonTrip(TroggleModel):
     person_expedition = models.ForeignKey(PersonExpedition,null=True)
     
+    expeditionday    = models.ForeignKey("ExpeditionDay")
     date             = models.DateField()    
     time_underground = models.FloatField(help_text="In decimal hours")
     logbook_entry    = models.ForeignKey(LogbookEntry)
