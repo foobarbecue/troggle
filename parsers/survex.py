@@ -69,7 +69,6 @@ def RecursiveLoad(survexblock, survexfile, fin, textlines):
         mref = comment and re.match('.*?ref.*?(\d+)\s*#\s*(\d+)', comment)
         if mref:
             refscan = "%s#%s" % (mref.group(1), mref.group(2))
-            print refscan
             survexscansfolders = models.SurvexScansFolder.objects.filter(walletname=refscan)
             if survexscansfolders:
                 survexblock.survexscansfolder = survexscansfolders[0]
@@ -125,7 +124,9 @@ def RecursiveLoad(survexblock, survexfile, fin, textlines):
                 if expeditions:
                     assert len(expeditions) == 1
                     survexblock.expedition = expeditions[0]
-                    survexblock.expeditiondate = survexblock.expedition.get_expedition_day(survexblock.date)
+                    survexblock.expeditionday = survexblock.expedition.get_expedition_day(survexblock.date)
+                    survexblock.save()
+                    
         elif re.match("team$(?i)", cmd):
             mteammember = re.match("(Insts|Notes|Tape|Dog|Useless|Pics|Helper|Disto|Consultant)\s+(.*)$(?i)", line)
             if mteammember:
@@ -135,6 +136,7 @@ def RecursiveLoad(survexblock, survexfile, fin, textlines):
                         if (personexpedition, tm) not in teammembers:
                             teammembers.append((personexpedition, tm))
                             personrole = models.SurvexPersonRole(survexblock=survexblock, nrole=mteammember.group(1).lower(), personexpedition=personexpedition, personname=tm)
+                            personrole.expeditionday = survexblock.expeditionday
                             if personexpedition:
                                 personrole.person=personexpedition.person
                             personrole.save()

@@ -55,8 +55,6 @@ urlpatterns = patterns('',
         
     url(r'^statistics/?$', views_other.stats, name="stats"),
     
-    url(r'^calendar/(?P<year>\d\d\d\d)/?$', views_other.calendar, name="calendar"),
-
     url(r'^survey/?$', surveyindex, name="survey"),
     url(r'^survey/(?P<year>\d\d\d\d)\#(?P<wallet_number>\d*)$', survey, name="survey"),
 
@@ -110,7 +108,8 @@ urlpatterns = patterns('',
     url(r'^survey_scans/(?P<path>[^/]+)/$',        view_surveys.surveyscansfolder,  name="surveyscansfolder"), 
     url(r'^survey_scans/(?P<path>[^/]+)/(?P<file>[^/]+(?:png|jpg))$', 
                                                    view_surveys.surveyscansingle,   name="surveyscansingle"), 
-
+    url(r'^tunneldata/$',                          view_surveys.tunneldata,         name="tunneldata"), 
+    
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.PHOTOS_ROOT, 'show_indexes':True}),
 

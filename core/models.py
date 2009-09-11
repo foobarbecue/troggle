@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Min, Max
 from django.conf import settings
 from decimal import Decimal, getcontext
 from django.core.urlresolvers import reverse
@@ -65,21 +66,18 @@ class TroggleImageModel(ImageModel):
 class Expedition(TroggleModel):
     year        = models.CharField(max_length=20, unique=True)
     name        = models.CharField(max_length=100)
-    
-    # these will become min and max dates
-    date_from   = models.DateField(blank=True,null=True)
-    date_to     = models.DateField(blank=True,null=True)
-    
+        
     def __unicode__(self):
         return self.year
 
     class Meta:
         ordering = ('-year',)
-        get_latest_by = 'date_from'
+        get_latest_by = 'year'
     
     def get_absolute_url(self):
         return urlparse.urljoin(settings.URL_ROOT, reverse('expedition', args=[self.year]))
     
+    # construction function.  should be moved out
     def get_expedition_day(self, date):
         expeditiondays = self.expeditionday_set.filter(date=date)
         if expeditiondays:
@@ -89,11 +87,28 @@ class Expedition(TroggleModel):
         res.save()
         return res
         
+    def day_min(self):
+        res = self.expeditionday_set.all()
+        return res and res[0] or None
+    
+    def day_max(self):
+        res = self.expeditionday_set.all()
+        return res and res[len(res) - 1] or None
         
+        
+
 class ExpeditionDay(TroggleModel):
     expedition  = models.ForeignKey("Expedition")
     date        = models.DateField()
 
+    class Meta:
+        ordering = ('date',)  
+
+    def GetPersonTrip(self, personexpedition):
+        personexpeditions = self.persontrip_set.filter(expeditionday=self)
+        return personexpeditions and personexpeditions[0] or None
+    
+        
 #
 # single Person, can go on many years
 #
@@ -159,8 +174,8 @@ class Person(TroggleModel):
 class PersonExpedition(TroggleModel):
     expedition  = models.ForeignKey(Expedition)
     person      = models.ForeignKey(Person)
-    date_from   = models.DateField(blank=True,null=True)
-    date_to     = models.DateField(blank=True,null=True)
+    
+    
     is_guest    = models.BooleanField(default=False)  
     COMMITTEE_CHOICES = (
         ('leader','Expo leader'),
@@ -184,7 +199,6 @@ class PersonExpedition(TroggleModel):
     class Meta:
         ordering = ('-expedition',)
         #order_with_respect_to = 'expedition'
-    get_latest_by = 'expedition'
 
     def __unicode__(self):
         return "%s: (%s)" % (self.person, self.expedition)
@@ -205,11 +219,21 @@ class PersonExpedition(TroggleModel):
         survexblocks = [personrole.survexblock  for personrole in self.personrole_set.all() ]
         return sum([survexblock.totalleglength  for survexblock in set(survexblocks)])
     
+    # would prefer to return actual person trips so we could link to first and last ones
+    def day_min(self):
+        res = self.persontrip_set.aggregate(day_min=Min("expeditionday__date"))
+        return res["day_min"]
+
+    def day_max(self):
+        res = self.persontrip_set.all().aggregate(day_max=Max("expeditionday__date"))
+        return res["day_max"]
+
 #
 # Single parsed entry from Logbook
 #    
 class LogbookEntry(TroggleModel):
     date    = models.DateField()
+    expeditionday = models.ForeignKey("ExpeditionDay", null=True)
     expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
     author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip.
     # Re: the above- so this field should be "typist" or something, not "author". - AC 15 jun 09
@@ -249,12 +273,14 @@ class LogbookEntry(TroggleModel):
         """Produces a link to a new QM with the next number filled in and this LogbookEntry set as 'found by' """
         return settings.URL_ROOT + r'/admin/core/qm/add/?' + r'found_by=' + str(self.pk) +'&number=' + str(self.new_QM_number())
 
+    def DayIndex(self):
+        return list(self.expeditionday.logbookentry_set.all()).index(self)
 
 #
 # Single Person going on a trip, which may or may not be written up (accounts for different T/U for people in same logbook entry)
 #
 class PersonTrip(TroggleModel):
-    person_expedition = models.ForeignKey(PersonExpedition,null=True)
+    personexpedition = models.ForeignKey("PersonExpedition",null=True)
     
     expeditionday    = models.ForeignKey("ExpeditionDay")
     date             = models.DateField()    
@@ -271,9 +297,8 @@ class PersonTrip(TroggleModel):
         return self.logbook_entry.cave and self.logbook_entry.cave or self.logbook_entry.place
 
     def __unicode__(self):
-        return "%s (%s)" % (self.person_expedition, self.date)
-
-
+        return "%s (%s)" % (self.personexpedition, self.date)
+    
 
 
 ##########################################

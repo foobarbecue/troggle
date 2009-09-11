@@ -113,6 +113,8 @@ class SurvexBlock(models.Model):
         ss.save()
         return ss
     
+    def DayIndex(self):
+        return list(self.expeditionday.survexblock_set.all()).index(self)
     
 
 class SurvexTitle(models.Model):
@@ -143,7 +145,8 @@ class SurvexPersonRole(models.Model):
     person              = models.ForeignKey('Person', blank=True, null=True)
     personexpedition    = models.ForeignKey('PersonExpedition', blank=True, null=True)
     persontrip          = models.ForeignKey('PersonTrip', blank=True, null=True)  
-
+    expeditionday       = models.ForeignKey("ExpeditionDay", null=True)
+    
     def __unicode__(self):
         return unicode(self.person) + " - " + unicode(self.survexblock) + " - " + unicode(self.nrole)
         
@@ -164,4 +167,11 @@ class SurvexScanSingle(models.Model):
         return urlparse.urljoin(settings.URL_ROOT, reverse('surveyscansingle', kwargs={"path":re.sub("#", "%23", self.survexscansfolder.walletname), "file":self.name}))
     
         
+class TunnelFile(models.Model):
+    tunnelpath          = models.CharField(max_length=200)
+    bfontcolours        = models.BooleanField()
+    survexscans         = models.ManyToManyField("SurvexScanSingle")
+    survexblocks        = models.ManyToManyField("SurvexBlock")
+    tunnelcontains      = models.ManyToManyField("TunnelFile")  # case when its a frame type
+    
     

@@ -29,12 +29,12 @@
 <tr><th>Caver</th><th>T/U</th><th>Prev</th><th>Next</th></tr>
 {% for persontrip in logbookentry.persontrip_set.all %}
 <tr>
-  {% ifequal persontrip.person_expedition logbookentry.author %}
+  {% ifequal persontrip.personexpedition logbookentry.author %}
     <td class="author">
   {% else %}
     <td>
   {% endifequal %}
-  <a href="{{ persontrip.person_expedition.get_absolute_url }}">{{persontrip.person_expedition.person}}</a>
+  <a href="{{ persontrip.personexpedition.get_absolute_url }}">{{persontrip.personexpedition.person}}</a>
   </td>
   
   <td>

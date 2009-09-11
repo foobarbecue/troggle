@@ -33,6 +33,60 @@ div.logbookentry p
     margin:10px;
 }
 
+div#content {
+	Zmargin-top: 50px;
+	Zmargin-left: 120px;
+	Zmargin-right: 120px;
+	padding-top: 10px;
+	padding-left: 5em;
+	padding-right: 5em;
+	padding-bottom:5em;
+	Zbackground:#CCC;
+    background-color:#f9f9f9;
+}
+
+table.expeditionpersonlist th
+{
+    padding:0 0 0 0;
+}
+
+table.expeditionpersonlist td.persondayactivity
+{
+    width:4em;
+    font-size:70%;
+    padding:0 0 0 0;
+}
+table.expeditionpersonlist td.persondayactivity-nothing
+{
+    background-color:#bbb; 
+}
+
+table.expeditionpersonlist a
+{
+    text-decoration:none; 
+    color:#009; 
+}
+table.expeditionpersonlist a:visited
+{
+    color:#509; 
+}
+
+table.expeditionpersonlist a.dayindexlog-1
+{ background-color: #440; color: white; }
+table.expeditionpersonlist a.dayindexlog-2
+{ background-color: #9fa; }
+table.expeditionpersonlist a.dayindexsurvex-1
+{ background-color: #000; color: #55f; }
+table.expeditionpersonlist a.dayindexsurvex-2
+{ background-color: #6ff; }
+
+table.expeditionpersonlist a:hover
+{
+    color:white;
+    background-color:#e00;  
+}
+
+
 
 div#content div#col2
 {
@@ -95,7 +149,7 @@ p.indent
 
 #currentLocation {
 	float:right;
-	background:#999;
+	Zbackground:#999;
 	line-height: 80%;
 	font-variant: small-caps;
 	margin: 0px;
@@ -259,22 +313,13 @@ div#editLinks {
 	filter:alpha(opacity=75);
 	-moz-opacity:.75;
 	opacity:.75;
+    text-align:right;
 }
 
 div#editLinks a{
 	color:#FFF;
 }
 
-div#content {
-	Zmargin-top: 50px;
-	Zmargin-left: 120px;
-	Zmargin-right: 120px;
-	padding-top: 10px;
-	padding-left: 5em;
-	padding-right: 5em;
-	padding-bottom:5em;
-	background:#CCC;
-}
 
 .toolbarlinks
 {

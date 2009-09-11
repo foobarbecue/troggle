@@ -45,23 +45,6 @@ def todo(request):
     totallogbookentries = LogbookEntry.objects.count()
     return render_with_context(request,'index.html', {'expeditions':expeditions, 'all':'all', 'totallogbookentries':totallogbookentries, "message":message})
 
-def calendar(request, year):
-    week=['S','S','M','T','W','T','F']
-    expedition = Expedition.objects.get(year=year)
-    personexpeditions = expedition.personexpedition_set.all()
-    
-    listdays = [ ]   # the columns of the table
-    date = expedition.date_from
-    while date <= expedition.date_to:
-        listdays.append(date)
-        date += datetime.timedelta(days=1)
-                
-    personexpeditiondays = [ ]
-    for personexpedition in personexpeditions:
-        pelistdays = [ (personexpedition.date_from and (personexpedition.date_from <= date < personexpedition.date_to))  for date in listdays ]
-        personexpeditiondays.append([personexpedition, pelistdays])
-        
-    return render_with_context(request,'calendar.html', {"expedition":expedition, "listdays":listdays, "personexpeditiondays":personexpeditiondays})
 
 def controlPanel(request):
     jobs_completed=[]

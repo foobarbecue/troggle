@@ -24,6 +24,7 @@ def get_or_create_placeholder(year):
     placeholder_logbook_entry, newly_created = save_carefully(LogbookEntry, lookupAttribs, nonLookupAttribs)
     return placeholder_logbook_entry
 
+# dead
 def readSurveysFromCSV():
     try:   # could probably combine these two
         surveytab = open(os.path.join(settings.SURVEY_SCANS, "Surveys.csv"))
@@ -75,6 +76,7 @@ def readSurveysFromCSV():
         
         logging.info("added survey " + survey[header['Year']] + "#" + surveyobj.wallet_number + "\r")
 
+# dead
 def listdir(*directories):
     try:
         return os.listdir(os.path.join(settings.SURVEYS, *directories))
@@ -134,11 +136,13 @@ def parseSurveyScans(year, logfile=None):
                 continue
             scanObj.save()
 
+# dead
 def parseSurveys(logfile=None):
     readSurveysFromCSV()                
     for year in Expedition.objects.filter(year__gte=2000):   #expos since 2000, because paths and filenames were nonstandard before then
         parseSurveyScans(year)
 
+# dead
 def isInterlacedPNG(filePath): #We need to check for interlaced PNGs because the thumbnail engine can't handle them (uses PIL)
     file=Image.open(filePath)
     print filePath
@@ -148,10 +152,11 @@ def isInterlacedPNG(filePath): #We need to check for interlaced PNGs because the
         return False
 
 
-# handles url or file
+# handles url or file, so we can refer to a set of scans on another server
 def GetListDir(sdir):
     res = [ ]
     if sdir[:7] == "http://":
+        assert False, "Not written"
         s = urllib.urlopen(sdir)
     else:
         for f in os.listdir(sdir):
@@ -198,4 +203,30 @@ def LoadListScans(surveyscansdir):
                 survexscansingle.save()
             
             
+
+def LoadTunnelFiles(tunneldatadir):
+    TunnelFile.objects.all().delete()
+    tunneldirs = [ "" ]
+    while tunneldirs:
+        tunneldir = tunneldirs.pop()
+        for f in os.listdir(os.path.join(tunneldatadir, tunneldir)):
+            if f[0] == "." or f[-1] == "~":
+                continue
+            lf = os.path.join(tunneldir, f)
+            ff = os.path.join(tunneldatadir, lf)
+            if os.path.isdir(ff):
+                tunneldirs.append(lf)
+            elif f[-4:] == ".xml":
+                fin = open(ff)
+                mtype = re.search("<(fontcolours|sketch)", fin.read(200))
+                assert mtype, lf
+                fin.close()
+                tunnelfile = TunnelFile(tunnelpath=lf, bfontcolours=(mtype.group(1)=="fontcolours"))
+                tunnelfile.save()
+    
         
+#    survexscans         = models.ManyToManyField("SurvexScanSingle")
+#    survexblocks        = models.ManyToManyField("SurvexBlock")
+#    tunnelcontains      = models.ManyToManyField("TunnelFile")  # case when its a frame type
+
+

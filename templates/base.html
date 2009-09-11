@@ -18,6 +18,7 @@
 <div id="header"> 
   <h1>CUCC Expeditions to Austria: 1976 - 2009</h1>
   <div id="editLinks"> {% block loginInfo %}
+    <a href="{{ settings.URL_ROOT }}">Home</a> | 
     {% if user.username %}
     You are logged in as {{ user.username }} 
     	{% if user.person %}(<a href="{{ user.person.get_absolute_url }}">{{ user.person }}</a>)
@@ -25,15 +26,15 @@
         {% endif %}.
     | <a href="{% url auth_logout %}">Log out</a> {% else %} <a href="{% url registration_register %}">Sign up</a> | <a href="{% url auth_login %}">Log in</a> {% endif %}
     {% endblock%}
-    | <a href="{{ settings.URL_ROOT }}">Home</a> | <a class="killEyeCandy">Kill Eyecandy</a><a class="showEyeCandy" style="display: none;">Show Eyecandy</a>
     {% block editLink %}
 
     {% endblock %}
    </div>
 </div>
 <div class="toolbarlinks">
-    <a href="{% url survexcaveslist %}">All Cave Survex</a> | 
-    <a href="{% url surveyscansfolders %}">All scans</a> | 
+    <a href="{% url survexcaveslist %}">All Survex</a> | 
+    <a href="{% url surveyscansfolders %}">Scans</a> | 
+    <a href="{% url tunneldata %}">Tunneldata</a> | 
     <a href="{% url survexcavessingle 161 %}">161</a> | 
     <a href="{% url survexcavessingle 204 %}">204</a> | 
     <a href="{% url survexcavessingle 258 %}">258</a> | 
@@ -95,7 +96,6 @@
                 	<li><a href="{% url stats %}">statistics</a></li>
                 </ul>
         </li>
-        <li><a href="{% url calendar 2008 %}">expedition calendar</a></li>
 		<li><a href="#">admin</a>
                 <ul class="sub_menu">
                     <li><a id="cuccLink" href="{% url controlpanel %}">Import / export data</a></li>

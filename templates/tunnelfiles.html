@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load survex_markup %}
+
+{% block title %}Tunnel files{% endblock %}
+
+{% block content %}
+
+<h3>All Tunnel files</h3>
+<table>
+<tr><th>File</th><th>Font</th><th>Frame</th><th>SurvexBlocks</th><th>Size</th></tr>
+{% for tunnelfile in tunnelfiles %}
+  <tr>
+    <td>{{tunnelfile.tunnelpath}}</td>
+    <td>{{tunnelfile.bfontcolours}}</td>
+  </tr>
+{% endfor %}
+</table>
+
+{% endblock %}

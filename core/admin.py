@@ -51,7 +51,7 @@ class PhotoInline(admin.TabularInline):
 class PersonTripInline(admin.TabularInline):
     model = PersonTrip
     exclude = ['persontrip_next','Delete']
-    raw_id_fields = ('person_expedition',)
+    raw_id_fields = ('personexpedition',)
     extra = 1
 
 #class LogbookEntryAdmin(VersionAdmin):

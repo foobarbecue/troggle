@@ -17,7 +17,7 @@ p		{ clear: both }
 
 <div class="tripdate" id="t{{logbook_entry.date}}A">{{logbook_entry.date}}</div>
 <div class="trippeople"><u>{{logbook_entry.author.person}}</u>
-{% for persontrip in logbook_entry.persontrip_set.all %}{{ persontrip.person_expedition.person }} {{ persontrip.person_expedition.time_underground }}, {% endfor %}
+{% for persontrip in logbook_entry.persontrip_set.all %}{{ persontrip.personexpedition.person }} {{ persontrip.personexpedition.time_underground }}, {% endfor %}
 </div>
 
 <div class="triptitle">{{logbook_entry.place}} - {{logbook_entry.title}}</div>

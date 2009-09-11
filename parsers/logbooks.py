@@ -88,14 +88,14 @@ def EnterLogIntoDbase(date, place, title, text, trippeople, expedition, logtime_
         cave=GetCaveLookup().get(lplace)
 
     #Check for an existing copy of the current entry, and save
+    expeditionday = expedition.get_expedition_day(date)
     lookupAttribs={'date':date, 'title':title} 
-    nonLookupAttribs={'place':place, 'text':text, 'author':author, 'expedition':expedition, 'cave':cave, 'slug':slugify(title)[:50]}
+    nonLookupAttribs={'place':place, 'text':text, 'author':author, 'expedition':expedition, 'expeditionday':expeditionday, 'cave':cave, 'slug':slugify(title)[:50]}
     lbo, created=save_carefully(models.LogbookEntry, lookupAttribs, nonLookupAttribs)
-    expeditiondate = expedition.get_expedition_date(date)
     
     for tripperson, time_underground in trippersons:
-        lookupAttribs={'person_expedition':tripperson, 'logbook_entry':lbo}
-        nonLookupAttribs={'time_underground':time_underground, 'date':date, 'expeditiondate':expeditiondate, 'is_logbook_entry_author':(tripperson == author)}
+        lookupAttribs={'personexpedition':tripperson, 'logbook_entry':lbo}
+        nonLookupAttribs={'time_underground':time_underground, 'date':date, 'expeditionday':expeditionday, 'is_logbook_entry_author':(tripperson == author)}
         #print nonLookupAttribs
         save_carefully(models.PersonTrip, lookupAttribs, nonLookupAttribs)
 
@@ -281,10 +281,6 @@ def SetDatesFromLogbookEntries(expedition):
     """
     for personexpedition in expedition.personexpedition_set.all():
         persontrips = personexpedition.persontrip_set.order_by('logbook_entry__date')
-        personexpedition.date_from = min([persontrip.logbook_entry.date  for persontrip in persontrips] or [None])
-        personexpedition.date_to = max([persontrip.logbook_entry.date  for persontrip in persontrips] or [None])
-        personexpedition.save()
-
         # sequencing is difficult to do
         lprevpersontrip = None
         for persontrip in persontrips:
@@ -296,46 +292,11 @@ def SetDatesFromLogbookEntries(expedition):
             lprevpersontrip = persontrip
             persontrip.save()
             
-    # from trips rather than logbook entries, which may include events outside the expedition
-    expedition.date_from = min([personexpedition.date_from  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_from] or [None])
-    expedition.date_to = max([personexpedition.date_to  for personexpedition in expedition.personexpedition_set.all()  if personexpedition.date_to] or [None])
-    expedition.save()
-
-# The below has been replaced with the methods get_next_by_id and get_previous_by_id
-#    # order by appearance in the logbook (done by id)
-#    lprevlogbookentry = None
-#    for logbookentry in expedition.logbookentry_set.order_by('id'):
-#        logbookentry.logbookentry_prev = lprevlogbookentry
-#        if lprevlogbookentry:
-#            lprevlogbookentry.logbookentry_next = logbookentry
-#            lprevlogbookentry.save()
-#        logbookentry.logbookentry_next = None
-#        logbookentry.save()
-#        lprevlogbookentry = logbookentry
-        
-# This combined date / number key is a weird way of doing things. Use the primary key instead. If we are going to use the date for looking up entries, we should set it up to allow multiple results.
-    # order by date for setting the references
-#    lprevlogbookentry = None
-#    for logbookentry in expedition.logbookentry_set.order_by('date'):
-#        if lprevlogbookentry and lprevlogbookentry.date == logbookentry.date:
-#            mcount = re.search("_(\d+)$", lprevlogbookentry.href)
-#            mc = mcount and (int(mcount.group(1)) + 1) or 1
-#            logbookentry.href = "%s_%d" % (logbookentry.date, mc)
-#        else:
-#            logbookentry.href = "%s" % logbookentry.date
-#        logbookentry.save()
-#        lprevlogbookentry = logbookentry
-
         
         
 def LoadLogbookForExpedition(expedition):
     """ Parses all logbook entries for one expedition """
-    
-    #We're checking for stuff that's changed in admin before deleting it now.
-    #print "deleting logbooks for", expedition
-    #expedition.logbookentry_set.all().delete()
-    #models.PersonTrip.objects.filter(person_expedition__expedition=expedition).delete()
-    
+        
     expowebbase = os.path.join(settings.EXPOWEB, "years")  
     year = str(expedition.year)
     for lyear, lloc, parsefunc in yearlinks:
@@ -347,7 +308,7 @@ def LoadLogbookForExpedition(expedition):
     fin.close()
     parsefunc(year, expedition, txt)
     SetDatesFromLogbookEntries(expedition)
-    return "TOLOAD: " + year + "  " + str(expedition.personexpedition_set.all()[1].logbookentry_set.count()) + "  " + str(models.PersonTrip.objects.filter(person_expedition__expedition=expedition).count())
+    return "TOLOAD: " + year + "  " + str(expedition.personexpedition_set.all()[1].logbookentry_set.count()) + "  " + str(models.PersonTrip.objects.filter(personexpedition__expedition=expedition).count())
 
 
 def LoadLogbooks():

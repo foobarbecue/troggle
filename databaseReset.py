@@ -75,6 +75,11 @@ def parse_descriptions():
     parsers.descriptions.parseDescriptions()
     parsers.descriptions.parseDescriptionsOnCaveObjects()
 
+def import_tunnelfiles():
+    import parsers.surveys
+    parsers.surveys.LoadTunnelFiles(settings.TUNNEL_DATA)
+
+
 def reset():
     """ Wipe the troggle database and import everything from legacy data
     """
@@ -86,7 +91,8 @@ def reset():
     import_survex()
     import_logbooks()
     import_QMs()
-    import_surveys()
+    import_tunnelfiles()
+    #import_surveys()
     import_descriptions()
     parse_descriptions()
 
@@ -112,6 +118,8 @@ if __name__ == "__main__":
         resetdesc()
     elif "scans" in sys.argv:
         import_surveyscans()
+    elif "tunnel" in sys.argv:
+        import_tunnelfiles()
     elif "reset" in sys.argv:
         reset()
     elif "survex" in sys.argv:

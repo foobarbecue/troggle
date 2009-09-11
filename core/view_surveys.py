@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
 import os
 import re
-from troggle.core.models import SurvexScansFolder, SurvexScanSingle, SurvexBlock
+from troggle.core.models import SurvexScansFolder, SurvexScanSingle, SurvexBlock, TunnelFile
 
 # inline fileabstraction into here if it's not going to be useful anywhere else 
 # keep things simple and ignore exceptions everywhere for now
@@ -47,6 +47,7 @@ extmimetypes = {".txt": "text/plain",
              ".jpg": "image/jpeg",
             }
             
+# dead
 def jgtfile(request, f):
     fp = os.path.join(settings.SURVEYS, f)
     # could also surf through SURVEX_DATA
@@ -175,4 +176,9 @@ def surveyscansingle(request, path, file):
 def surveyscansfolders(request):
     survexscansfolders = SurvexScansFolder.objects.all()
     return render_to_response('survexscansfolders.html', { 'survexscansfolders':survexscansfolders, 'settings': settings })
+    
+    
+def tunneldata(request):
+    tunnelfiles = TunnelFile.objects.all()
+    return render_to_response('tunnelfiles.html', { 'tunnelfiles':tunnelfiles, 'settings': settings })
     
