@@ -1,4 +1,4 @@
-import sys, os, types, logging
+import sys, os, types, logging, stat
 #sys.path.append('C:\\Expo\\expoweb')
 #from troggle import *
 #os.environ['DJANGO_SETTINGS_MODULE']='troggle.settings'
@@ -204,7 +204,30 @@ def LoadListScans(surveyscansdir):
             
             
 
-def LoadTunnelFiles(tunneldatadir):
+def SetTunnelfileInfo(tunnelfile):
+    ff = os.path.join(settings.TUNNEL_DATA, tunnelfile.tunnelpath)
+    tunnelfile.filesize = os.stat(ff)[stat.ST_SIZE]
+    fin = open(ff)
+    ttext = fin.read()
+    fin.close()
+    
+    mtype = re.search("<(fontcolours|sketch)", ttext)
+    assert mtype, ff
+    tunnelfile.bfontcolours = (mtype.group(1)=="fontcolours")
+    tunnelfile.npaths = len(re.findall("<skpath", ttext))
+    tunnelfile.save()
+    
+    # <tunnelxml tunnelversion="version2009-06-21 Matienzo" tunnelproject="ireby" tunneluser="goatchurch" tunneldate="2009-06-29 23:22:17">
+    # <pcarea area_signal="frame" sfscaledown="12.282584" sfrotatedeg="-90.76982" sfxtrans="11.676667377221136" sfytrans="-15.677173422877454" sfsketch="204description/scans/plan(38).png" sfstyle="" nodeconnzsetrelative="0.0">
+    print tunnelfile.tunnelpath, re.findall('<pcarea area_signal="frame".*?sfsketch="([^"]*)" sfstyle="([^"]*)"', ttext)
+#    npaths              = models.IntegerField()
+#    survexscans         = models.ManyToManyField("SurvexScanSingle")
+#    survexblocks        = models.ManyToManyField("SurvexBlock")
+#    tunnelcontains      = models.ManyToManyField("TunnelFile")  # case when its a frame type
+
+
+def LoadTunnelFiles():
+    tunneldatadir = settings.TUNNEL_DATA
     TunnelFile.objects.all().delete()
     tunneldirs = [ "" ]
     while tunneldirs:
@@ -217,16 +240,10 @@ def LoadTunnelFiles(tunneldatadir):
             if os.path.isdir(ff):
                 tunneldirs.append(lf)
             elif f[-4:] == ".xml":
-                fin = open(ff)
-                mtype = re.search("<(fontcolours|sketch)", fin.read(200))
-                assert mtype, lf
-                fin.close()
-                tunnelfile = TunnelFile(tunnelpath=lf, bfontcolours=(mtype.group(1)=="fontcolours"))
+                tunnelfile = TunnelFile(tunnelpath=lf)
                 tunnelfile.save()
+                SetTunnelfileInfo(tunnelfile)
     
         
-#    survexscans         = models.ManyToManyField("SurvexScanSingle")
-#    survexblocks        = models.ManyToManyField("SurvexBlock")
-#    tunnelcontains      = models.ManyToManyField("TunnelFile")  # case when its a frame type
 
 

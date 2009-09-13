@@ -173,5 +173,9 @@ class TunnelFile(models.Model):
     survexscans         = models.ManyToManyField("SurvexScanSingle")
     survexblocks        = models.ManyToManyField("SurvexBlock")
     tunnelcontains      = models.ManyToManyField("TunnelFile")  # case when its a frame type
+    filesize            = models.IntegerField(default=0)
+    npaths              = models.IntegerField(default=0)
     
+    class Meta:
+        ordering = ('tunnelpath',)
     

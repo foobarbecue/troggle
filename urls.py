@@ -108,7 +108,10 @@ urlpatterns = patterns('',
     url(r'^survey_scans/(?P<path>[^/]+)/$',        view_surveys.surveyscansfolder,  name="surveyscansfolder"), 
     url(r'^survey_scans/(?P<path>[^/]+)/(?P<file>[^/]+(?:png|jpg))$', 
                                                    view_surveys.surveyscansingle,   name="surveyscansingle"), 
+    
     url(r'^tunneldata/$',                          view_surveys.tunneldata,         name="tunneldata"), 
+    url(r'^tunneldataraw/(?P<path>.+?\.xml)$',     view_surveys.tunnelfile,         name="tunnelfile"), 
+    #url(r'^tunneldatainfo/(?P<path>.+?\.xml)$',    view_surveys.tunnelfileinfo,     name="tunnelfileinfo"), 
     
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.PHOTOS_ROOT, 'show_indexes':True}),

@@ -2,7 +2,7 @@ from django.conf import settings
 import fileAbstraction
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
-import os
+import os, stat
 import re
 from troggle.core.models import SurvexScansFolder, SurvexScanSingle, SurvexBlock, TunnelFile
 
@@ -182,3 +182,44 @@ def tunneldata(request):
     tunnelfiles = TunnelFile.objects.all()
     return render_to_response('tunnelfiles.html', { 'tunnelfiles':tunnelfiles, 'settings': settings })
     
+def tunnelfile(request, path):
+    tunnelfile = TunnelFile.objects.get(tunnelpath=path)
+    tfile = os.path.join(settings.TUNNEL_DATA, tunnelfile.tunnelpath)
+    
+    # just output the file
+    if not request.POST:
+        return HttpResponse(content=open(tfile), mimetype="text/plain")
+    
+    project, user, password, tunnelversion = request.POST["tunnelproject"], request.POST["tunneluser"], request.POST["tunnelpassword"], request.POST["tunnelversion"]
+    print (project, user, tunnelversion)
+    for uploadedfile in request.FILES.values():
+        if uploadedfile.field_name != "sketch":
+            return HttpResponse(content="Error: non-sketch file uploaded", mimetype="text/plain")
+        if uploadedfile.content_type != "text/plain":
+            return HttpResponse(content="Error: non-plain content type", mimetype="text/plain")
+            
+        # could use this to add new files
+        if os.path.split(path)[1] != uploadedfile.name:  
+            return HttpResponse(content="Error: name disagrees", mimetype="text/plain")
+        
+        orgsize = tunnelfile.filesize   # = os.stat(tfile)[stat.ST_SIZE]
+            
+        ttext = uploadedfile.read()
+        
+        # could check that the user and projects agree here
+        
+        fout = open(tfile, "w")
+        fout.write(ttext)
+        fout.close()
+        
+        # redo its settings of 
+        tunnelfile.filesize = os.stat(tfile)[stat.ST_SIZE]
+        tunnelfile.save()
+        
+        uploadedfile.close()
+        message = "File size %d overwritten with size %d" % (orgsize, tunnelfile.filesize)
+        return HttpResponse(content=message, mimetype="text/plain")
+
+    
+    
+

@@ -8,11 +8,15 @@
 
 <h3>All Tunnel files</h3>
 <table>
-<tr><th>File</th><th>Font</th><th>Frame</th><th>SurvexBlocks</th><th>Size</th></tr>
+<tr><th>File</th><th>Font</th><th>Frame</th><th>SurvexBlocks</th><th>Size</th><th>Paths</td></tr>
 {% for tunnelfile in tunnelfiles %}
   <tr>
-    <td>{{tunnelfile.tunnelpath}}</td>
+    <td><a href="{% url tunnelfile tunnelfile.tunnelpath %}">{{tunnelfile.tunnelpath}}</a></td>
     <td>{{tunnelfile.bfontcolours}}</td>
+    <td></td>
+    <td></td>
+    <td>{{tunnelfile.filesize}}</td>
+    <td>{{tunnelfile.npaths}}</td>   
   </tr>
 {% endfor %}
 </table>

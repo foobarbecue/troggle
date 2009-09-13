@@ -77,7 +77,7 @@ def parse_descriptions():
 
 def import_tunnelfiles():
     import parsers.surveys
-    parsers.surveys.LoadTunnelFiles(settings.TUNNEL_DATA)
+    parsers.surveys.LoadTunnelFiles()
 
 
 def reset():
