@@ -12,10 +12,20 @@
   <tr>
     <td class="survexscansingle"><a href="{{survexscansingle.get_absolute_url}}">{{survexscansingle.name}}</a></td>
     <td>
-    {% for survexblock in survexscansingle.survexblock_set %}
+    {% for survexblock in survexscansingle.survexblock_set.all %}
       {{survexblock}}
     {% endfor %}
     </td>
+  </tr>
+{% endfor %}
+</table>
+
+<h3>Surveys referring to this wallet</h3>
+
+<table>
+{% for survexblock in survexscansfolder.survexblock_set.all %}
+  <tr>
+    <td><a href="{% url svx survexblock.survexfile.path %}">{{survexblock}}</a></td>
   </tr>
 {% endfor %}
 </table>
