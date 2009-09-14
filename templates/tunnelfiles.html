@@ -8,15 +8,34 @@
 
 <h3>All Tunnel files</h3>
 <table>
-<tr><th>File</th><th>Font</th><th>Frame</th><th>SurvexBlocks</th><th>Size</th><th>Paths</td></tr>
+<tr><th>File</th><th>Font</th><th>SurvexBlocks</th><th>Size</th><th>Paths</th><th>Scans folder</th><th>Scan files</th><th>Frames</th></tr>
 {% for tunnelfile in tunnelfiles %}
   <tr>
     <td><a href="{% url tunnelfile tunnelfile.tunnelpath %}">{{tunnelfile.tunnelpath}}</a></td>
     <td>{{tunnelfile.bfontcolours}}</td>
     <td></td>
-    <td></td>
     <td>{{tunnelfile.filesize}}</td>
     <td>{{tunnelfile.npaths}}</td>   
+
+    <td>
+    {% for survexscansfolder in tunnelfile.survexscansfolders.all %}
+      <a href="{{survexscansfolder.get_absolute_url}}">{{survexscansfolder.walletname}}</a>
+    {% endfor %}
+    </td>   
+
+    <td>
+    {% for survexscansingle in tunnelfile.survexscans.all %}
+      <a href="{{survexscansingle.get_absolute_url}}">{{survexscansingle.name}}</a>
+    {% endfor %}
+    </td>   
+
+    <td>
+    {% for rtunnelfile in tunnelfile.tunnelcontains.all %}
+      <a href="{% url tunnelfile rtunnelfile.tunnelpath %}">{{rtunnelfile.tunnelpath}}</a>
+    {% endfor %}
+    </td>   
+
+
   </tr>
 {% endfor %}
 </table>

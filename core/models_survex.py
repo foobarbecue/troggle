@@ -155,6 +155,9 @@ class SurvexScansFolder(models.Model):
     fpath               = models.CharField(max_length=200)
     walletname          = models.CharField(max_length=200)
     
+    class Meta:
+        ordering = ('walletname',)
+    
     def get_absolute_url(self):
         return urlparse.urljoin(settings.URL_ROOT, reverse('surveyscansfolder', kwargs={"path":re.sub("#", "%23", self.walletname)}))
     
@@ -163,18 +166,25 @@ class SurvexScanSingle(models.Model):
     name                = models.CharField(max_length=200)
     survexscansfolder   = models.ForeignKey("SurvexScansFolder", null=True)
     
+    class Meta:
+        ordering = ('name',)
+    
     def get_absolute_url(self):
         return urlparse.urljoin(settings.URL_ROOT, reverse('surveyscansingle', kwargs={"path":re.sub("#", "%23", self.survexscansfolder.walletname), "file":self.name}))
     
         
 class TunnelFile(models.Model):
     tunnelpath          = models.CharField(max_length=200)
+    tunnelname          = models.CharField(max_length=200)
     bfontcolours        = models.BooleanField()
+    survexscansfolders  = models.ManyToManyField("SurvexScansFolder")
     survexscans         = models.ManyToManyField("SurvexScanSingle")
     survexblocks        = models.ManyToManyField("SurvexBlock")
     tunnelcontains      = models.ManyToManyField("TunnelFile")  # case when its a frame type
     filesize            = models.IntegerField(default=0)
     npaths              = models.IntegerField(default=0)
+    survextitles        = models.ManyToManyField("SurvexTitle")
+    
     
     class Meta:
         ordering = ('tunnelpath',)

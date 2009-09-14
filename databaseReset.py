@@ -63,7 +63,7 @@ def import_surveys():
 
 def import_surveyscans():
     import parsers.surveys
-    parsers.surveys.LoadListScans(settings.SURVEY_SCANS)
+    parsers.surveys.LoadListScans()
 
     
 def import_descriptions():

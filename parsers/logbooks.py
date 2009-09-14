@@ -120,7 +120,7 @@ def Parselogwikitxt(year, expedition, txt):
     trippara = re.findall("===(.*?)===([\s\S]*?)(?====)", txt)
     for triphead, triptext in trippara:
         tripheadp = triphead.split("|")
-        #print tripheadp
+        #print "ttt", tripheadp
         assert len(tripheadp) == 3, (tripheadp, triptext)
         tripdate, tripplace, trippeople = tripheadp
         tripsplace = tripplace.split(" - ")
@@ -135,7 +135,7 @@ def Parselogwikitxt(year, expedition, txt):
             tu = ""
             #assert tripcave == "Journey", (triphead, triptext)
 
-        print tripdate
+        #print tripdate
         ldate = ParseDate(tripdate.strip(), year)
         #print "\n", tripcave, "---   ppp", trippeople, len(triptext)
         EnterLogIntoDbase(date = ldate, place = tripcave, title = tripplace, text = triptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
@@ -155,7 +155,8 @@ def Parseloghtmltxt(year, expedition, txt):
                             \s*$
                      ''', trippara)
         if not s:
-            print "can't parse: ", trippara  # this is 2007 which needs editing
+            if not re.search("Rigging Guide", trippara):
+                print "can't parse: ", trippara  # this is 2007 which needs editing
             #assert s, trippara
             continue
 
@@ -218,7 +219,7 @@ def Parseloghtml01(year, expedition, txt):
         ltriptext = re.sub("</?b>", "'''", ltriptext)
         
 
-        print ldate, trippeople.strip()
+        #print ldate, trippeople.strip()
             # could includ the tripid (url link for cross referencing)
         EnterLogIntoDbase(date=ldate, place=tripcave, title=triptitle, text=ltriptext, trippeople=trippeople, expedition=expedition, logtime_underground=0)
 
@@ -236,8 +237,7 @@ def Parseloghtml03(year, expedition, txt):
         if re.match("T/U|Time underwater", sheader[-1]):
             tu = sheader.pop()
         if len(sheader) != 3:
-            print sheader
-        #    continue
+            print "header not three pieces", sheader
         tripdate, triptitle, trippeople = sheader
         ldate = ParseDate(tripdate.strip(), year)
         triptitles = triptitle.split(" , ")

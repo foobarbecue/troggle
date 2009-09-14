@@ -165,13 +165,42 @@ def GetListDir(sdir):
                 res.append((f, ff, os.path.isdir(ff)))
     return res
         
+        
+        
+
+
+def LoadListScansFile(survexscansfolder):
+    gld = [ ]
+    
+    # flatten out any directories in these book files
+    for (fyf, ffyf, fisdiryf) in GetListDir(survexscansfolder.fpath):
+        if fisdiryf:
+            gld.extend(GetListDir(ffyf))
+        else:
+            gld.append((fyf, ffyf, fisdiryf))
+    
+    for (fyf, ffyf, fisdiryf) in gld:
+        assert not fisdiryf, ffyf
+        if re.search("\.(?:png|jpg|jpeg)(?i)$", fyf):
+            survexscansingle = SurvexScanSingle(ffile=ffyf, name=fyf, survexscansfolder=survexscansfolder)
+            survexscansingle.save()
+
+        
 # this iterates through the scans directories (either here or on the remote server)
 # and builds up the models we can access later
-def LoadListScans(surveyscansdir):
+def LoadListScans():
     SurvexScanSingle.objects.all().delete()
     SurvexScansFolder.objects.all().delete()
 
-    for f, ff, fisdir in GetListDir(surveyscansdir):
+    # first do the smkhs (large kh survey scans) directory
+    survexscansfoldersmkhs = SurvexScansFolder(fpath=os.path.join(settings.SURVEY_SCANS, "smkhs"), walletname="smkhs") 
+    if os.path.isdir(survexscansfoldersmkhs.fpath):
+        survexscansfoldersmkhs.save()
+        LoadListScansFile(survexscansfoldersmkhs)
+        
+    
+    # iterate into the surveyscans directory
+    for f, ff, fisdir in GetListDir(os.path.join(settings.SURVEY_SCANS, "surveyscans")):
         if not fisdir:
             continue
         
@@ -181,28 +210,46 @@ def LoadListScans(surveyscansdir):
                 assert fisdiry, ffy
                 survexscansfolder = SurvexScansFolder(fpath=ffy, walletname=fy)
                 survexscansfolder.save()
-                for fyf, ffyf, fisdiryf in GetListDir(ffy):
-                    assert not fisdiryf, ffyf
-                    survexscansingle = SurvexScanSingle(ffile=ffyf, name=fyf, survexscansfolder=survexscansfolder)
-                    survexscansingle.save()
+                LoadListScansFile(survexscansfolder)
+        
+        # do the 
         elif f != "thumbs":
             survexscansfolder = SurvexScansFolder(fpath=ff, walletname=f)
             survexscansfolder.save()
-            gld = [ ]
+            LoadListScansFile(survexscansfolder)
             
-            # flatten out any directories in these book files
-            for (fyf, ffyf, fisdiryf) in GetListDir(ff):
-                if fisdiryf:
-                    gld.extend(GetListDir(ffyf))
-                else:
-                    gld.append((fyf, ffyf, fisdiryf))
+
+def FindTunnelScan(tunnelfile, path):
+    scansfolder, scansfile = None, None
+    mscansdir = re.search("(\d\d\d\d#\d+\w?|1995-96kh|92-94Surveybookkh|1991surveybook|smkhs)/(.*?(?:png|jpg))$", path)
+    if mscansdir:
+        scansfolderl = SurvexScansFolder.objects.filter(walletname=mscansdir.group(1))
+        if len(scansfolderl):
+            assert len(scansfolderl) == 1
+            scansfolder = scansfolderl[0]
+        if scansfolder:
+            scansfilel = scansfolder.survexscansingle_set.filter(name=mscansdir.group(2))
+            if len(scansfilel):
+                assert len(scansfilel) == 1
+                scansfile = scansfilel[0]
             
-            for (fyf, ffyf, fisdiryf) in gld:
-                assert not fisdiryf, ffyf
-                survexscansingle = SurvexScanSingle(ffile=ffyf, name=fyf, survexscansfolder=survexscansfolder)
-                survexscansingle.save()
-            
-            
+        if scansfolder:
+            tunnelfile.survexscansfolders.add(scansfolder)
+        if scansfile:
+            tunnelfile.survexscans.add(scansfile)
+    
+    elif path and not re.search("\.(?:png|jpg)$(?i)", path):
+        name = os.path.split(path)[1]
+        print "ttt", tunnelfile.tunnelpath, path, name
+        rtunnelfilel = TunnelFile.objects.filter(tunnelname=name)
+        if len(rtunnelfilel):
+            assert len(rtunnelfilel) == 1, ("two paths with name of", path, "need more discrimination coded")
+            rtunnelfile = rtunnelfilel[0]
+            #print "ttt", tunnelfile.tunnelpath, path, name, rtunnelfile.tunnelpath
+            tunnelfile.tunnelcontains.add(rtunnelfile)
+
+    tunnelfile.save()
+
 
 def SetTunnelfileInfo(tunnelfile):
     ff = os.path.join(settings.TUNNEL_DATA, tunnelfile.tunnelpath)
@@ -219,11 +266,13 @@ def SetTunnelfileInfo(tunnelfile):
     
     # <tunnelxml tunnelversion="version2009-06-21 Matienzo" tunnelproject="ireby" tunneluser="goatchurch" tunneldate="2009-06-29 23:22:17">
     # <pcarea area_signal="frame" sfscaledown="12.282584" sfrotatedeg="-90.76982" sfxtrans="11.676667377221136" sfytrans="-15.677173422877454" sfsketch="204description/scans/plan(38).png" sfstyle="" nodeconnzsetrelative="0.0">
-    print tunnelfile.tunnelpath, re.findall('<pcarea area_signal="frame".*?sfsketch="([^"]*)" sfstyle="([^"]*)"', ttext)
-#    npaths              = models.IntegerField()
-#    survexscans         = models.ManyToManyField("SurvexScanSingle")
-#    survexblocks        = models.ManyToManyField("SurvexBlock")
-#    tunnelcontains      = models.ManyToManyField("TunnelFile")  # case when its a frame type
+    for path, style in re.findall('<pcarea area_signal="frame".*?sfsketch="([^"]*)" sfstyle="([^"]*)"', ttext):
+        FindTunnelScan(tunnelfile, path)
+    
+    # should also scan and look for survex blocks that might have been included
+    # and also survex titles as well.  
+    
+    tunnelfile.save()
 
 
 def LoadTunnelFiles():
@@ -240,9 +289,11 @@ def LoadTunnelFiles():
             if os.path.isdir(ff):
                 tunneldirs.append(lf)
             elif f[-4:] == ".xml":
-                tunnelfile = TunnelFile(tunnelpath=lf)
+                tunnelfile = TunnelFile(tunnelpath=lf, tunnelname=os.path.split(f[:-4])[1])
                 tunnelfile.save()
-                SetTunnelfileInfo(tunnelfile)
+                
+    for tunnelfile in TunnelFile.objects.all():
+        SetTunnelfileInfo(tunnelfile)
     
         
 
