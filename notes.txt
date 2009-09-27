@@ -1,5 +1,9 @@
 troggle_erebus notes
 
 - don't need author field on logbookentries because is in persontrip
-- don't need date in persontrips
-- don't need expedition in survey
+- don't need date in persontrips because is in logbookentry
+- don't need expedition in survey beacuse is in logbookentry's persontrip's personexpedition
+- don't need expedition in logbookentry because is in persontrip's personexpedition
+- time_underground should not be required on persontrips
+
+- put persontrip next and prev stuff back in as methods. julian being silly again

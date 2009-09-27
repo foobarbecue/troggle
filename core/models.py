@@ -232,9 +232,11 @@ class PersonExpedition(TroggleModel):
 #    
 class LogbookEntry(TroggleModel):
     date    = models.DateField()
+    
+    #below field is unnecessary duplicate; can figure out what expedition it is from any persontrip's personexpedition's expedition.
     expedition  = models.ForeignKey(Expedition,blank=True,null=True)
-    author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip.
-    # Re: the above- so this field should be "typist" or something, not "author". - AC 15 jun 09
+    
+    #author  = models.ForeignKey(PersonExpedition,blank=True,null=True) # the person who writes it up doesn't have to have been on the trip. <- reply to previous from Aaron: if they wrote it up and weren't on the trip, they are actually part of the trip by virtue of writing about it; they just have a time underground of 0.
     title   = models.CharField(max_length=200)
     cave    = models.ForeignKey('Cave',blank=True,null=True)
     place   = models.CharField(max_length=100,blank=True,null=True,help_text="Only use this if you haven't chosen a cave")
@@ -281,15 +283,16 @@ class PersonTrip(TroggleModel):
     personexpedition = models.ForeignKey("PersonExpedition",null=True)
     
     #expeditionday    = models.ForeignKey("ExpeditionDay")
-    date             = models.DateField()    
-    time_underground = models.FloatField(help_text="In decimal hours")
+    #date             = models.DateField()    
+    time_underground = models.FloatField(help_text="In decimal hours", blank=True, null=True)
     logbook_entry    = models.ForeignKey(LogbookEntry)
     is_logbook_entry_author = models.BooleanField()
     
-    
-    # sequencing by person (difficult to solve locally)
-    persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
-    persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
+
+    # sequencing by person (difficult to solve locally) - Julian
+    # No, it really isn't difficult at all - Aaron
+    #persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
+    #persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
     
     def place(self):
         return self.logbook_entry.cave and self.logbook_entry.cave or self.logbook_entry.place
