@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
 import os, stat
 import re
-from troggle.core.models import SurvexScansFolder, SurvexScanSingle, SurvexBlock, TunnelFile
+from core.models import SurvexScansFolder, SurvexScanSingle, SurvexBlock, TunnelFile
 import parsers.surveys
 
 # inline fileabstraction into here if it's not going to be useful anywhere else 

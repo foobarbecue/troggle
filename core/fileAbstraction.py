@@ -1,4 +1,4 @@
-import troggle.settings as settings
+from django.conf import settings
 import os
 import urllib
 

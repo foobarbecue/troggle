@@ -1,7 +1,7 @@
-import troggle.settings as settings
-import troggle.core.models as models
+from django.conf import settings
+import core.models as models
 
-from troggle.parsers.people import GetPersonExpeditionNameLookup
+from parsers.people import GetPersonExpeditionNameLookup
 import re
 import os
 

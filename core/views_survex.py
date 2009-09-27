@@ -7,11 +7,11 @@ import os
 import datetime
 import difflib
 
-from troggle.core.models import Expedition, Person, PersonExpedition, PersonTrip, LogbookEntry, Cave
-from troggle.core.models import SurvexBlock, SurvexPersonRole, SurvexFile, SurvexDirectory, SurvexTitle
+from core.models import Expedition, Person, PersonExpedition, PersonTrip, LogbookEntry, Cave
+from core.models import SurvexBlock, SurvexPersonRole, SurvexFile, SurvexDirectory, SurvexTitle
 from parsers.people import GetPersonExpeditionNameLookup
 
-import troggle.settings as settings
+from django.conf import settings
 import parsers.survex
 
 survextemplatefile = """; Locn: Totes Gebirge, Austria - Loser/Augst-Eck Plateau (kataster group 1623)

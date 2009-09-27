@@ -1,6 +1,6 @@
-from troggle.core.models import Cave, CaveAndEntrance, Survey, Expedition, QM, CaveDescription
-import troggle.core.models as models
-import troggle.settings as settings
+from core.models import Cave, CaveAndEntrance, Survey, Expedition, QM, CaveDescription
+import core.models as models
+from django.conf import settings
 from django.forms.models import formset_factory
 from django.core.urlresolvers import reverse
 from utils import render_with_context # see views_logbooks for explanation on this.

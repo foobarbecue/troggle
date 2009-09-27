@@ -1,4 +1,4 @@
-from troggle.core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, DPhoto, QM
+from core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, DPhoto, QM
 from django.conf import settings
 from django import forms
 from django.template import loader, Context

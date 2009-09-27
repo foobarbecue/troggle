@@ -1,4 +1,4 @@
-import troggle.core.models as models
+import core.models as models
 from django.conf import settings
 
 import csv

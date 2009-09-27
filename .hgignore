@@ -1,4 +1,0 @@
-syntax: glob
-localsettings.py
-*.pyc
-*.py~

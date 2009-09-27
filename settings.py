@@ -63,10 +63,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
-    'troggle.middleware.SmartAppendSlashMiddleware'
+    'middleware.SmartAppendSlashMiddleware'
 )
 
-ROOT_URLCONF = 'troggle.urls'
+ROOT_URLCONF = 'urls'
 
 ACCOUNT_ACTIVATION_DAYS=3
 
@@ -82,10 +82,10 @@ INSTALLED_APPS = (
     #'troggle.photologue',
     #'troggle.reversion',
     #'django_evolution',
-    'troggle.registration',
-    'troggle.profiles',
-    'troggle.core',
-    'troggle.imagekit', 
+    'registration',
+    'profiles',
+    'core',
+    'imagekit', 
 )
 
 QM_PATTERN="\[\[\s*[Qq][Mm]:([ABC]?)(\d{4})-(\d*)-(\d*)\]\]"

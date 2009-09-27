@@ -11,7 +11,7 @@ def weighted_choice(lst):
 	return item
 
 def randomLogbookSentence():
-    from troggle.core.models import LogbookEntry
+    from core.models import LogbookEntry
     randSent={}
 
     # needs to handle empty logbooks without crashing
