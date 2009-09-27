@@ -44,7 +44,7 @@ class QMsFoundInline(admin.TabularInline):
     extra=1
     
 class PhotoInline(admin.TabularInline):
-    model = DPhoto
+    model = Photo
     exclude = ['is_mugshot' ]
     extra = 1
 
@@ -116,7 +116,12 @@ class EntranceAdmin(admin.GeoModelAdmin):
     display_wkt = True
     inlines = (CaveAndEntranceInline,)
 
-admin.site.register(DPhoto)
+class PhotoAdmin(admin.GeoModelAdmin):
+    display_wkt = True
+    prepopulated_fields = {'slug':("caption",)}
+    
+
+admin.site.register(Photo, PhotoAdmin)
 admin.site.register(Cave, CaveAdmin)
 admin.site.register(Area)
 #admin.site.register(OtherCaveName)

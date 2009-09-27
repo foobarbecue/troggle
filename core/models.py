@@ -48,7 +48,7 @@ class TroggleModel(models.Model):
     class Meta:
 	    abstract = True
 
-class TroggleImageModel(ImageModel):
+class TroggleImageModel(ImageModel, models.Model):
     new_since_parsing = models.BooleanField(default=False, editable=False)
     
     def object_name(self):
@@ -581,18 +581,21 @@ class QM(TroggleModel):
 	return u"%s%s%s" % ('[[QM:',self.code(),']]')
 
 photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
-class DPhoto(TroggleImageModel): 
+class Photo(TroggleImageModel):    
     caption = models.CharField(max_length=1000,blank=True,null=True)
     contains_logbookentry = models.ForeignKey(LogbookEntry,blank=True,null=True)
     contains_person = models.ManyToManyField(Person,blank=True,null=True)
     file = models.ImageField(storage=photoFileStorage, upload_to='.',)
     is_mugshot = models.BooleanField(default=False)
-    contains_cave = models.ForeignKey(Cave,blank=True,null=True)
-    contains_entrance = models.ForeignKey(Entrance, related_name="photo_file",blank=True,null=True)
-    nearest_survey_point = models.ForeignKey(SurveyStation,blank=True,null=True)
-    nearest_QM = models.ForeignKey(QM,blank=True,null=True)
-    lon_utm = models.FloatField(blank=True,null=True)
-    lat_utm = models.FloatField(blank=True,null=True)
+    contains_cave = models.ForeignKey(Cave,blank=True,null=True, help_text='If you fill this out, do not fill out "location" below.')
+    contains_entrance = models.ForeignKey(Entrance, related_name="photo_file",blank=True,null=True,  help_text='If you fill this out, do not fill out "location" below.')
+    nearest_survey_point = models.ForeignKey(SurveyStation,blank=True,null=True,  help_text='If you fill this out, do not fill out "location" below.')
+    nearest_QM = models.ForeignKey(QM,blank=True,null=True,  help_text='If you fill this out, do not fill out "location" below.')
+    
+    location = models.PointField(blank=True,null=True,help_text='Only fill this out if the photo is not linked to a cave, entrance, survey point, or QM. You can use the text field below to manually enter coordinates in the Well-Known Text format.')
+    objects = models.GeoManager()
+    
+    slug=models.SlugField()
     
     class IKOptions:
         spec_module = 'core.imagekit_specs'

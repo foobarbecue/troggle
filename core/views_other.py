@@ -1,4 +1,4 @@
-from core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, DPhoto, QM
+from core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, Photo, QM
 from django.conf import settings
 from django import forms
 from django.template import loader, Context
@@ -32,7 +32,7 @@ def frontpage(request):
     for cave in Cave.objects.all():
         for entrance in cave.entrances():
             entrances.append(entrance)
-    photo = DPhoto
+    photo = Photo
     from django.contrib.admin.templatetags import log
     return render_with_context(request,'frontpage.html', locals())
 

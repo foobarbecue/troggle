@@ -3,7 +3,7 @@ from django.utils.html import conditional_escape
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.conf import settings
-from core.models import QM, DPhoto, LogbookEntry, Cave
+from core.models import QM, Photo, LogbookEntry, Cave
 import re, urlparse
 
 register = template.Library()
@@ -122,7 +122,7 @@ def wiki_to_html_short(value, autoescape=None):
             linkText=None
 
         try:
-            photo=DPhoto.objects.get(file=matchdict['photoName'])
+            photo=Photo.objects.get(file=matchdict['photoName'])
             if not linkText:
                 linkText=str(photo)
             res=r'<a href=' + photo.get_admin_url() +'>' + linkText + '</a>'
