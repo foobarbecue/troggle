@@ -120,10 +120,12 @@ class PhotoAdmin(admin.GeoModelAdmin):
     display_wkt = True
     prepopulated_fields = {'slug':("caption",)}
     
+class AreaAdmin(TroggleModelAdmin):
+    prepopulated_fields = {'slug':("name",)}
 
 admin.site.register(Photo, PhotoAdmin)
 admin.site.register(Cave, CaveAdmin)
-admin.site.register(Area)
+admin.site.register(Area, AreaAdmin)
 #admin.site.register(OtherCaveName)
 #admin.site.register(CaveAndEntrance)
 #admin.site.register(SurveyStation)

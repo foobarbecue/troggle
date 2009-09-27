@@ -1,0 +1,5 @@
+troggle_erebus notes
+
+- don't need author field on logbookentries because is in persontrip
+- don't need date in persontrips
+- don't need expedition in survey

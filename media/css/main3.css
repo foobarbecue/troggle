@@ -474,10 +474,31 @@ div#related
 	z-index:2000;
 }
 
-div#related table
+div#recent_actions h2
 {
-	Zborder-collapse:separate;
+	padding-bottom:0px;
+	font-size:100%;
+	text-align:left;
+	background:#EEEEEE url(../nav-bg.gif) repeat-x scroll left bottom;
+	color:#666666;
+	margin: 0px;
 }
+
+div#recent_actions
+{
+	max-width:200px;
+	max-height:50%;
+	overflow-x:hidden;
+	overflow-y:scroll;
+	border: thin solid black;
+	background:#EEEEEE;
+	color:#666666;
+	position:absolute;
+	right:20px;
+	bottom:20px;
+	z-index:2000;
+}
+
 
 div#cave_details h2
 {

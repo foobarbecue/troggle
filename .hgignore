@@ -1,4 +1,7 @@
 syntax: glob
+*fixture*
+scans
+photos
 localsettings.py
 *.pyc
 *.py~

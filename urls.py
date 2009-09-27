@@ -108,11 +108,10 @@ urlpatterns = patterns('',
 
     
             
-    #(r'^survey_scans/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.SURVEY_SCANS, 'show_indexes':True}),
-    url(r'^survey_scans/$',                        view_surveys.surveyscansfolders, name="surveyscansfolders"), 
-    url(r'^survey_scans/(?P<path>[^/]+)/$',        view_surveys.surveyscansfolder,  name="surveyscansfolder"), 
-    url(r'^survey_scans/(?P<path>[^/]+)/(?P<file>[^/]+(?:png|jpg))$', 
-                                                   view_surveys.surveyscansingle,   name="surveyscansingle"), 
+    (r'^survey_scans/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.SURVEY_SCANS, 'show_indexes':True}),
+    #url(r'^survey_scans/$',                        view_surveys.surveyscansfolders, name="surveyscansfolders"), 
+    #url(r'^survey_scans/(?P<path>[^/]+)/$',        view_surveys.surveyscansfolder,  name="surveyscansfolder"), 
+    #url(r'^survey_scans/(?P<path>[^/]+)/(?P<file>[^/]+(?:png|jpg))$', view_surveys.surveyscansingle,   name="surveyscansingle"), 
     
     url(r'^tunneldata/$',                          view_surveys.tunneldata,         name="tunneldata"), 
     url(r'^tunneldataraw/(?P<path>.+?\.xml)$',     view_surveys.tunnelfile,         name="tunnelfile"), 

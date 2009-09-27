@@ -32,6 +32,17 @@
     {% endfor %}
 {% endif %}
 
+{% if cave.photos_set.all %}
+    <table>
+        {% for photo in cave.photos_set.all %}
+            <tr>
+                <td><img src="{{photo.thumbnail_url}}"></td>
+                <td>{{photo.caption}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
 {% if cave.explorers %}
     <h2>Explorers</h2>
     {{ cave.explorers|wiki_to_html }}

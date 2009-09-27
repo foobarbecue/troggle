@@ -304,15 +304,15 @@ class PersonTrip(TroggleModel):
 ##########################################
 
 class Area(TroggleModel):
-    short_name = models.CharField(max_length=100)
-    name = models.CharField(max_length=200, blank=True, null=True)
+    name = models.CharField(max_length=200, )
+    slug = models.SlugField()
     description = models.TextField(blank=True,null=True)
     parent = models.ForeignKey('Area', blank=True, null=True)
     def __unicode__(self):
         if self.parent:
-            return unicode(self.parent) + u" - " + unicode(self.short_name)
+            return unicode(self.parent) + u" - " + unicode(self.name)
         else:
-            return unicode(self.short_name)
+            return unicode(self.name)
     def kat_area(self):
         if self.short_name in ["1623", "1626"]:
             return self.short_name
@@ -612,9 +612,12 @@ class Photo(TroggleImageModel):
 scansFileStorage = FileSystemStorage(location=settings.SURVEY_SCANS, base_url=settings.SURVEYS_URL)
 def get_scan_path(instance, filename):
     year=instance.survey.expedition.year
-    print "WN: ", type(instance.survey.wallet_number), instance.survey.wallet_number
-    number="%02d" % instance.survey.wallet_number + str(instance.survey.wallet_letter) #using %02d string formatting because convention was 2009#01
-    return os.path.join('./',year,year+r'#'+number,instance.contents+str(instance.number_in_wallet)+r'.jpg')
+    if instance.survey.wallet_number:
+        print "WN: ", type(instance.survey.wallet_number), instance.survey.wallet_number
+        number="%02d" % instance.survey.wallet_number + str(instance.survey.wallet_letter) #using %02d string formatting because convention was 2009#01
+        return os.path.join('./',year,year+r'#'+number,instance.contents+str(instance.number_in_wallet)+r'.jpg')
+    else:
+        return str(instance.survey)+r'.jpg'
 
 class ScannedImage(TroggleImageModel): 
     file = models.ImageField(storage=scansFileStorage, upload_to=get_scan_path)
@@ -622,9 +625,7 @@ class ScannedImage(TroggleImageModel):
     scanned_on = models.DateField(null=True)
     survey = models.ForeignKey('Survey')
     contents = models.CharField(max_length=20,choices=(('notes','notes'),('plan','plan_sketch'),('elevation','elevation_sketch')))
-    number_in_wallet = models.IntegerField(null=True)
-    lon_utm = models.FloatField(blank=True,null=True)
-    lat_utm = models.FloatField(blank=True,null=True)
+    number_in_wallet = models.IntegerField(blank=True,null=True)
 
     class IKOptions:
         spec_module = 'core.imagekit_specs'
@@ -660,7 +661,10 @@ class Survey(TroggleModel):
     integrated_into_main_sketch_by = models.ForeignKey('Person' ,related_name='integrated_into_main_sketch_by', blank=True,null=True)
     rendered_image = models.ImageField(upload_to='renderedSurveys',blank=True,null=True)
     def __unicode__(self):
-        return self.expedition.year+"#"+"%02d" % int(self.wallet_number)
+        if self.wallet_number:
+            return self.expedition.year+"#"+"%02d" % int(self.wallet_number)
+        else:
+            return str(self.logbook_entry.slug)+'_survey'
 
     def notes(self):
 	    return self.scannedimage_set.filter(contents='notes')
