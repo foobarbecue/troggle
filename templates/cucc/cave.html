@@ -1,0 +1,89 @@
+{% extends "cavebase.html" %}
+{% load wiki_markup %}
+{% block editLink %}| <a href={{cave.get_admin_url}}>Edit cave {{cave|wiki_to_html_short}}</a>{% endblock %}
+
+{% block related %}
+  <h2>All logbook entries regarding this cave ({{cave.logbookentry_set.count}})</h2>
+  <table>
+  {% for logbookentry in cave.logbookentry_set.all %}
+  {% if logbookentry.title %}
+    <tr>
+      <td>{{logbookentry.date}}</td>
+      <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.title|safe}}</a></td>
+    </tr>
+  {% endif %}
+  {% endfor %}
+  </table>
+{% endblock %}
+
+{% block content %}
+
+{% if cave.entrances %}
+    <h2>Entrances</h2>
+    {% for ent in cave.entrances %}
+        <a href = "./{{ ent.entrance_letter|wiki_to_html_short }}">{{ ent.entrance_letter|wiki_to_html_short }}</a>
+        {% if ent.entrance.marking %}
+            Marking: {{ ent.entrance.marking_val|wiki_to_html_short }}
+        {% endif %}
+        <br>
+    {% endfor %}
+{% endif %}
+
+{% if cave.explorers %}
+    <h2>Explorers</h2>
+    {{ cave.explorers|wiki_to_html }}
+{% endif %}
+{% if cave.underground_description %}
+    <h2>Underground Description</h2>
+    {{ cave.underground_description|wiki_to_html }}
+{% endif %}
+{% if cave.equipment %}
+    <h2>Equipment</h2>
+    {{ cave.equipment|wiki_to_html }}
+{% endif %}
+{% if cave.references %}
+    <h2>References</h2>
+    {{ cave.references|wiki_to_html }}
+{% endif %}
+{% if cave.survey %}
+    <h2>Survey</h2>
+    {{ cave.survey|wiki_to_html }}
+{% endif %}
+{% if cave.kataster_status %}
+    <h2>Kataster_status</h2>
+    {{ cave.kataster_status|wiki_to_html }}
+{% endif %}
+{% if cave.underground_centre_line %}
+    <h2>Underground Centre Line</h2>
+    {{ cave.underground_centre_line|wiki_to_html }}
+{% endif %}
+{% if cave.survex_file %}
+    <h2>Survex File</h2>
+    {{ cave.survex_file|wiki_to_html }}
+{% endif %}
+{% if cave.notes %}
+    <h2>Notes</h2>
+    {{ cave.notes|wiki_to_html }}
+{% endif %}
+
+{% if cave.get_QMs %}
+	<h2>Question marks</h2>
+    <h3>Extant</h3>
+    <ul id="cavelist">
+    {% for QM in cave.get_QMs %}
+        {% if QM.ticked_off_by %}
+        {% else %}
+        <li><a href="{{QM.get_absolute_url}}">{{QM}}</a></li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+    <h3>Ticked off</h3>
+    <ul>
+    {% for QM in cave.get_QMs %}
+        {% if QM.ticked_off_by %}
+        <li><a href="{{QM.get_absolute_url}}">{{QM}}</a></li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

@@ -1,6 +1,5 @@
 import urllib, urlparse, string, os, datetime, logging, re
 from django.forms import ModelForm
-from django.db import models
 from django.contrib import admin
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
@@ -14,6 +13,7 @@ getcontext().prec=2 #use 2 significant figures for decimal calculations
 
 from models_survex import *
 
+from django.contrib.gis.db import models
 
 def get_related_by_wikilinks(wiki_text):
     found=re.findall(settings.QM_PATTERN,wiki_text)
@@ -38,6 +38,7 @@ logging.basicConfig(level=logging.DEBUG,
 class TroggleModel(models.Model):
     new_since_parsing = models.BooleanField(default=False, editable=False)
     non_public = models.BooleanField(default=False)
+    
     def object_name(self):
         return self._meta.object_name
 
@@ -68,7 +69,7 @@ class Expedition(TroggleModel):
     name        = models.CharField(max_length=100)
         
     def __unicode__(self):
-        return self.year
+        return self.name
 
     class Meta:
         ordering = ('-year',)
@@ -96,17 +97,18 @@ class Expedition(TroggleModel):
         return res and res[len(res) - 1] or None
         
         
+# I can't think of a reason why the following model would be necessary. - Aaron 21 Sep 09
+#
+#class ExpeditionDay(TroggleModel):
+#    expedition  = models.ForeignKey("Expedition")
+#    date        = models.DateField()
 
-class ExpeditionDay(TroggleModel):
-    expedition  = models.ForeignKey("Expedition")
-    date        = models.DateField()
+#    class Meta:
+#        ordering = ('date',)  
 
-    class Meta:
-        ordering = ('date',)  
-
-    def GetPersonTrip(self, personexpedition):
-        personexpeditions = self.persontrip_set.filter(expeditionday=self)
-        return personexpeditions and personexpeditions[0] or None
+#    def GetPersonTrip(self, personexpedition):
+#        personexpeditions = self.persontrip_set.filter(expeditionday=self)
+#        return personexpeditions and personexpeditions[0] or None
     
         
 #
@@ -114,13 +116,10 @@ class ExpeditionDay(TroggleModel):
 #
 class Person(TroggleModel):
     first_name  = models.CharField(max_length=100)
-    last_name   = models.CharField(max_length=100)
-    is_vfho     = models.BooleanField(help_text="VFHO is the Vereines f&uuml;r H&ouml;hlenkunde in Obersteier, a nearby Austrian caving club.")    
-    mug_shot    = models.CharField(max_length=100, blank=True,null=True)
+    last_name   = models.CharField(max_length=100, blank=True, null=True)
+    affiliation     = models.CharField(max_length=300, blank=True, null=True)
+    #mug_shot    = models.CharField(max_length=100, blank=True,null=True)
     blurb = models.TextField(blank=True,null=True)
-    
-    #href        = models.CharField(max_length=200)
-    orderref    = models.CharField(max_length=200)  # for alphabetic 
     
     #the below have been removed and made methods. I'm not sure what the b in bisnotable stands for. - AC 16 Feb
     #notability  = models.FloatField()               # for listing the top 20 people
@@ -132,7 +131,7 @@ class Person(TroggleModel):
     class Meta:
 	    verbose_name_plural = "People"
     class Meta:
-        ordering = ('orderref',)  # "Wookey" makes too complex for: ('last_name', 'first_name') 
+        ordering = ('last_name','first_name')  
     
     def __unicode__(self):
         if self.last_name:
@@ -184,7 +183,7 @@ class PersonExpedition(TroggleModel):
         ('sponsorship','Expo sponsorship coordinator'),
         ('research','Expo research coordinator'),
         )
-    expo_committee_position = models.CharField(blank=True,null=True,choices=COMMITTEE_CHOICES,max_length=200)
+    position = models.CharField(blank=True,null=True,choices=COMMITTEE_CHOICES,max_length=200)
     nickname    = models.CharField(max_length=100,blank=True,null=True)
     
     def GetPersonroles(self):
@@ -233,8 +232,7 @@ class PersonExpedition(TroggleModel):
 #    
 class LogbookEntry(TroggleModel):
     date    = models.DateField()
-    expeditionday = models.ForeignKey("ExpeditionDay", null=True)
-    expedition  = models.ForeignKey(Expedition,blank=True,null=True)  # yes this is double-
+    expedition  = models.ForeignKey(Expedition,blank=True,null=True)
     author  = models.ForeignKey(PersonExpedition,blank=True,null=True)  # the person who writes it up doesn't have to have been on the trip.
     # Re: the above- so this field should be "typist" or something, not "author". - AC 15 jun 09
     title   = models.CharField(max_length=200)
@@ -282,7 +280,7 @@ class LogbookEntry(TroggleModel):
 class PersonTrip(TroggleModel):
     personexpedition = models.ForeignKey("PersonExpedition",null=True)
     
-    expeditionday    = models.ForeignKey("ExpeditionDay")
+    #expeditionday    = models.ForeignKey("ExpeditionDay")
     date             = models.DateField()    
     time_underground = models.FloatField(help_text="In decimal hours")
     logbook_entry    = models.ForeignKey(LogbookEntry)
@@ -331,6 +329,7 @@ class CaveAndEntrance(TroggleModel):
 class Cave(TroggleModel):
     # too much here perhaps
     official_name = models.CharField(max_length=160)
+    slug = models.SlugField(max_length=50)
     area = models.ManyToManyField(Area, blank=True, null=True)
     kataster_code = models.CharField(max_length=20,blank=True,null=True)
     kataster_number = models.CharField(max_length=10,blank=True, null=True)
@@ -358,7 +357,7 @@ class Cave(TroggleModel):
         elif self.unofficial_number:
             href = self.unofficial_number
         else:
-            href = official_name.lower()
+            href = self.official_name.lower()
         #return settings.URL_ROOT + '/cave/' + href + '/'
         return urlparse.urljoin(settings.URL_ROOT, reverse('cave',kwargs={'cave_id':href,}))
 
@@ -368,11 +367,13 @@ class Cave(TroggleModel):
                 return self.kat_area() + u": " + self.kataster_number
             else:
                 return unicode("l") + u": " + self.kataster_number
-        else:
+        elif self.unofficial_number:
             if self.kat_area():
                 return self.kat_area() + u": " + self.unofficial_number
             else:
                 return self.unofficial_number
+        else:
+            return self.official_name
 
     def get_QMs(self):
         return QM.objects.filter(found_by__cave=self)	
@@ -391,7 +392,10 @@ class Cave(TroggleModel):
                 return a.kat_area()
     
     def entrances(self):
-        return CaveAndEntrance.objects.filter(cave=self)
+        entrances=[]
+        for caveandentrance in self.caveandentrance_set.all():
+            entrances.append(caveandentrance.entrance)
+        return entrances
     
     def entrancelist(self):
         rs = []
@@ -433,6 +437,10 @@ class SurveyStation(TroggleModel):
         return unicode(self.name)
 
 class Entrance(TroggleModel):
+    #fields using django.contrib.gis
+    location = models.PointField()
+    objects = models.GeoManager()
+    
     name = models.CharField(max_length=100, blank=True,null=True)
     entrance_description = models.TextField(blank=True,null=True)
     explorers = models.TextField(blank=True,null=True)
@@ -459,10 +467,7 @@ class Entrance(TroggleModel):
         ('L', 'Lost'),
         ('R', 'Refindable'))
     findability = models.CharField(max_length=1, choices=FINDABLE_CHOICES, blank=True, null=True)
-    findability_description = models.TextField(blank=True,null=True)
-    alt = models.TextField(blank=True, null=True)
-    northing = models.TextField(blank=True, null=True)
-    easting = models.TextField(blank=True, null=True)
+    findability_description = models.TextField(blank=True,null=True)    
     tag_station = models.ForeignKey(SurveyStation, blank=True,null=True, related_name="tag_station")
     exact_station = models.ForeignKey(SurveyStation, blank=True,null=True, related_name="exact_station")
     other_station = models.ForeignKey(SurveyStation, blank=True,null=True, related_name="other_station")
@@ -485,6 +490,11 @@ class Entrance(TroggleModel):
             if f[0] == self.findability:
                 return f[1]
                 
+    def caves(self):
+        caves=[]
+        for caveandentrance in self.caveandentrance_set.all():
+            caves.append(caveandentrance.cave)
+        return caves
 
     def get_absolute_url(self):
         

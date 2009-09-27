@@ -1,4 +1,4 @@
-/* The following serves to stretch the content div to the bottom of the margin images, or vice versa*/
+/* The following serves to stretch the content div to the bottom of the margin images, or vice versa
 
 function contentHeight(){
 setMaxHeight($(".rightMargin,#content,.leftMargin,#col2"),$("#content"));
@@ -15,7 +15,7 @@ function setMaxHeight(group, target) {
 	target.height(tallest);
 };
 
-
+*/
 
 /*This is the jquery stuff */
 $(document).ready(function() {
@@ -76,7 +76,7 @@ $(hoverLink).bind('mouseout',
 };
 
 function showEyeCandy(){
-contentHeight();
+/*contentHeight();*/
 switchStylestyle("eyeCandy");
 $("#eyeCandyFooterPopUps").load("/eyecandy");
 $(".leftMargin,.rightMargin").show();

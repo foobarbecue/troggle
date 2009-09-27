@@ -1,5 +1,6 @@
 html, body {
 	height: 100%;
+	margin: 0px;
 }
 
 
@@ -34,14 +35,6 @@ div.logbookentry p
 }
 
 div#content {
-	Zmargin-top: 50px;
-	Zmargin-left: 120px;
-	Zmargin-right: 120px;
-	padding-top: 10px;
-	padding-left: 5em;
-	padding-right: 5em;
-	padding-bottom:5em;
-	Zbackground:#CCC;
     background-color:#f9f9f9;
 }
 
@@ -88,11 +81,16 @@ table.expeditionpersonlist a:hover
 
 
 
-div#content div#col2
+div#content
 {
-    float:right; 
-    width:33%;
+	height:100%;
     background-color:#feeeed;
+}
+
+div#map
+{
+	height:100%;
+	position:relative;
 }
 
 div#content h2
@@ -463,11 +461,17 @@ div#related h2
 
 div#related
 {
-	Zwidth:200px;
-	float:right;
+	max-width:200px;
+	max-height:50%;
+	overflow-x:hidden;
+	overflow-y:scroll;
 	border: thin solid black;
 	background:#EEEEEE;
 	color:#666666;
+	position:absolute;
+	right:20px;
+	bottom:20px;
+	z-index:2000;
 }
 
 div#related table
@@ -475,18 +479,48 @@ div#related table
 	Zborder-collapse:separate;
 }
 
+div#cave_details h2
+{
+	padding-bottom:0px;
+	font-size:100%;
+	text-align:left;
+	background:#EEEEEE url(../nav-bg.gif) repeat-x scroll left bottom;
+	color:#666666;
+	margin: 0px;
+}
+
+div#cave_details
+{
+	max-width:200px;
+	max-height:50%;
+	overflow-x:hidden;
+	overflow-y:scroll;
+	border: thin solid black;
+	background:#EEEEEE;
+	color:#666666;
+	position:absolute;
+	left:20px;
+	bottom:20px;
+	z-index:2000;
+}
+
+div#cave_details table
+{
+	Zborder-collapse:separate;
+}
+
 .addlink {
-    padding-left: 12px;
+    padding-left: 6px;
     background: url(../icon_addlink.gif) 0 .2em no-repeat;
 }
 
 .changelink {
-    padding-left: 12px;
+    padding-left: 6px;
     background: url(../icon_changelink.gif) 0 .2em no-repeat;
 }
 
 .deletelink {
-    padding-left: 12px;
+    padding-left: 6px;
     background: url(../icon_deletelink.gif) 0 .25em no-repeat;
 }
 

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+
+{% block title %}Mount Erebus Cave Database{% endblock %}
+
+{% block head %}
+    <script src="http://openlayers.org/dev/OpenLayers.js"></script>
+    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;'></script>
+    <script type="text/javascript">
+        var map, entrances, selectControl;
+        
+        function selected(evt){
+            window.open(evt.feature.attributes.href,"Window1",
+"menubar=no,width=430,height=360,toolbar=no");
+        }
+        
+        function init(){
+            map = new OpenLayers.Map( 'map' );
+            
+            var gphy = new OpenLayers.Layer.Google(
+                "Google Physical",
+                {type: G_PHYSICAL_MAP}
+            );
+            
+            var ol_wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+                    "http://labs.metacarta.com/wms/vmap0",
+                    {layers: 'basic'} );
+                    
+            var jpl_wms = new OpenLayers.Layer.WMS(
+                "NASA Global Mosaic",
+                "http://t1.hypercube.telascience.org/cgi-bin/landsat7", 
+                {layers: "landsat7"}
+            );
+            
+            
+
+            entrances = new OpenLayers.Layer.Vector("Simple Geometry", {
+                styleMap: new OpenLayers.StyleMap({
+                    "default": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
+                        label : "${name}",
+                        labelAlign: "${align}",
+                        fontSize: "10px",
+                    }, OpenLayers.Feature.Vector.style["default"])),
+                    "select": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
+                        label : "${name}",
+                        labelAlign: "${align}",
+                        fontSize: "10px",
+                    }, OpenLayers.Feature.Vector.style["select"])),
+                })
+            });
+
+            
+            {% for entrance in entrances %}
+                    var entrance{{entrance.id}} = new OpenLayers.Geometry.Point({{entrance.location.x}}, {{entrance.location.y}});
+                    var entrance{{entrance.id}}Feature = new OpenLayers.Feature.Vector(entrance{{entrance.id}});
+                        entrance{{entrance.id}}Feature.attributes = {
+                            href: "{{entrance.caves.0.get_absolute_url}}",
+                            name: "{{entrance}}",				
+                            favColor: "black",
+                            align: "rt"
+                };
+            {% endfor %}
+            
+            entrances.addFeatures([{%for entrance in entrances %}entrance{{entrance.id}}Feature, {%endfor%}]);
+            
+            var report = function(e) {
+                OpenLayers.Console.log(e.type, e.feature.id);
+            };
+
+/*            
+            var highlightCtrl = new OpenLayers.Control.SelectFeature(entrances, {
+                hover: true,
+                highlightOnly: true,
+                renderIntent: "temporary",
+                eventListeners: {
+                    beforefeaturehighlighted: report,
+                    featurehighlighted: report,
+                    featureunhighlighted: report
+                }
+            });
+*/
+            selectCtrl = new OpenLayers.Control.SelectFeature(
+                [entrances],
+                {
+                    clickout: true, toggle: false,
+                    multiple: false, hover: false,
+                    toggleKey: "ctrlKey", // ctrl key removes from selection
+                    multipleKey: "shiftKey" // shift key adds to selection
+                }
+            );
+
+
+            /*map.addControl(highlightCtrl);*/
+
+            
+            map.addControl(new OpenLayers.Control.LayerSwitcher());
+            map.addLayer(gphy);
+            map.addLayer(ol_wms);
+            map.addLayer(jpl_wms);
+            map.addLayer(entrances);
+            map.addControl(selectCtrl);
+            selectCtrl.activate();
+            map.zoomToExtent(entrances.getDataExtent());
+            map.zoomTo(10);
+            
+            entrances.events.register("featureselected", entrances, selected);
+        }
+    </script>
+
+{% endblock head %}
+
+	{% block related %}
+        <h2>Recent Actions</h2>
+            {% load log %}
+            {% get_admin_log 10 as admin_log %}
+            {% if not admin_log %}
+            <p>No recent actions</p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="admin/{{ entry.get_absolute_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br/>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{{entry.content_type.name}}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet">Unknown content</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+	{% endblock %}
+
+{% block body_onload %}init();{% endblock body_onload %}
+
+{% block content %}
+
+    <div id="map"></div>
+
+{% endblock content %}
+
+{% block margins %}
+<img class="leftMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}eieshole.jpg">
+<img class="rightMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}goesser.jpg">
+{% endblock margins %}

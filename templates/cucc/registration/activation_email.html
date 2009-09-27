@@ -1,0 +1,10 @@
+<P>Hello {{ form.user }},</P>
+
+<P>Glad you're joining the CUCC EXPO team! Please go to</P>
+
+<P><a href="{{ site }}{% url registration_activate activation_key %}">{{ site }}{% url registration_activate activation_key %}</a></P>
+
+<P>to activate your account. Do this within {{ expiration_days }} days, or else you'll have to sign up again.</P>
+
+<P>Yours,<BR>
+The magical troggle</P>

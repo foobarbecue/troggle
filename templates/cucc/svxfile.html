@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load survex_markup %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+<script src="{{ settings.MEDIA_URL }}js/base.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{settings.MEDIA_URL}}js/jquery.form.js"></script>
+<script type="text/javascript" src="{{settings.MEDIA_URL}}CodeMirror-0.62/js/codemirror.js"></script>
+
+<script type="text/javascript">
+var codeeditor;
+$(document).ready(function()
+{
+    codeeditor = CodeMirror.fromTextArea("id_code", 
+    {
+        parserfile: ["parsesurvex.js"],
+        stylesheet: "{{settings.MEDIA_URL}}CodeMirror-0.62/css/survexcolors.css",
+        path: "{{settings.MEDIA_URL}}CodeMirror-0.62/js/",
+        textWrapping: false, 
+        lineNumbers: false, 
+        indentUnit: 4, 
+        tabMode: "spaces"
+    });
+    $("#id_outputtype").val("ajax"); 
+    var options = 
+    { 
+        target:        '#difflistajax', 
+        beforeSubmit:  function() { $("textarea#id_code").value = codeeditor.getCode().length; }, 
+        success:       function() { codeeditor.focus(); }
+    }; 
+    $('#codewikiform').ajaxForm(options);   // bind form using 'ajaxForm' 
+});
+
+</script>
+{% endblock %}
+
+{% block content %}
+<h1>Survex File: {{ title }}</h1>
+
+{% if svxincludes %}
+<p><b>Included files:</b>
+{% for svxinclude in svxincludes %}
+ <a href="{{svxinclude}}.svx">{{svxinclude}}</a>
+{% endfor %}
+</p>
+{% endif %}
+
+<form id="codewikiform" action="" method="POST">
+    <div class="codeframebit">{{form.code}}</div>
+    <div style="display:none">{{form.filename}} {{form.dirname}} {{form.datetime}} {{form.outputtype}}</div>
+    <input type="submit" name="diff" value="Diffy" />
+    <input type="submit" name="save" value="Save"/>
+    <input type="submit" name="process" value="Process" title="executes cavern"/>
+</form>
+
+<div id="difflistajax">
+<pre>
+{% for diffline in difflist %}{{diffline}}
+{% endfor %}
+</pre>
+
+{% if logmessage %}
+{% if has_3d %}
+<p><a href="{% url threed title %}">3d file</a></p>
+{% else %}
+<p><b>No 3d file</b></p>
+{% endif %}
+<pre>
+LOGMESSAGES
+{{logmessage}}
+</pre>
+{% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+<pre>
+ using difflistonly.html
+{% for diffline in difflist %}{{diffline}}
+{% endfor %}
+</pre>
+
+{% if logmessage %}
+{% if has_3d %}
+<p><a href="{% url threed title %}">3d file</a></p>
+{% else %}
+<p><b>No 3d file</b></p>
+{% endif %}
+<pre>
+LOGMESSAGES
+{{logmessage}}
+</pre>
+{% endif %}
+

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block contentheader %}
+<h1>Profile for {{ profile }}</h1>
+{% endblock %}
+
+{% block content %}
+
+{{ profile }}
+
+{% if form.errors %}
+ <p class="errornote">Please correct the errors below</p>
+{% endif %}
+{% endblock %}

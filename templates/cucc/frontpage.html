@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+
+{% block title %}Cambridge Expeditions to Austria{% endblock %}
+
+	{% block related %}
+        <h2>Recent Actions</h2>
+            {% load log %}
+            {% get_admin_log 10 as admin_log %}
+            {% if not admin_log %}
+            <p>No recent actions</p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="admin/{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br/>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{{entry.content_type.name}}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet">Unknown content</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+	{% endblock %}
+
+{% block content %}
+
+
+
+
+<div id="col1">
+<h3>Welcome</h3>
+<p class="indent">
+This is Troggle, the information portal for Cambridge University Caving Club's Expeditions to Austria. 
+</p>
+
+<p class="indent">
+Here you will find information about the {{expedition.objects.count}} expeditions the club has undertaken since 1976. Browse survey information, photos, and description wikis for {{cave.objects.count}} caves, {{subcave.objects.count}} areas within those caves, and {{extantqms.count}} going leads yet to be explored. We have {{photo.objects.count}} photos and {{logbookentry.objects.count}} logbook entries.
+</p>
+
+<p class="indent">
+If you are an expedition member, please sign up using the link to the top right and begin editing.
+</p>
+
+<h3>News</h3>
+
+<p class="indent">
+Everyone is gearing up for the 2009 expedition; please see the link below for the main expedition website.
+</p>
+
+<h3>Troggle development</h3>
+<p class="indent">
+Troggle is still under development. Check out the <a href="http://troggle.googlecode.com">development page</a> on google code, where you can file bug reports, make suggestions, and help develop the code. There is also an old todo list at <a href="{%url todo%}">here</a>.
+</p>
+</div>
+{% endblock content %}
+
+{% block margins %}
+<img class="leftMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}eieshole.jpg">
+<img class="rightMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}goesser.jpg">
+{% endblock margins %}

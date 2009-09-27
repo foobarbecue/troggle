@@ -9,7 +9,9 @@ from core.models import *
 from django.views.generic.create_update import create_object
 from django.contrib import admin
 from django.views.generic.list_detail import object_list
-from django.contrib import admin
+from django.contrib import databrowse
+import datalogging.models
+
 admin.autodiscover()
 
 
@@ -20,7 +22,7 @@ urlpatterns = patterns('',
     url(r'^$',              views_other.frontpage,      name="frontpage"),
     url(r'^todo/$',              views_other.todo,      name="todo"),
     
-    url(r'^caves/?$',     views_caves.caveindex,      name="caveindex"),
+    url(r'^caves/$',     views_caves.caveindex,      name="caves"),
     url(r'^people/?$',   views_logbooks.personindex, name="personindex"),
 
     url(r'^newqmnumber/?$',              views_other.ajax_QM_number,  ),
@@ -70,6 +72,9 @@ urlpatterns = patterns('',
 
     (r'^admin/doc/?', include('django.contrib.admindocs.urls')),
     url(r'^admin/(.*)', admin.site.root, name="admin"),
+    
+    (r'^databrowse/(.*)', databrowse.site.root),
+
     
     # don't know why this needs troggle/ in here.  nice to get it out
     url(r'^troggle/media-admin/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ADMIN_DIR, 'show_indexes':True}),
@@ -123,3 +128,11 @@ urlpatterns = patterns('',
     
             #url(r'^trip_report/?$',views_other.tripreport,name="trip_report")
 )
+
+from datalogging.models import *
+
+databrowse.site.register(Manufacturer)
+databrowse.site.register(EquipmentType)
+databrowse.site.register(EquipmentItem)
+databrowse.site.register(Timeseries)
+databrowse.site.register(DataPoint)

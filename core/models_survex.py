@@ -77,7 +77,7 @@ class SurvexBlock(models.Model):
     cave       = models.ForeignKey('Cave', blank=True, null=True)
     
     date       = models.DateField(blank=True, null=True)
-    expeditionday = models.ForeignKey("ExpeditionDay", null=True)
+    #expeditionday = models.ForeignKey("ExpeditionDay", null=True)
     expedition = models.ForeignKey('Expedition', blank=True, null=True)
         
     survexfile = models.ForeignKey("SurvexFile", blank=True, null=True)
@@ -145,7 +145,7 @@ class SurvexPersonRole(models.Model):
     person              = models.ForeignKey('Person', blank=True, null=True)
     personexpedition    = models.ForeignKey('PersonExpedition', blank=True, null=True)
     persontrip          = models.ForeignKey('PersonTrip', blank=True, null=True)  
-    expeditionday       = models.ForeignKey("ExpeditionDay", null=True)
+    #expeditionday       = models.ForeignKey("ExpeditionDay", null=True)
     
     def __unicode__(self):
         return unicode(self.person) + " - " + unicode(self.survexblock) + " - " + unicode(self.nrole)

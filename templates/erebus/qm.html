@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load link %}
+
+{% block title %} QM: {{qm|wiki_to_html_short}} {% endblock %}
+
+{% block editLink %}| <a href={{qm.get_admin_url}}>Edit QM {{qm|wiki_to_html_short}}</a>{% endblock %}
+
+
+
+{% block contentheader %}
+<table id="cavepage">
+<tr>
+<th id="kat_no"><a href="{{qm.get_previous_by_id.get_absolute_url}}">Previous</a></th>
+<th id="name">{{qm|wiki_to_html_short}}</th>
+<th id="status"><a href="{{qm.get_next_by_id.get_absolute_url}}">Next</a></th>
+</tr>
+</table>
+{% endblock %}
+
+{% block related %}
+
+{% endblock %}
+<h2>Related items</h2>
+  
+Parent cave: {{qm.found_by.cave|link}}
+(todo: add parent survey and parent subcave)
+{% block content %}
+
+<h3>Location</h3>
+{{qm.location_description}}
+
+
+<h3>Creation</h3>
+Found by <a href="{{qm.found_by.get_absolute_url}}">{{qm.found_by}}</a> on {{qm.found_by.date}}.
+
+<h3>Completion</h3>
+{% if ticked_off_by %}
+{{qm.completion_description}}
+Ticked off by: <a href="{{qm.ticked_off_by.get_absolute_url}}">{{qm.ticked_off_by}}</a><br />
+Description: {{qm.completion_description}}
+{% else %}
+None yet- STILL EXTANT.
+{% endif %}
+
+<h3>Comment</h3>
+{{qm.comment}}
+
+{% endblock %}

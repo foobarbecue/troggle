@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load link %}
+
+{% block title %}Expedition {{expedition.name}}{% endblock %}
+{% block editLink %}<a href={{expedition.get_admin_url}}>Edit expedition {{expedition|wiki_to_html_short}}</a>{% endblock %}
+
+{% block related %}
+{% endblock %}
+
+{% block content %}
+
+{% if message %}
+<p>debug message: {{message}}</p>
+{% endif %}
+
+<h2>{{expedition.name}}</h2>
+
+<p><b>Other years:</b>
+{% for otherexpedition in expeditions %}
+  {% ifequal otherexpedition expedition %}
+  | <b>{{otherexpedition.year}}</b>
+  {% else %}
+  | <a href="{{otherexpedition.get_absolute_url}}">{{ otherexpedition.year }}</a>
+  {% endifequal %}
+{% endfor %}
+</p>
+
+<p><b>At a single glance:</b> The table shows all expo cavers and their recorded trips.  
+The columns are the date in the month (July or August), with a "T" for a logbook entry, and 
+an "S" for a survey trip.  The colours are the same for people on the same trip.</p>
+
+<table class="expeditionpersonlist">
+<tr>
+<th>Caver</th>
+{% for expeditionday in expedition.expeditionday_set.all %} 
+<th>
+  {{expeditionday.date.day}}
+</th>
+{% endfor %}
+</tr>
+{% for personexpeditionday in personexpeditiondays %}
+  <tr>
+  <td><a href="{{ personexpeditionday.personexpedition.get_absolute_url }}">{{personexpeditionday.personexpedition.person}}</a></td>
+  {% for persondayactivities in personexpeditionday.personrow %}
+
+  {% if persondayactivities.persontrips or persondayactivities.survexblocks %}
+  <td class="persondayactivity">
+    {% for persontrip in persondayactivities.persontrips %}
+      <a href="{{persontrip.logbook_entry.get_absolute_url}}" class="dayindexlog-{{persontrip.logbook_entry.DayIndex}}">T</a>
+    {% endfor %}
+   <br/>
+    {% for survexblock in persondayactivities.survexblocks %}
+      <a href="{% url svx survexblock.survexfile.path %}" class="dayindexsurvex-{{survexblock.DayIndex}}">S</a>
+    {% endfor %}
+  </td>
+  {% else %}
+  <td class="persondayactivity-nothing">
+  </td>
+  {% endif %}
+
+  {% endfor %}
+  </tr>
+{% endfor %}
+</table>
+
+<form action="" method="GET"><input type="submit" name="reload" value="Reload"></form>
+
+<h3>Logbooks and survey trips per day</h3>
+<table class="expeditionlogbooks">
+<tr><th>Date</th><th>Logged trips</th><th>Surveys</th></tr>
+{% for expeditionday in expedition.expeditionday_set.all %} 
+<tr>
+  <td>{{expeditionday.date}}</td>
+  <td>
+    {% for logbookentry in expeditionday.logbookentry_set.all %}
+    <a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.title|safe}}</a><br/>
+    {% endfor %}
+  </td>
+  <td>
+    {% for survexblock in expeditionday.survexblock_set.all %}
+    <a href="{% url svx survexblock.survexfile.path %}">{{survexblock.name}}</a>
+    {% endfor %}
+  </td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

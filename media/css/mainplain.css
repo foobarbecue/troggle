@@ -377,7 +377,7 @@ div#related h2
 
 div#related
 {
-	width:200px;
+	max-width:100px;
 	float:right;
 	border: thin solid black;
 	background:#EEEEEE;

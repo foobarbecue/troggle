@@ -22,12 +22,16 @@ def stats(request):
     return render_with_context(request,'statistics.html', statsDict)
 
 def frontpage(request):
-    if request.user.is_authenticated():
-        return render_with_context(request,'tasks.html')
+    #if request.user.is_authenticated():
+        #return render_with_context(request,'tasks.html')
 
     expeditions =  Expedition.objects.order_by("-year")
     logbookentry = LogbookEntry
     cave = Cave
+    entrances = []
+    for cave in Cave.objects.all():
+        for entrance in cave.entrances():
+            entrances.append(entrance)
     photo = DPhoto
     from django.contrib.admin.templatetags import log
     return render_with_context(request,'frontpage.html', locals())
