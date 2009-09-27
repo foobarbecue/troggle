@@ -1,6 +1,0 @@
-=Expo {{logbook_entries.0.expedition}} logbook ==
-{%for logbook_entry in logbook_entries%}
-==={{logbook_entry.date}} | {{logbook_entry.place}} - {{logbook_entry.title}} | {% for persontrip in logbook_entry.persontrip_set.all %}{{ persontrip.person_expedition.person }} {{ persontrip.person_expedition.time_underground }}, {% endfor %}===
-
-{{logbook_entry.text|safe}}
-{% endfor %}
