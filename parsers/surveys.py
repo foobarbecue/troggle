@@ -207,10 +207,12 @@ def LoadListScans():
         # do the year folders
         if re.match("\d\d\d\d$", f):
             for fy, ffy, fisdiry in GetListDir(ff):
-                assert fisdiry, ffy
-                survexscansfolder = SurvexScansFolder(fpath=ffy, walletname=fy)
-                survexscansfolder.save()
-                LoadListScansFile(survexscansfolder)
+                if fisdiry:
+                    survexscansfolder = SurvexScansFolder(fpath=ffy, walletname=fy)
+                    survexscansfolder.save()
+                    LoadListScansFile(survexscansfolder)
+                else:
+                    assert fy == "index", ffy
         
         # do the 
         elif f != "thumbs":
