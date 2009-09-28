@@ -220,7 +220,7 @@ def tunnelfileupload(request, path):
     fout.write(ttext)
     fout.close()
     
-    # redo its settings of 
+    # redo its settings of the tunnel file
     parsers.surveys.SetTunnelfileInfo(tunnelfile)
     tunnelfile.save()
     
@@ -228,6 +228,33 @@ def tunnelfileupload(request, path):
     message = "File size %d overwritten with size %d" % (orgsize, tunnelfile.filesize)
     return HttpResponse(content=message, mimetype="text/plain")
 
+#http://127.0.0.1:8000/tunneldataraw/161/allnth.xml
+#http://127.0.0.1:8000/survey_scans/1995-96kh/77.jpg    
+def tunnelfilebackgroundscan(request, path, backgroundscan):
+    tunnelfile = TunnelFile.objects.get(tunnelpath=path)
+    foldername, scanname = os.path.split(backgroundscan)
+    print "sss", scanname
     
+    # try links just in this tunnel file (not complete as we may have added a new one)
+    survexscansingles = tunnelfile.survexscans.filter(name=scanname)
     
-
+    # try to find a name in the folder listed
+    if len(survexscansingles) != 1:
+        print "trying in foldername:", foldername
+        survexscansfolders = SurvexScansFolder.objects.filter(walletname=foldername)
+        if len(survexscansfolders) == 1:
+            survexscansingles = survexscansfolders[0].survexscansingle_set.filter(name=scanname)
+    
+    # try to find a name across everywhere
+    if len(survexscansingles) != 1:
+        survexscansingles = SurvexScanSingle.objects.filter(name=scanname)
+    
+    # return the absolute url for this (for loading up from)
+    if len(survexscansingles) == 1:
+        survexscansingle = survexscansingles[0]
+        content = "imageforward= " + survexscansingle.get_absolute_url()
+        print "ccc", content
+        return HttpResponse(content=content, mimetype="text/plain")
+    
+    return HttpResponse(content="No file found for name: " + path + " // " + backgroundscan, mimetype="text/plain")
+    
