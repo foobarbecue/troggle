@@ -36,10 +36,10 @@ USE_I18N = True
 ADMIN_MEDIA_PREFIX = '/troggle/media-admin/'
 #PHOTOS_ROOT = os.path.join(EXPOWEB, 'photos')
 
-MEDIA_URL = urlparse.urljoin(URL_ROOT , '/site_media/')
-SURVEYS_URL = urlparse.urljoin(URL_ROOT , '/survey_scans/')
-PHOTOS_URL  = urlparse.urljoin(URL_ROOT , '/photos/')
-SVX_URL = urlparse.urljoin(URL_ROOT , '/survex/')
+MEDIA_URL = '/site_media/'
+SURVEYS_URL = '/survey_scans/'
+PHOTOS_URL  = '/photos/'
+SVX_URL = '/survex/'
 
 APPEND_SLASH = False
 SMART_APPEND_SLASH = True
