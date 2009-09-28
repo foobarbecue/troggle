@@ -22,7 +22,7 @@
 <div id="header"> 
   <h1>Erebus Cave and Fumarole Database</h1>
   <div id="editLinks"> {% block loginInfo %}
-    <a href="{{ settings.URL_ROOT }}">Home</a> | 
+    <a href="/">Home</a> | 
     {% if user.username %}
     You are logged in as {{ user.username }} 
     	{% if user.person %}(<a href="{{ user.person.get_absolute_url }}">{{ user.person }}</a>)

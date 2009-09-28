@@ -1,4 +1,4 @@
-from localsettings import URL_ROOT, EXPOWEB #inital localsettings call so that urljoins work
+from localsettings import EXPOWEB #inital localsettings call so that urljoins work
 import os
 import urlparse
 # Django settings for troggle project.

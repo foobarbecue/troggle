@@ -362,7 +362,7 @@ class Cave(TroggleModel):
         else:
             href = self.official_name.lower()
         #return settings.URL_ROOT + '/cave/' + href + '/'
-        return urlparse.urljoin(settings.URL_ROOT, reverse('cave',kwargs={'cave_id':href,}))
+        return reverse('cave',kwargs={'cave_id':href,})
 
     def __unicode__(self):
         if self.kataster_number:
