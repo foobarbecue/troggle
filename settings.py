@@ -79,6 +79,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.redirects',
+    'south',
     #'troggle.photologue',
     #'troggle.reversion',
     #'django_evolution',
