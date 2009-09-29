@@ -18,7 +18,7 @@
 <div id="header"> 
   <h1>CUCC Expeditions to Austria: 1976 - 2009</h1>
   <div id="editLinks"> {% block loginInfo %}
-    <a href="{{ settings.URL_ROOT }}">Home</a> | 
+    <a href="/">Home</a> | 
     {% if user.username %}
     You are logged in as {{ user.username }} 
     	{% if user.person %}(<a href="{{ user.person.get_absolute_url }}">{{ user.person }}</a>)
@@ -99,7 +99,7 @@
 		<li><a href="#">admin</a>
                 <ul class="sub_menu">
                     <li><a id="cuccLink" href="{% url controlpanel %}">Import / export data</a></li>
-                    <li><a id="expoWebsiteLink" href="{{ settings.URL_ROOT }}admin">Troggle administration pages</a></li>
+                    <li><a id="expoWebsiteLink" href="/admin">Troggle administration pages</a></li>
                 </ul>
         <li class="toggleMenu"><a href="#">hide menu</a></li>
 
