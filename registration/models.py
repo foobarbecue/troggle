@@ -123,18 +123,18 @@ class RegistrationManager(models.Manager):
             current_site = Site.objects.get_current()
             
             subject = render_to_string('registration/activation_email_subject.txt',
-                                       { 'site': settings.URL_ROOT })
+                                       { 'site': 'troggle' })
             # Email subject *must not* contain newlines
             subject = ''.join(subject.splitlines())
             
             text_content = render_to_string('registration/activation_email.txt',
                                        { 'activation_key': registration_profile.activation_key,
                                          'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
-                                         'site': settings.URL_ROOT })
+                                         'site': 'troggle' })
             html_content = render_to_string('registration/activation_email.html',
                                        { 'activation_key': registration_profile.activation_key,
                                          'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
-                                         'site': settings.URL_ROOT })
+                                         'site': 'troggle' })
             msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [new_user.email])
             msg.attach_alternative(html_content, "text/html")
             msg.send()

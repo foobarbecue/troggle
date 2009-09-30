@@ -19,7 +19,7 @@ def get_related_by_wikilinks(wiki_text):
     found=re.findall(settings.QM_PATTERN,wiki_text)
     res=[]
     for wikilink in found:
-        qmdict={'urlroot':settings.URL_ROOT,'cave':wikilink[2],'year':wikilink[1],'number':wikilink[3]}
+        qmdict={'urlroot':'','cave':wikilink[2],'year':wikilink[1],'number':wikilink[3]}
         try:
             qm=QM.objects.get(found_by__cave__kataster_number = qmdict['cave'],
                               found_by__date__year = qmdict['year'],
@@ -43,7 +43,7 @@ class TroggleModel(models.Model):
         return self._meta.object_name
 
     def get_admin_url(self):
-        return urlparse.urljoin(settings.URL_ROOT, "/admin/core/" + self.object_name().lower() + "/" + str(self.pk))
+        return "/admin/core/" + self.object_name().lower() + "/" + str(self.pk))
 
     class Meta:
 	    abstract = True
@@ -55,7 +55,7 @@ class TroggleImageModel(ImageModel, models.Model):
         return self._meta.object_name
 
     def get_admin_url(self):
-        return urlparse.urljoin(settings.URL_ROOT, "/admin/core/" + self.object_name().lower() + "/" + str(self.pk))
+        return "/admin/core/" + self.object_name().lower() + "/" + str(self.pk)
 
 
     class Meta:
@@ -76,7 +76,7 @@ class Expedition(TroggleModel):
         get_latest_by = 'year'
     
     def get_absolute_url(self):
-        return urlparse.urljoin(settings.URL_ROOT, reverse('expedition', args=[self.year]))
+        return reverse('expedition', args=[self.year])
     
     # construction function.  should be moved out
     def get_expedition_day(self, date):
@@ -126,7 +126,7 @@ class Person(TroggleModel):
     #bisnotable  = models.BooleanField()
     user	= models.OneToOneField(User, null=True, blank=True)
     def get_absolute_url(self):
-        return urlparse.urljoin(settings.URL_ROOT,reverse('person',kwargs={'first_name':self.first_name,'last_name':self.last_name}))
+        return reverse('person',kwargs={'first_name':self.first_name,'last_name':self.last_name})
 
     class Meta:
 	    verbose_name_plural = "People"
@@ -212,7 +212,7 @@ class PersonExpedition(TroggleModel):
         return self.person.first_name
 
     def get_absolute_url(self):
-        return urlparse.urljoin(settings.URL_ROOT, reverse('personexpedition',kwargs={'first_name':self.person.first_name,'last_name':self.person.last_name,'year':self.expedition.year}))
+        return reverse('personexpedition',kwargs={'first_name':self.person.first_name,'last_name':self.person.last_name,'year':self.expedition.year})
 	
     def surveyedleglength(self):
         survexblocks = [personrole.survexblock  for personrole in self.personrole_set.all() ]
@@ -250,7 +250,7 @@ class LogbookEntry(TroggleModel):
         ordering = ('-date',)
 
     def get_absolute_url(self):
-        return urlparse.urljoin(settings.URL_ROOT, reverse('logbookentry',kwargs={'date':self.date,'slug':self.slug}))
+        return reverse('logbookentry',kwargs={'date':self.date,'slug':self.slug})
 
     def __unicode__(self):
         return "%s: (%s)" % (self.date, self.title)
@@ -271,7 +271,7 @@ class LogbookEntry(TroggleModel):
 
     def new_QM_found_link(self):
         """Produces a link to a new QM with the next number filled in and this LogbookEntry set as 'found by' """
-        return settings.URL_ROOT + r'/admin/core/qm/add/?' + r'found_by=' + str(self.pk) +'&number=' + str(self.new_QM_number())
+        return r'/admin/core/qm/add/?' + r'found_by=' + str(self.pk) +'&number=' + str(self.new_QM_number())
 
     def DayIndex(self):
         return list(self.expeditionday.logbookentry_set.all()).index(self)
@@ -525,7 +525,7 @@ class CaveDescription(TroggleModel):
             return unicode(self.short_name)
     
     def get_absolute_url(self):
-        return urlparse.urljoin(settings.URL_ROOT, reverse('cavedescription', args=(self.short_name,)))
+        return reverse('cavedescription', args=(self.short_name,))
     
     def save(self):
         """
@@ -572,7 +572,7 @@ class QM(TroggleModel):
 
     def get_absolute_url(self):
         #return settings.URL_ROOT + '/cave/' + self.found_by.cave.kataster_number + '/' + str(self.found_by.date.year) + '-' + '%02d' %self.number
-        return urlparse.urljoin(settings.URL_ROOT, reverse('qm',kwargs={'cave_id':self.found_by.cave.kataster_number,'year':self.found_by.date.year,'qm_id':self.number,'grade':self.grade}))
+        return reverse('qm',kwargs={'cave_id':self.found_by.cave.kataster_number,'year':self.found_by.date.year,'qm_id':self.number,'grade':self.grade})
 
     def get_next_by_id(self):
         return QM.objects.get(id=self.id+1)

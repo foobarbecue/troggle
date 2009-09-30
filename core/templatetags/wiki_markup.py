@@ -90,7 +90,7 @@ def wiki_to_html_short(value, autoescape=None):
         [[QM:C204-1999-24]]
         If the QM does not exist, the function will return a link for creating it.
         """
-        qmdict={'urlroot':settings.URL_ROOT,'cave':matchobj.groups()[2],'year':matchobj.groups()[1],'number':matchobj.groups()[3]}
+        qmdict={'urlroot':'','cave':matchobj.groups()[2],'year':matchobj.groups()[1],'number':matchobj.groups()[3]}
         try:
             qm=QM.objects.get(found_by__cave__kataster_number = qmdict['cave'],
                               found_by__date__year = qmdict['year'],
@@ -143,13 +143,13 @@ def wiki_to_html_short(value, autoescape=None):
     value = re.sub(photoSrcPattern,photoSrcRepl, value, re.DOTALL)
 
     #make cave links
-    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="%scave/\1/">\1</a>' % settings.URL_ROOT, value, re.DOTALL)
+    value = re.sub("\[\[\s*cave:([^\s]+)\s*\s*\]\]", r'<a href="cave/\1/">\1</a>', value, re.DOTALL)
     #make people links
-    value = re.sub("\[\[\s*person:(.+)\|(.+)\]\]",r'<a href="%sperson/\1/">\2</a>' % settings.URL_ROOT, value, re.DOTALL)
+    value = re.sub("\[\[\s*person:(.+)\|(.+)\]\]",r'<a href="person/\1/">\2</a>', value, re.DOTALL)
     #make subcave links
-    value = re.sub("\[\[\s*subcave:(.+)\|(.+)\]\]",r'<a href="%ssubcave/\1/">\2</a>' % settings.URL_ROOT, value, re.DOTALL)
+    value = re.sub("\[\[\s*subcave:(.+)\|(.+)\]\]",r'<a href="subcave/\1/">\2</a>', value, re.DOTALL)
     #make cavedescription links
-    value = re.sub("\[\[\s*cavedescription:(.+)\|(.+)\]\]",r'<a href="%scavedescription/\1/">\2</a>' % settings.URL_ROOT, value, re.DOTALL)
+    value = re.sub("\[\[\s*cavedescription:(.+)\|(.+)\]\]",r'<a href="cavedescription/\1/">\2</a>' value, re.DOTALL)
 
 
 

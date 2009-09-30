@@ -44,7 +44,7 @@ def qm(request,cave_id,qm_id,year,grade=None):
         return render_with_context(request,'qm.html',locals())
 
     except QM.DoesNotExist:
-        url=urlparse.urljoin(settings.URL_ROOT, r'/admin/core/qm/add/'+'?'+  r'number=' + qm_id)
+        url=r'/admin/core/qm/add/'+'?'+  r'number=' + qm_id
         if grade:
             url += r'&grade=' + grade
         return HttpResponseRedirect(url)
