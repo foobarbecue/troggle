@@ -43,7 +43,7 @@ class TroggleModel(models.Model):
         return self._meta.object_name
 
     def get_admin_url(self):
-        return "/admin/core/" + self.object_name().lower() + "/" + str(self.pk))
+        return "/admin/core/" + self.object_name().lower() + "/" + str(self.pk)
 
     class Meta:
 	    abstract = True
