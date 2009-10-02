@@ -4,7 +4,7 @@ html, body {
 }
 
 p {
-	margin-left:2em;
+	margin:1.5em;
 }
 
 .caption			{ font-size: 8pt; margin-bottom: 0pt; }
@@ -30,11 +30,6 @@ div.logbookentry ul.cavers
 td.author
 {
     background-color:yellow;
-}
-
-div.logbookentry p
-{
-    margin:10px;
 }
 
 table.expeditionpersonlist th
@@ -169,7 +164,7 @@ div.centre img			{ vertical-align: middle; }
 
 h1				{ text-align: center; font-size: 210%; display: inline;}
 h2				{ }
-h3				{ color: #000 text-align:left; margin-bottom:1em; margin-top:1em; margin-left:1em; font-weight:bold}
+h3				{ color: #000 text-align:left; padding:1em; margin: 0; font-weight:bold}
 h4				{ color: #0d664c; }
 h4.navbar {line-height: 0px;}
 img.onright, div.onright	{ vertical-align: top; float: right;
