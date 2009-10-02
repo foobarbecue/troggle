@@ -480,7 +480,7 @@ class Entrance(TroggleModel):
         CaveNEntrance = CaveAndEntrance.objects.filter(entrance = self)
         name = u''
         if self.name:
-            name = unicode(self.name) + u' '
+            name = unicode(self.name)
         if len(CaveNEntrance) == 1:
             return unicode(CaveNEntrance[0])+' ('+name + ')'
         return unicode(CaveNEntrance) + ' (' +name+')'

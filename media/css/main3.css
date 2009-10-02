@@ -288,7 +288,7 @@ div#header {
 	margin-left:auto;
 	margin-right:auto;
 	Dheight:50px;
-	background-image: url( ../204plan.gif);
+	background-image: url( ../blueholebanner.jpg);
 	border-bottom:thin solid #000;
 	font-family: Arial, Helvetica, sans-serif;
 	font-variant: normal;
@@ -330,7 +330,7 @@ div#editLinks a{
 
 h1 {
 	margin-top:0;
-	margin-left:10px;	
+	margin-left:50px;	
 	vertical-align:top;
 }
 

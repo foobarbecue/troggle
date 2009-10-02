@@ -4,7 +4,7 @@
 {% block title %}Mount Erebus Cave Database{% endblock %}
 
 {% block head %}
-    <script src="{{settings.MEDIA_URL}}js/OpenLayers.js"></script>
+    <script src="http://www.openlayers.com/dev/OpenLayers.js"></script>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;'></script>
     <script type="text/javascript">
         var map, entrances, selectControl;
@@ -40,12 +40,18 @@
                     "default": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
                         label : "${name}",
                         labelAlign: "${align}",
-                        fontSize: "10px",
+                        fontSize: "15px",
+                        fontColor:"#00FF00",
+                        fontWeight:"bold",
+                        fill: true,
                     }, OpenLayers.Feature.Vector.style["default"])),
                     "select": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
                         label : "${name}",
                         labelAlign: "${align}",
-                        fontSize: "10px",
+                        fontSize: "15px",
+                        fontColor:"#00FF00", 
+                        fontWeight:"bold",                        
+                        fill: true,
                     }, OpenLayers.Feature.Vector.style["select"])),
                 })
             });
@@ -104,7 +110,7 @@
             map.addControl(selectCtrl);
             selectCtrl.activate();
             map.zoomToExtent(entrances.getDataExtent());
-            map.zoomTo(10);
+            map.zoomTo(11);
             
             entrances.events.register("featureselected", entrances, selected);
         }
