@@ -360,7 +360,7 @@ class Cave(TroggleModel):
         elif self.unofficial_number:
             href = self.unofficial_number
         else:
-            href = self.official_name.lower()
+            href = self.slug
         #return settings.URL_ROOT + '/cave/' + href + '/'
         return reverse('cave',kwargs={'cave_id':href,})
 

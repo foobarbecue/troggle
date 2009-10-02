@@ -17,7 +17,7 @@ def getCave(cave_id):
         try:
             cave = Cave.objects.get(unofficial_number=cave_id)
         except:
-            cave = Cave.objects.get(official_name=cave_id)
+            cave = Cave.objects.get(slug=cave_id)
     
     return cave
 
