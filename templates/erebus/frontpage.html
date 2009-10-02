@@ -10,8 +10,8 @@
         var map, entrances, selectControl;
         
         function selected(evt){
-            window.open(evt.feature.attributes.href,"Window1",
-"menubar=no,width=430,height=360,toolbar=no");
+            window.open(evt.feature.attributes.href,"Window1, ");
+            return false;
         }
         
         function init(){

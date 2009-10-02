@@ -34,10 +34,6 @@ div.logbookentry p
     margin:10px;
 }
 
-div#content {
-    background-color:#f9f9f9;
-}
-
 table.expeditionpersonlist th
 {
     padding:0 0 0 0;
@@ -84,7 +80,7 @@ table.expeditionpersonlist a:hover
 div#content
 {
 	height:100%;
-    background-color:#feeeed;
+    background-color:lightgrey;
 }
 
 div#map
@@ -97,7 +93,7 @@ div#content h2
 {
     text-align:center;
     font-size:200%;
-    Dpadding-bottom:30px;
+    margin-top:0px;
 }
 
 table.prevnextexpeditions
@@ -215,7 +211,7 @@ table.trad td, table.trad th	{ margin: 0pt; border: 1px solid #aaa;
 
 
 /* You are not expected to understand this. It is necessary. */
-/* The above is the most fucktarded comment I have ever read :-) AC, 24 APR 2009 */
+/* The above is a stupid thing to say :-) AC, 1 OCT 2009 */
 table.centre			{ margin-left: auto; margin-right: auto; }
 table.centre td			{ text-align: left; }
 
@@ -235,16 +231,10 @@ table#cavepage th#status	{ text-align: right; width: 25%; }
 table {
 	border: thin solid black;
 	border-collapse: collapse;
+	margin-left:60px;
 }
 td {
-	padding:0px;
 	border: thin solid black;
-}
-th 
-{
-    color:white;
-    background-color:black; 
-	border: thin solid silver;
 }
 
 

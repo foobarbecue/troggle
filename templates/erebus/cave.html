@@ -1,42 +1,88 @@
-{% extends "cavebase.html" %}
+{% extends "base.html" %}
 {% load wiki_markup %}
 {% block editLink %}| <a href={{cave.get_admin_url}}>Edit cave {{cave|wiki_to_html_short}}</a>{% endblock %}
 
-{% block related %}
+{% block title %}{{ cave.official_name|wiki_to_html_short }}{% endblock %}
 
-  <h2>All logbook entries regarding this cave ({{cave.logbookentry_set.count}})</h2>
-  <table>
-  {% for logbookentry in cave.logbookentry_set.all %}
-  {% if logbookentry.title %}
-    <tr>
-      <td>{{logbookentry.date}}</td>
-      <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.title|safe}}</a></td>
-      <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.title|safe}}</a></td>
-    </tr>
-  {% endif %}
-  {% endfor %}
-  </table>
+{% block contentheader %}
+
+         <h2>{{ cave.official_name|wiki_to_html_short }}</h2>
+
+{% endblock %}
+
+{% block related %}
 
 {% endblock %}
 
 {% block content %}
 
-{% if cave.entrances %}
-    <h2>Entrances</h2>
-    {% for ent in cave.entrances %}
-        <a href = "./{{ ent.entrance_letter|wiki_to_html_short }}">{{ ent.entrance_letter|wiki_to_html_short }}</a>
-        {% if ent.entrance.marking %}
-            Marking: {{ ent.entrance.marking_val|wiki_to_html_short }}
-        {% endif %}
-        <br>
-    {% endfor %}
+{% if cave.logbookentry_set.all %}
+  <h3>Logbook entries ({{cave.logbookentry_set.all.count}})</h3>
+  <table>
+  {% for logbookentry in cave.logbookentry_set.all %}
+    <tr>
+        <th>Date</th>
+        <th>Title</th>
+        <th>Preview</th>
+        <th>People</th>
+    </tr>
+    <tr>
+        <td>{{logbookentry.date}}</td>
+        <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.title|safe}}</a></td>
+        <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.preview}}</a></td>
+        <td>{% for pt in logbookentry.persontrip_set.all %}<a href="{{pt.get_absolute_url}}">{{pt}}</a>,{% endfor %}</td>
+        <td>
+            {% if user.is_authenticated %}
+                <a href="{{ ent.get_admin_url }}">edit</a>
+            {% endif %}
+        </td>
+    </tr>
+  {% endfor %}
+  </table>
 {% endif %}
 
-{% if cave.photos_set.all %}
+{% if cave.entrances %}
+    <h3>Entrances</h3>
+    {% for ent in cave.entrances %}
     <table>
-        {% for photo in cave.photos_set.all %}
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Northing
+            </th>
+            <th>
+                Easting
+            </td>            
+        </tr>
+        <tr>
+            <td>
+                {{ ent }}
+            </td>
+            <td>
+                {{ ent.location.y }}
+            </td>            
+            <td>
+                {{ ent.location.x }}
+            </td>
+            <td>
+                {% if user.is_authenticated %}
+                    <a href="{{ ent.get_admin_url }}">edit</a>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    {% endfor %}
+
+{% endif %}
+
+{% if cave.photo_set.all %}
+<h3>Photos</h3>
+    <table>
+        {% for photo in cave.photo_set.all %}
             <tr>
-                <td><img src="{{photo.thumbnail_url}}"></td>
+                <td><img href="{{photo.display.url}}" src="{{photo.thumbnail_image.url}}"></td>
                 <td>{{photo.caption}}</td>
             </tr>
         {% endfor %}

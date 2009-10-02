@@ -105,7 +105,7 @@ class CaveAndEntranceInline(admin.TabularInline):
 class CaveAdmin(TroggleModelAdmin):
     search_fields = ('official_name','kataster_number','unofficial_number')
     fields = ('official_name','underground_description','equipment','area','slug')
-    inlines = (OtherCaveInline, CaveAndEntranceInline)
+    inlines = (OtherCaveInline, CaveAndEntranceInline, PhotoInline)
     prepopulated_fields = {'slug':("official_name",)}
     extra = 4
 
@@ -117,6 +117,7 @@ class EntranceAdmin(admin.GeoModelAdmin):
 
 class PhotoAdmin(admin.GeoModelAdmin):
     display_wkt = True
+    exclude=('location')
     prepopulated_fields = {'slug':("caption",)}
     
 class AreaAdmin(TroggleModelAdmin):

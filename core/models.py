@@ -327,7 +327,7 @@ class CaveAndEntrance(TroggleModel):
     entrance = models.ForeignKey('Entrance')
     entrance_letter = models.CharField(max_length=20,blank=True,null=True)
     def __unicode__(self):
-        return unicode(self.cave) + unicode(self.entrance_letter)
+        return unicode(self.cave) + ' ' + unicode(self.entrance_letter)
         
 class Cave(TroggleModel):
     # too much here perhaps
@@ -477,17 +477,19 @@ class Entrance(TroggleModel):
     other_description = models.TextField(blank=True,null=True)
     bearings = models.TextField(blank=True,null=True)
     def __unicode__(self):
-        a = CaveAndEntrance.objects.filter(entrance = self)
+        CaveNEntrance = CaveAndEntrance.objects.filter(entrance = self)
         name = u''
         if self.name:
             name = unicode(self.name) + u' '
-        if len(a) == 1:
-            return name + unicode(a[0])
-        return name + unicode(a)
+        if len(CaveNEntrance) == 1:
+            return unicode(CaveNEntrance[0])+' ('+name + ')'
+        return unicode(CaveNEntrance) + ' (' +name+')'
+
     def marking_val(self):
         for m in self.MARKING_CHOICES:
             if m[0] == self.marking:
                 return m[1]
+    
     def findability_val(self):
         for f in self.FINDABLE_CHOICES:
             if f[0] == self.findability:
@@ -585,10 +587,11 @@ class QM(TroggleModel):
 
 photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
 class Photo(TroggleImageModel):    
-    caption = models.CharField(max_length=1000,blank=True,null=True)
+    file = models.ImageField(storage=photoFileStorage, upload_to='.',)
+    caption = models.TextField(blank=True,null=True)
+    slug=models.SlugField()    
     contains_logbookentry = models.ForeignKey(LogbookEntry,blank=True,null=True)
     contains_person = models.ManyToManyField(Person,blank=True,null=True)
-    file = models.ImageField(storage=photoFileStorage, upload_to='.',)
     is_mugshot = models.BooleanField(default=False)
     contains_cave = models.ForeignKey(Cave,blank=True,null=True, help_text='If you fill this out, do not fill out "location" below.')
     contains_entrance = models.ForeignKey(Entrance, related_name="photo_file",blank=True,null=True,  help_text='If you fill this out, do not fill out "location" below.')
@@ -597,8 +600,6 @@ class Photo(TroggleImageModel):
     
     location = models.PointField(blank=True,null=True,help_text='Only fill this out if the photo is not linked to a cave, entrance, survey point, or QM. You can use the text field below to manually enter coordinates in the Well-Known Text format.')
     objects = models.GeoManager()
-    
-    slug=models.SlugField()
     
     class IKOptions:
         spec_module = 'core.imagekit_specs'
