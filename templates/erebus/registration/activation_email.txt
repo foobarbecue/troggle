@@ -1,10 +1,12 @@
 Hello {{ form.user }},
 
-Glad you're joining the CUCC EXPO team! Please go to
+Glad you're joining erebuscaves.com! Please go to
 
 {{ site }}{% url registration_activate activation_key %}
 
 to activate your account. Do this within {{ expiration_days }} days, or else you'll have to sign up again.
 
-Yours,
-The magical troggle
+As soon as I get around to it, I will verify that this name belongs to someone I know and give you administrative privledges to change things on the site.
+
+Thanks,
+Aaron Curtis (actually, his Python script)

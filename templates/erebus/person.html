@@ -11,11 +11,13 @@
 
 {% block content %}
 {% if person.blurb %}
-{{person.blurb|safe}}
+<h3>About {{person}}</h3>
+<p>{{person.blurb|safe}}</p>
 {% endif %}
 
 {% for pic in person.photo_set.all %}
 {% if pic.is_mugshot %}
+<h3>Mugshot for {{person}}</h3>
     <div class="figure">
       <p> <img src="{{ pic.thumbnail_image.url }}" class="thumbnail" />
       <p> {{ pic.caption }}</p>
@@ -27,7 +29,7 @@
 {% endfor %}
 <br class="clearfloat" />
 
-<h3>{{person|wiki_to_html_short}} has been on expo in the following years:</h3>
+<h3>{{person|wiki_to_html_short}} has been on the  following expeditions:</h3>
 <p>
 <ul>
 {% for personexpedition in person.personexpedition_set.all %}

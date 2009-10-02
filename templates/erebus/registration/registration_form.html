@@ -9,10 +9,17 @@ registration_form.html | {{ block.super }}
 {% endblock %}
 
 {% block content %}
+<h2>Erebus cave and fumarole database registration</h2>
+
+<p>If you've been to any of the Erebus caves or fumaroles, we need your input!</p>
+<p>Please sign up here so that you can add descriptions, coordinates, photos, etc.</p>
+<p>The password you type here is converted to a hash as soon as it hits our server and therefore will not be seen or stored by anyone including the administrators of erebuscaves.com . However, this is not an encrypted connection, so if someone is eavesdropping on your network it could be theoretically be intercepted before reaching erebuscaves.com . We may implement and https connection soon to deal with this. </p>
+
 <form action="{% url registration_register %}" method="POST">
         {% for error in form.non_field_errors %}
         <span style="color:red">{{ error }}</span>
         {% endfor %}
+
 <table>
 <tr>
     <td align="right" valign="top">Username:</td>
@@ -56,4 +63,5 @@ registration_form.html | {{ block.super }}
 </tr>
 </table>
 </form>
+
 {% endblock %}

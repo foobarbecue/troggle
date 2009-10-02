@@ -7,7 +7,7 @@
     <script src="{{settings.MEDIA_URL}}js/OpenLayers.js"></script>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;'></script>
     <script type="text/javascript">
-        var map, entrances, selectControl;
+        var map, entrances, selectControl, ls, entrance1, entrance2;
         
         function selected(evt){
             window.open(evt.feature.attributes.href,"Window1, ");
@@ -15,25 +15,27 @@
         }
         
         function init(){
-            map = new OpenLayers.Map( 'map' );
-            
+            map = new OpenLayers.Map("map",{
+                    controls: [
+                        new OpenLayers.Control.Navigation(),
+                        new OpenLayers.Control.PanZoomBar(),
+                        new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+                        new OpenLayers.Control.Permalink(),
+                        new OpenLayers.Control.ScaleLine(),
+                        new OpenLayers.Control.Permalink('permalink'),
+                        new OpenLayers.Control.MousePosition(),
+                        new OpenLayers.Control.OverviewMap(),
+                        new OpenLayers.Control.KeyboardDefaults()
+                    ],
+                    numZoomLevels: 6
+                    
+                });
+
             var gphy = new OpenLayers.Layer.Google(
                 "Google Physical",
-                {'type': G_SATELLITE_MAP , 'sphericalMercator': true, 'maxExtent': new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34)
-}
+                {"type": G_SATELLITE_MAP , "sphericalMercator": true}
             );
-            
-            var ol_wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-                    "http://labs.metacarta.com/wms/vmap0",
-                    {layers: 'basic'} );
-                    
-            var jpl_wms = new OpenLayers.Layer.WMS(
-                "NASA Global Mosaic",
-                "http://t1.hypercube.telascience.org/cgi-bin/landsat7", 
-                {layers: "landsat7"}
-            );
-            
-            
+
 
             entrances = new OpenLayers.Layer.Vector("Simple Geometry", {
                 styleMap: new OpenLayers.StyleMap({
@@ -47,14 +49,15 @@
                         labelAlign: "${align}",
                         fontSize: "10px",
                     }, OpenLayers.Feature.Vector.style["select"])),
+                    "projection": new OpenLayers.Projection("EPSG:4326"),
                 })
             });
 
-            proj = new OpenLayers.Projection("EPSG:4326");
-            
+            var proj = new OpenLayers.Projection("EPSG:4326");
+
             {% for entrance in entrances %}
                     entrance{{entrance.id}} = new OpenLayers.Geometry.Point({{entrance.location.x}}, {{entrance.location.y}});
-                    entrance{{entrance.id}}.transform(proj, new OpenLayers.Projection("EPSG:900913"));
+                    entrance{{entrance.id}}.transform(proj, map.getProjectionObject());
                     var entrance{{entrance.id}}Feature = new OpenLayers.Feature.Vector(entrance{{entrance.id}});
                         entrance{{entrance.id}}Feature.attributes = {
                             href: "{{entrance.caves.0.get_absolute_url}}",
@@ -66,22 +69,6 @@
             
             entrances.addFeatures([{%for entrance in entrances %}entrance{{entrance.id}}Feature, {%endfor%}]);
             
-            var report = function(e) {
-                OpenLayers.Console.log(e.type, e.feature.id);
-            };
-
-/*            
-            var highlightCtrl = new OpenLayers.Control.SelectFeature(entrances, {
-                hover: true,
-                highlightOnly: true,
-                renderIntent: "temporary",
-                eventListeners: {
-                    beforefeaturehighlighted: report,
-                    featurehighlighted: report,
-                    featureunhighlighted: report
-                }
-            });
-*/
             selectCtrl = new OpenLayers.Control.SelectFeature(
                 [entrances],
                 {
@@ -91,18 +78,20 @@
                     multipleKey: "shiftKey" // shift key adds to selection
                 }
             );
-
-
-            /*map.addControl(highlightCtrl);*/
-
             
-            map.addControl(new OpenLayers.Control.LayerSwitcher());
+
             map.addLayer(gphy);
-            map.addLayer(ol_wms);
+            /*map.addLayer(ol_wms);
             map.addLayer(jpl_wms);
-            map.addLayer(entrances);
+            map.addLayer(entrances);*/
+            ls=new OpenLayers.Control.LayerSwitcher()
+            map.addControl(new OpenLayers.Control.Permalink());
+            map.addControl(new OpenLayers.Control.MousePosition());
+            
             map.addControl(selectCtrl);
             selectCtrl.activate();
+            map.addControl(ls);
+            ls.activate();
             map.zoomToExtent(entrances.getDataExtent());
             map.zoomTo(10);
             
@@ -112,7 +101,7 @@
 
 {% endblock head %}
 
-	{% block recent_actions %}
+	{% block recent_actions_obstructed %}
         <h2>Recent Actions</h2>
             {% load log %}
             {% get_admin_log 10 as admin_log %}

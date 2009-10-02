@@ -3,6 +3,9 @@ html, body {
 	margin: 0px;
 }
 
+p {
+	margin-left:2em;
+}
 
 .caption			{ font-size: 8pt; margin-bottom: 0pt; }
 .centre				{ text-align: center; }
@@ -166,7 +169,7 @@ div.centre img			{ vertical-align: middle; }
 
 h1				{ text-align: center; font-size: 210%; display: inline;}
 h2				{ }
-h3				{ color: #000 text-align:left; Dborder-bottom:thin solid black; margin-bottom:1em; margin-top:1em; font-weight:bold}
+h3				{ color: #000 text-align:left; margin-bottom:1em; margin-top:1em; margin-left:1em; font-weight:bold}
 h4				{ color: #0d664c; }
 h4.navbar {line-height: 0px;}
 img.onright, div.onright	{ vertical-align: top; float: right;
@@ -231,7 +234,7 @@ table#cavepage th#status	{ text-align: right; width: 25%; }
 table {
 	border: thin solid black;
 	border-collapse: collapse;
-	margin-left:60px;
+	margin-left: 2em;
 }
 td {
 	border: thin solid black;
@@ -428,9 +431,19 @@ div#difflistajax
 
 /*this is for the related objects box on the right hand side, formerly called "col2." transition is in progress.*/
 
+ul.actionlist
+{
+	padding-left:5px;
+}
+
 ul.actionlist li
 {
 	list-style-type:none;	
+}
+
+ul.actionlist a
+{
+	padding-left:5px;
 }
 
 div#related h2
