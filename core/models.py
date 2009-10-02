@@ -298,7 +298,7 @@ class PersonTrip(TroggleModel):
         return self.logbook_entry.cave and self.logbook_entry.cave or self.logbook_entry.place
 
     def __unicode__(self):
-        return "%s (%s)" % (self.personexpedition, self.date)
+        return "%s (%s)" % (self.personexpedition, self.logbook_entry.date)
     
 
 
