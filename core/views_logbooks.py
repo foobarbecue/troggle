@@ -46,19 +46,12 @@ def personindex(request):
 def expedition(request, expeditionname):
     expedition = Expedition.objects.get(year=int(expeditionname))
     expeditions = Expedition.objects.all()
-    personexpeditiondays = [ ]
-    for personexpedition in expedition.personexpedition_set.all():
-        prow = [ ]
-        for expeditionday in expedition.expeditionday_set.all():
-            pcell = { "persontrips":expeditionday.persontrip_set.filter(personexpedition=personexpedition) }
-            pcell["survexblocks"] = set([survexpersonrole.survexblock  for survexpersonrole in expeditionday.survexpersonrole_set.filter(personexpedition=personexpedition)])
-            prow.append(pcell)
-        personexpeditiondays.append({"personexpedition":personexpedition, "personrow":prow})
+
         
     message = ""
     if "reload" in request.GET:
         message = LoadLogbookForExpedition(expedition)
-    return render_with_context(request,'expedition.html', {'expedition': expedition, 'expeditions':expeditions, 'personexpeditiondays':personexpeditiondays, 'message':message, 'settings':settings })
+    return render_with_context(request,'expedition.html', {'expedition': expedition, 'expeditions':expeditions, 'message':message, 'settings':settings })
 
     def get_absolute_url(self):
         return ('expedition', (expedition.year))

@@ -275,7 +275,12 @@ class LogbookEntry(TroggleModel):
 
     def DayIndex(self):
         return list(self.expeditionday.logbookentry_set.all()).index(self)
-
+        
+    def intro(self):
+        if len(self.text) > 80:
+            return self.text[0:80] + '...'
+        else:
+            return self.text
 #
 # Single Person going on a trip, which may or may not be written up (accounts for different T/U for people in same logbook entry)
 #
@@ -288,11 +293,17 @@ class PersonTrip(TroggleModel):
     logbook_entry    = models.ForeignKey(LogbookEntry)
     is_logbook_entry_author = models.BooleanField()
     
-
+    
     # sequencing by person (difficult to solve locally) - Julian
-    # No, it really isn't difficult at all - Aaron
+    # No, it really isn't difficult at all, see below- Aaron
     #persontrip_next  = models.ForeignKey('PersonTrip', related_name='pnext', blank=True,null=True)
     #persontrip_prev  = models.ForeignKey('PersonTrip', related_name='pprev', blank=True,null=True)
+    
+    def next_trip_for_person(self):
+        self.personexpedition.persontrip_set.order_by('date').filter(date__gte=self.logbook_entry.date,)[0]
+    
+    def prev_trip_for_person(self):
+        self.personexpedition.persontrip_set.order_by('-date').filter(date__lte=self.logbook_entry.date,)[0]
     
     def place(self):
         return self.logbook_entry.cave and self.logbook_entry.cave or self.logbook_entry.place

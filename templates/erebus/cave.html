@@ -17,24 +17,32 @@
 {% block content %}
 
 {% if cave.logbookentry_set.all %}
-  <h3>Logbook entries ({{cave.logbookentry_set.all.count}})</h3>
+  <h3>Logbook entries (<a href="/admin/core/logbookentry/add/?cave={{cave.id}}">add new</a>)</h3>
   <table>
-  {% for logbookentry in cave.logbookentry_set.all %}
+
     <tr>
         <th>Date</th>
         <th>Title</th>
         <th>Preview</th>
         <th>People</th>
+        <th></th>
     </tr>
+      {% for logbookentry in cave.logbookentry_set.all %}
     <tr>
         <td>{{logbookentry.date}}</td>
         <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.title|safe}}</a></td>
-        <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.preview}}</a></td>
-        <td>{% for pt in logbookentry.persontrip_set.all %}<a href="{{pt.get_absolute_url}}">{{pt}}</a>,{% endfor %}</td>
+        <td>{{logbookentry.intro}}</td>
+        {% if logbookentry.persontrip_set.all %}
+        {% for pt in logbookentry.persontrip_set.all %}
+            {% if pt.author %}<td class='author'>{% else %}<td>{% endif %}
+            <a href="{{pt.personexpedition.person.get_absolute_url}}">{{pt.personexpedition.person}}</a>,
+        {% endfor %}</td>
+        {% else %}
+            <td> &nbsp </td>
+        {% endif %}
+        
         <td>
-            {% if user.is_authenticated %}
                 <a href="{{ ent.get_admin_url }}">edit</a>
-            {% endif %}
         </td>
     </tr>
   {% endfor %}
@@ -42,7 +50,7 @@
 {% endif %}
 
 {% if cave.entrances %}
-    <h3>Entrances</h3>
+    <h3>Entrances (<a href="/admin/core/entrance/add/?cave={{cave.id}}">add new</a>)</h3>
     {% for ent in cave.entrances %}
     <table>
         <tr>
@@ -78,11 +86,11 @@
 {% endif %}
 
 {% if cave.photo_set.all %}
-<h3>Photos</h3>
+<h3>Photos (<a href="/admin/core/photo/add/?cave={{cave.id}}">upload new</a>)</h3>
     <table>
         {% for photo in cave.photo_set.all %}
             <tr>
-                <td><img href="{{photo.display.url}}" src="{{photo.thumbnail_image.url}}"></td>
+                <td><a href="{{photo.display.url}}"><img src="{{photo.thumbnail_image.url}}"></a></td>
                 <td>{{photo.caption}}</td>
             </tr>
         {% endfor %}

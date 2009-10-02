@@ -228,13 +228,15 @@ table#cavepage th#status	{ text-align: right; width: 25%; }
 
 table {
 	border: thin solid black;
-	border-collapse: collapse;
 	margin-left: 2em;
 }
 td {
 	border: thin solid black;
 }
 
+td.edit{
+	border: none;
+}
 
 .redtext{
 		 color:#F00;
@@ -448,7 +450,6 @@ div#related h2
 div#related
 {
 	#max-width:200px;
-	max-height:50%;
 	border: thin solid black;
 	background:#EEEEEE;
 	color:#666666;

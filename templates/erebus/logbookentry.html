@@ -35,7 +35,7 @@
   {% else %}
     <td>
   {% endif %}
-  <a href="{{ persontrip.personexpedition.get_absolute_url }}">{{persontrip.personexpedition.person}}</a>
+  <a href="{{ persontrip.person.get_absolute_url }}">{{persontrip.personexpedition.person}}</a>
   </td>
   
   <td>
@@ -46,15 +46,14 @@
 
   <td>
   {% if persontrip.persontrip_prev %}
-    <a href="{{ persontrip.persontrip_prev.logbook_entry.get_absolute_url }}">{{persontrip.persontrip_prev.date}}</a>
+    <a href="{{ persontrip.next_trip_for_person.logbook_entry.get_absolute_url }}">{{persontrip.persontrip_prev.date}}</a>
   {% endif %}
   </td>
   <td>
   {% if persontrip.persontrip_next %}
-    <a href="{{ persontrip.persontrip_next.logbook_entry.get_absolute_url }}">{{persontrip.persontrip_next.date}}</a>
+    <a href="{{ persontrip.prev_trip_for_person.logbook_entry.get_absolute_url }}">{{persontrip.persontrip_next.date}}</a>
   {% endif %}
   </td>
-
 </tr>
 {% endfor %}
 </table>
@@ -65,8 +64,26 @@
 
 <div id="col1">
 <div class="logbookentry">
-<h3>{{logbookentry}}</h3>
+<h2>{{logbookentry}}</h2>
+<h3>Logbook entry text</h3>
     {{logbookentry.text|wiki_to_html}}
+
+{% if logbookentry.survey_set.all %}
+
+<h3>Surveys  (<a href="/admin/core/survey/add/?logbookentry={{logbookentry.id}}">add new</a>)</h3>
+
+    <table>
+        {% for survey in logbookentry.survey_set.all %}
+    <td>{{survey}}</td>
+    
+        {% for scan in survey.scannedimage_set.all %}
+            <td><a href="{{scan.display.url}}"><img src="{{scan.thumbnail_image.url}}"></a><br>{{scan.contents}}</td>
+        {% endfor %}
+    {% endfor %}
+    </table>
+
+{% endif %}
+
 </div>
 </div>
 </div>
