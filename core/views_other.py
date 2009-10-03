@@ -214,12 +214,8 @@ def logbook_entry_suggestions(request):
         })
 
 def cave_stats_ajax(request):
-    print request.POST
     cave_id = request.POST.get('cave_id')
-    print cave_id
-    
     cave=Cave.objects.get(pk=cave_id)
-    print cave
     response_dict={
         'logbookentrycount':cave.logbookentry_set.all().count(),
         'photocount':Photo.objects.filter(contains_logbookentry__cave=cave).count(),
