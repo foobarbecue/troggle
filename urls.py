@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^$',              views_other.frontpage,      name="frontpage"),
     url(r'^todo/$',              views_other.todo,      name="todo"),
     (r'^about/$',             direct_to_template, {'template': 'about.html'}),
+    (r'^ajax/$',             views_other.cave_stats_ajax),
 
     url(r'^caves/$',     views_caves.caveindex,      name="caves"),
     url(r'^people/?$',   views_logbooks.personindex, name="personindex"),

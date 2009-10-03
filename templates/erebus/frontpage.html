@@ -64,7 +64,8 @@
                     var entrance{{entrance.id}}Feature = new OpenLayers.Feature.Vector(entrance{{entrance.id}});
                         entrance{{entrance.id}}Feature.attributes = {
                             href: "{{entrance.caves.0.get_absolute_url}}",
-                            name: "{{entrance}}",				
+                            name: "{{entrance}}",
+                            pk:"{{entrance.caves.0.pk}}",
                             favColor: "black",
                             align: "rt"
                 };
@@ -72,19 +73,38 @@
             
             entrances.addFeatures([{%for entrance in entrances %}entrance{{entrance.id}}Feature, {%endfor%}]);
             
-            var report = function(e) {
-                OpenLayers.Console.log(e.type, e.feature.id);
+            var get_cave_stats = function(evt) {
+                $.post('/ajax/',
+                       { 'cave_id': evt.feature.attributes.pk,},
+                            function(data){
+                                    info='<table><tr><th colspan=3>Click to see: </th></tr><tr><th colspan=3>'
+                                    info+=evt.feature.attributes.name
+                                    info+='</th></tr>'
+                                    info+='<tr><th>Logbook entries</th><th>Photos</th><th>Surveys</th><tr><td>'
+                                    info+=data.logbookentrycount
+                                    info+='</td><td>'
+                                    info+=data.photocount
+                                    info+='</td><td>'
+                                    info+=data.surveycount
+                                    info+='</td></table>'
+                                    document.getElementById("cave_stats").innerHTML = info;                                    
+                                    responsevariable=data
+                            },
+                            "json");
             };
 
+            var clear_cave_stats = function(evt) {
+                document.getElementById("cave_stats").innerHTML = '';
+            };
 
             highlightCtrl = new OpenLayers.Control.SelectFeature(entrances, {
                 hover: true,
                 highlightOnly: true,
                 renderIntent: "temporary",
                 eventListeners: {
-                    beforefeaturehighlighted: report,
-                    featurehighlighted: report,
-                    featureunhighlighted: report
+                    //beforefeaturehighlighted: report,
+                    featurehighlighted: get_cave_stats,
+                    featureunhighlighted: clear_cave_stats,
                 }
             });
 
@@ -104,10 +124,12 @@
             map.addLayer(ol_wms);
             map.addLayer(jpl_wms);
             map.addLayer(entrances);
-            map.addControl(selectCtrl);
-            selectCtrl.activate();
+
             map.addControl(highlightCtrl);
             highlightCtrl.activate();
+            map.addControl(selectCtrl);
+            selectCtrl.activate();
+
             map.zoomToExtent(entrances.getDataExtent());
             map.zoomTo(11);
             
@@ -149,6 +171,7 @@
 {% block content %}
 
     <div id="map"></div>
+    <div id="cave_stats"></div>
 
 {% endblock content %}
 

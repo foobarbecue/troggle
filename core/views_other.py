@@ -8,6 +8,8 @@ import re
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from utils import render_with_context
+from django.core import serializers
+from django.utils import simplejson
 from core.models import *
 
 def showrequest(request):
@@ -209,3 +211,18 @@ def logbook_entry_suggestions(request):
         'unwiki_QMs':unwiki_QMs,
         'any_suggestions':any_suggestions
         })
+
+def cave_stats_ajax(request):
+    print request.POST
+    cave_id = request.POST.get('cave_id')
+    print cave_id
+    
+    cave=Cave.objects.get(pk=cave_id)
+    print cave
+    response_dict={
+        'logbookentrycount':cave.logbookentry_set.all().count(),
+        'photocount':Photo.objects.filter(contains_logbookentry__cave=cave).count(),
+        'surveycount':Survey.objects.filter(logbook_entry__cave=cave).count(),
+        }
+
+    return HttpResponse(simplejson.dumps(response_dict), mimetype="application/javascript")

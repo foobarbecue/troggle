@@ -278,7 +278,6 @@ img.thumbnail {
 }
 
 div#header {
-	Dposition:absolute;
 	left:100px;
 	right:100px;
 	top:0;
@@ -536,4 +535,15 @@ a.deletelink:link, a.deletelink:visited {
 
 a.deletelink:hover {
     color: #993333;
+}
+
+div#cave_stats {
+	left:0px;
+	bottom:0px;
+	background-color:lightgrey;
+	position:absolute;
+}
+
+div#cave_stats th {
+font-weight:normal;
 }
