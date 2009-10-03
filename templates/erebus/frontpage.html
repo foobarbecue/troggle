@@ -19,18 +19,13 @@
             
             var gphy = new OpenLayers.Layer.Google(
                 "Google Physical",
+                {'type': G_PHYSICAL_MAP , 'sphericalMercator': true, 'maxExtent': new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34)
+}
+
+            var gsat = new OpenLayers.Layer.Google(
+                "Google Satellite",
                 {'type': G_SATELLITE_MAP , 'sphericalMercator': true, 'maxExtent': new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34)
 }
-            );
-            
-            var ol_wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-                    "http://labs.metacarta.com/wms/vmap0",
-                    {layers: 'basic'} );
-                    
-            var jpl_wms = new OpenLayers.Layer.WMS(
-                "NASA Global Mosaic",
-                "http://t1.hypercube.telascience.org/cgi-bin/landsat7", 
-                {layers: "landsat7"}
             );
             
             
@@ -132,9 +127,8 @@
 
             
             map.addControl(new OpenLayers.Control.LayerSwitcher());
-            map.addLayer(gphy);
-            map.addLayer(ol_wms);
-            map.addLayer(jpl_wms);
+            map.addLayer(gsat);
+            map.addLayer(gphy);            
             map.addLayer(entrances);
 
             map.addControl(highlightCtrl);
@@ -155,9 +149,9 @@
         <h2 class="collapse_head">Add information</h2>
         <span class="collapse_body">
         <a href="{% url admin:core_logbookentry_add %}">new logbook entry</a><br />
-        <a href="{% url admin:core_photo_add %}">new photo</a>
-        <a href="{% url admin:core_survey_add %}">new survey</a>
-        <a href="{% url admin:datalogging_timeseries_add %}">new timeseries</a>
+        <a href="{% url admin:core_photo_add %}">new photo</a><br />
+        <a href="{% url admin:core_survey_add %}">new survey</a><br />
+        <a href="{% url admin:datalogging_timeseries_add %}">new timeseries</a><br />
         </span>
         </ul>
         {% endblock add_info %}
@@ -201,6 +195,4 @@
 {% endblock content %}
 
 {% block margins %}
-<img class="leftMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}eieshole.jpg">
-<img class="rightMargin eyeCandy fadeIn" src="{{ settings.MEDIA_URL }}goesser.jpg">
 {% endblock margins %}
