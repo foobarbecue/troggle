@@ -9,6 +9,7 @@ from core.models import *
 from django.views.generic.create_update import create_object
 from django.contrib import admin
 from django.views.generic.list_detail import object_list
+from django.views.generic.simple import direct_to_template
 from django.contrib import databrowse
 import datalogging.models
 
@@ -21,7 +22,8 @@ urlpatterns = patterns('',
     
     url(r'^$',              views_other.frontpage,      name="frontpage"),
     url(r'^todo/$',              views_other.todo,      name="todo"),
-    
+    (r'^about/$',             direct_to_template, {'template': 'about.html'}),
+
     url(r'^caves/$',     views_caves.caveindex,      name="caves"),
     url(r'^people/?$',   views_logbooks.personindex, name="personindex"),
 

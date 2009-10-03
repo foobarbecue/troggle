@@ -76,8 +76,8 @@
                 OpenLayers.Console.log(e.type, e.feature.id);
             };
 
-/*            
-            var highlightCtrl = new OpenLayers.Control.SelectFeature(entrances, {
+
+            highlightCtrl = new OpenLayers.Control.SelectFeature(entrances, {
                 hover: true,
                 highlightOnly: true,
                 renderIntent: "temporary",
@@ -87,7 +87,7 @@
                     featureunhighlighted: report
                 }
             });
-*/
+
             selectCtrl = new OpenLayers.Control.SelectFeature(
                 [entrances],
                 {
@@ -98,9 +98,6 @@
                 }
             );
 
-
-            /*map.addControl(highlightCtrl);*/
-
             
             map.addControl(new OpenLayers.Control.LayerSwitcher());
             map.addLayer(gphy);
@@ -109,6 +106,8 @@
             map.addLayer(entrances);
             map.addControl(selectCtrl);
             selectCtrl.activate();
+            map.addControl(highlightCtrl);
+            highlightCtrl.activate();
             map.zoomToExtent(entrances.getDataExtent());
             map.zoomTo(11);
             
