@@ -94,7 +94,7 @@
                                     info+=data.surveycount
                                     info+='</td></tr>'
 
-                                    info+='<tr><th>Dataseries</th><td>'
+                                    info+='<tr><th>Timeseries</th><td>'
                                     info+=data.dataseriescount
                                     info+='</td></tr>'
 
@@ -156,6 +156,8 @@
         <span class="collapse_body">
         <a href="{% url admin:core_logbookentry_add %}">new logbook entry</a><br />
         <a href="{% url admin:core_photo_add %}">new photo</a>
+        <a href="{% url admin:core_survey_add %}">new survey</a>
+        <a href="{% url admin:datalogging_timeseries_add %}">new timeseries</a>
         </span>
         </ul>
         {% endblock add_info %}
@@ -163,7 +165,7 @@
 	{% block recent_actions %}
 
         
-        <h2 class="collapse_head">Recent Actions</h2>
+        <h2 class="collapse_head">Recent actions</h2>
             {% load log %}
             {% get_admin_log 10 as admin_log %}
             {% if not admin_log %}

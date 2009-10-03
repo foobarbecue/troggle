@@ -82,7 +82,11 @@ table.expeditionpersonlist a:hover
 
 div#content
 {
-	height:100%;
+	position:absolute;
+	top:63px;
+	bottom:0px;
+	left:0px;
+	right:0px;
     background-color:lightgrey;
 }
 
