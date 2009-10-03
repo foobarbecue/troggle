@@ -32,6 +32,11 @@ td.author
     background-color:yellow;
 }
 
+table {
+	padding: 0px;
+	margin: 0px;
+}
+
 table.expeditionpersonlist th
 {
     padding:0 0 0 0;
@@ -229,6 +234,7 @@ table#cavepage th#status	{ text-align: right; width: 25%; }
 table {
 	border: thin solid black;
 	margin-left: 2em;
+	border-collapse: collapse;
 }
 td {
 	border: thin solid black;
@@ -458,9 +464,9 @@ div#related
 	z-index:2000;
 }
 
-div#recent_actions h2
+div#right_sidetable h2, div#cave_stats h2
 {
-	padding-bottom:0px;
+	padding:0px;
 	font-size:100%;
 	text-align:left;
 	background:#EEEEEE url(../nav-bg.gif) repeat-x scroll left bottom;
@@ -468,13 +474,22 @@ div#recent_actions h2
 	margin: 0px;
 }
 
-div#recent_actions
+div#cave_stats table {
+	margin:0px;
+	border-collapse: separate;
+	border:none;
+}
+
+div#cave_stats {
+	border:thin black solid;
+	text-align:right;
+}
+
+div#right_sidetable
 {
+	border: thin solid black;
 	max-width:200px;
 	max-height:50%;
-	overflow-x:hidden;
-	overflow-y:scroll;
-	border: thin solid black;
 	background:#EEEEEE;
 	color:#666666;
 	position:absolute;
@@ -483,6 +498,15 @@ div#recent_actions
 	z-index:2000;
 }
 
+div#right_sidetable div{
+	border: none;
+	width:200px;
+}
+
+div#recent_actions{
+	max-height:150px;
+	overflow-y:auto;
+}
 
 div#cave_details h2
 {
@@ -540,10 +564,12 @@ a.deletelink:hover {
 div#cave_stats {
 	left:0px;
 	bottom:0px;
-	background-color:lightgrey;
+	margin:20px;
+	background-color:#EEEEEE;
 	position:absolute;
 }
 
 div#cave_stats th {
-font-weight:normal;
+	font-weight:normal;
+	text-align:right;
 }

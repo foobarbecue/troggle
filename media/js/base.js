@@ -20,6 +20,14 @@ function setMaxHeight(group, target) {
 /*This is the jquery stuff */
 $(document).ready(function() {
 
+//hide the all of the element with class msg_body
+$(".collapse_body").hide();
+//toggle the componenet with class msg_body
+$(".collapse_head").click(function()
+{
+$(this).next(".collapse_body").slideToggle(600);
+});
+
 $('.searchable li').quicksearch({
   position: 'before',
   attached: 'ul.searchable',

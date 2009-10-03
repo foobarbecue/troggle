@@ -11,6 +11,7 @@ from utils import render_with_context
 from django.core import serializers
 from django.utils import simplejson
 from core.models import *
+from datalogging.models import *
 
 def showrequest(request):
     return HttpResponse(request.GET)
@@ -223,6 +224,7 @@ def cave_stats_ajax(request):
         'logbookentrycount':cave.logbookentry_set.all().count(),
         'photocount':Photo.objects.filter(contains_logbookentry__cave=cave).count(),
         'surveycount':Survey.objects.filter(logbook_entry__cave=cave).count(),
+        'dataseriescount':Timeseries.objects.filter(logbook_entry__cave=cave).count(),
         }
 
     return HttpResponse(simplejson.dumps(response_dict), mimetype="application/javascript")

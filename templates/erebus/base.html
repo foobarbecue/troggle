@@ -59,13 +59,22 @@
     {% endblock %}
 </div>
 
-<div id="recent_actions"> 
-    {% block recent_actions %}
-        <script language="javascript">
-                $('#recent_actions').remove()
-                /*This is a hack to stop a line appearing because of the empty div border*/
-        </script>
-    {% endblock recent_actions %}
+<div id="right_sidetable"> 
+    <div id="add_info">
+    {% block add_info %}
+    {% endblock add_info %}
+    </div>
+    
+
+    <div id="recent_actions">
+        {% block recent_actions %}
+        
+            <script language="javascript">
+                    $('#recent_actions').remove()
+                    /*This is a hack to stop a line appearing because of the empty div border*/
+            </script>
+        {% endblock recent_actions %}
+    </div>
 </div>
 
     {% block content %}
