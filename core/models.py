@@ -129,8 +129,7 @@ class Person(TroggleModel):
         return reverse('person',kwargs={'first_name':self.first_name,'last_name':self.last_name})
 
     class Meta:
-	    verbose_name_plural = "People"
-    class Meta:
+        verbose_name_plural = "People"
         ordering = ('last_name','first_name')  
     
     def __unicode__(self):
@@ -138,7 +137,6 @@ class Person(TroggleModel):
             return "%s %s" % (self.first_name, self.last_name)
         return self.first_name
 
-    
     def notability(self):
         notability = Decimal(0)
         for personexpedition in self.personexpedition_set.all():
@@ -244,9 +242,7 @@ class LogbookEntry(TroggleModel):
     slug    = models.SlugField(max_length=50)
 
     class Meta:
-	   verbose_name_plural = "Logbook Entries"
-        # several PersonTrips point in to this object
-    class Meta:
+        verbose_name_plural = "Logbook entries"
         ordering = ('-date',)
 
     def get_absolute_url(self):

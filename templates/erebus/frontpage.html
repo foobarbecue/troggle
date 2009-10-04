@@ -147,10 +147,10 @@
         {% block add_info %}
         <h2 class="collapse_head">Add information</h2>
         <span class="collapse_body">
-        <a href="{% url admin:core_logbookentry_add %}">new logbook entry</a><br />
-        <a href="{% url admin:core_photo_add %}">new photo</a><br />
-        <a href="{% url admin:core_survey_add %}">new survey</a><br />
-        <a href="{% url admin:datalogging_timeseries_add %}">new timeseries</a><br />
+        <a href="{% url admin:core_logbookentry_add %}" target="_blank">new logbook entry</a><br />
+        <a href="{% url admin:core_photo_add %}" target="_blank">new photo</a><br />
+        <a href="{% url admin:core_survey_add %}" target="_blank">new survey</a><br />
+        <a href="{% url admin:datalogging_timeseries_add %}" target="_blank">new timeseries</a><br />
         </span>
         </ul>
         {% endblock add_info %}

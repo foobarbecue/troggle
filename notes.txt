@@ -1,5 +1,7 @@
 troggle_erebus notes
 
+- don't need link to expedition from survey
+
 - don't need author field on logbookentries because is in persontrip
 - don't need date in persontrips because is in logbookentry
 - don't need expedition in survey beacuse is in logbookentry's persontrip's personexpedition
