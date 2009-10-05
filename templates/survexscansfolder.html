@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load survex_markup %}
+
+{% block title %}Survex Scans Folder{% endblock %}
+{% block nav %}{% endblock %}
+{% block related %}{% endblock %}
+
+{% block content %}
+
+<h3>Survex Scans in: {{survexscansfolder.walletname}}</h3>
+<table>
+{% for survexscansingle in survexscansfolder.survexscansingle_set.all %}
+  <tr>
+    <td class="survexscansingle"><a href="{{survexscansingle.get_absolute_url}}">{{survexscansingle.name}}</a></td>
+    <td>
+    {% for survexblock in survexscansingle.survexblock_set.all %}
+      {{survexblock}}
+    {% endfor %}
+    </td>
+  </tr>
+{% endfor %}
+</table>
+
+<h3>Surveys referring to this wallet</h3>
+
+<table>
+{% for survexblock in survexscansfolder.survexblock_set.all %}
+  <tr>
+    <td><a href="{% url svx survexblock.survexfile.path %}">{{survexblock}}</a></td>
+  </tr>
+{% endfor %}
+</table>
+
+{% endblock %}

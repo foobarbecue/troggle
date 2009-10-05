@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load link %}
+
+{% block title %}Person {{personexpedition.person|wiki_to_html_short}} for {{personexpedition.expedition}}{% endblock %}
+{% block nav %}{% endblock %}
+{% block related %}{% endblock %}
+
+
+{% block content %}
+<h1>
+  <a href="{{personexpedition.person.get_absolute_url}}">{{personexpedition.person}}</a> : 
+  <a href="{{personexpedition.expedition.get_absolute_url}}">{{personexpedition.expedition}}</a>
+</h1>
+
+<p>{{message}}</p>
+
+<p><b>Other years:</b>
+{% for otherpersonexpedition in personexpedition.person.personexpedition_set.all %}
+  {% ifequal otherpersonexpedition personexpedition %}
+  | <b>{{otherpersonexpedition.expedition.year}}</b>
+  {% else %}
+  | <a href="{{otherpersonexpedition.get_absolute_url}}">{{ otherpersonexpedition.expedition.year }}</a>
+  {% endifequal %}
+{% endfor %}
+</p>
+
+<h3>Table of all trips and surveys aligned by date</h3>
+<div>
+<table class="survexcontibutions">
+<tr><th>Date</th><th colspan="2">Trips</th><th colspan="2">Surveys</th></tr>
+{% for persondate in personchronology %}
+<tr>
+  <td class="date">{{persondate.0}}</td>
+
+  {% if persondate.1 %}
+     <td class="trip"><a href="{{ persondate.1.logbook_entry.get_absolute_url }}">{{persondate.1.logbook_entry.title|safe}}</a></td>
+     <td><a href="{{ persondate.1.logbook_entry.cave.get_absolute_url }}">{{persondate.1.place|safe}}</a></td>
+  {% else %}
+     <td colspan="2"> </td>
+  {% endif %}
+
+  {% if persondate.2 %}
+    <td class="survexblock"><a href="{% url svx persondate.2.survexfile.path %}">{{persondate.2}}</a></td>
+    <td class="roles">
+    {% for survexpersonrole in persondate.2.survexpersonrole_set.all %}
+      {{survexpersonrole.nrole}}
+    {% endfor %}
+    </td>
+  {% else %}
+    <td colspan="2"> </td>
+  {% endif %}
+
+</tr>
+{% endfor %}
+</table>
+</div>
+
+{% endblock %}

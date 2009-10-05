@@ -272,6 +272,7 @@ yearlinks = [
                 ("1993", "1993/log.htm", Parseloghtml01), 		
                 ("1992", "1992/log.htm", Parseloghtml01), 		
                 ("1991", "1991/log.htm", Parseloghtml01), 		
+                ("1990", "1990/log.htm", Parseloghtml01), 		
             ]
 
 def SetDatesFromLogbookEntries(expedition):
