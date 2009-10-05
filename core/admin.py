@@ -100,12 +100,17 @@ class PersonExpeditionAdmin(TroggleModelAdmin):
 
 class CaveAndEntranceInline(admin.TabularInline):
     model = CaveAndEntrance
+    extra = 3
+
+class SurveyInline(admin.TabularInline):
+    model = Survey
     extra = 1
 
 class CaveAdmin(TroggleModelAdmin):
     search_fields = ('official_name','kataster_number','unofficial_number')
     fields = ('official_name','underground_description','equipment','area','slug')
-    inlines = (OtherCaveInline, CaveAndEntranceInline, PhotoInline)
+    inlines = (OtherCaveInline, CaveAndEntranceInline, PhotoInline, 
+SurveyInline)
     prepopulated_fields = {'slug':("official_name",)}
     extra = 4
 
