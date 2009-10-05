@@ -1,5 +1,7 @@
 troggle_erebus notes
 
+- need some kind of link to admin from front page
+
 - don't need link to expedition from survey
 
 - don't need author field on logbookentries because is in persontrip
