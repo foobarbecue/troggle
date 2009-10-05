@@ -52,6 +52,10 @@ class PersonTripInline(admin.TabularInline):
     model = PersonTrip
     exclude = ['persontrip_next','Delete']
     raw_id_fields = ('personexpedition',)
+    extra = 3
+
+class SurveyInline(admin.TabularInline):
+    model = Survey
     extra = 1
 
 #class LogbookEntryAdmin(VersionAdmin):
@@ -59,7 +63,8 @@ class LogbookEntryAdmin(TroggleModelAdmin):
     prepopulated_fields = {'slug':("title",)}
     search_fields = ('title','expedition__year')
     date_heirarchy = ('date',)
-    inlines = (PersonTripInline, PhotoInline, QMsFoundInline)
+    inlines = (PersonTripInline, SurveyInline, PhotoInline, 
+QMsFoundInline)
     class Media:
         css = {
             "all": ("css/troggleadmin.css",)
@@ -102,15 +107,10 @@ class CaveAndEntranceInline(admin.TabularInline):
     model = CaveAndEntrance
     extra = 3
 
-class SurveyInline(admin.TabularInline):
-    model = Survey
-    extra = 1
-
 class CaveAdmin(TroggleModelAdmin):
     search_fields = ('official_name','kataster_number','unofficial_number')
     fields = ('official_name','underground_description','equipment','area','slug')
-    inlines = (OtherCaveInline, CaveAndEntranceInline, PhotoInline, 
-SurveyInline)
+    inlines = (OtherCaveInline, CaveAndEntranceInline, PhotoInline,)
     prepopulated_fields = {'slug':("official_name",)}
     extra = 4
 
