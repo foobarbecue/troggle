@@ -167,16 +167,7 @@
         </ul>
         </span>
         {% endblock %}
-
-        {% block browse_expeditions %}
-        <h2 class="collapse_head">Browse expeditions</h2>
-        <span class="collapse_body">
-            {% for expedition in expeditions %}
-                <a href="{{expedition.get_absolute_url}}">{{expedition}}</a>
-            {% endfor %}
-        </span>
-        {% endblock browse_expeditions %}
-
+        
         {% block add_info %}
         <h2 class="collapse_head">Add information</h2>
         <span class="collapse_body">
@@ -185,6 +176,7 @@
         <a href="{% url admin:core_survey_add %}" target="_blank">new survey</a><br />
         <a href="{% url admin:datalogging_timeseries_add %}" target="_blank">new timeseries</a><br />
         </span>
+        </ul>
         {% endblock add_info %}
 
 	{% block recent_actions %}

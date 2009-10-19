@@ -61,6 +61,11 @@
 
 <div id="right_sidetable"> 
 
+    <div id="browse_expeditions">
+    {% block browse_expeditions %}
+    {% endblock browse_expeditions %}
+    </div>    
+
     <div id="entrance_list" style="padding-left:0">
     {% block entrance_list %}
     {% endblock entrance_list %}
@@ -70,7 +75,6 @@
     {% block add_info %}
     {% endblock add_info %}
     </div>
-    
 
     <div id="recent_actions">
         {% block recent_actions %}
@@ -84,7 +88,7 @@
 </div>
 
     {% block content %}
-    REPLACE : The content
+    This page has no content.
     {% endblock %}
 
   </div>

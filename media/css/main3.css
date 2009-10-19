@@ -89,7 +89,7 @@ div#content
 	bottom:51px;
 	left:0px;
 	right:0px;
-    background-color:lightgrey;
+    background-color:#F9F9F9;
 }
 
 div#map
@@ -246,6 +246,7 @@ table {
 	margin-left: 2em;
 	border-collapse: collapse;
 }
+
 td {
 	border: thin solid black;
 }

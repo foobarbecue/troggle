@@ -65,7 +65,6 @@
 
 {% if cave.entrances %}
     <h3>Entrances (<a href="/admin/core/entrance/add/?cave={{cave.id}}">add new</a>)</h3>
-    {% for ent in cave.entrances %}
     <table>
         <tr>
             <th>
@@ -78,6 +77,8 @@
                 Easting
             </td>            
         </tr>
+    {% for ent in cave.entrances %}
+
         <tr>
             <td>
                 {{ ent }}
@@ -94,9 +95,9 @@
                 {% endif %}
             </td>
         </tr>
-    </table>
+    
     {% endfor %}
-
+    </table>
 {% endif %}
 
 {% if cave.photo_set.all %}
@@ -179,4 +180,8 @@
     {% endfor %}
     </ul>
 {% endif %}
+
+<h3> Comments </h3>
+{{cave.comments}}
+
 {% endblock %}

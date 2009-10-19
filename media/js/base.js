@@ -22,10 +22,11 @@ $(document).ready(function() {
 
 //hide the all of the element with class msg_body
 $(".collapse_body").hide();
-//toggle the componenet with class msg_body
+//toggle on click header
 $(".collapse_head").click(function()
 {
 $(this).next(".collapse_body").slideToggle(600);
+$(".collapse_body").not($(this).next(".collapse_body")).slideUp();
 });
 
 $('.searchable li').quicksearch({
