@@ -1,0 +1,20 @@
+An introduction to the erebus cave database
+
+==Unfamilar models==
+The database contains objects which will make sense immediately to the average user, such as the Cave model and the LogbookEntry model. It also contains some which won't make sense, but are still necessary, such as the PersonTrip model and the SurveyScan model. This section explains all the non-intuitive models.
+
+===PersonExpedition model===
+A PersonExpedition is tored for each expedition that each person goes on. This model stores information about their participation in that expedition, primarily what date they arrived and what date they left.
+
+===PersonTrip===
+A PersonTrip object is stored for each trip that each person goes on. There is not a lot of data stored here, but the model is needed because in addition to knowing who went on each trip we also want to store what each person's role was on the trip, the time each person spent underground, whether or not they wrote the logbook entry.
+
+At the moment, PersonTrip objects are linked to PersonExpeditions, but they may be changed to link directly to Person objects in the future, since they are already linked to LogbookEntry objects which are in turn linked to Expedition objects.
+
+===CaveAndEntrance===
+A CaveAndEntrance is stored for each entrance of each cave, and records the entrance letter for that entrance of that cave. This is one of the most non-intuitive models. The reason for its existance is that it is possible for two caves that were discovered seperately to connect underground. This model allows a single entrance to belong to more than one cave.
+
+==Limitations of the database==
+LogbookEntry can only be associated with one Cave or Place. This means that if you visit lots of caves in a day, you need to split up your description of what you did into separate logbook entries for each cave. This allows us to store more granular information and is necessary for database structure. For example, surveys are attached to logbook entries and they "know" what cave they are about by looking at the Cave field in the attached LogbookEntry.
+
+One trip per 

@@ -11,6 +11,7 @@
         
         function selected(evt){
             window.open(evt.feature.attributes.href,"Window1, ");
+            selectCtrl.unselectAll();
             return false;
         }
         
@@ -29,21 +30,26 @@
             
             
 
-            entrances = new OpenLayers.Layer.Vector("Simple Geometry", {
+            entrances = new OpenLayers.Layer.Vector("Cave and tower entrances", {
                 styleMap: new OpenLayers.StyleMap({
                     "default": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
-                        label : "${name}",
+                        /*label : "${name}",*/
                         labelAlign: "${align}",
+                        externalGraphic: '${graphic}',
+                        pointRadius:20,
+                        graphicOpacity:1,
                         fontSize: "15px",
                         fontColor:"#00FF00",
                         fontWeight:"bold",
-                        fill: true,
                     }, OpenLayers.Feature.Vector.style["default"])),
                     "select": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
                         label : "${name}",
+                        externalGraphic: '${graphic}',
+                        pointRadius:20,
+                        graphicOpacity:1,
                         labelAlign: "${align}",
                         fontSize: "15px",
-                        fontColor:"#00FF00", 
+                        fontColor:"#000000", 
                         fontWeight:"bold",                        
                         fill: true,
                     }, OpenLayers.Feature.Vector.style["select"])),
@@ -55,14 +61,23 @@
             {% for entrance in entrances %}
                     entrance{{entrance.id}} = new OpenLayers.Geometry.Point({{entrance.location.x}}, {{entrance.location.y}});
                     entrance{{entrance.id}}.transform(proj, new OpenLayers.Projection("EPSG:900913"));
-                    var entrance{{entrance.id}}Feature = new OpenLayers.Feature.Vector(entrance{{entrance.id}});
+                    entrance{{entrance.id}}Feature = new OpenLayers.Feature.Vector(entrance{{entrance.id}});
                         entrance{{entrance.id}}Feature.attributes = {
                             href: "{{entrance.caves.0.get_absolute_url}}",
                             name: "{{entrance}}",
                             cavename: "{{entrance.caves.0.official_name}}",
                             pk:"{{entrance.caves.0.pk}}",
                             favColor: "black",
-                            align: "lt"
+                            align: "lt",
+                            {% ifequal  entrance.caves.0.type "tower" %}
+                                graphic: "/site_media/smokestack.png"
+                            {% endifequal %}
+                            {% ifequal  entrance.caves.0.type "cave" %}
+                                graphic: "/site_media/cave.png"
+                            {% endifequal %}
+                            {% ifequal  entrance.caves.0.type "unknown" %}
+                                graphic: "/site_media/smokestack.png"
+                            {% endifequal %}
                 };
             {% endfor %}
             
@@ -106,9 +121,8 @@
             highlightCtrl = new OpenLayers.Control.SelectFeature(entrances, {
                 hover: true,
                 highlightOnly: true,
-                renderIntent: "temporary",
+                renderIntent: "select",
                 eventListeners: {
-                    //beforefeaturehighlighted: report,
                     featurehighlighted: get_cave_stats,
                     featureunhighlighted: clear_cave_stats,
                 }
@@ -117,10 +131,10 @@
             selectCtrl = new OpenLayers.Control.SelectFeature(
                 [entrances],
                 {
-                    clickout: true, toggle: false,
-                    multiple: false, hover: false,
-                    toggleKey: "ctrlKey", // ctrl key removes from selection
-                    multipleKey: "shiftKey" // shift key adds to selection
+                    hover: false,
+                    clickout: true,
+                    multiple: false,
+
                 }
             );
 
@@ -143,6 +157,17 @@
 
 {% endblock head %}
 
+        {% block entrance_list %}
+        <h2 class="collapse_head">Entrances by name</h2>
+        <span class="collapse_body">
+        <ul class="searchable" style="padding:0">
+            {% for entrance in entrances %}
+                <li><a href="javascript: void(0)" onmouseover="highlightCtrl.highlight(entrance{{entrance.id}}Feature);" onmouseout="highlightCtrl.unhighlight(entrance{{entrance.id}}Feature);" onclick="selectCtrl.select(entrance{{entrance.id}}Feature)">{{entrance}}</a></li>
+            {% endfor %}
+        </ul>
+        </span>
+        {% endblock %}
+        
         {% block add_info %}
         <h2 class="collapse_head">Add information</h2>
         <span class="collapse_body">
@@ -169,7 +194,7 @@
                 {% if entry.is_deletion %}
                     {{ entry.object_repr }}
                 {% else %}
-                    <a href="admin/{{ entry.get_absolute_url }}">{{ entry.object_repr }}</a>
+                    <a href="{{ entry.get_edited_object.get_absolute_url }}">{{ entry.object_repr }}</a>
                 {% endif %}
                 <br/>
                 {% if entry.content_type %}
@@ -183,7 +208,7 @@
             {% endif %}
 	{% endblock %}
 
-{% block body_onload %}init();{% endblock body_onload %}
+{% block body_onload %}onload="init();"{% endblock body_onload %}
 
 {% block content %}
 

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load wiki_markup %}
+{% load comments %}
 {% block editLink %}| <a href={{cave.get_admin_url}}>Edit cave {{cave|wiki_to_html_short}}</a>{% endblock %}
 
 {% block title %}{{ cave.official_name|wiki_to_html_short }}{% endblock %}
@@ -12,6 +13,19 @@
 
 {% block related %}
 
+{% endblock %}
+
+{% block head %}
+{% if cave.timeseries_set.all %}
+
+    {% for timeseries in cave.timeseries_set.all %}
+        {{timeseries.plot}}
+    {% endfor %}
+    
+{% endif %}
+{% endblock %}
+
+{% block body_onload %}
 {% endblock %}
 
 {% block content %}
@@ -95,6 +109,17 @@
             </tr>
         {% endfor %}
     </table>
+{% endif %}
+
+{% if cave.timeseries_set.all %}
+<h3>Timeseries</h3>
+    {% for timeseries in cave.timeseries_set.all %}
+    <div id="both_graphs_{{timeseries.id}}" class="timeseries_graph">
+    <div id='{{timeseries.id}}_graph_id' class="main_graph" style="width:200px;height:100px"></div>
+    <div id='{{timeseries.id}}_overview_graph_id' class="overview_graph"  style="width:200px;height:100px"></div>
+    </div>
+    {{timeseries}}
+    {% endfor %}
 {% endif %}
 
 {% if cave.explorers %}

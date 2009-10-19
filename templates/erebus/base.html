@@ -17,7 +17,7 @@
 
 {% block head %}{% endblock %}
 </head>
-<body  onLoad="{% block body_onload %}contentHeight();{% endblock %}">
+<body  {% block body_onload %}onLoad="contentHeight();"{% endblock %}>
 
 <div id="header"> 
   <h1>Erebus Cave and Fumarole Database</h1>
@@ -60,6 +60,12 @@
 </div>
 
 <div id="right_sidetable"> 
+
+    <div id="entrance_list" style="padding-left:0">
+    {% block entrance_list %}
+    {% endblock entrance_list %}
+    </div>
+    
     <div id="add_info">
     {% block add_info %}
     {% endblock add_info %}

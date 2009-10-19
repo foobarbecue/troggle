@@ -109,7 +109,7 @@ class CaveAndEntranceInline(admin.TabularInline):
 
 class CaveAdmin(TroggleModelAdmin):
     search_fields = ('official_name','kataster_number','unofficial_number')
-    fields = ('official_name','underground_description','equipment','area','slug')
+    fields = ('official_name','type','underground_description','equipment','area','slug')
     inlines = (OtherCaveInline, CaveAndEntranceInline, PhotoInline,)
     prepopulated_fields = {'slug':("official_name",)}
     extra = 4

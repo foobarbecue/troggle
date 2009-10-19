@@ -4,7 +4,8 @@ html, body {
 }
 
 p {
-	margin:1.5em;
+	margin-left:1em;
+	margin-right:1em;
 }
 
 .caption			{ font-size: 8pt; margin-bottom: 0pt; }
@@ -82,9 +83,10 @@ table.expeditionpersonlist a:hover
 
 div#content
 {
-	position:absolute;
-	top:60px;
-	bottom:0px;
+	position:relative;
+	min-height:100%;
+	width:100%;
+	bottom:51px;
 	left:0px;
 	right:0px;
     background-color:lightgrey;
@@ -92,11 +94,13 @@ div#content
 
 div#map
 {
-	height:100%;
-	position:relative;
+	top: 51px;
+	bottom: 0px;
+	width:100%;
+	position:absolute;
 }
 
-div#content h2
+div#content > h2
 {
     text-align:center;
     margin-top:0px;
@@ -125,7 +129,9 @@ table.expeditionpersonlist td
 
 div#content div#col1
 {
-    width:66%;
+    position:relative;
+	top:51px;
+	width:66%;
 }
 table.expeditionlogbooks td
 {
@@ -171,7 +177,7 @@ hr{
 
 div.centre img			{ vertical-align: middle; }
 
-h1				{ text-align: center; font-size: 210%; display: inline;}
+h1				{ text-align: center; display: inline;}
 h2				{ }
 h3				{ color: #000 text-align:left; padding:1em; margin: 0; font-weight:bold}
 h4				{ color: #0d664c; }
@@ -288,23 +294,23 @@ img.thumbnail {
 }
 
 div#header {
-	left:100px;
-	right:100px;
+	position:relative;
 	top:0;
-	margin-left:auto;
-	margin-right:auto;
-	Dheight:50px;
+	height:50px;
 	background-image: url( ../blueholebanner.jpg);
 	border-bottom:thin solid #000;
 	font-family: Arial, Helvetica, sans-serif;
 	font-variant: normal;
+	z-index: 10;
 }
 
 
 div#editLinks {
+	bottom:3px;
 	right:5px;
 	font-family: "Courier New", Courier, monospace;
     text-align:right;
+	position: absolute;
 }
 
 div#editLinks a{
@@ -385,10 +391,6 @@ h1 {
 	width:60%
 }
 
-#quicksearch {
-	margin-left:40px;
-}
-
 .noticeBox {
 	border:thin black solid; width: 40%; color:#F00; margin-left:auto; margin-right:auto
 }
@@ -458,17 +460,17 @@ div#related h2
 
 div#related
 {
-	#max-width:200px;
 	border: thin solid black;
 	background:#EEEEEE;
 	color:#666666;
-	position:absolute;
+	float:right;
 	right:20px;
+	margin:51px 1em 1em;
 	top:100px;
 	z-index:2000;
 }
 
-div#right_sidetable h2, div#cave_stats h2
+div#right_sidetable h2, div#cave_stats h2, div.comments_container h2, div#related h2
 {
 	padding:0px;
 	font-size:100%;
@@ -507,8 +509,8 @@ div#right_sidetable div{
 	width:200px;
 }
 
-div#recent_actions{
-	max-height:150px;
+div#recent_actions, div#entrance_list{
+	max-height:200px;
 	overflow-y:auto;
 }
 
@@ -576,4 +578,43 @@ div#cave_stats {
 div#cave_stats th {
 	font-weight:normal;
 	text-align:right;
+}
+
+div.timeseries_graph {
+	margin-right:auto;
+	margin-left:auto;
+	width:60%;
+	height:35%;
+}
+
+div.comments_container {
+	width:60%;
+	margin-left:2em;
+	border: thin solid black;
+	background:#EEEEEE;	
+}
+
+div.object {
+	margin:1em;
+	border: thin black solid;
+	background:#EEEEEE;	
+}
+
+div.object > div > h3 {
+	margin:0;
+	background:#EEEEEE url(../nav-bg.gif) repeat-x;
+	border-bottom: thin solid black;
+	right:1em;
+}
+
+div.object > h2 {
+	margin:0;
+	background:#EEEEEE url(../nav-bg.gif) repeat-x;
+	border-bottom: thin solid black;
+	right:1em;
+}
+
+div.entry_text {
+	border-left: thin dotted black;
+	margin-left: 1em;
 }

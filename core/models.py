@@ -8,6 +8,7 @@ from django.db.models import Min, Max
 from django.conf import settings
 from decimal import Decimal, getcontext
 from django.core.urlresolvers import reverse
+from django.template.loader import render_to_string
 from imagekit.models import ImageModel
 getcontext().prec=2 #use 2 significant figures for decimal calculations
 
@@ -28,7 +29,7 @@ def get_related_by_wikilinks(wiki_text):
         except QM.DoesNotExist:
             print 'fail on '+str(wikilink)
     
-    return res
+    return render_to_string('object_preview.html',{'object':self})
 
 logging.basicConfig(level=logging.DEBUG,
                            filename=settings.LOGFILE,
@@ -44,6 +45,9 @@ class TroggleModel(models.Model):
 
     def get_admin_url(self):
         return "/admin/core/" + self.object_name().lower() + "/" + str(self.pk)
+    
+    def comments(self):
+        return render_to_string('comments.html',{'object':self})
 
     class Meta:
 	    abstract = True
@@ -277,6 +281,9 @@ class LogbookEntry(TroggleModel):
             return self.text[0:80] + '...'
         else:
             return self.text
+    
+    def author(self):
+        return PersonTrip.objects.get(logbook_entry=self, is_logbook_entry_author=True).personexpedition.person
 #
 # Single Person going on a trip, which may or may not be written up (accounts for different T/U for people in same logbook entry)
 #
@@ -344,6 +351,13 @@ class Cave(TroggleModel):
     kataster_code = models.CharField(max_length=20,blank=True,null=True)
     kataster_number = models.CharField(max_length=10,blank=True, null=True)
     unofficial_number = models.CharField(max_length=60,blank=True, null=True)
+    TYPE_CHOICES = (
+        ('tower', 'vertical ice tower without horizontal development'),
+        ('cave', 'horizontal ice cave without vertical tower'),
+        ('cave_n_tower', 'connected horizontal cave and vertical tower'),
+        ('unknown', 'not known, need to check'),
+    )
+    type = models.CharField(max_length=200, choices=TYPE_CHOICES)
     entrances = models.ManyToManyField('Entrance', through='CaveAndEntrance')
     explorers = models.TextField(blank=True,null=True)
     underground_description = models.TextField(blank=True,null=True)
@@ -434,6 +448,11 @@ class Cave(TroggleModel):
         else:
             res += "&ndash;" + prevR
         return res
+
+    def timeseries_set(self):
+        from datalogging.models import Timeseries
+        return Timeseries.objects.filter(logbook_entry__cave=self)
+        
 
 class OtherCaveName(TroggleModel):
     name = models.CharField(max_length=160)
