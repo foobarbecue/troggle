@@ -7,8 +7,8 @@ from core.views_caves import *
 from core.views_survex import *
 from core.models import *
 from django.views.generic.create_update import create_object
+from django.views.generic.list_detail import object_list, object_detail
 from django.contrib import admin
-from django.views.generic.list_detail import object_list
 from django.views.generic.simple import direct_to_template
 from django.contrib import databrowse
 import datalogging.models
@@ -48,6 +48,9 @@ urlpatterns = patterns('',
     url(r'^jgtfile/(.*)$',      view_surveys.jgtfile,       name="jgtfile"),
     url(r'^jgtuploadfile$',     view_surveys.jgtuploadfile, name="jgtuploadfile"),
 
+    
+    url(r'^photos/?$',      object_list,  {'queryset':Photo.objects.all(), 'template_name':'photo_list.html'} ),
+    
     url(r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
     #(r'^cavesearch', caveSearch),

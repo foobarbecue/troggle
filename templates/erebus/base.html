@@ -47,7 +47,7 @@
  
 <div id="content" >
 
-  	{% block contentheader %}
+    {% block contentheader %}
     {% endblock %}
 
 <div id="related"> 
@@ -57,6 +57,13 @@
                 /*This is a hack to stop a line appearing because of the empty div border*/
         </script>
     {% endblock %}
+</div>
+
+
+    {% block content %}
+    This page has no content.
+    {% endblock %}
+
 </div>
 
 <div id="right_sidetable"> 
@@ -87,12 +94,8 @@
     </div>
 </div>
 
-    {% block content %}
-    This page has no content.
-    {% endblock %}
-
-  </div>
-
+{% block map %}
+{% endblock %}
     <div class="footer">
 	<ul class="dropdown" id="footerLinks">
 

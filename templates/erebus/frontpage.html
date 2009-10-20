@@ -219,11 +219,14 @@
 {% block body_onload %}onload="init();"{% endblock body_onload %}
 
 {% block content %}
+{% endblock content %}
 
+{% block map %}
     <div id="map"></div>
+    
     <div id="cave_stats"></div>
 
-{% endblock content %}
+{% endblock map %}
 
 {% block margins %}
 {% endblock margins %}

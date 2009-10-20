@@ -1,6 +1,7 @@
 html, body {
-	height: 100%;
+	min-height: 100%;
 	margin: 0px;
+	background:#F9F9F9
 }
 
 p {
@@ -83,10 +84,10 @@ table.expeditionpersonlist a:hover
 
 div#content
 {
-	position:relative;
-	min-height:100%;
+	position:absolute;
+	margin-top:51px;
 	width:100%;
-	bottom:51px;
+	top:0px;
 	left:0px;
 	right:0px;
     background-color:#F9F9F9;
@@ -156,7 +157,6 @@ p.indent
 
 #currentLocation {
 	float:right;
-	Zbackground:#999;
 	line-height: 80%;
 	font-variant: small-caps;
 	margin: 0px;
@@ -237,10 +237,6 @@ table#cavepage th#status	{ text-align: right; width: 25%; }
 .command                        { color: #FF0000; }
 .comment                        { color: #888888; font-style:italic;}
 
-.thumbnail {
-	width: 300px;
-}
-
 table {
 	border: thin solid black;
 	margin-left: 2em;
@@ -275,7 +271,7 @@ td.survexnewfile
 }
 div.figure {
   width: 20%;
-  border: thin white solid;
+  border: thin black solid;
   margin: 0.5em;
   padding: 0.5em;
   display: inline;	
