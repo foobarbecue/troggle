@@ -6,7 +6,7 @@
 <!--<link rel="alternate stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/mainplain.css" title="plain"/>-->
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/dropdownNavStyle.css" />
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/jquery.jqplot.css" />
-<title>{% block title %}Troggle{% endblock %}</title>
+<title>{% block title %}Erebus Cave Database{% endblock %}</title>
 <script src="{{ settings.MEDIA_URL }}js/jquery.js" type="text/javascript"></script>
 <script src="{{ settings.MEDIA_URL }}js/jquery.quicksearch.js" type="text/javascript"></script>
 <script src="{{ settings.MEDIA_URL }}js/base.js" type="text/javascript"></script>
@@ -92,6 +92,13 @@
             </script>
         {% endblock recent_actions %}
     </div>
+    
+    
+    <div id="misc">
+    {% block misc %}
+    {% endblock misc %}
+    </div>
+    
 </div>
 
 {% block map %}

@@ -110,6 +110,11 @@
                                     info+='</td></table>'
                                     document.getElementById("cave_stats").innerHTML = info;                                    
                                     responsevariable=data
+                                    
+                                    $('#cave_stats table').css("background-repeat","no-repeat")
+                                    $('#cave_stats table').css("background-image","url("+evt.feature.attributes.graphic+")")
+                                    
+                                
                             },
                             "json");
             };
@@ -214,7 +219,16 @@
             {% endfor %}
             </ul>
             {% endif %}
-	{% endblock %}
+
+    {% endblock %}
+    
+    {% block misc %}
+        <h2 class="collapse_head">Miscelleneous</h2>
+        <span class="collapse_body">
+        <a href="{%url photos%}">view all photos</a><br />
+        <a href="{%url about%}">about this database</a><br />
+        </span>
+    {% endblock misc %}
 
 {% block body_onload %}onload="init();"{% endblock body_onload %}
 

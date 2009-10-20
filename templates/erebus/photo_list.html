@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block contentheader %}
+{% endblock contentheader %}
+
+{% block content %}
+
+{% if object_list %}
+    {% for photo in object_list %}
+        <div class="figure">
+            <p> <a href="{{ photo.display.url }}"><img src="{{ photo.thumbnail_image.url }}" class="thumbnail" />
+                  <p> File at: <a href="{{ photo.display.url }}"> {{ photo.display.url }} </a> <br />
+                    Caption: {{ photo.caption }} <br />
+                    {% if photo.contains_logbookentry %}
+                    Logbook entry: <a href="{{ photo.contains_logbookentry.get_absolute_url }} ">{{ photo.contains_logbookentry }} </a><br />
+                    {% endif %}
+                    {% if photo.contains_cave %}
+                    Cave: <a href="{{ photo.contains_cave.get_absolute_url }} ">{{ photo.contains_cave }} </a><br />
+                    [<a href="{{photo.get_admin_url}}">edit</a>]
+                    {% endif %}
+                  </p>
+            </p>
+        </div>
+    {% endfor%}
+{% else %}
+There are no photos in the database.
+{% endif %}
+<a href="{% url admin:core_photo_add %}">add a photo</a>
+
+{% endblock content %}

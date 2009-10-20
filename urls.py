@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     
     url(r'^$',              views_other.frontpage,      name="frontpage"),
     url(r'^todo/$',              views_other.todo,      name="todo"),
-    (r'^about/$',             direct_to_template, {'template': 'about.html'}),
+    url(r'^about/$',             direct_to_template, {'template': 'about.html'}, name="about"),
     (r'^ajax/$',             views_other.cave_stats_ajax),
     (r'^comments/', include('django.contrib.comments.urls')),
 
@@ -49,7 +49,7 @@ urlpatterns = patterns('',
     url(r'^jgtuploadfile$',     view_surveys.jgtuploadfile, name="jgtuploadfile"),
 
     
-    url(r'^photos/?$',      object_list,  {'queryset':Photo.objects.all(), 'template_name':'photo_list.html'} ),
+    url(r'^photos/?$',      object_list,  {'queryset':Photo.objects.all(), 'template_name':'photo_list.html'}, name="photos" ),
     
     url(r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
@@ -127,9 +127,6 @@ urlpatterns = patterns('',
                                                    view_surveys.tunnelfilebackgroundscan), 
             
     #url(r'^tunneldatainfo/(?P<path>.+?\.xml)$',    view_surveys.tunnelfileinfo,     name="tunnelfileinfo"), 
-    
-    (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': settings.PHOTOS_ROOT, 'show_indexes':True}),
 
     # for those silly ideas
     url(r'^experimental.*$',                         views_logbooks.experimental,  name="experimental"),
