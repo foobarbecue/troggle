@@ -20,12 +20,18 @@ function setMaxHeight(group, target) {
 /*This is the jquery stuff */
 $(document).ready(function() {
 
+
+$('div.figure').width($('div.figure img').width()+40)
+
 //hide the all of the element with class msg_body
 $(".collapse_body").hide();
+$(".collapse_head").addClass("plus_icon");
+
 //toggle on click header
 $(".collapse_head").click(function()
 {
 $(this).next(".collapse_body").slideToggle(600);
+$(this).toggleClass("plus_icon");
 $(".collapse_body").not($(this).next(".collapse_body")).slideUp();
 });
 

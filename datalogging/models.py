@@ -63,14 +63,11 @@ class Timeseries(TroggleModel):
     def plot(self):
         return render_to_string('timeseries_plot.html',{'timeseries':self})
     
-    def import_from_tinytag_csv_nounits(self):
+    def import_csv_simple(self):
         import_file_reader = csv.reader(self.import_file.file)
         for line in import_file_reader:
             try:
-                new_point=DataPoint(time=line[1], value=line[2], parent_timeseries=self)
-                new_point.save()
+                DataPoint.objects.get_or_create(parent_timeseries=self, time=line[1], defaults={'value':line[2]})
             except:
-                print 'skipped' + str(line)
-
-
+                print 'could not import line:' + str(line)
 # Create your models here.

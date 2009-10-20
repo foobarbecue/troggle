@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block contentheader %}
+<h2>Photo gallery</h2>
 {% endblock contentheader %}
 
 {% block content %}
@@ -9,15 +10,15 @@
     {% for photo in object_list %}
         <div class="figure">
         {{ photo.caption }}
-            <p> <a href="{{ photo.display.url }}"><img src="{{ photo.thumbnail_image.url }}" class="thumbnail" />
+            <p> <a href="{{ photo.display.url }}"><img src="{{ photo.thumbnail_image.url }}" class="thumbnail" /></a>
                   <p>
                     {% if photo.contains_logbookentry %}
                     Logbook entry: <a href="{{ photo.contains_logbookentry.get_absolute_url }} ">{{ photo.contains_logbookentry }} </a><br />
                     {% endif %}
                     {% if photo.contains_cave %}
                     Cave: <a href="{{ photo.contains_cave.get_absolute_url }} ">{{ photo.contains_cave }} </a><br />
-                    [<a href="{{photo.get_admin_url}}">edit</a>]
                     {% endif %}
+                    [<a href="{{photo.get_admin_url}}">edit</a>]
                   </p>
             </p>
         </div>
@@ -25,6 +26,8 @@
 {% else %}
 There are no photos in the database.
 {% endif %}
-<a href="{% url admin:core_photo_add %}">add a photo</a>
+<div class="figure">
+<a href="{% url admin:core_photo_add %}"><p>add a photo</p></a>
+</div>
 
 {% endblock content %}

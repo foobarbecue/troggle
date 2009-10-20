@@ -115,11 +115,13 @@
 {% if cave.timeseries_set.all %}
 <h3>Timeseries</h3>
     {% for timeseries in cave.timeseries_set.all %}
-    <div id="both_graphs_{{timeseries.id}}" class="timeseries_graph">
-    <div id='{{timeseries.id}}_graph_id' class="main_graph" style="width:200px;height:100px"></div>
-    <div id='{{timeseries.id}}_overview_graph_id' class="overview_graph"  style="width:200px;height:100px"></div>
+    <div id="both_graphs_{{timeseries.id}}"  class="timeseries_graph">
+        
+        <div id='{{timeseries.id}}_graph_id'  class="main_graph"></div>
+        <div id='{{timeseries.id}}_overview_graph_id' class="overview_graph"></div>
+        <p style="clear:left;">{{timeseries}}</p>
     </div>
-    {{timeseries}}
+    
     {% endfor %}
 {% endif %}
 

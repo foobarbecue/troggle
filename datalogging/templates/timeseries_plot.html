@@ -10,8 +10,29 @@ var plot = $.plot($('#{{timeseries.id}}_graph_id'),
 
 // setup overview
 var overview = $.plot($("#{{timeseries.id}}_overview_graph_id"), [datapoints], {
-    selection: { mode: "xy" }
+    selection: { mode: "xy" },  xaxis: { mode:'time'}
 });
+
+    $("#{{timeseries.id}}_graph_id").bind("plotselected", function (event, ranges) {
+        // clamp the zooming to prevent eternal zoom
+        if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
+            ranges.xaxis.to = ranges.xaxis.from + 0.00001;
+        if (ranges.yaxis.to - ranges.yaxis.from < 0.00001)
+            ranges.yaxis.to = ranges.yaxis.from + 0.00001;
+        
+        // do the zooming
+        plot = $.plot($("#{{timeseries.id}}_graph_id"), [datapoints],
+                      $.extend(true, {}, { title:'{{timeseries}}',  xaxis: { mode:'time'}, selection: { mode: "xy" }}, {
+                          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
+                          yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
+                      }));
+        
+        // don't fire event on the overview to prevent eternal loop
+        overview.setSelection(ranges, true);
+    });
+    $("#{{timeseries.id}}_overview_graph_id").bind("plotselected", function (event, ranges) {
+        plot.setSelection(ranges);
+    });
 
  
 });
