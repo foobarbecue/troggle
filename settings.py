@@ -38,7 +38,7 @@ ADMIN_MEDIA_PREFIX = '/troggle/media-admin/'
 
 MEDIA_URL = '/site_media/'
 SURVEYS_URL = '/survey_scans/'
-PHOTOS_URL  = '/photos/'
+PHOTOS_URL  = '/media/photos/'
 SVX_URL = '/survex/'
 
 APPEND_SLASH = False

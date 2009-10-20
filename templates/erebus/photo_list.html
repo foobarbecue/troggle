@@ -8,9 +8,9 @@
 {% if object_list %}
     {% for photo in object_list %}
         <div class="figure">
+        {{ photo.caption }}
             <p> <a href="{{ photo.display.url }}"><img src="{{ photo.thumbnail_image.url }}" class="thumbnail" />
-                  <p> File at: <a href="{{ photo.display.url }}"> {{ photo.display.url }} </a> <br />
-                    Caption: {{ photo.caption }} <br />
+                  <p>
                     {% if photo.contains_logbookentry %}
                     Logbook entry: <a href="{{ photo.contains_logbookentry.get_absolute_url }} ">{{ photo.contains_logbookentry }} </a><br />
                     {% endif %}

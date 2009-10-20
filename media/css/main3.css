@@ -131,7 +131,6 @@ table.expeditionpersonlist td
 div#content div#col1
 {
     position:relative;
-	top:51px;
 	width:66%;
 }
 table.expeditionlogbooks td
@@ -281,9 +280,6 @@ div.figure p {
   text-align: left;
   font-size: smaller;
   text-indent: 0;
-}
-img.thumbnail {
-  width: 100%;
 }
 
 #error {
@@ -462,7 +458,7 @@ div#related
 	color:#666666;
 	float:right;
 	right:20px;
-	margin:51px 1em 1em;
+	margin:1em 1em 1em;
 	top:100px;
 	z-index:2000;
 }
