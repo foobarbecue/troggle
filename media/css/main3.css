@@ -461,6 +461,7 @@ div#related
 	margin:1em 1em 1em;
 	top:100px;
 	z-index:2000;
+	width:30%
 }
 
 div#right_sidetable h2, div#cave_stats h2, div.comments_container h2, div#related h2
@@ -602,6 +603,9 @@ div.overview_graph {
 div.comments_container {
 	width:60%;
 	margin-left:2em;
+	margin-bottom:1em;
+	margin-top:1em;
+	margin-right:1em;
 	border: thin solid black;
 	background:#EEEEEE;	
 }
