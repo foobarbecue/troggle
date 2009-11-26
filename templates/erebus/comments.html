@@ -10,13 +10,14 @@
     {% get_comment_list for object as comment_list %}        
             {% for comment in comment_list %}
                 <div class="comment">
-                    {{comment}} &mdash; {{comment.submit_date}}
+                    {{comment.comment}} &mdash; {{comment.submit_date}}
                 </div>
             {% endfor %}
     </div>
     <div class="collapse_head">
         <h2>Add a comment</h2>
     </div>
+    
     <div class="comments collapse_body">
         {% render_comment_form for object %}
     </div>

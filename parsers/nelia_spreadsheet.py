@@ -21,7 +21,7 @@ def import_csv_simple(path):
                 ent_field='Entrance '+str(n)
                 print line[header['Long']]
                 print line[header['Lat']]
-                newent=Entrance(name=ent_field, location=Point(-float(line[header['Long']]), float(line[header['Lat']]), srid=4326))
+                newent=Entrance(name=ent_field, location=Point(float(line[header['Long']]), float(-line[header['Lat']]), srid=4326))
                 newent.entrance_description=r'x entrance width (in):' + line[header[ent_field]]  + r'y entrance width (in):' + line[header[ent_field]+1] 
                 newent.save()
                 

@@ -14,6 +14,11 @@ class EquipmentType(TroggleModel):
     manufacturer=models.ForeignKey(Manufacturer)
     model_number=models.CharField(max_length=100,  primary_key=True)
     description=models.TextField(blank=True, null=True)
+    voltage=models.FloatField(blank=True, null=True, )
+    current=models.FloatField(blank=True, null=True, )
+    amp_hours=models.FloatField(blank=True, null=True, )
+    data_storage_capacity=models.FloatField(blank=True, null=True, )
+    manual=models.FileField(upload_to="equipment_manuals")
     
     def __unicode__(self):
         return "%s %s" % (self.manufacturer, self.model_number)
@@ -24,7 +29,7 @@ class EquipmentItem(TroggleModel):
     notes=models.TextField(blank=True, null=True)
     
     def __unicode__(self):
-        return "%s %s" % (self.equipment_type, self.serial_number)      
+        return "%s %s" % (self.equipment_type, self.serial_number)
 
 class DataPoint(TroggleModel):
     time=models.DateTimeField()
@@ -70,4 +75,14 @@ class Timeseries(TroggleModel):
                 DataPoint.objects.get_or_create(parent_timeseries=self, time=line[1], defaults={'value':line[2]})
             except:
                 print 'could not import line:' + str(line)
-# Create your models here.
+
+class DataAquisitionSystem(TroggleModel):
+    component=models.ManyToManyField(EquipmentItem)
+    description=models.TextField(blank=True, null=True)
+    
+    def total_watts(self):
+        pass
+        #need to write this
+    
+    def __unicode__(self):
+        return str(self.pk)

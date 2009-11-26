@@ -102,38 +102,5 @@
 
 {% block map %}
 {% endblock %}
-    <div class="footer">
-	<ul class="dropdown" id="footerLinks">
-
-		<li><a href="#">External links</a>
-                <ul class="sub_menu">
-                    <li><a id="cuccLink" href="http://www.srcf.ucam.org/caving/wiki/Main_Page">CUCC website</a></li>
-                    <li><a id="expoWebsiteLink" href="http://cucc.survex.com/expo">Expedition website</a></li>
-                </ul>
-        </li>
-        <li><a href="{% url frontpage %}">Troggle front page</a></li>
-        <li><a id="cavesLink" href="{% url caves %}">caves</a></li>
-        <li><a id="caversLink" href="{% url personindex %}">cavers</a></li>
-        <li><a href="#">expeditions</a>
-        		<ul class="sub_menu">
-                    <li><a id="expeditionsLink" href="{{ Expedition.objects.latest.get_absolute_url }}">newest</a></li>
-                	<li><a id="expeditionsLink" href="{% url expeditions %}">list all</a></li>
-                </ul>
-        </li>
-        <li><a id="surveyBinderLink" href="{% url survey %}">survey binder</a></li>
-        <li><a href="#">diversions</a>
-        		<ul class="sub_menu">
-                	<li><a href="{% url stats %}">statistics</a></li>
-                </ul>
-        </li>
-		<li><a href="#">admin</a>
-                <ul class="sub_menu">
-                    <li><a id="cuccLink" href="{% url controlpanel %}">Import / export data</a></li>
-                    <li><a id="expoWebsiteLink" href="admin">Troggle administration pages</a></li>
-                </ul>
-        <li class="toggleMenu"><a href="#">hide menu</a></li>
-
-	</ul>
-    </div>
 </body>
 </html>
