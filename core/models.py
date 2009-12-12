@@ -345,11 +345,11 @@ class CaveAndEntrance(TroggleModel):
         
 class Cave(TroggleModel):
     # too much here perhaps
-    official_name = models.CharField(max_length=160)
+    official_name = models.CharField(max_length=160, unique=True)
     slug = models.SlugField(max_length=50)
     area = models.ManyToManyField(Area, blank=True, null=True)
     kataster_code = models.CharField(max_length=20,blank=True,null=True)
-    kataster_number = models.CharField(max_length=10,blank=True, null=True)
+    number = models.CharField(max_length=10,blank=True, null=True)
     unofficial_number = models.CharField(max_length=60,blank=True, null=True)
     TYPE_CHOICES = (
         ('tower', 'vertical ice tower without horizontal development'),
@@ -386,18 +386,7 @@ class Cave(TroggleModel):
         return reverse('cave',kwargs={'cave_id':href,})
 
     def __unicode__(self):
-        if self.kataster_number:
-            if self.kat_area():
-                return self.kat_area() + u": " + self.kataster_number
-            else:
-                return unicode("l") + u": " + self.kataster_number
-        elif self.unofficial_number:
-            if self.kat_area():
-                return self.kat_area() + u": " + self.unofficial_number
-            else:
-                return self.unofficial_number
-        else:
-            return self.official_name
+        return self.official_name
 
     def get_QMs(self):
         return QM.objects.filter(found_by__cave=self)	
@@ -453,6 +442,8 @@ class Cave(TroggleModel):
         from datalogging.models import Timeseries
         return Timeseries.objects.filter(logbook_entry__cave=self)
         
+    class Meta:
+        ordering=['official_name']
 
 class OtherCaveName(TroggleModel):
     name = models.CharField(max_length=160)
@@ -475,6 +466,7 @@ class Entrance(TroggleModel):
     explorers = models.TextField(blank=True,null=True)
     map_description = models.TextField(blank=True,null=True)
     location_description = models.TextField(blank=True,null=True)
+    equipment = models.TextField(blank=True,null=True)
     approach = models.TextField(blank=True,null=True)
     underground_description = models.TextField(blank=True,null=True)
     photo = models.TextField(blank=True,null=True)
@@ -537,6 +529,9 @@ class Entrance(TroggleModel):
             res = '/'.join((self.get_root().cave.get_absolute_url(), self.title))
             
         return res
+    
+    class Meta:
+        ordering=['caveandentrance__cave']
 
 class CaveDescription(TroggleModel):
     short_name = models.CharField(max_length=50, unique = True)
@@ -623,7 +618,7 @@ class Photo(TroggleImageModel):
     contains_entrance = models.ForeignKey(Entrance, related_name="photo_file",blank=True,null=True,  help_text='If you fill this out, do not fill out "location" below.')
     nearest_survey_point = models.ForeignKey(SurveyStation,blank=True,null=True,  help_text='If you fill this out, do not fill out "location" below.')
     nearest_QM = models.ForeignKey(QM,blank=True,null=True,  help_text='If you fill this out, do not fill out "location" below.')
-    
+    taken_by = models.ForeignKey(Person, blank=True, null=True, related_name="photographer")
     location = models.PointField(blank=True,null=True,help_text='Only fill this out if the photo is not linked to a cave, entrance, survey point, or QM. You can use the text field below to manually enter coordinates in the Well-Known Text format.')
     objects = models.GeoManager()
     

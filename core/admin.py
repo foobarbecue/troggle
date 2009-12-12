@@ -7,7 +7,6 @@ from django.core import serializers
 from core.views_other import downloadLogbook
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
 
-
 class TroggleModelAdmin(admin.ModelAdmin):
     
     def save_model(self, request, obj, form, change):
@@ -51,8 +50,7 @@ class PhotoInline(admin.TabularInline):
 class PersonTripInline(admin.TabularInline):
     model = PersonTrip
     exclude = ['persontrip_next','Delete']
-    raw_id_fields = ('personexpedition',)
-    extra = 3
+    extra = 8
 
 class SurveyInline(admin.TabularInline):
     model = Survey
@@ -63,8 +61,7 @@ class LogbookEntryAdmin(TroggleModelAdmin):
     prepopulated_fields = {'slug':("title",)}
     search_fields = ('title','expedition__year')
     date_heirarchy = ('date',)
-    inlines = (PersonTripInline, SurveyInline, PhotoInline, 
-QMsFoundInline)
+    inlines = (PersonTripInline, SurveyInline, PhotoInline, QMsFoundInline)
     class Media:
         css = {
             "all": ("css/troggleadmin.css",)
@@ -77,9 +74,7 @@ QMsFoundInline)
         
     def export_logbook_entries_as_txt(modeladmin, request, queryset):
         response=downloadLogbook(request=request, queryset=queryset, extension='txt')
-        return response
-    
-    
+        return response    
 
 class PersonExpeditionInline(admin.TabularInline):
     model = PersonExpedition
@@ -93,7 +88,7 @@ class PersonAdmin(TroggleModelAdmin):
     inlines = (PersonExpeditionInline,)
 
 class QMAdmin(TroggleModelAdmin):
-    search_fields = ('found_by__cave__kataster_number','number','found_by__date')
+    search_fields = ('number','found_by__date')
     list_display = ('__unicode__','grade','found_by','ticked_off_by')
     list_display_links = ('__unicode__',)
     list_editable = ('found_by','ticked_off_by','grade')
@@ -106,19 +101,24 @@ class PersonExpeditionAdmin(TroggleModelAdmin):
 class CaveAndEntranceInline(admin.TabularInline):
     model = CaveAndEntrance
     extra = 3
+    
+class CaveAndEntranceInlineNoLetter(admin.TabularInline):
+    model = CaveAndEntrance
+    exclude = ['entrance_letter']
+    extra = 3
 
 class CaveAdmin(TroggleModelAdmin):
-    search_fields = ('official_name','kataster_number','unofficial_number')
-    fields = ('official_name','type','underground_description','equipment','area','slug')
-    inlines = (OtherCaveInline, CaveAndEntranceInline, PhotoInline,)
+    search_fields = ('official_name','unofficial_number')
+    fields = ('official_name','unofficial_number','type','underground_description','area','slug', )
+    inlines = (OtherCaveInline, CaveAndEntranceInline, PhotoInline)
     prepopulated_fields = {'slug':("official_name",)}
     extra = 4
 
 class EntranceAdmin(admin.GeoModelAdmin):
-    search_fields = ('caveandentrance__cave__kataster_number','')
-    fields = ('entrance_description','name','location')
+    search_fields = ('caveandentrance__cave__official_name','name')
+    fields = ('entrance_description','name','location','equipment')
     display_wkt = True
-    inlines = (CaveAndEntranceInline,)
+    inlines = (CaveAndEntranceInlineNoLetter,)
 
 class PhotoAdmin(admin.GeoModelAdmin):
     display_wkt = True

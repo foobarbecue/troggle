@@ -131,7 +131,9 @@ urlpatterns = patterns('',
     # for those silly ideas
     url(r'^experimental.*$',                         views_logbooks.experimental,  name="experimental"),
     
-            #url(r'^trip_report/?$',views_other.tripreport,name="trip_report")
+    (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': '/home/aaron/troggle_erebus/photos/'}),
+
 )
 
 from datalogging.models import *
