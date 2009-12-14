@@ -16,6 +16,15 @@ from datalogging.models import *
 def showrequest(request):
     return HttpResponse(request.GET)
 
+def alarms(request):
+    caves_missing_logbookentries=[]
+    for cave in Cave.objects.all():
+        if cave.logbookentry_set.count()==0:
+            caves_missing_logbookentries.append(cave)
+            print caves_missing_logbookentries
+    
+    return render_with_context(request,'alarms.html', {'caves_missing_logbookentries':caves_missing_logbookentries})
+
 def stats(request):
     statsDict={}
     statsDict['expoCount'] = int(Expedition.objects.count())
