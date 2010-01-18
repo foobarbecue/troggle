@@ -12,12 +12,9 @@ from django.shortcuts import get_object_or_404
 def getCave(cave_id):
     """Returns a cave object when given a cave name or number. It is used by views including cavehref, ent, and qm."""
     try:
-        cave = Cave.objects.get(kataster_number=cave_id)
-    except Cave.DoesNotExist:
-        try:
-            cave = Cave.objects.get(unofficial_number=cave_id)
-        except:
-            cave = Cave.objects.get(slug=cave_id)
+        cave = Cave.objects.get(unofficial_number=cave_id)
+    except:
+        cave = Cave.objects.get(slug=cave_id)
     
     return cave
 

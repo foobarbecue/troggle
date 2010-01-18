@@ -376,9 +376,7 @@ class Cave(TroggleModel):
     #href    = models.CharField(max_length=100)
     
     def get_absolute_url(self):
-        if self.kataster_number:
-            href = self.kataster_number
-        elif self.unofficial_number:
+        if self.unofficial_number:
             href = self.unofficial_number
         else:
             href = self.slug
@@ -689,7 +687,7 @@ class Survey(TroggleModel):
         if self.wallet_number:
             return self.expedition.year+"#"+"%02d" % int(self.wallet_number)
         else:
-            return str(self.logbook_entry.slug)+'_survey'
+            return str(self.logbook_entry.slug)+'_survey from '+str(self.expedition.year)+' '
 
     def notes(self):
 	    return self.scannedimage_set.filter(contents='notes')

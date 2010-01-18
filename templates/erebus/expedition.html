@@ -10,13 +10,40 @@
 
 {% block content %}
 
-<h2>Caves with no logbook entries</h2>
+<h2>{{expedition.name}}</h2>
 
-<ul>
-{% for cave in alarmDict.caves_missing_logbookentries %}
-{{cave}}
-{% endfor %}
 
-</ul>
+
+  <h3>Logbook entries (<a href="/admin/core/logbookentry/add/?cave={{cave.id}}">add new</a>)</h3>
+  <table>
+
+    <tr>
+        <th>Date</th>
+        <th>Title</th>
+        <th>Preview</th>
+        <th>People</th>
+        <th></th>
+    </tr>
+    
+    {% for logbookentry in expedition.logbookentry_set.all %}
+    <tr>
+        <td>{{logbookentry.date}}</td>
+        <td><a href="{{ logbookentry.get_absolute_url }}">{{logbookentry.title|safe}}</a></td>
+        <td>{{logbookentry.intro}}</td>
+        {% if logbookentry.persontrip_set.all %}
+        {% for pt in logbookentry.persontrip_set.all %}
+            {% if pt.author %}<td class='author'>{% else %}<td>{% endif %}
+            <a href="{{pt.personexpedition.person.get_absolute_url}}">{{pt.personexpedition.person}}</a>,
+        {% endfor %}</td>
+        {% else %}
+            <td> &nbsp </td>
+        {% endif %}
+        
+        <td class="edit">
+                <a href="{{ ent.get_admin_url }}">edit</a>
+        </td>
+    </tr>
+  {% endfor %}
+  </table>
 
 {% endblock %}
