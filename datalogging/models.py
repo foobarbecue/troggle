@@ -72,7 +72,8 @@ class Timeseries(TroggleModel):
         import_file_reader = csv.reader(self.import_file.file)
         for line in import_file_reader:
             try:
-                DataPoint.objects.get_or_create(parent_timeseries=self, time=line[1], defaults={'value':line[2]})
+                #DataPoint.objects.get_or_create(parent_timeseries=self, time=line[1], defaults={'value':line[2]})
+                DataPoint.objects.get_or_create(parent_timeseries=self, time=datetime.datetime.strptime(line[1],'%Y-%m-%d %H:%M:%S'), defaults={'value':line[2].split(' ')[0]})
             except:
                 print 'could not import line:' + str(line)
 
