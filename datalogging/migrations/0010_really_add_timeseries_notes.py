@@ -7,15 +7,15 @@ class Migration:
     
     def forwards(self, orm):
         
-        # Adding field 'Timeseries.data_type'
-        db.add_column('datalogging_timeseries', 'data_type', orm['datalogging.timeseries:data_type'])
+        # Adding field 'Timeseries.notes'
+        db.add_column('datalogging_timeseries', 'notes', orm['datalogging.timeseries:notes'])
         
     
     
     def backwards(self, orm):
         
-        # Deleting field 'Timeseries.data_type'
-        db.delete_column('datalogging_timeseries', 'data_type')
+        # Deleting field 'Timeseries.notes'
+        db.delete_column('datalogging_timeseries', 'notes')
         
     
     
@@ -38,13 +38,13 @@ class Migration:
             'extent': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kataster_code': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
-            'kataster_number': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
             'kataster_status': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'length': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'new_since_parsing': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'non_public': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'notes': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'official_name': ('django.db.models.fields.CharField', [], {'max_length': '160'}),
+            'number': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
+            'official_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '160'}),
             'references': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
             'survex_file': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
@@ -73,6 +73,13 @@ class Migration:
             'text': ('django.db.models.fields.TextField', [], {}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '200'})
         },
+        'datalogging.dataaquisitionsystem': {
+            'component': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['datalogging.EquipmentItem']"}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'new_since_parsing': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'non_public': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'})
+        },
         'datalogging.datapoint': {
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'new_since_parsing': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
@@ -89,11 +96,16 @@ class Migration:
             'serial_number': ('django.db.models.fields.CharField', [], {'max_length': '100', 'primary_key': 'True'})
         },
         'datalogging.equipmenttype': {
+            'amp_hours': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'current': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'data_storage_capacity': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'manual': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'manufacturer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['datalogging.Manufacturer']"}),
             'model_number': ('django.db.models.fields.CharField', [], {'max_length': '100', 'primary_key': 'True'}),
             'new_since_parsing': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'non_public': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'})
+            'non_public': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'voltage': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
         },
         'datalogging.manufacturer': {
             'name': ('django.db.models.fields.CharField', [], {'max_length': '160', 'primary_key': 'True'}),
@@ -111,6 +123,7 @@ class Migration:
             'logger_timeseries_id': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'new_since_parsing': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'non_public': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'notes': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'sensor': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sensor'", 'to': "orm['datalogging.EquipmentItem']"})
         }
     }

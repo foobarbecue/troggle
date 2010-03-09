@@ -4,6 +4,6 @@ scans
 photos
 localsettings.py
 *.pyc
-*.py~
 erebus_imagery
 media
+*~

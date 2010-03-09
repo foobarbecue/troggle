@@ -82,9 +82,13 @@
     <table>
         {% for survey in logbookentry.survey_set.all %}
     <td>{{survey}}</td>
-    
+
+        {% if survey.rendered_image %}
+            <td><a href="{{rendered_image.file.url}}"><img src="{{rendered_image.thumbnail_image.url}}"></a><br>Final survey</td>
+        {% endif %}
+
         {% for scan in survey.scannedimage_set.all %}
-            <td><a href="{{scan.display.url}}"><img src="{{scan.thumbnail_image.url}}"></a><br>{{scan.contents}}</td>
+            <td><a href="{{scan.file.url}}"><img src="{{scan.thumbnail_image.url}}"></a><br>{{scan.contents}}</td>
         {% endfor %}
     {% endfor %}
     </table>

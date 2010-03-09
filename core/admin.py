@@ -60,14 +60,14 @@ class SurveyInline(admin.TabularInline):
 class LogbookEntryAdmin(TroggleModelAdmin):
     prepopulated_fields = {'slug':("title",)}
     search_fields = ('title','expedition__year')
-    date_heirarchy = ('date',)
+    date_hierarchy = 'date'
     inlines = (PersonTripInline, SurveyInline, PhotoInline, QMsFoundInline)
     class Media:
         css = {
             "all": ("css/troggleadmin.css",)
         }
     actions=('export_logbook_entries_as_html','export_logbook_entries_as_txt')
-    
+
     def export_logbook_entries_as_html(modeladmin, request, queryset):
         response=downloadLogbook(request=request, queryset=queryset, extension='html')
         return response

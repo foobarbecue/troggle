@@ -374,7 +374,8 @@ class Cave(TroggleModel):
     description_file = models.CharField(max_length=200,blank=True,null=True)
     
     #href    = models.CharField(max_length=100)
-    
+
+
     def get_absolute_url(self):
         if self.unofficial_number:
             href = self.unofficial_number
@@ -439,7 +440,10 @@ class Cave(TroggleModel):
     def timeseries_set(self):
         from datalogging.models import Timeseries
         return Timeseries.objects.filter(logbook_entry__cave=self)
-        
+
+    def survey_set(self):
+        return Survey.objects.filter(logbook_entry__cave=self)
+
     class Meta:
         ordering=['official_name']
 
@@ -606,7 +610,7 @@ class QM(TroggleModel):
 
 photoFileStorage = FileSystemStorage(location=settings.PHOTOS_ROOT, base_url=settings.PHOTOS_URL)
 class Photo(TroggleImageModel):    
-    file = models.ImageField(storage=photoFileStorage, upload_to='.',)
+    file = models.ImageField(storage=photoFileStorage, upload_to='.',null=False)
     caption = models.TextField(blank=True,null=True)
     slug=models.SlugField()    
     contains_logbookentry = models.ForeignKey(LogbookEntry,blank=True,null=True)
@@ -640,14 +644,14 @@ def get_scan_path(instance, filename):
         number="%02d" % instance.survey.wallet_number + str(instance.survey.wallet_letter) #using %02d string formatting because convention was 2009#01
         return os.path.join('./',year,year+r'#'+number,instance.contents+str(instance.number_in_wallet)+r'.jpg')
     else:
-        return str(instance.survey)+r'.jpg'
+        return unicode(instance.survey)+'_'+unicode(instance.contents)+'_'+unicode(len(instance.survey.scannedimage_set.all())+1)+r'.jpg'
 
 class ScannedImage(TroggleImageModel): 
     file = models.ImageField(storage=scansFileStorage, upload_to=get_scan_path)
     scanned_by = models.ForeignKey(Person,blank=True, null=True)
     scanned_on = models.DateField(null=True)
     survey = models.ForeignKey('Survey')
-    contents = models.CharField(max_length=20,choices=(('notes','notes'),('plan','plan_sketch'),('elevation','elevation_sketch')))
+    contents = models.CharField(max_length=20,choices=(('notes','notes'),('plan','plan_sketch'),('elevation','elevation_sketch'),('survey','rendered_survey')))
     number_in_wallet = models.IntegerField(blank=True,null=True)
 
     class IKOptions:
@@ -682,7 +686,7 @@ class Survey(TroggleModel):
     tunnel_main_sketch = models.ForeignKey('Survey',blank=True,null=True)
     integrated_into_main_sketch_on = models.DateField(blank=True,null=True)
     integrated_into_main_sketch_by = models.ForeignKey('Person' ,related_name='integrated_into_main_sketch_by', blank=True,null=True)
-    rendered_image = models.ImageField(upload_to='renderedSurveys',blank=True,null=True)
+
     def __unicode__(self):
         if self.wallet_number:
             return self.expedition.year+"#"+"%02d" % int(self.wallet_number)
@@ -697,3 +701,8 @@ class Survey(TroggleModel):
 
     def elevations(self):
 	    return self.scannedimage_set.filter(contents='elevation')
+    
+    class IKOptions:
+        spec_module = 'core.imagekit_specs'
+        cache_dir = 'thumbs'
+        image_field = 'file'

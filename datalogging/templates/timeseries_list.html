@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load comments %}
+
+
+{% block head %}
+    {% for timeseries in object_list %}
+        {{timeseries.plot}}
+    {% endfor %}
+{% endblock head %}
+
+
+{% block content %}
+    {% for timeseries in object_list %}
+	Timeseries from {{ timeseries.logbook_entry.cave }} . Data type: {{ timeseries.data_type }}.
+    <div id="both_graphs_{{timeseries.id}}"  class="timeseries_graph">
+        
+        <div id='{{timeseries.id}}_graph_id'  class="main_graph"></div>
+        <div id='{{timeseries.id}}_overview_graph_id' class="overview_graph"></div>
+        <p style="clear:left;">{{timeseries}}</p>
+        <p style="clear:left;">Y axis: {{timeseries.data_type}}</p>
+        <p style="clear:left;">X axis: time</p>
+        {{timeseries.comments}}
+    </div>
+    
+    {% endfor %}
+{% endblock content %}

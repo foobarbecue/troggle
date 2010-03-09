@@ -11,6 +11,10 @@
 
 {% endblock %}
 
+{% block related %}
+
+{% endblock %}
+
 {% block head %}
 {% if cave.timeseries_set.all %}
 
@@ -96,28 +100,6 @@
     </table>
 {% endif %}
 
-{% if cave.survey_set.all %}
-
-<h3>Surveys  (<a href="/admin/core/survey/add/?logbookentry={{logbookentry.id}}">add new</a>)</h3>
-
-    <table>
-    {% for survey in cave.survey_set.all %}
-    <tr>
-    <td>{{survey}}</td>
-
-        {% if survey.rendered_image %}
-            <td><a href="{{rendered_image.file.url}}"><img src="{{rendered_image.thumbnail_image.url}}"></a><br>Final survey</td>
-        {% endif %}
-
-        {% for scan in survey.scannedimage_set.all %}
-            <td><a href="{{scan.file.url}}"><img src="{{scan.thumbnail_image.url}}"></a><br>{{scan.contents}}</td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-    </table>
-
-{% endif %}
-
 {% if cave.photo_set.all %}
 <h3>Photos (<a href="/admin/core/photo/add/?cave={{cave.id}}">upload new</a>)</h3>
     <table>
@@ -138,12 +120,14 @@
         <div id='{{timeseries.id}}_graph_id'  class="main_graph"></div>
         <div id='{{timeseries.id}}_overview_graph_id' class="overview_graph"></div>
         <p style="clear:left;">{{timeseries}}</p>
-        <p style="clear:left;">Y axis: {{timeseries.data_type}}</p>
-        <p style="clear:left;">X axis: time</p>
         {{timeseries.comments}}
     </div>
     
     {% endfor %}
+{% endif %}
+
+{% if cave.survey_set %}
+    
 {% endif %}
 
 {% if cave.explorers %}

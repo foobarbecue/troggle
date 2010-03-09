@@ -29,6 +29,7 @@ urlpatterns = patterns('',
 
     url(r'^caves/$',     views_caves.caveindex,      name="caves"),
     url(r'^people/?$',   views_logbooks.personindex, name="personindex"),
+    url(r'^plots/?$',   object_list, {'queryset':Timeseries.objects.all(),'template_name':'timeseries_list.html'}, name="plots"),
 
     url(r'^newqmnumber/?$',              views_other.ajax_QM_number,  ),
     url(r'^lbo_suggestions/?$',              logbook_entry_suggestions),    

@@ -5,7 +5,7 @@
 
 {% block head %}
     <script src="{{ settings.MEDIA_URL }}js/OpenLayers.js"></script>
-    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key={{settings.GOOGLE_MAPS_KEY}}'></script>
+    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key={{settings.GOOGLE_MAPS_KEY}}&amp;sensor=false'></script>
     <script type="text/javascript">
         var map, entrances, selectControl;
         
