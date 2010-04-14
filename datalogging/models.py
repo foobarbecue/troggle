@@ -58,6 +58,12 @@ class Timeseries(TroggleModel):
     UNITS_CHOICES=(
         ('air_deg_c','Air Temperature Degrees Celsius',),
         ('deg_k','Air Temperature Degrees Kelvin'),
+        ('w_azmth','Wind azimuth in degrees'),
+        ('w_incl','Wind inclination in degrees'),
+        ('w_speed','Wind speed in meters per second'),
+        ('deg_k','Air Temperature in Degrees Kelvin'),
+        ('press_hpa','Air Pressure in hectopascals'),
+        ('rain','Rain depth (check units)'),
         ('co2_wt_perc','Weight percent CO2'),
         ('co2_mass_perc','Mass percent CO2'),
         ('rh_perc','Relative humidity'),
@@ -70,9 +76,9 @@ class Timeseries(TroggleModel):
 
     def __unicode__(self):
 	if self.logger_timeseries_id:
-	    return "%s on run %s of logger %s" % (self.sensor, self.logger_timeseries_id, self.logger)
+	    return "%s on run %s of logger %s (%s)" % (self.sensor, self.logger_timeseries_id, self.logger, self.data_type)
         else:
-            return "%s on logger %s" % (self.sensor, self.logger)
+            return "%s on logger %s (%s)" % (self.sensor, self.logger, self.data_type)
     
     def plot(self):
         return render_to_string('timeseries_plot.html',{'timeseries':self})

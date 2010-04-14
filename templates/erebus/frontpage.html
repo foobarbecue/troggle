@@ -75,6 +75,9 @@
                             {% ifequal  entrance.caves.0.type "cave" %}
                                 graphic: "/site_media/cave.png"
                             {% endifequal %}
+                            {% ifequal  entrance.caves.0.type "cave_n_tower" %}
+                                graphic: "/site_media/cave.png"
+                            {% endifequal %}
                             {% ifequal  entrance.caves.0.type "unknown" %}
                                 graphic: "/site_media/smokestack.png"
                             {% endifequal %}
