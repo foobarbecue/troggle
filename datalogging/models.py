@@ -83,6 +83,13 @@ class Timeseries(TroggleModel):
     def plot(self):
         return render_to_string('timeseries_plot.html',{'timeseries':self})
 
+    def data(self):
+        data=[[],[]]
+        for dp in self.datapoint_set.all():
+            data[0].append(dp.time)
+            data[1].append(dp.value)
+        return data
+
     def import_csv_hobo(self):
         import_file_reader = csv.reader(self.import_file.file)
         for line in import_file_reader:
