@@ -54,6 +54,7 @@ class Timeseries(TroggleModel):
     logger_timeseries_id=models.IntegerField(blank=True, null=True)
     logger=models.ForeignKey(EquipmentItem, related_name='logger', blank=True, null=True)
     logger_channel=models.IntegerField(blank=True, null=True)
+    location_in_cave=models.CharField(blank=True, null=True, max_length=500)
     import_file=models.FileField(upload_to='datalogging_files', blank=True, null=True)
     UNITS_CHOICES=(
         ('air_deg_c','Air Temperature Degrees Celsius',),
