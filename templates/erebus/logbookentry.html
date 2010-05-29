@@ -3,7 +3,6 @@
 
 {% block title %}Logbook {{logbookentry}}{% endblock %}
 {% block editLink %}| <a href={{logbookentry.get_admin_url}}>Edit logbook entry {{logbookentry|wiki_to_html_short}}</a>{% endblock %}
-{% block content %}
 
 {% block related %}
 <div id="related">
@@ -64,6 +63,7 @@
 </div>
 {% endblock related %}
 
+{% block content %}
 <div id="col1">
 <div class="logbookentry object">
 <h2>Logbook entry: {{logbookentry}}</h2>

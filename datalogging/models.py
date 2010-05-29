@@ -46,6 +46,7 @@ class DataPoint(TroggleModel):
 
     class Meta:
         ordering=('time',)
+        get_latest_by=('time',)
 
 class Timeseries(TroggleModel):
     logbook_entry=models.ForeignKey(LogbookEntry, blank=True, null=True)
@@ -56,6 +57,10 @@ class Timeseries(TroggleModel):
     logger_channel=models.IntegerField(blank=True, null=True)
     location_in_cave=models.CharField(blank=True, null=True, max_length=500)
     import_file=models.FileField(upload_to='datalogging_files', blank=True, null=True)
+    sibling_timeseries_for_file=models.ForeignKey('Timeseries', blank=True, null=True)
+    csv_column=models.IntegerField(blank=True, null=True)
+    start_time=models.DateTimeField(blank=True, null=True)
+    end_time=models.DateTimeField(blank=True, null=True)
     UNITS_CHOICES=(
         ('air_deg_c','Air Temperature Degrees Celsius',),
         ('deg_k','Air Temperature Degrees Kelvin'),
@@ -84,15 +89,22 @@ class Timeseries(TroggleModel):
     def plot(self):
         return render_to_string('timeseries_plot.html',{'timeseries':self})
 
-    def data(self):
-        data=[[],[]]
-        for dp in self.datapoint_set.all():
-            data[0].append(dp.time)
-            data[1].append(dp.value)
-        return data
+    def data(self, max_samples=1000):
+        try:
+            cropped_ts=self.datapoint_set.filter(time__gte=self.start_time, time__lte=self.end_time)
+        except:
+            cropped_ts=self.datapoint_set.all()
+        if len(cropped_ts) > max_samples:
+            return cropped_ts.extra(where=['MOD(id,%s)=0' % (len(cropped_ts)/max_samples)])
+        else:
+            return cropped_ts
 
     def import_csv_hobo(self):
-        import_file_reader = csv.reader(self.import_file.file)
+        if self.import_file:
+            import_file_reader = csv.reader(self.import_file.file)
+        else:
+            import_file_reader = csv.reader(self.sibling_timeseries_for_file.import_file.file)            
+        
         for line in import_file_reader:
             try:
                 DataPoint.objects.get_or_create(parent_timeseries=self, time=datetime.datetime.strptime(line[1],'%m/%d/%y %I:%M:%S %p'), defaults={'value':line[1+self.logger_channel]})
@@ -100,10 +112,22 @@ class Timeseries(TroggleModel):
                logging.debug('could not import line:' + str(line))
         logging.debug('imported data for:' + unicode(self))   
 
+    def import_csv_campbell(self):
+        import_file_reader = csv.reader(self.import_file.file);
+        for line in import_file_reader:
+            try:
+                DataPoint.objects.get_or_create(parent_timeseries=self, time=datetime.datetime.strptime(line[0],'%Y-%m-%d %H:%M:%S'), defaults={'value':line[self.csv_column]})
+            except:
+                logging.debug('could not import line:' + str(line))
+        logging.debug('imported data for:' + unicode(self))  
+
+       
     def import_csv_simple(self):
         import_file_reader = csv.reader(self.import_file.file)
-	if self.logger.equipment_type.model_number=='U12-008':
+        if self.logger.equipment_type.model_number=='U12-008':
             self.import_csv_hobo()
+        elif self.logger.equipment_type.model_number=='CR1000':
+            self.import_csv_campbell()
         else:
             for line in import_file_reader:
                 try:
@@ -112,6 +136,9 @@ class Timeseries(TroggleModel):
                 except:
                     logging.debug('could not import line:' + str(line))
             logging.debug('imported data for:' + unicode(self))
+
+    def cave(self):
+        return self.logbook_entry.cave
             
             
 class DataAquisitionSystem(TroggleModel):

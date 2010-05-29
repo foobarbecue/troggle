@@ -1,7 +1,7 @@
 <script language='javascript' >
 $(document).ready(function() {
 
-var datapoints=[{% for point in timeseries.datapoint_set.all %}[{{point.epoch_time|floatformat}},{{point.value}}],{% endfor %} ]
+var datapoints=[{% for point in timeseries.data %}[{{point.epoch_time|floatformat}},{{point.value}}],{% endfor %} ]
 
 var plot = $.plot($('#{{timeseries.id}}_graph_id'),
 [datapoints],

@@ -35,10 +35,10 @@ for ts in dataset:
     ax.set_title(unicode(ts.logbook_entry.cave)+': '+(ts.location_in_cave or ''))
 
     if not datemin or datemin > min(tsls[0]):
-        datemin = min(tsls[0])
+        datemin = min(tsls)
     
     if not datemax or datemax < max(tsls[0]):
-        datemax = max(tsls[0])
+        datemax = max(tsls)
 
     ax.plot(tsls[0], tsls[1])
     
