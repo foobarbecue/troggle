@@ -1,0 +1,123 @@
+#log# Automatic Logger file. *** THIS MUST BE THE FIRST LINE ***
+#log# DO NOT CHANGE THIS LINE OR THE TWO BELOW
+#log# opts = Struct({'__allownew': True, 'logfile': 'import_env.txt'})
+#log# args = []
+#log# It is safe to make manual edits below here.
+#log#-----------------------------------------------------------------------
+from datalogging.models import *
+from datalogging.models import *
+import matplotlib.pyplot as plt
+heloco2=Timeseries.objects.get(pk=19)
+helotemp=Timeseries.objects.get(pk=20)
+ax=fig.add_subplot(211)
+fig = plt.figure()
+ax = fig.add_subplot(211)
+ax.plot(heloco2.data().values_list('time',flat=True), heloco2.data().values_list('value',flat=True))
+ax.plot(helotemp.data().values_list('time',flat=True), heloco2temp.data().values_list('value',flat=True))
+ax.plot(helotemp.data().values_list('time',flat=True), helotemp.data().values_list('value',flat=True))
+plt.show()
+env_sum=open('/fs/raid/users/aarongc/env_summary_366.dat')
+new_ts=Timeseries.objects.latest()
+new_ts=Timeseries.objects.all()[0:]
+new_ts
+new_ts.pk
+len(new_ts)
+new_ts=Timeseries.objects.all()[30]
+new_ts=Timeseries.objects.all()[29]
+new_ts
+new_ts=Timeseries.objects.all()[29]
+for line in env_sum:
+    if 'CON' in line:
+_ip.magic("loggingstatus ")
+_ip.magic("log ")
+_ip.magic("logon ")
+_ip.magic("logstart import_env.txt")
+
+_ip.magic("logon ")
+for line in env_sum:
+    if 'CON' in line:
+        line=line.split(' ')
+        new_ts.datapoint_set.add(value=line[4], time=line[0])
+for line in env_sum:
+    if 'CON' in line and ' C' in line:
+        line=line.split(' ')
+        new_ts.datapoint_set.add(value=line[4], time=line[0])
+        
+for line in env_sum:
+    if 'CON' in line and ' C' in line:
+        line=line.split(' ')
+        new_ts.datapoint_set.add(Datapoint(value=line[4], time=line[0])
+        
+        
+        )
+        
+for line in env_sum:
+    if 'CON' in line and ' C' in line:
+        line=line.split(' ')
+        new_ts.datapoint_set.add(DataPoint(value=line[4], time=line[0]))
+        
+for line in env_sum:
+    if 'CON' in line and ' C' in line:
+        line=line.split(' ')
+        new_ts.datapoint_set.add(DataPoint(value=line[4], time=line[1]+line[2]))
+        
+for line in env_sum:
+    if 'CON' in line and ' C' in line:
+        line=line.split(' ')
+        new_ts.datapoint_set.add(DataPoint(value=line[4], time=line[1]+' '+line[2]))
+        
+new_ts.datapoint_set.count()
+plt.show()
+fig=plt.figure*(
+fig=plt.figure()
+ax=fig.add_subplot(111)
+ax.plot(r.date, r.adj_close)
+import datetime
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import matplotlib.mlab as mlab
+years    = mdates.YearLocator()   # every year
+months   = mdates.MonthLocator()  # every month
+yearsFmt = mdates.DateFormatter('%Y')
+dates=new_ts.data().values_list('date',flat=True)
+dates=new_ts.data().values_list('time',flat=True)
+ax.plot(new_ts.data().values_list('time',flat=True), new_ts.data().values_list('value',flat=True))
+plt.show()
+new_ts.data().filter(value_gte='0').delete()
+new_ts.data().filter(value__gte='0').delete()
+plt.cla()
+line = ax.plot(new_ts.data().values_list('time',flat=True), new_ts.data().values_list('value',flat=True))
+plot.show()
+line.show()
+plt.show()
+line.remove()
+? line.remove()
+#? line.remove
+#? ax.remove
+ax.lines.remove(line)
+cla()
+del ax.lines[0]
+plt.show()
+ax.plot(new_ts.data().filter(datetime__range=('2009-12-01'),('2010-01-31')).values_list('time',flat=True), new_ts.data().filter(datetime__range=('2009-12-01'),('2010-01-31')).values_list('value',flat=True))
+ax.plot(new_ts.data().filter(datetime__range=(('2009-12-01'),('2010-01-31'))).values_list('time',flat=True), new_ts.data().filter(datetime__range=(('2009-12-01'),('2010-01-31'))).values_list('value',flat=True))
+ax.plot(new_ts.data().filter(time__range=(('2009-12-01'),('2010-01-31'))).values_list('time',flat=True), new_ts.data().filter(time__range=(('2009-12-01'),('2010-01-31'))).values_list('value',flat=True))
+ax.plot(new_ts.data().filter(time__range=(('2009-12-01'),('2010-01-31'))).values_list('time',flat=True), new_ts.data().filter(time__range=(('2009-12-01'),('2010-01-31'))).values_list('value',flat=True))
+plt.show()
+draw()
+plt.draw()
+plt.show()
+fig=plt.figure()
+ax=fig.add_subplot(111)
+ax=fig.add_subplot(211)
+plt.show()
+fig=plt.figure()
+ax=fig.add_subplot(211)
+ax.plot(new_ts.data().filter(time__range=(('2009-12-01'),('2010-01-31'))).values_list('time',flat=True), new_ts.data().filter(time__range=(('2009-12-01'),('2010-01-31'))).values_list('value',flat=True))
+fig.draw()
+fig.show()
+_ip.magic("logstatus ")
+_ip.magic("log ")
+_ip.magic("logon ")
+_ip.magic("logoff ")

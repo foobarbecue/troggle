@@ -7,15 +7,15 @@ class Migration:
     
     def forwards(self, orm):
         
-        # Adding field 'Timeseries.notes'
-        db.add_column('datalogging_timeseries', 'notes', orm['datalogging.timeseries:notes'])
+        # Adding field 'Timeseries.csv_column'
+        db.add_column('datalogging_timeseries', 'csv_column', orm['datalogging.timeseries:csv_column'])
         
     
     
     def backwards(self, orm):
         
-        # Deleting field 'Timeseries.notes'
-        db.delete_column('datalogging_timeseries', 'notes')
+        # Deleting field 'Timeseries.csv_column'
+        db.delete_column('datalogging_timeseries', 'csv_column')
         
     
     
@@ -77,6 +77,7 @@ class Migration:
             'component': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['datalogging.EquipmentItem']"}),
             'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'new_since_parsing': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'non_public': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'})
         },
@@ -114,9 +115,11 @@ class Migration:
             'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'})
         },
         'datalogging.timeseries': {
+            'csv_column': ('django.db.models.fields.IntegerField', [], {}),
             'data_type': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'import_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
+            'import_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'location_in_cave': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'logbook_entry': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.LogbookEntry']", 'null': 'True', 'blank': 'True'}),
             'logger': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'logger'", 'null': 'True', 'to': "orm['datalogging.EquipmentItem']"}),
             'logger_channel': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),

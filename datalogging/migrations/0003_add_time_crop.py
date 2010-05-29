@@ -7,17 +7,29 @@ class Migration:
     
     def forwards(self, orm):
         
-        # Changing field 'EquipmentType.manual'
-        # (to signature: django.db.models.fields.files.FileField(max_length=100, null=True, blank=True))
-        db.alter_column('datalogging_equipmenttype', 'manual', orm['datalogging.equipmenttype:manual'])
+        # Adding field 'Timeseries.start_time'
+        db.add_column('datalogging_timeseries', 'start_time', orm['datalogging.timeseries:start_time'])
+        
+        # Adding field 'Timeseries.end_time'
+        db.add_column('datalogging_timeseries', 'end_time', orm['datalogging.timeseries:end_time'])
+        
+        # Changing field 'Timeseries.csv_column'
+        # (to signature: django.db.models.fields.IntegerField(null=True, blank=True))
+        db.alter_column('datalogging_timeseries', 'csv_column', orm['datalogging.timeseries:csv_column'])
         
     
     
     def backwards(self, orm):
         
-        # Changing field 'EquipmentType.manual'
-        # (to signature: django.db.models.fields.files.FileField(max_length=100))
-        db.alter_column('datalogging_equipmenttype', 'manual', orm['datalogging.equipmenttype:manual'])
+        # Deleting field 'Timeseries.start_time'
+        db.delete_column('datalogging_timeseries', 'start_time')
+        
+        # Deleting field 'Timeseries.end_time'
+        db.delete_column('datalogging_timeseries', 'end_time')
+        
+        # Changing field 'Timeseries.csv_column'
+        # (to signature: django.db.models.fields.IntegerField())
+        db.alter_column('datalogging_timeseries', 'csv_column', orm['datalogging.timeseries:csv_column'])
         
     
     
@@ -79,6 +91,7 @@ class Migration:
             'component': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['datalogging.EquipmentItem']"}),
             'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'new_since_parsing': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'non_public': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'})
         },
@@ -116,16 +129,21 @@ class Migration:
             'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'})
         },
         'datalogging.timeseries': {
+            'csv_column': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'data_type': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'end_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'import_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
+            'import_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'location_in_cave': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'logbook_entry': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.LogbookEntry']", 'null': 'True', 'blank': 'True'}),
             'logger': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'logger'", 'null': 'True', 'to': "orm['datalogging.EquipmentItem']"}),
             'logger_channel': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'logger_timeseries_id': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'new_since_parsing': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'non_public': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'sensor': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sensor'", 'to': "orm['datalogging.EquipmentItem']"})
+            'notes': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'sensor': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'sensor'", 'to': "orm['datalogging.EquipmentItem']"}),
+            'start_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
         }
     }
     
