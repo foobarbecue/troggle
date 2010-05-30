@@ -1,0 +1,14 @@
+<script language='javascript' >
+$(document).ready(function() {
+
+var hist_datapoints=[{% for point in timeseries.histogram %}[{{point.0}},{{point.1}}],{% endfor %} ]
+
+var plot = $.plot($('#{{timeseries.id}}_histgraph_id'),
+[hist_datapoints],
+ { title:'{{timeseries}}',}
+ );
+
+
+ 
+});
+</script>

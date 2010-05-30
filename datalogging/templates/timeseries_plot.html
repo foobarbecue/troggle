@@ -1,11 +1,11 @@
 <script language='javascript' >
 $(document).ready(function() {
 
-var datapoints=[{% for point in timeseries.data %}[{{point.epoch_time|floatformat}},{{point.value}}],{% endfor %} ]
+var datapoints=[{% for point in timeseries.datapoint_set.all %}[{{point.epoch_time|floatformat}},{{point.value}}],{% endfor %} ]
 
 var plot = $.plot($('#{{timeseries.id}}_graph_id'),
 [datapoints],
- { title:'{{timeseries}}',  xaxis: { mode:'time'}, selection: { mode: "xy" }}
+ { title:'{{timeseries}}',  xaxis: { mode:'time'}, selection: { mode: "xy" }, points: { show: true}, lines: {show: true}, color: "Black", clickable: true, hoverable: true}
  );
 
 // setup overview
@@ -22,7 +22,7 @@ var overview = $.plot($("#{{timeseries.id}}_overview_graph_id"), [datapoints], {
         
         // do the zooming
         plot = $.plot($("#{{timeseries.id}}_graph_id"), [datapoints],
-                      $.extend(true, {}, { title:'{{timeseries}}',  xaxis: { mode:'time'}, selection: { mode: "xy" }}, {
+                      $.extend(true, {}, { title:'{{timeseries}}',  xaxis: { mode:'time'}, selection: { mode: "xy" }, points: { show: true}, lines: {show: true}, color: "Black", clickable: true, hoverable: true}, {
                           xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
                           yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
                       }));

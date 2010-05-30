@@ -134,7 +134,7 @@
 <h3>Timeseries</h3>
     {% for timeseries in cave.timeseries_set.all %}
     <div id="both_graphs_{{timeseries.id}}"  class="timeseries_graph">
-        <p style="clear:left;">Timeseries #{{timeseries.pk}}: {{timeseries}}</p>        
+        <p style="clear:left;">Timeseries #{{timeseries.pk}}: {{timeseries}}, {{timeseries.location_in_cave}}</p>        
         <div id='{{timeseries.id}}_graph_id'  class="main_graph"></div>
         <div id='{{timeseries.id}}_overview_graph_id' class="overview_graph"></div>
         <p style="clear:right;">Click and drag on either graph to zoom the left graph. Click "comments" below to discuss this data.</p>
