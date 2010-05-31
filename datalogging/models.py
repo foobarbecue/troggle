@@ -113,13 +113,30 @@ class Timeseries(TroggleModel):
         logging.debug('imported data for:' + unicode(self))   
 
     def import_csv_campbell(self):
-        import_file_reader = csv.reader(self.import_file.file);
+        import_file_reader = csv.reader(self.import_file.file)
         for line in import_file_reader:
             try:
                 DataPoint.objects.get_or_create(parent_timeseries=self, time=datetime.datetime.strptime(line[0],'%Y-%m-%d %H:%M:%S'), defaults={'value':line[self.csv_column]})
             except:
                 logging.debug('could not import line:' + str(line))
         logging.debug('imported data for:' + unicode(self))  
+
+    def import_spawar_aws(self, import_file_path):
+        import_file_reader = csv.reader(open(import_file_path),dialect='excel-tab')
+        import_file_reader.next()
+        import_file_reader.next()
+        month_year=datetime.datetime.strptime(import_file_reader.next()[0],'%B %Y')
+        print month_year
+        for line in import_file_reader:
+            try:
+                time=month_year+datetime.timedelta(days=int(line[0])-1,hours=int(line[1][0:2]),minutes=int(line[1][2:4]))
+                DataPoint.objects.get_or_create(parent_timeseries=self, time=time, defaults={'value':line[self.csv_column-1]})
+                logging.debug('imported data for:' + str(line))
+                print 'imported data for:' + str(line)
+            except:
+                logging.debug('could not import line:' + str(line))
+                print 'could not import line:' + str(line)
+ 
 
        
     def import_csv_simple(self):

@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import matplotlib.mlab as mlab
+from matplotlib import mlab
+from matplotlib.ticker import MaxNLocator
 
 from datalogging.models import *
 

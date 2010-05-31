@@ -1,6 +1,6 @@
 #log# Automatic Logger file. *** THIS MUST BE THE FIRST LINE ***
 #log# DO NOT CHANGE THIS LINE OR THE TWO BELOW
-#log# opts = Struct({'__allownew': True, 'logfile': 'ipython_log.py'})
+#log# opts = Struct({'__allownew': True, 'logfile': 'aws_import.py'})
 #log# args = []
 #log# It is safe to make manual edits below here.
 #log#-----------------------------------------------------------------------
@@ -95,6 +95,86 @@ cones_09.next()
 cones_09.next()
 cones_09.next()
 _ip.magic("logstart ")
-
 _ip.magic("logstart aws_import.py")
 _ip.magic("logstop ")
+_ip.magic("logstart aws_import.py")
+
+for line in cones_09:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:1]),int(line[3:4]),int(line[4:5])))
+    print newdp
+    newts.datapoint_set.add(newdp)
+    
+pdb.pm()
+_ip.magic("pdb ")
+cones_09=open('/fs/raid/users/aarongc/cones_aws_dec09.txt','r')
+for line in cones_09:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:1]),int(line[3:4]),int(line[4:5])))
+    print newdp
+    newts.datapoint_set.add(newdp)
+for line in cones_09:
+    try:
+        newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:1]),int(line[3:4]),int(line[4:5])))
+        print newdp
+        newts.datapoint_set.add(newdp)
+    except ValueError:
+        print 'ValueError, tuple is'
+        print (2009,12,int(line[0:1]),int(line[3:4]),int(line[4:5]))
+        
+cones_09.next()
+cones_09.next()
+cones_09.next()
+cones_09.next()
+for line in cones_09:
+    try:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:1]),int(line[3:4]),int(line[4:5])))
+print(newdp)
+for line in cones_09:
+    try:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:1]),int(line[3:4]),int(line[4:5])))
+print(newdp)
+for line in cones_09:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:1]),int(line[3:4]),int(line[4:5])))
+    print newdp
+    newts.datapoint_set.add(newdp)
+    
+for line in cones_09:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:2]),int(line[3:4]),int(line[4:5])))
+    print newdp
+    newts.datapoint_set.add(newdp
+for line in cones_09:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:2]),int(line[3:4]),int(line[4:5])))
+    print newdp
+    newts.datapoint_set.add(newdp
+    )
+    
+for line in cones_09:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:2]),int(line[3:4]),int(line[4:5])))
+    print newdp
+for line in cones_09:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:2]),int(line[3:4]),int(line[4:5])))
+    print newdp
+for line in cones_09:
+    newdp=DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:2]),int(line[3:4]),int(line[4:5])))
+    print newdp
+    newts.datapoint_set.add(newdp)
+    
+newts
+cones_09=open('/fs/raid/users/aarongc/cones_aws_dec09.txt','r')
+cones_09.next()
+cones_09.next()
+cones_09.next()
+cones_09.next()
+cones_09.next()
+cones_09.next()
+for line in cones_09:
+    newts.datapoint_set.add(DataPoint(value=line[8:13], time=datetime.datetime(2009,12,int(line[0:2]),int(line[3:4]),int(line[4:5]))))
+from IPython.Debugger import Pdb
+Pdb.pm)_
+Pdb.pm()
+_ip.magic("pdb ")
+fump
+_ip.magic("debug ")
+_ip.magic("prun 5+2")
+_ip.magic("prun 5+2")
+exit90
+exit()
