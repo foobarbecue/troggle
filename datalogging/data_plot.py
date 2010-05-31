@@ -4,16 +4,33 @@ from datalogging.models import *
 from core.models import Cave
 from matplotlib import pyplot as plt
 from datetime import datetime, date
-from django.db.models import Count
+from django.db.models import Count, Q
 from matplotlib.ticker import MaxNLocator
 
 default_time_range=(datetime(2009,12,8,0,0),datetime(2010,1,3,0,0))
-all_temp_plots=Timeseries.objects.filter(data_type='air_deg_c')
-caves_with_timeseries=Cave.objects.annotate(num_ts=Count('logbookentry__timeseries')).filter(num_ts__gt=0)
+all_temp_plots=Q(Timeseries.objects.filter(data_type='air_deg_c'))
+
 
 #remove 'bogus cave' which was used for testing
 #and some others we don't want displayed
-caves_with_timeseries=caves_with_timeseries.exclude(official_name__in=('Bogus Cave','LEH','Helo Cave'))
+#caves_with_timeseries=Cave.objects.annotate(num_ts=Count('logbookentry__timeseries')).filter(
+#    Q(num_ts__gt=0)|Q(official_name__icontains='wind'),
+#    ~Q(official_name__in=('Bogus Cave','LEH','Helo Cave')))
+
+caves_with_timeseries=(
+    Cave.objects.get(official_name__icontains='temp'),
+    Cave.objects.get(slug__icontains='wind'),
+    Cave.objects.get(slug__icontains='mouse'),
+    Cave.objects.get(slug__icontains='2009-02'),
+    Cave.objects.get(slug='heroin'),
+    Cave.objects.get(slug__icontains='heroine'),
+    Cave.objects.get(slug__icontains='shooting'),
+    Cave.objects.get(slug__icontains='derodome'),
+    Cave.objects.get(slug__icontains='kachina'),
+#    Cave.objects.get(slug_icontains='helo'),
+    Cave.objects.get(slug__icontains='hut'),
+    )
+
 cave_number=0
 
 def time_domain(ts_list=all_temp_plots, date_range=default_time_range):
@@ -67,7 +84,15 @@ def time_domain_do_plot(ts_list, date_range, ax):
         values=ts.datapoint_set.filter(time__range=date_range_cropped).values_list('value',flat=True)
         label=unicode(ts.location_in_cave)
 
-        ax.plot(times, values, label=label)
+        if ts.data_type=='w_azmth':
+            a2=ax.twinx()
+            for tlabel in a2.get_yticklabels():
+                tlabel.set_color('g')
+            a2.plot(times, values, label=label, color='g')
+            a2.legend(labels=('windspeed (m/s)','direction (degrees from true north)'))
+        else:
+            ax.plot(times, values, label=label)
+
         ax.set_xlim(date_range)
         ax.legend(loc='best')
         ax.yaxis.set_label_text(ts.logbook_entry.cave)
@@ -97,6 +122,7 @@ def adjust(fig):
 #    fig.subplots_adjust(hspace=1)
     for ax in fig.axes:
         ax.yaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(fig.axes[-1].get_xticklabels(), visible=True)  
     plt.show()
 
 def time_domain_by_cave(cave_list=caves_with_timeseries, date_range=default_time_range):
@@ -112,28 +138,28 @@ def time_domain_by_cave(cave_list=caves_with_timeseries, date_range=default_time
     ax=None
     
     #first plot the barometric pressure at LEH
-    ax=fig.add_subplot(len(cave_list),1,1)
-    LEHpress=Timeseries.objects.get(logbook_entry__cave__slug='leh',data_type='press_hpa').datapoint_set
-    ax.plot(LEHpress.values_list('time',flat=True),LEHpress.values_list('value',flat=True))
-    plt.setp(ax.get_xticklabels(), visible=False)
-    ax.set_xlim(date_range)
-    ax.yaxis.set_label_text('Barometric Pressure (hPa)')
-    ax.yaxis.label.set_rotation('horizontal')
-    ax.yaxis.label.set_ha('right')
-    ax.set_ylim(625,640)
+#    ax=fig.add_subplot(len(cave_list),1,1)
+#    LEHpress=Timeseries.objects.get(logbook_entry__cave__slug='leh',data_type='press_hpa').datapoint_set
+#    ax.plot(LEHpress.values_list('time',flat=True),LEHpress.values_list('value',flat=True))
+#    plt.setp(ax.get_xticklabels(), visible=False)
+#    ax.set_xlim(date_range)
+#    ax.yaxis.set_label_text('Barometric Pressure (hPa)')
+#    ax.yaxis.label.set_rotation('horizontal')
+#    ax.yaxis.label.set_ha('right')
+#    ax.set_ylim(625,640)
  
     #now plot all of the temperatures
     for cave in cave_list:
         print 'Adding subplot for cave: '+unicode(cave)
 
         #Link every subplot to the xaxis of the LEH barometric pressure
-        ax=fig.add_subplot(len(cave_list)+1,1,cave_number+2,sharex=ax)
+        ax=fig.add_subplot(len(cave_list),1,cave_number+1,sharex=ax)
 
         #Hide the x-axis lables, except for the last one
         plt.setp(ax.get_xticklabels(), visible=False)
         if cave_number==(len(cave_list)-1):
             plt.setp(ax.get_xticklabels(), visible=True)    
-        time_domain_do_plot(cave.timeseries_set().filter(data_type='air_deg_c'), date_range, ax)
+        time_domain_do_plot(cave.timeseries_set().filter(data_type__in=('air_deg_c','w_speed','w_azmth')).exclude(location_in_cave__icontains='panel'), date_range, ax)
         cave_number+=1
 
     adjust(fig)
