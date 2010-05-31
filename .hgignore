@@ -7,3 +7,4 @@ localsettings.py
 erebus_imagery
 media
 *~
+.json
