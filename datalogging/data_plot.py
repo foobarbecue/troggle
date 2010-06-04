@@ -7,7 +7,7 @@ from datetime import datetime, date
 from django.db.models import Count, Q
 from matplotlib.ticker import MaxNLocator
 
-default_time_range=(datetime(2009,12,8,0,0),datetime(2010,1,3,0,0))
+default_time_range=(datetime(2009,12,8,0,0),datetime(2010,1,4,0,0))
 all_temp_plots=Q(Timeseries.objects.filter(data_type='air_deg_c'))
 
 
@@ -29,6 +29,7 @@ caves_with_timeseries=(
     Cave.objects.get(slug__icontains='kachina'),
 #    Cave.objects.get(slug_icontains='helo'),
     Cave.objects.get(slug__icontains='hut'),
+    Cave.objects.get(slug__icontains='warren'),
     )
 
 cave_number=0
@@ -89,7 +90,7 @@ def time_domain_do_plot(ts_list, date_range, ax):
             for tlabel in a2.get_yticklabels():
                 tlabel.set_color('g')
             a2.plot(times, values, label=label, color='g')
-            a2.legend(labels=('windspeed (m/s)','direction (degrees from true north)'))
+#            a2.legend(labels=('windspeed (m/s)','direction (degrees from true north)'))
         else:
             ax.plot(times, values, label=label)
 
@@ -122,7 +123,9 @@ def adjust(fig):
 #    fig.subplots_adjust(hspace=1)
     for ax in fig.axes:
         ax.yaxis.set_major_locator(MaxNLocator(4))
-    plt.setp(fig.axes[-1].get_xticklabels(), visible=True)  
+    plt.setp(fig.axes[-1].get_xticklabels(), visible=True)
+    fig.axes[2].set_yticks((90,180,270,360))
+    fig.axes[2].set_yticklabels(('E','S','W','N'))
     plt.show()
 
 def time_domain_by_cave(cave_list=caves_with_timeseries, date_range=default_time_range):
