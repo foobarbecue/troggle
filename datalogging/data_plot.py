@@ -105,8 +105,9 @@ def hist_do_plot(ts_list, ax):
     """
     Handles the actual plotting for histogram data.
     """
-    for ts in ts_list and ts.pk !=25:
-        
+    for ts in ts_list:
+        if ts.pk==25:
+            continue
         dps=ts.datapoint_set.all()
         if ts.start_time is not None:
             dps=dps.filter(time__gte=ts.start_time)
@@ -116,8 +117,10 @@ def hist_do_plot(ts_list, ax):
             ax.hist(dps.values_list('value', flat=True), histtype='step', normed=True, label=ts.location_in_cave)
         except:
             pass
+        ax.legend(loc='best')
         ax.yaxis.set_label_text(ts.logbook_entry.cave)
-
+        ax.yaxis.label.set_rotation('horizontal')
+        ax.yaxis.label.set_ha('right')
 
 def adjust(fig):
 #    fig.subplots_adjust(hspace=1)
@@ -126,6 +129,9 @@ def adjust(fig):
     plt.setp(fig.axes[-1].get_xticklabels(), visible=True)
     fig.axes[2].set_yticks((90,180,270,360))
     fig.axes[2].set_yticklabels(('E','S','W','N'))
+    plt.show()
+
+def adjust_hist(fig):
     plt.show()
 
 def time_domain_by_cave(cave_list=caves_with_timeseries, date_range=default_time_range):
@@ -192,7 +198,7 @@ def histograms_by_cave(cave_list=caves_with_timeseries):
         cave_number+=1
         ax.legend(loc='best')
     
-    adjust(fig)
+    adjust_hist(fig)
     
 def scatterplots(xtimeseries, ytimeseries_list):
     pass

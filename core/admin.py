@@ -49,7 +49,6 @@ class PhotoInline(admin.TabularInline):
 
 class PersonTripInline(admin.TabularInline):
     model = PersonTrip
-    exclude = ['persontrip_next','Delete']
     extra = 8
 
 class SurveyInline(admin.TabularInline):
@@ -122,7 +121,7 @@ class EntranceAdmin(admin.GeoModelAdmin):
 
 class PhotoAdmin(admin.GeoModelAdmin):
     display_wkt = True
-    exclude=('location')
+    exclude=('location',)
     prepopulated_fields = {'slug':("caption",)}
     
 class AreaAdmin(TroggleModelAdmin):

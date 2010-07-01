@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load wiki_markup %}
+{% load link %}
+
+{% block title %}Expedition: {{expedition.name}}{% endblock %}
+{% block editLink %}<a href={{expedition.get_admin_url}}>Edit expedition {{expedition|wiki_to_html_short}}</a>{% endblock %}
+
+{% block related %}
+{% endblock %}
+
+{% block content %}
+
+<h2>Caves with no logbook entries</h2>
+
+<ul>
+{% for cave in caves_missing_logbookentries %}
+<li>{{cave.official_name}} <a href="/admin/core/logbookentry/add/?cave={{cave.id}}">[add]</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

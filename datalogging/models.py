@@ -80,6 +80,19 @@ class Timeseries(TroggleModel):
         )
     data_type=models.CharField(choices=UNITS_CHOICES, max_length=15)
 
+    def auto_date_range(self):
+        if self.start_time:
+            start=self.start_time
+        else:
+            start=self.datapoint_set.all()[0].time
+
+        if self.end_time:
+            end=self.end_time
+        else:
+            end=self.datapoint_set.all().reverse()[0].time
+
+        return((start,end))
+
     def __unicode__(self):
 	if self.logger_timeseries_id:
 	    return "%s on run %s of logger %s (%s)" % (self.sensor, self.logger_timeseries_id, self.logger, self.data_type)
