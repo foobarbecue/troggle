@@ -10,3 +10,4 @@ media
 *.json
 SBD/*
 *.csv
+log.txt

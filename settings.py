@@ -72,23 +72,6 @@ ACCOUNT_ACTIVATION_DAYS=3
 
 AUTH_PROFILE_MODULE = 'core.person'
 
-INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.redirects',
-    'south',
-    #'troggle.photologue',
-    #'troggle.reversion',
-    #'django_evolution',
-    'registration',
-    'profiles',
-    'core',
-    'imagekit', 
-)
-
 QM_PATTERN="\[\[\s*[Qq][Mm]:([ABC]?)(\d{4})-(\d*)-(\d*)\]\]"
 
 from localsettings import * #localsettings needs to take precedence. Call it to override any existing vars.

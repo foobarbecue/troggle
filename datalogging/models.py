@@ -101,10 +101,10 @@ class Timeseries(TroggleModel):
     
     def plot(self):
         return render_to_string('timeseries_plot.html',{'timeseries':self})
-
-    def data(self, max_samples=1000):
+    
+    def data(self, start_time=start_time, end_time=end_time, max_samples=1000):
         try:
-            cropped_ts=self.datapoint_set.filter(time__gte=self.start_time, time__lte=self.end_time)
+            cropped_ts=self.datapoint_set.filter(time__gte=start_time, time__lte=end_time)
         except:
             cropped_ts=self.datapoint_set.all()
         if len(cropped_ts) > max_samples:
