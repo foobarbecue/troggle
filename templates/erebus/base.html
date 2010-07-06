@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+{% if settings.PLAIN%}
+<link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/mainplain3.css" title="eyeCandy"/>
+{% else %}
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main3.css" title="eyeCandy"/>
+{% endif %}
+
+
 <!--<link rel="alternate stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/mainplain.css" title="plain"/>-->
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/dropdownNavStyle.css" />
 <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/jquery.jqplot.css" />
@@ -18,7 +25,7 @@
 {% block head %}{% endblock %}
 </head>
 <body  {% block body_onload %}onLoad="contentHeight();"{% endblock %}>
-
+{% if not settings.PLAIN %}
 <div id="header"> 
   <h1>Erebus Cave and Fumarole Database</h1>
   <div id="editLinks"> {% block loginInfo %}
@@ -35,6 +42,7 @@
     {% endblock %}
    </div>
 </div>
+{% endif %}
 
 <div id="nav">
 

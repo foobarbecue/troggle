@@ -445,7 +445,7 @@ class Cave(TroggleModel):
         return Survey.objects.filter(logbook_entry__cave=self)
 
     class Meta:
-        ordering=['official_name']
+        ordering=['-official_name']
 
 class OtherCaveName(TroggleModel):
     name = models.CharField(max_length=160)
@@ -504,6 +504,10 @@ class Entrance(TroggleModel):
         if len(CaveNEntrance) == 1:
             return unicode(CaveNEntrance[0])+' ('+name + ')'
         return unicode(CaveNEntrance) + ' (' +name+')'
+
+
+    def coordsUtmZone58C(self):
+        return self.location.transform(32758, clone=True)
 
     def marking_val(self):
         for m in self.MARKING_CHOICES:

@@ -71,8 +71,26 @@
             </th>
             <th>
                 Easting
+            </th>            
+
+            <th>
+                Northing
+            </th>
+            <th>
+                Easting
             </td>            
         </tr>
+        <tr>
+            <td>
+            </td>
+            <td colspan="2">
+            WGS84 decimal degrees (SRID:4326)
+            </td>
+            <td colspan="2">
+            WGS84 UTM Zone 58S meters (SRID:4326)
+            </td>
+        </tr>
+
     {% for ent in cave.entrances %}
 
         <tr>
@@ -86,10 +104,18 @@
                 {{ ent.location.x }}
             </td>
             <td>
-                {% if user.is_authenticated %}
-                    <a href="{{ ent.get_admin_url }}">edit</a>
-                {% endif %}
+                {{ ent.coordsUtmZone58C.y }}
+            </td>            
+            <td>
+                {{ ent.coordsUtmZone58C.x }}
             </td>
+                {% if user.is_authenticated %}
+            <td>
+
+                    <a href="{{ ent.get_admin_url }}">edit</a>
+                
+            </td>
+                {% endif %}
         </tr>
     
     {% endfor %}
