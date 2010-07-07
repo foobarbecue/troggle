@@ -3,6 +3,7 @@ from django.db import models
 from core.models import TroggleModel, LogbookEntry
 from django.template.loader import render_to_string
 import datetime, time, csv, logging
+from scipy import signal
 logging.basicConfig(filename=settings.LOGFILE,level=logging.DEBUG)
 
 class Manufacturer(TroggleModel):
@@ -111,6 +112,66 @@ class Timeseries(TroggleModel):
             return cropped_ts.extra(where=['MOD(id,%s)=0' % (len(cropped_ts)/max_samples)])
         else:
             return cropped_ts
+
+    def time_range_intersect(self, time_range_crop):
+        """
+        Finds the intersection of the input date range with the timeseries start_time and
+        end_time.
+        """
+        ts=self
+        time_range_crop=list(time_range_crop)
+        print "input date is:" ,
+        print time_range_crop[0],
+        print "to"
+        print time_range_crop[1],
+        if ts.start_time is not None and time_range_crop[0] < ts.start_time:
+            time_range_crop[0] = ts.start_time
+            print "Adjusting start time"
+        else:
+            print "Didn't need to adjust start time"
+        if ts.end_time is not None and time_range_crop[1] > ts.end_time:
+            time_range_crop[1] = ts.end_time    
+            print "Adjusting end time"
+        else:
+            print "Didn't need to adjust end time"
+            print "Intersected time is %s" % time_range_crop
+        return time_range_crop
+
+    def data_cropped_resampled(self, sample_rate=None, num_samples=None, time_range_crop=None):
+        """
+        Returns:
+        1. Data cropped by the start_time and end_time field and date_range_crop, and
+        resampled to rate or num_samples.
+        2. A list of the times corresponding to each data point.
+        """
+    
+        #figure out the date range, based on three things:
+        # 1. requested time_range
+        # 2. start_time and end_time
+        # 3. actual beginning and end of data
+        #     (2 and 3 work using the auto_date_range)
+        if time_range_crop:
+            time_range=self.time_range_intersect(time_range_crop)
+        else:
+            time_range=self.auto_date_range()
+        datapoints_cropped=self.datapoint_set.filter(time__range=time_range)
+        data=datapoints_cropped.values_list('value',flat=True)
+
+        if sample_rate and time_range_crop:
+            raise Exception("You must specify either the sample rate or time range, not both.")
+
+        if num_samples:
+            #resample to fixed number of samples
+            print "resampling from %d samples to %d" % (len(data), num_samples)
+            data=signal.resample(data, num_samples)
+            sample_rate=(time_range[1]-time_range[0])/num_samples
+            times=[time_range[0]+n*sample_rate for n in range(num_samples)]
+        elif sample_rate:
+            raise Exception("Resampling by data rate is not yet implemented.")
+        else:
+            raise Exception("Either the sample rate or time range are required but you didn't specify either.")
+
+        return data, times
 
     def import_csv_hobo(self):
         if self.import_file:
