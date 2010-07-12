@@ -4,13 +4,13 @@
 {% block title %}Mount Erebus Cave Database{% endblock %}
 
 {% block head %}
-    <script src="{{ settings.MEDIA_URL }}js/OpenLayers.js"></script>
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key={{settings.GOOGLE_MAPS_KEY}}&amp;sensor=false'></script>
     <script type="text/javascript">
-        var map, entrances, selectControl;
+        var map, entrances, selectCtrl, highlightCtrl;
         
         function selected(evt){
-            window.open(evt.feature.attributes.href,"Window1, ");
+            window.open(evt.feature.attributes.href,"Window1");
             selectCtrl.unselectAll();
             return false;
         }
@@ -40,8 +40,8 @@
                         graphicOpacity:1,
                         fontSize: "15px",
                         fontColor:"#00FF00",
-                        fontWeight:"bold",
-                    }, OpenLayers.Feature.Vector.style["default"])),
+                        fontWeight:"bold"}
+                    , OpenLayers.Feature.Vector.style["default"])),
                     "select": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
                         label : "${name}",
                         externalGraphic: '${graphic}',
@@ -51,12 +51,12 @@
                         fontSize: "15px",
                         fontColor:"#000000", 
                         fontWeight:"bold",                        
-                        fill: true,
-                    }, OpenLayers.Feature.Vector.style["select"])),
+                        fill: true}
+                        , OpenLayers.Feature.Vector.style["select"]))
                 })
             });
 
-            proj = new OpenLayers.Projection("EPSG:4326");
+            var proj = new OpenLayers.Projection("EPSG:4326");
             
             {% for entrance in entrances %}
                     entrance{{entrance.id}} = new OpenLayers.Geometry.Point({{entrance.location.x}}, {{entrance.location.y}});
@@ -68,27 +68,31 @@
                             cavename: "{{entrance.caves.0.official_name}}",
                             pk:"{{entrance.caves.0.pk}}",
                             favColor: "black",
-                            align: "lt",
+                            align: "lt"
                             {% ifequal  entrance.caves.0.type "tower" %}
+,
                                 graphic: "/site_media/smokestack.png"
                             {% endifequal %}
                             {% ifequal  entrance.caves.0.type "cave" %}
+,
                                 graphic: "/site_media/cave.png"
                             {% endifequal %}
                             {% ifequal  entrance.caves.0.type "cave_n_tower" %}
+,
                                 graphic: "/site_media/cave.png"
                             {% endifequal %}
                             {% ifequal  entrance.caves.0.type "unknown" %}
+,
                                 graphic: "/site_media/smokestack.png"
                             {% endifequal %}
                 };
             {% endfor %}
             
-            entrances.addFeatures([{%for entrance in entrances %}entrance{{entrance.id}}Feature, {%endfor%}]);
+            entrances.addFeatures([{%for entrance in entrances %}entrance{{entrance.id}}Feature{% if not forloop.last %},{% endif %} {%endfor%}]);
             
             var get_cave_stats = function(evt) {
                 $.post('/ajax/',
-                       { 'cave_id': evt.feature.attributes.pk,},
+                       { 'cave_id': evt.feature.attributes.pk },
                             function(data){
                                     info='<h2 class=sidetable>'
                                     info+=evt.feature.attributes.cavename
@@ -132,7 +136,7 @@
                 renderIntent: "select",
                 eventListeners: {
                     featurehighlighted: get_cave_stats,
-                    featureunhighlighted: clear_cave_stats,
+                    featureunhighlighted: clear_cave_stats
                 }
             });
 
@@ -141,7 +145,7 @@
                 {
                     hover: false,
                     clickout: true,
-                    multiple: false,
+                    multiple: false
 
                 }
             );
