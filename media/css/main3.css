@@ -485,6 +485,17 @@ div#cave_stats {
 	text-align:right;
 }
 
+div#loading {
+	border: thin solid black;
+    color:red;
+    position:absolute;
+	background:#EEEEEE url(../nav-bg.gif) repeat-x scroll left bottom;
+    z-index:1999;
+    bottom:0px;
+    margin-bottom:20px;
+    margin-left:50%;
+}
+
 div#right_sidetable
 {
 	border: thin solid black;
