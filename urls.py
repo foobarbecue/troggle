@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^todo/$',              views_other.todo,      name="todo"),
     url(r'^about/$',             direct_to_template, {'template': 'about.html'}, name="about"),
     (r'^ajax/$',             views_other.cave_stats_ajax),
+    (r'^coords_ajax/$',             views_other.entrance_location_ajax),
     (r'^comments/', include('django.contrib.comments.urls')),
 
     url(r'^caves/$',     views_caves.caveindex,      name="caves"),

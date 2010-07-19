@@ -38,15 +38,15 @@ def frontpage(request):
         #return render_with_context(request,'tasks.html')
 
     expeditions =  Expedition.objects.order_by("-year")
-    logbookentry = LogbookEntry
-    cave = Cave
-    entrances = []
-    for cave in Cave.objects.all():
-        for entrance in cave.entrances():
-            entrances.append(entrance)
-    photo = Photo
-    from django.contrib.admin.templatetags import log
-    return render_with_context(request,'frontpage.html', locals())
+#    from django.contrib.admin.templatetags import log
+    return render_with_context(request,'frontpage.html', {
+                'expeditions':Expedition.objects.order_by("-year"),
+                'logbookentry':LogbookEntry,
+                'cave':Cave,
+                'photo':Photo,
+                'entrances':Entrance.objects.filter(caveandentrance__cave__isnull=False),
+                'entrance':Entrance,
+                })
 
 def todo(request):
     message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
@@ -221,6 +221,28 @@ def logbook_entry_suggestions(request):
         'unwiki_QMs':unwiki_QMs,
         'any_suggestions':any_suggestions
         })
+
+map_icon_dict={
+    "tower":"/site_media/smokestack.png",
+    "cave":"/site_media/cave.png",
+    "cave_n_tower":"/site_media/cave.png",
+    "unknown":"/site_media/smokestack.png",
+    "":"/site_media/smokestack.png"}
+
+def entrance_location_ajax(request):
+    entrance_id = request.GET['entrance_id']
+    entrance=Entrance.objects.get(pk=entrance_id)
+    cave=entrance.caves()[0]
+    response_dict={
+        'x':entrance.location.x,
+        'y':entrance.location.y,
+        'name':unicode(entrance),
+        'href':cave.get_absolute_url(),
+        'pk':cave.pk,
+        'graphic':map_icon_dict[entrance.caves()[0].type],
+        'cavename':unicode(cave)
+        }  
+    return HttpResponse(simplejson.dumps(response_dict), mimetype="application/javascript")
 
 def cave_stats_ajax(request):
     cave_id = request.POST.get('cave_id')

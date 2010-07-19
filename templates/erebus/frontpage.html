@@ -4,19 +4,19 @@
 {% block title %}Mount Erebus Cave Database{% endblock %}
 
 {% block head %}
-    <script src="{{ settings.MEDIA_URL }}js/OpenLayers.js"></script>
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key={{settings.GOOGLE_MAPS_KEY}}&amp;sensor=false'></script>
     <script type="text/javascript">
-        var map, entrances, selectControl;
+        var map, selectCtrl, highlightCtrl;
         
         function selected(evt){
-            window.open(evt.feature.attributes.href,"Window1, ");
+            window.open(evt.feature.attributes.href,"Window1");
             selectCtrl.unselectAll();
             return false;
         }
         
         function init(){
-            map = new OpenLayers.Map( 'map' );
+            cavesmap = new OpenLayers.Map( 'map' );
             
             var gphy = new OpenLayers.Layer.Google(
                 "Google Physical",
@@ -40,9 +40,9 @@
                         graphicOpacity:1,
                         fontSize: "15px",
                         fontColor:"#00FF00",
-                        fontWeight:"bold",
-                    }, OpenLayers.Feature.Vector.style["default"])),
-                    "select": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
+                        fontWeight:"bold"}
+                    , OpenLayers.Feature.Vector.style["default"])),
+                    "highlightedCave": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
                         label : "${name}",
                         externalGraphic: '${graphic}',
                         pointRadius:20,
@@ -51,44 +51,50 @@
                         fontSize: "15px",
                         fontColor:"#000000", 
                         fontWeight:"bold",                        
-                        fill: true,
-                    }, OpenLayers.Feature.Vector.style["select"])),
+                        fill: true}
+                        , OpenLayers.Feature.Vector.style["select"]))
                 })
             });
 
             proj = new OpenLayers.Projection("EPSG:4326");
+
+            add_point_from_JSON = function(data, entrance_id){
+                entrance = new OpenLayers.Geometry.Point(data.x, data.y);
+                entrance.transform(proj, new OpenLayers.Projection("EPSG:900913"));
+                entranceFeature = new OpenLayers.Feature.Vector(entrance);
+                entranceFeature.attributes = data;
+                return entranceFeature;
+            };
+
             
-            {% for entrance in entrances %}
-                    entrance{{entrance.id}} = new OpenLayers.Geometry.Point({{entrance.location.x}}, {{entrance.location.y}});
-                    entrance{{entrance.id}}.transform(proj, new OpenLayers.Projection("EPSG:900913"));
-                    entrance{{entrance.id}}Feature = new OpenLayers.Feature.Vector(entrance{{entrance.id}});
-                        entrance{{entrance.id}}Feature.attributes = {
-                            href: "{{entrance.caves.0.get_absolute_url}}",
-                            name: "{{entrance}}",
-                            cavename: "{{entrance.caves.0.official_name}}",
-                            pk:"{{entrance.caves.0.pk}}",
-                            favColor: "black",
-                            align: "lt",
-                            {% ifequal  entrance.caves.0.type "tower" %}
-                                graphic: "/site_media/smokestack.png"
-                            {% endifequal %}
-                            {% ifequal  entrance.caves.0.type "cave" %}
-                                graphic: "/site_media/cave.png"
-                            {% endifequal %}
-                            {% ifequal  entrance.caves.0.type "cave_n_tower" %}
-                                graphic: "/site_media/cave.png"
-                            {% endifequal %}
-                            {% ifequal  entrance.caves.0.type "unknown" %}
-                                graphic: "/site_media/smokestack.png"
-                            {% endifequal %}
-                };
-            {% endfor %}
-            
-            entrances.addFeatures([{%for entrance in entrances %}entrance{{entrance.id}}Feature, {%endfor%}]);
-            
+
+            get_ent_coords = function(entrance_id, entrances, total) {
+                cavesmap.zoomToExtent(new OpenLayers.Bounds(18599368.165099,-14124250.106075,18616043.045581,-14110854.747819));
+                $.ajax({
+                    url:'/coords_ajax/',
+                    data:{ 'entrance_id' : entrance_id },
+                    complete:function(data,status){
+                               entrance_id++;
+                               if (entrance_id<=total) {
+                                   get_ent_coords(entrance_id,entrances,total);
+                               }
+                               else {
+                                   $('#loading').fadeOut()
+                               }
+
+                             },
+                    success: function(data){
+                             entrancePoint=(add_point_from_JSON(data, entrance_id));
+                             entrances.addFeatures(add_point_from_JSON(data, entrance_id));
+                             res=$('#loading').replaceWith("<div id='loading'> " + entrance_id + " of " + total + " entrances loaded </div>")
+                             
+                    },
+                    dataType:"json"})                    
+            };
+
             var get_cave_stats = function(evt) {
                 $.post('/ajax/',
-                       { 'cave_id': evt.feature.attributes.pk,},
+                       { 'cave_id': evt.feature.attributes.pk },
                             function(data){
                                     info='<h2 class=sidetable>'
                                     info+=evt.feature.attributes.cavename
@@ -129,10 +135,10 @@
             highlightCtrl = new OpenLayers.Control.SelectFeature(entrances, {
                 hover: true,
                 highlightOnly: true,
-                renderIntent: "select",
+                renderIntent: "highlightedCave",
                 eventListeners: {
                     featurehighlighted: get_cave_stats,
-                    featureunhighlighted: clear_cave_stats,
+                    featureunhighlighted: clear_cave_stats 
                 }
             });
 
@@ -141,23 +147,23 @@
                 {
                     hover: false,
                     clickout: true,
-                    multiple: false,
+                    multiple: false
 
                 }
             );
 
             
-            map.addControl(new OpenLayers.Control.LayerSwitcher());
-            map.addLayer(gsat);
-            map.addLayer(gphy);            
-            map.addLayer(entrances);
-
-            map.addControl(highlightCtrl);
+            cavesmap.addControl(new OpenLayers.Control.LayerSwitcher());
+            cavesmap.addLayer(gsat);
+            cavesmap.addLayer(gphy);            
+            cavesmap.addLayer(entrances);
+            get_ent_coords(1,entrances,{{entrance.objects.count}});
+            cavesmap.addControl(highlightCtrl);
             highlightCtrl.activate();
-            map.addControl(selectCtrl);
+            cavesmap.addControl(selectCtrl);
             selectCtrl.activate();
 
-            map.zoomToExtent(entrances.getDataExtent());
+            cavesmap.zoomToExtent(entrances.getDataExtent());
             
             entrances.events.register("featureselected", entrances, selected);
         }
@@ -243,6 +249,7 @@
     
     <div id="cave_stats"></div>
 
+    <div id="loading">loading page...</div>
 {% endblock map %}
 
 {% block margins %}
