@@ -157,8 +157,8 @@ class Timeseries(TroggleModel):
         datapoints_cropped=self.datapoint_set.filter(time__range=time_range)
         data=datapoints_cropped.values_list('value',flat=True)
 
-        if sample_rate and time_range_crop:
-            raise Exception("You must specify either the sample rate or time range, not both.")
+        if sample_rate and num_samples:
+            raise Exception("You must specify either the sample rate or number of samples, not both.")
 
         if num_samples:
             #resample to fixed number of samples
@@ -169,7 +169,7 @@ class Timeseries(TroggleModel):
         elif sample_rate:
             raise Exception("Resampling by data rate is not yet implemented.")
         else:
-            raise Exception("Either the sample rate or time range are required but you didn't specify either.")
+            raise Exception("Either the sample rate or number of samples are required but you didn't specify either.")
 
         return data, times
 
