@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script>
+$(document).ready(function () {
+    var plottedData = [];
+   
+    plotNewData = function(series) {
+        plottedData.push(series);
+        $.plot($('#graph'), plottedData, options);
+        refreshRemoverButtons(plottedData);
+    };
+
+    var options = {
+        dataType: 'json',
+        success: plotNewData,
+        beforeSend: function () { $('#loading').fadeIn() },
+        complete: function() { $('#loading').fadeOut() },
+        xaxis: {mode:'time'}
+        }
+
+
+{% if auto_click_submit %}
+    $("option[value='JSON']").attr('selected','selected');
+    $('#ts_form').ajaxSubmit(options);
+{% endif %}
+
+    refreshRemoverButtons = function(plottedData){
+        // blank the list of remover buttons
+        $('#alreadyFetched').replaceWith("<div class='center alreadyFetched' id='alreadyFetched'></div>");
+        // for each shown plot
+        $.each(plottedData,
+            // create a remove button
+            function(index, value){
+
+                $('#alreadyFetched').append("<p><input type='submit' class='alreadyFetched' value='Remove "+ value['label'] +"' id='remove"+ value['label'] +"'></p>");
+                $('input:last').click(function() {
+                    plottedData.splice(index,1)
+                    $.plot($('#graph'), plottedData, options);
+                    $(this).remove();
+                    refreshRemoverButtons(plottedData);
+                });
+
+             });        
+    };
+
+    $('#ts_form').ajaxForm(
+        options
+    );
+
+
+    var plot = $.plot($('#graph'),
+    plottedData,
+     {xaxis: {mode:"time"}, selection: { mode: "xy" }, points: { show: true}, lines: {show: true}, color: "Black", clickable: true, hoverable: true}
+     );
+
+    // setup overview
+    var overview = $.plot($("#{{timeseries.id}}_overview_graph_id"), [plottedData], {
+        selection: { mode: "xy" },  xaxis: { mode:'time'}
+    });
+
+    $("#{{timeseries.id}}_graph_id").bind("plotselected", function (event, ranges) {
+        // clamp the zooming to prevent eternal zoom
+        if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
+            ranges.xaxis.to = ranges.xaxis.from + 0.00001;
+        if (ranges.yaxis.to - ranges.yaxis.from < 0.00001)
+            ranges.yaxis.to = ranges.yaxis.from + 0.00001;
+        
+        // do the zooming
+        plot = $.plot($("#{{timeseries.id}}_graph_id"), [plottedData],
+                      $.extend(true, {}, { title:'{{timeseries}}',  xaxis: { mode:'time'}, selection: { mode: "xy" }, points: { show: true}, lines: {show: true}, color: "Black", clickable: true, hoverable: true}, {
+                          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
+                          yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
+                      }));
+        
+        // don't fire event on the overview to prevent eternal loop
+        overview.setSelection(ranges, true);
+    });
+
+    $("#{{timeseries.id}}_overview_graph_id").bind("plotselected", function (event, ranges) {
+        plot.setSelection(ranges);
+    });
+});
+
+
+</script>
+{% endblock head %}
+
+{% block content%}
+<h3>Timeseries browser</h3>
+
+<div id="graph" class="big center">
+</div>
+
+<h2>Get data</h2>
+<form action="/timeseries_ajax/" method="GET" id="ts_form">
+<table class="center">
+{{ts_form.as_table}}
+<tr><td colspan=2><input type="submit" value="Do it!" /></td></tr>
+</table>
+</form>
+
+<h2>Remove data from the plot</h2>
+<div class="center" id="alreadyFetched">
+</div>
+</form>
+
+{% endblock content%}

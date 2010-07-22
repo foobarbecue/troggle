@@ -95,10 +95,7 @@ class Timeseries(TroggleModel):
         return((start,end))
 
     def __unicode__(self):
-	if self.logger_timeseries_id:
-	    return "%s on run %s of logger %s (%s)" % (self.sensor, self.logger_timeseries_id, self.logger, self.data_type)
-        else:
-            return "%s on logger %s (%s)" % (self.sensor, self.logger, self.data_type)
+        return "%s: %s at %s" % (self.cave(),self.data_type,self.location_in_cave)
     
     def plot(self):
         return render_to_string('timeseries_plot.html',{'timeseries':self})
@@ -137,7 +134,7 @@ class Timeseries(TroggleModel):
             print "Intersected time is %s" % time_range_crop
         return time_range_crop
 
-    def data_cropped_resampled(self, sample_rate=None, num_samples=None, time_range_crop=None):
+    def data_cropped_resampled(self, sample_rate=None, num_samples=None, time_range_crop=None, style='normal'):
         """
         Returns:
         1. Data cropped by the start_time and end_time field and date_range_crop, and
@@ -164,14 +161,24 @@ class Timeseries(TroggleModel):
             #resample to fixed number of samples
             print "resampling from %d samples to %d" % (len(data), num_samples)
             data=signal.resample(data, num_samples)
-            sample_rate=(time_range[1]-time_range[0])/num_samples
+            try:
+                sample_rate=(time_range[1]-time_range[0])/num_samples
+            except TypeError:
+                sample_rate=(datetime.datetime(time_range[1])-datetime.datetime(time_range[0]))/num_samples
             times=[time_range[0]+n*sample_rate for n in range(num_samples)]
+
         elif sample_rate:
             raise Exception("Resampling by data rate is not yet implemented.")
         else:
             raise Exception("Either the sample rate or number of samples are required but you didn't specify either.")
-
-        return data, times
+        if style=='normal':
+            return data, times
+        elif style=='flot':
+            flot_data=[]
+            for value, measurement_time in zip(data, times):
+                flot_data.append((int(time.mktime(measurement_time.timetuple())*1000), value))            
+            return {'label':unicode(self),'data':flot_data}
+            
 
     def import_csv_hobo(self):
         if self.import_file:
@@ -227,6 +234,9 @@ class Timeseries(TroggleModel):
                 except:
                     logging.debug('could not import line:' + str(line))
             logging.debug('imported data for:' + unicode(self))
+
+    def get_absolute_url(self):
+        return '/timeseries_ajax/?action=newpage&timeseries=%s&number_of_samples=%d&start_time=%s&end_time=%s' % (self.pk, self.datapoint_set.count(), self.auto_date_range()[0], self.auto_date_range()[1])
 
     def cave(self):
         return self.logbook_entry.cave

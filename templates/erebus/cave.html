@@ -12,13 +12,7 @@
 {% endblock %}
 
 {% block head %}
-{% if cave.timeseries_set.all %}
 
-    {% for timeseries in cave.timeseries_set.all %}
-        {{timeseries.plot}}
-    {% endfor %}
-    
-{% endif %}
 {% endblock %}
 
 {% block body_onload %}
@@ -156,21 +150,24 @@
     </table>
 {% endif %}
 
-{% if cave.timeseries_set.all %}
+
 <h3>Timeseries</h3>
+{% if cave.timeseries_set.all %}
+<table>
+    <tr><th>Timeseries</th><th>From</th><th>To</th><th>Number of samples</th><th>Data type</th><th>View</th></tr>
     {% for timeseries in cave.timeseries_set.all %}
-    <div id="both_graphs_{{timeseries.id}}"  class="timeseries_graph">
-        <p style="clear:left;">Timeseries #{{timeseries.pk}}: {{timeseries}}, {{timeseries.location_in_cave}}</p>        
-        <div id='{{timeseries.id}}_graph_id'  class="main_graph"></div>
-        <div id='{{timeseries.id}}_overview_graph_id' class="overview_graph"></div>
-        <p style="clear:right;">Click and drag on either graph to zoom the left graph. Click "comments" below to discuss this data.</p>
-        <p style="clear:left;">Y axis: {{timeseries.data_type}}</p>
-        <p style="clear:left;">X axis: time</p>
-        
-        {{timeseries.comments}}
-    </div>
-    
+	<tr>
+		<td>{{timeseries}}</td>
+		<td>{{timeseries.auto_date_range.0}}</td>
+		<td>{{timeseries.auto_date_range.1}}</td>
+		<td>{{timeseries.datapoint_set.count}}</td>
+		<td>{{timeseries.data_type}}</td>
+		<td><a href='{{timeseries.get_absolute_url}}'>view</a></td>
+	</tr>
     {% endfor %}
+</table>
+{% else %}
+No timeseries data has been collected for this cave.
 {% endif %}
 
 {% if cave.explorers %}

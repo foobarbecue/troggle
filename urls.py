@@ -12,6 +12,7 @@ from django.contrib import admin
 from django.views.generic.simple import direct_to_template
 from django.contrib import databrowse
 import datalogging.models
+import datalogging.views
 
 admin.autodiscover()
 
@@ -26,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^about/$',             direct_to_template, {'template': 'about.html'}, name="about"),
     (r'^ajax/$',             views_other.cave_stats_ajax),
     (r'^coords_ajax/$',             views_other.entrance_location_ajax),
+    (r'^timeseries_ajax/$',             datalogging.views.ajax_timeseries_data),
     (r'^comments/', include('django.contrib.comments.urls')),
 
     url(r'^caves/$',     views_caves.caveindex,      name="caves"),

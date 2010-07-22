@@ -177,7 +177,7 @@ hr{
 div.centre img			{ vertical-align: middle; }
 
 h1				{ text-align: center; display: inline;}
-h2				{ }
+h2				{ color: black; padding:1em}
 h3				{ color: #000 text-align:left; padding:1em; margin: 0; font-weight:bold}
 h4				{ color: #0d664c; }
 h4.navbar {line-height: 0px;}
@@ -644,4 +644,18 @@ div.object > h2 {
 div.entry_text {
 	border-left: thin dotted black;
 	margin-left: 1em;
+}
+
+.big {
+    height:400px;
+    width: 90%;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.center th{
+    text-align:right;
 }

@@ -20,7 +20,7 @@ function setMaxHeight(group, target) {
 /*This is the jquery stuff */
 $(document).ready(function() {
 
-
+$('#loading').hide()
 $('div.figure').width($('div.figure img').width()+40)
 
 //hide the all of the element with class msg_body
@@ -45,18 +45,6 @@ $('.searchable li').quicksearch({
 $('table.searchable tr').quicksearch({
   position: 'before',
   attached: 'table.searchable:first'});
-
-$(".killEyeCandy").click(function () {
-                                         killEyeCandy();
-                                         setCookie("eyeCandy", "False", 100);
-                                        }
-                           );
-
-$(".showEyeCandy").click(function () {
-		                         showEyeCandy();
-		                         setCookie("eyeCandy", "True", 100);
-                                        }
-                           );
 
 $(".toggleMenu").click(function () {
 		  $("ul.dropdown li:not(.toggleMenu)").toggle();
@@ -89,41 +77,6 @@ $(hoverLink).bind('mouseout',
 
 
 };
-
-function showEyeCandy(){
-/*contentHeight();*/
-switchStylestyle("eyeCandy");
-$("#eyeCandyFooterPopUps").load("/eyecandy");
-$(".leftMargin,.rightMargin").show();
-$(".showEyeCandy").hide();
-$(".killEyeCandy").show();
-linkHover("#cavesLink","#richardBanner");
-linkHover("#caversLink","#timeMachine");
-linkHover("#surveyBinderLink","#surveyHover");
-linkHover("#troggle","#timeMachine");
-};
-
-function killEyeCandy(){
-$("#content").removeAttr("style")
-switchStylestyle("plain");
-$(".leftMargin,.rightMargin").hide();
-$(".showEyeCandy").show();
-$(".killEyeCandy").hide();
-$("#cavesLink").unbind('mouseover').unbind('mouseout');
-$("#caversLink").unbind('mouseover').unbind('mouseout');
-$("#surveyBinderLink").unbind('mouseover').unbind('mouseout');
-$("#troggle").unbind('mouseover').unbind('mouseout');
-};
-
-if (getCookie("eyeCandy") == "False")
-    {killEyeCandy();}
-else
-    {showEyeCandy();
-     $(".footer").hide();
-     $(".fadeIn").hide();
-     setTimeout("$('.leftMargin.fadeIn').fadeIn(3000);",1000);
-     setTimeout("$('.rightMargin.fadeIn').fadeIn(3000);",2000);
-     }
 
 /*dropdown (well, up actually) menu code from http://css-tricks.com/simple-jquery-dropdowns/*/
 $("ul.dropdown li").hover(
