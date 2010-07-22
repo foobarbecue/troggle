@@ -11,10 +11,15 @@ $(document).ready(function () {
         refreshRemoverButtons(plottedData);
     };
 
+    ajaxError = function() {
+        alert('There was a problem with your request. Make sure you are not requesting a higher sample rate than the original sample rate.');
+    };
+
     var options = {
         dataType: 'json',
         success: plotNewData,
         beforeSend: function () { $('#loading').fadeIn() },
+        error: ajaxError,
         complete: function() { $('#loading').fadeOut() },
         xaxis: {mode:'time'}
         }

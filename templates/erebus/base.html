@@ -25,7 +25,7 @@
 
 {% block head %}{% endblock %}
 </head>
-<body>
+<body {% block body_tag %}{% endblock body_tag %}>
 {% if not settings.PLAIN %}
 <div id="header"> 
   <h1>Erebus Cave and Fumarole Database</h1>
