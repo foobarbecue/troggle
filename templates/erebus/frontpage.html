@@ -4,12 +4,12 @@
 {% block title %}Mount Erebus Cave Database{% endblock %}
 
 {% block head %}
-    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+    <script src="{{ settings.MEDIA_URL }}js/openlayers/lib/OpenLayers.js"></script>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key={{settings.GOOGLE_MAPS_KEY}}&amp;sensor=false'></script>
     <script type="text/javascript">
         var map, selectCtrl, highlightCtrl;
         
-        function selected(evt){
+        function entSelected(evt){
             window.open(evt.feature.attributes.href,"Window1");
             $('#loading').replaceWith("<div id='loading'> opened page for " + evt.feature.attributes.cavename + " in another tab / window </div>");
             $('#loading').show();
@@ -36,9 +36,9 @@
             entrances = new OpenLayers.Layer.Vector("Cave and tower entrances", {
                 styleMap: new OpenLayers.StyleMap({
                     "default": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
-                        /*label : "${name}",*/
+                        label : "",
                         labelAlign: "${align}",
-                        externalGraphic: '${graphic}',
+                        externalGraphic: "${graphic}",
                         pointRadius:20,
                         graphicOpacity:1,
                         fontSize: "15px",
@@ -47,7 +47,8 @@
                     , OpenLayers.Feature.Vector.style["default"])),
                     "selected": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
                         label : "${name}",
-                        externalGraphic: '${graphic}',
+                        labelAlign: "${align}",
+                        externalGraphic: "${graphic}",
                         pointRadius:20,
                         graphicOpacity:1,
                         labelAlign: "${align}",
@@ -58,6 +59,7 @@
                         , OpenLayers.Feature.Vector.style["highlight"])),
                     "clicked": new OpenLayers.Style(OpenLayers.Util.applyDefaults({
                         label : "Opening in new window",
+                        labelAlign: "${align}",
                         externalGraphic: '${graphic}',
                         pointRadius:20,
                         graphicOpacity:1,
@@ -67,7 +69,12 @@
                         fontWeight:"bold",                        
                         fill: true}
                         , OpenLayers.Feature.Vector.style["select"]))
-                })
+                }),
+            eventListeners: {
+                    featureclick: function (evt){
+                        alert('you clicked a feature')
+                        }
+                }
             });
 
             proj = new OpenLayers.Projection("EPSG:4326");
@@ -83,9 +90,9 @@
             
 
             get_ent_coords = function(entrance_id, entrances, total) {
-                cavesmap.zoomToExtent(new OpenLayers.Bounds(18599368.165099,-14124250.106075,18616043.045581,-14110854.747819));
                 ent_list_ul=$('#entrance_list').find('ul')
                 $.ajax({
+                    cache: false,
                     url:'/coords_ajax/',
                     data:{ 'entrance_id' : entrance_id },
                     complete:function(data,status){
@@ -171,12 +178,11 @@
             });
 
             selectCtrl = new OpenLayers.Control.SelectFeature(
-                [entrances],
+                entrances,
                 {
                     hover: false,
                     clickout: true,
                     multiple: false
-                    
 
                 }
             );
@@ -186,17 +192,13 @@
             cavesmap.addLayer(gsat);
             cavesmap.addLayer(gphy);            
             cavesmap.addLayer(entrances);
+            cavesmap.zoomToExtent(new OpenLayers.Bounds(18599368.165099,-14124250.106075,18616043.045581,-14110854.747819));
             get_ent_coords(1,entrances,{{entrance.objects.count}});
-            entrances.events.register("featureselected", entrances, selected);
             cavesmap.addControl(highlightCtrl);
-
             highlightCtrl.activate();
-
             cavesmap.addControl(selectCtrl);
-
             selectCtrl.activate();
-            
-
+            entrances.events.register("featureselected", entrances, entSelected);
         }
     </script>
 

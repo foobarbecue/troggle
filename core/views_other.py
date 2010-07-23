@@ -48,6 +48,21 @@ def frontpage(request):
                 'entrance':Entrance,
                 })
 
+def frontpagetesting(request):
+    #if request.user.is_authenticated():
+        #return render_with_context(request,'tasks.html')
+
+    expeditions =  Expedition.objects.order_by("-year")
+#    from django.contrib.admin.templatetags import log
+    return render_with_context(request,'frontpagetesting.html', {
+                'expeditions':Expedition.objects.order_by("-year"),
+                'logbookentry':LogbookEntry,
+                'cave':Cave,
+                'photo':Photo,
+                'entrances':Entrance.objects.filter(caveandentrance__cave__isnull=False),
+                'entrance':Entrance,
+                })
+
 def todo(request):
     message = "no test message"  #reverse('personn', kwargs={"name":"hkjhjh"}) 
     if "reloadexpos" in request.GET:
@@ -240,7 +255,8 @@ def entrance_location_ajax(request):
         'href':cave.get_absolute_url(),
         'pk':cave.pk,
         'graphic':map_icon_dict[entrance.caves()[0].type],
-        'cavename':unicode(cave)
+        'cavename':unicode(cave),
+        'align':'rb',
         }  
     return HttpResponse(simplejson.dumps(response_dict), mimetype="application/javascript")
 

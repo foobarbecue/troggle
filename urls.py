@@ -22,12 +22,13 @@ admin.autodiscover()
 urlpatterns = patterns('',
     
     url(r'^$',              views_other.frontpage,      name="frontpage"),
+    url(r'^testing/$',              views_other.frontpagetesting,      name="frontpagetesting"),
     url(r'^alarms/$',              views_other.alarms,      name="alarms"),
     url(r'^todo/$',              views_other.todo,      name="todo"),
     url(r'^about/$',             direct_to_template, {'template': 'about.html'}, name="about"),
     (r'^ajax/$',             views_other.cave_stats_ajax),
     (r'^coords_ajax/$',             views_other.entrance_location_ajax),
-    (r'^timeseries_ajax/$',             datalogging.views.ajax_timeseries_data),
+    (r'^timeseries/$',             datalogging.views.ajax_timeseries_data),
     (r'^comments/', include('django.contrib.comments.urls')),
 
     url(r'^caves/$',     views_caves.caveindex,      name="caves"),

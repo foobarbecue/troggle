@@ -23,6 +23,11 @@ $(document).ready(function() {
 $('#loading').hide()
 $('div.figure').width($('div.figure img').width()+40)
 
+if ($('#right_sidetable div:first').text()=='') {
+$('#right_sidetable').remove()
+}
+/*This is a hack to stop a line appearing because of the empty div border*/
+
 //hide the all of the element with class msg_body
 $(".collapse_body").hide();
 $(".collapse_head").addClass("plus_icon");

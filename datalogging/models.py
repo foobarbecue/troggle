@@ -236,7 +236,7 @@ class Timeseries(TroggleModel):
             logging.debug('imported data for:' + unicode(self))
 
     def get_absolute_url(self):
-        return '/timeseries_ajax/?action=newpage&timeseries=%s&number_of_samples=%d&start_time=%s&end_time=%s' % (self.pk, self.datapoint_set.count(), self.auto_date_range()[0], self.auto_date_range()[1])
+        return '/timeseries/?action=newpage&timeseries=%s&number_of_samples=%d&start_time=%s&end_time=%s' % (self.pk, self.datapoint_set.count(), self.auto_date_range()[0], self.auto_date_range()[1])
 
     def cave(self):
         return self.logbook_entry.cave

@@ -22,7 +22,6 @@
 <!--[if IE]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
 <script language="javascript" type="text/javascript" src="{{ settings.MEDIA_URL }}js/jquery.flot.pack.js"></script>
 
-
 {% block head %}{% endblock %}
 </head>
 <body {% block body_tag %}{% endblock body_tag %}>
@@ -71,39 +70,12 @@
 
 </div>
 
-<div id="right_sidetable"> 
-
-    <div id="browse_expeditions">
-    {% block browse_expeditions %}
-    {% endblock browse_expeditions %}
-    </div>    
-
-    <div id="entrance_list" style="padding-left:0">
-    {% block entrance_list %}
-    {% endblock entrance_list %}
-    </div>
-    
-    <div id="add_info">
-    {% block add_info %}
-    {% endblock add_info %}
-    </div>
-
-    <div id="recent_actions">
-        {% block recent_actions %}
-        
-            <script language="javascript">
-                    $('#right_sidetable').remove()
-                    /*This is a hack to stop a line appearing because of the empty div border*/
-            </script>
-        {% endblock recent_actions %}
-    </div> 
-    
-    <div id="misc">
-    {% block misc %}
-    {% endblock misc %}
-    </div>
-
-   
+<div id="right_sidetable">
+    <div id="browse_expeditions">{% block browse_expeditions %}{% endblock browse_expeditions %}</div>    
+    <div id="entrance_list" style="padding-left:0">{% block entrance_list %}{% endblock entrance_list %}</div>
+    <div id="add_info">{% block add_info %}{% endblock add_info %}</div>
+    <div id="recent_actions">{% block recent_actions %}{% endblock recent_actions %}</div> 
+    <div id="misc">{% block misc %}{% endblock misc %}</div>
 </div>
 
     <div id="loading">loading page...</div>
