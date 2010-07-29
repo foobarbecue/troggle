@@ -4,6 +4,21 @@
 <script>
 $(document).ready(function () {
     var plottedData = [];
+
+    getTsStats = function (ts_pk) {
+        $.ajax({
+          url: '/timeseries/',
+          data: {'timeseries': ts_pk, 'action':'stats'},
+          success: function (data){
+                        $('#id_start_time').attr('value',data['start_time']);
+                        $('#id_end_time').attr('value',data['end_time']);
+                        $('#id_number_of_samples').attr('value',data['number_of_samples']);
+                   },
+          dataType:'json',
+          beforeSend: function () { $('#loading').fadeIn() },
+          complete: function() { $('#loading').fadeOut() },
+          })
+    };
    
     plotNewData = function(series) {
         plottedData.push(series);
@@ -23,7 +38,6 @@ $(document).ready(function () {
         complete: function() { $('#loading').fadeOut() },
         xaxis: {mode:'time'}
         }
-
 
 {% if auto_click_submit %}
     $("option[value='JSON']").attr('selected','selected');
@@ -53,6 +67,11 @@ $(document).ready(function () {
         options
     );
 
+
+    $('#id_timeseries').change(
+        function(){
+            getTsStats(this.value)
+        })
 
     var plot = $.plot($('#graph'),
     plottedData,
@@ -85,8 +104,8 @@ $(document).ready(function () {
     $("#{{timeseries.id}}_overview_graph_id").bind("plotselected", function (event, ranges) {
         plot.setSelection(ranges);
     });
-});
 
+});
 
 </script>
 {% endblock head %}

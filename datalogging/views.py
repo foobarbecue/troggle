@@ -25,6 +25,11 @@ def ajax_timeseries_data(request):
                 ts=Timeseries.objects.get(pk=request.GET.get('timeseries'))
                 data=ts.data_cropped_resampled(num_samples=int(num_samples), time_range_crop=(start_time, end_time), style='flot')
                 return HttpResponse(simplejson.dumps(data), mimetype="application/javascript")
+            elif form.cleaned_data['action']=='stats':
+                ts=Timeseries.objects.get(pk=request.GET.get('timeseries'))
+                start_time, end_time=ts.auto_date_range()
+                num_samples=ts.datapoint_set.count()
+                return HttpResponse(simplejson.dumps({'ts':ts.pk,'start_time':str(start_time), 'end_time':str(end_time), 'number_of_samples':num_samples}), mimetype="application/javascript")
             elif form.cleaned_data['action']=='CSV':
                 return HttpResponse("CSV not implemented yet")
             elif form.cleaned_data['action']=='matlab':

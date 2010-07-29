@@ -82,6 +82,17 @@ class Timeseries(TroggleModel):
     data_type=models.CharField(choices=UNITS_CHOICES, max_length=15)
 
     def auto_date_range(self):
+        """
+        Determine the valid time range of the data.
+
+        Returns the start time and end time of the
+        timeseries. If the timeseries has boundaries
+        stored in its start_time or end_time
+        properties, these are used. Otherwise the 
+        actual boundary of the data is checked.
+        It is possible to have a stored start_time
+        and an actual end_time or vice-versa.
+        """
         if self.start_time:
             start=self.start_time
         else:

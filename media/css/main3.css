@@ -659,3 +659,8 @@ div.entry_text {
 .center th{
     text-align:right;
 }
+
+.helptext {
+    color: gray;
+    font-style: italic;
+}
