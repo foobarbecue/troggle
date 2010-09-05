@@ -9,6 +9,10 @@ from django.utils import simplejson
 
 def ajax_timeseries_data(request):
     num_samples=request.GET.get('num_samples')
+    #convert to an integer if it exists
+    if num_samples:
+        num_samples=int(num_samples)
+
     start_time=request.GET.get('start_time')
     end_time=request.GET.get('end_time')
 
@@ -23,7 +27,7 @@ def ajax_timeseries_data(request):
 
             if form.cleaned_data['action']=='JSON':
                 ts=Timeseries.objects.get(pk=request.GET.get('timeseries'))
-                data=ts.data_cropped_resampled(num_samples=int(num_samples), time_range_crop=(start_time, end_time), style='flot')
+                data=ts.data_cropped_resampled(num_samples=num_samples, time_range_crop=(start_time, end_time), style='flot')
                 return HttpResponse(simplejson.dumps(data), mimetype="application/javascript")
             elif form.cleaned_data['action']=='stats':
                 ts=Timeseries.objects.get(pk=request.GET.get('timeseries'))

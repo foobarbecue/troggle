@@ -3,12 +3,8 @@ from datalogging.models import Timeseries
 
 class TimeseriesDataForm(forms.Form):
     timeseries=forms.ModelChoiceField(queryset=Timeseries.objects.all())
-    start_time=forms.DateTimeField(
-        required=False,
-        help_text="<span class='helptext'>Leave blank to start at the beginning of the data.</span>")
-    end_time=forms.DateTimeField(
-        required=False,
-        help_text="<span class='helptext'>Leave blank to end at the end of the data.</span>")
+    start_time=forms.DateTimeField(required=False,)
+    end_time=forms.DateTimeField(required=False,)
     number_of_samples=forms.IntegerField(
         required=False,
         help_text="<span class='helptext'>Leave blank to load all samples. Entering a smaller number of than the database contains will resample the data using fast Fourier methods.</span>")

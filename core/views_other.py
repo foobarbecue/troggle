@@ -256,7 +256,7 @@ def entrance_location_ajax(request):
         'pk':cave.pk,
         'graphic':map_icon_dict[entrance.caves()[0].type],
         'cavename':unicode(cave),
-        'align':'rb',
+        'align':'lb',
         }  
     return HttpResponse(simplejson.dumps(response_dict), mimetype="application/javascript")
 

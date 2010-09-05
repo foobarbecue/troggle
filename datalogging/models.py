@@ -172,16 +172,17 @@ class Timeseries(TroggleModel):
             #resample to fixed number of samples
             print "resampling from %d samples to %d" % (len(data), num_samples)
             data=signal.resample(data, num_samples)
-            try:
-                sample_rate=(time_range[1]-time_range[0])/num_samples
-            except TypeError:
-                sample_rate=(datetime.datetime(time_range[1])-datetime.datetime(time_range[0]))/num_samples
-            times=[time_range[0]+n*sample_rate for n in range(num_samples)]
 
-        elif sample_rate:
-            raise Exception("Resampling by data rate is not yet implemented.")
+#        elif sample_rate:
+#            raise Exception("Resampling by data rate is not yet implemented.")
         else:
-            raise Exception("Either the sample rate or number of samples are required but you didn't specify either.")
+            num_samples=len(data)
+        try:
+            sample_rate=(time_range[1]-time_range[0])/num_samples
+        except TypeError:
+            sample_rate=(datetime.datetime(time_range[1])-datetime.datetime(time_range[0]))/num_samples
+        times=[time_range[0]+n*sample_rate for n in range(num_samples)]
+
         if style=='normal':
             return data, times
         elif style=='flot':
