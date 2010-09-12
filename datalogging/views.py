@@ -57,28 +57,5 @@ def ajax_timeseries_data(request):
     else:
         form = TimeseriesDataForm()
         return render_with_context(request,'timeseries_browser.html',{'ts_form':form,})
-
-def timeseries_download(request):
-    if request.GET:
-        form=TimeseriesDataForm(request.GET)
-        if form.is_valid():
-            num_samples=form.cleaned_data['number_of_samples']
-            start_time=form.cleaned_data['start_time']
-            end_time=form.cleaned_data['end_time']
-            number_of_samples=form.cleaned_data['number_of_samples']
-            ts=form.cleaned_data['timeseries']
-            
-            if form.cleaned_data['action']=='CSV':
-                return HttpResponse("CSV not implemented yet")
-            elif form.cleaned_data['action']=='matlab':
-                if os.path.exists(settings.TEMP_MAT_FILE_PATH):
-                    os.remove(settings.TEMP_MAT_FILE_PATH)
-                temp_mat_file=open(settings.TEMP_MAT_FILE_PATH,'w')
-                to_matlab.make_mat(temp_mat_file,ts_pk_list=[ts.pk],samples_per_ts=num_samples)
-                temp_mat_file.close
-                temp_mat_file=open(settings.TEMP_MAT_FILE_PATH,'r')
-                response=HttpResponse(temp_mat_file)
-                response['Content-Disposition']='attachment; filename=%s%s.mat' % ('erebus_caves_ts_',ts.pk)
-                return response
         
 
