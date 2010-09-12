@@ -39,13 +39,15 @@ $(document).ready(function () {
         alert('There was a problem with your request. Make sure you are not requesting a higher sample rate than the original sample rate.');
     };
 
+    //Due to my supreme laziness, this options object is for both the ajax form and the Flot graph! Maybe fix that...
     var options = {
         dataType: 'json',
         success: plotNewData,
         beforeSend: function () { $('#loading').fadeIn() },
         error: ajaxError,
         complete: function() { $('#loading').fadeOut() },
-        xaxis: {mode:'time'}
+        xaxis: {mode:'time'},
+        selection: { mode: "xy" }
         }
 
 {% if auto_click_submit %}
@@ -75,8 +77,17 @@ $(document).ready(function () {
              });        
     };
 
-    $('#ts_form').ajaxForm(
-        options
+    $('#ts_form').submit(
+        function() {
+            if ($("option[value='matlab']").attr('selected')){
+                return true; 
+                }
+            else {
+                $(this).ajaxSubmit(options);
+                alert('submitting ajax');
+                return false;
+                }
+        }
     );
 
     $('#id_start_time').AnyTime_picker();
@@ -97,7 +108,7 @@ $(document).ready(function () {
         selection: { mode: "xy" },  xaxis: { mode:'time'}
     });
 
-    $("#{{timeseries.id}}_graph_id").bind("plotselected", function (event, ranges) {
+    $("#graph").bind("plotselected", function (event, ranges) {
         // clamp the zooming to prevent eternal zoom
         if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
             ranges.xaxis.to = ranges.xaxis.from + 0.00001;
@@ -105,7 +116,8 @@ $(document).ready(function () {
             ranges.yaxis.to = ranges.yaxis.from + 0.00001;
         
         // do the zooming
-        plot = $.plot($("#{{timeseries.id}}_graph_id"), [plottedData],
+        alert('zooming');
+        plot = $.plot($("#graph"), [plottedData],
                       $.extend(true, {}, { title:'{{timeseries}}',  xaxis: { mode:'time'}, selection: { mode: "xy" }, points: { show: true}, lines: {show: true}, color: "Black", clickable: true, hoverable: true}, {
                           xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
                           yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
@@ -135,7 +147,7 @@ $(document).ready(function () {
 <form action="/timeseries/" method="GET" id="ts_form">
 <table class="center">
 {{ts_form.as_table}}
-<tr><td colspan=2><input type="submit" value="Do it!" /></td></tr>
+<tr><td colspan=2><input type="submit" value="Do it!" /><input id="downloadbutton" type="button" value="download" /></td></tr>
 </table>
 </form>
 
