@@ -2,7 +2,7 @@ from utils import render_with_context
 from django.conf import settings
 from django.shortcuts import render_to_response
 from datalogging.models import Timeseries
-from datalogging import to_matlab
+from datalogging import to_matlab, export_csv
 from datetime import datetime
 from datalogging.forms import TimeseriesDataForm
 from django.http import HttpResponse
@@ -36,17 +36,17 @@ def ajax_timeseries_data(request):
                 start_time, end_time=ts.auto_date_range()
                 num_samples=ts.datapoint_set.count()
                 return HttpResponse(simplejson.dumps({'ts':ts.pk,'start_time':str(start_time), 'end_time':str(end_time), 'number_of_samples':num_samples}), mimetype="application/javascript")
-            elif form.cleaned_data['action']=='CSV':
-                return HttpResponse("CSV not implemented yet")
+            elif form.cleaned_data['action']=='csv':
+                response=HttpResponse()
+                export_csv.export_to_csv(response, (start_time, end_time), (ts,)) #it expects a set of timeseries, not just one so we trick it
+                response['Content-Disposition']='attachment; filename=%s%s.csv' % ('erebus_caves_ts_',ts.pk)
+                return response
+
             elif form.cleaned_data['action']=='matlab':
-                if os.path.exists(settings.TEMP_MAT_FILE_PATH):
-                    os.remove(settings.TEMP_MAT_FILE_PATH)
-                temp_mat_file=open(settings.TEMP_MAT_FILE_PATH,'w')
-                to_matlab.make_mat(temp_mat_file,ts_pk_list=[ts.pk],samples_per_ts=num_samples)
-                temp_mat_file.close
-                temp_mat_file=open(settings.TEMP_MAT_FILE_PATH,'r')
-                response=HttpResponse(temp_mat_file)
+                # note: does not chop dates yet
+                response=HttpResponse()
                 response['Content-Disposition']='attachment; filename=%s%s.mat' % ('erebus_caves_ts_',ts.pk)
+                to_matlab.make_mat(response,ts_pk_list=[ts.pk],samples_per_ts=num_samples)
                 return response
             elif form.cleaned_data['action']=='newpage':
                 return render_with_context(request,'timeseries_browser.html',{'ts_form':form,'auto_click_submit':True})

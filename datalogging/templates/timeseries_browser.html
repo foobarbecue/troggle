@@ -79,7 +79,7 @@ $(document).ready(function () {
 
     $('#ts_form').submit(
         function() {
-            if ($("option[value='matlab']").attr('selected')){
+            if ($("option[value='matlab']").attr('selected') || $("option[value='csv']").attr('selected')){
                 return true; 
                 }
             else {
@@ -147,7 +147,7 @@ $(document).ready(function () {
 <form action="/timeseries/" method="GET" id="ts_form">
 <table class="center">
 {{ts_form.as_table}}
-
+<tr><td colspan=2><input type="submit" value="Do it!" /></td></tr>
 </table>
 </form>
 
