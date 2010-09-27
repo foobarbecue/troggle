@@ -49,7 +49,7 @@ if len(inp)>1:
         value=re.match(line[1], curfile).groups()[0]
 
         #workaround for bug where co2 values put the decimal point one to the left of where it should be
-        if (int(line[0])==19 and float(value) < 75):
+        if (line[0].pk==19 and float(value) < 75):
             value=value*10
 
         dp, created = DataPoint.objects.get_or_create(time=curtime, value=value, parent_timeseries=line[0])
