@@ -2,11 +2,12 @@ from utils import render_with_context
 from django.conf import settings
 from django.shortcuts import render_to_response
 from datalogging.models import Timeseries
-from datalogging import to_matlab, export_csv
+from datalogging import to_matlab, export_csv, processing
 from datetime import datetime
 from datalogging.forms import TimeseriesDataForm
 from django.http import HttpResponse
 from django.utils import simplejson
+from django.db.models import Q
 import os
 
 def ajax_timeseries_data(request):
@@ -58,4 +59,17 @@ def ajax_timeseries_data(request):
         form = TimeseriesDataForm()
         return render_with_context(request,'timeseries_browser.html',{'ts_form':form,})
         
-
+def monthly_stats(request, data_type):
+    tses=Timeseries.objects.filter(data_type=data_type)
+    template_file='timeseries_stats.html'
+    if request.GET:
+        pk_list=request.GET.getlist('ts')
+        tses=tses.filter(logbook_entry__cave__slug__in=pk_list)
+        if 'overall' in request.GET:
+            overall_stats=processing.monthly_stats_multiple(pk_list, data_type=data_type)
+        else:
+            overall_stats=None
+        if 'plot' in request.GET:
+            template_file='timeseries_stats_plot.html'
+            
+    return render_with_context(request,template_file,{'timeseries': tses,'overall_stats':overall_stats})

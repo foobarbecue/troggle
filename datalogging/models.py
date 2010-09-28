@@ -3,7 +3,11 @@ from django.db import models
 from core.models import TroggleModel, LogbookEntry
 from django.template.loader import render_to_string
 import datetime, time, csv, logging
+
+#ugly hack to avoid circular reference
+from datalogging.processing import monthly_stats as month_stats
 from scipy import signal
+from django.db.models import Avg, Max, Min, Count, StdDev
 logging.basicConfig(filename=settings.LOGFILE,level=logging.DEBUG)
 
 class Manufacturer(TroggleModel):
@@ -78,6 +82,8 @@ class Timeseries(TroggleModel):
         ('co2_pptv','Parts per thousand by volume CO2'),
         ('v','Volts'),
         ('ma','Milliamps'),
+        ('a','amps'),
+        ('ur','Microrads'),   
         )
     data_type=models.CharField(choices=UNITS_CHOICES, max_length=15)
 
@@ -229,8 +235,9 @@ class Timeseries(TroggleModel):
             except:
                 logging.debug('could not import line:' + str(line))
                 print 'could not import line:' + str(line)
- 
 
+    def monthly_stats(self):
+        return month_stats(self)
        
     def import_csv_simple(self):
         import_file_reader = csv.reader(self.import_file.file)
@@ -251,7 +258,10 @@ class Timeseries(TroggleModel):
         return '/timeseries/?action=newpage&timeseries=%s&number_of_samples=%d&start_time=%s&end_time=%s' % (self.pk, self.datapoint_set.count(), self.auto_date_range()[0], self.auto_date_range()[1])
 
     def cave(self):
-        return self.logbook_entry.cave
+        try:
+            return self.logbook_entry.cave
+        except:
+            return 'no cave'
             
             
 class DataAquisitionSystem(TroggleModel):

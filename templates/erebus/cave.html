@@ -151,10 +151,10 @@
 {% endif %}
 
 
-<h3>Timeseries</h3>
+<h3>Timeseries </h3>
 {% if cave.timeseries_set.all %}
 <table>
-    <tr><th>Timeseries</th><th>From</th><th>To</th><th>Number of samples</th><th>Data type</th><th>View</th></tr>
+    <tr><th>Timeseries</th><th>From</th><th>To</th><th>Number of samples</th><th>Data type</th><th>Links</th><th></th></tr>
     {% for timeseries in cave.timeseries_set.all %}
 	<tr>
 		<td>{{timeseries}}</td>
@@ -162,7 +162,7 @@
 		<td>{{timeseries.auto_date_range.1}}</td>
 		<td>{{timeseries.datapoint_set.count}}</td>
 		<td>{{timeseries.data_type}}</td>
-		<td><a href='{{timeseries.get_absolute_url}}'>view</a></td>
+		<td><a href='timeseries_stats/{{timeseries.data_type}}?ts={{cave.slug}}'>(view montly stats)</a> | <a href='{{timeseries.get_absolute_url}}'>view plot</a></td>
 	</tr>
     {% endfor %}
 </table>

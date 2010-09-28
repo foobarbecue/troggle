@@ -20,6 +20,8 @@ admin.autodiscover()
 # type url probably means it's used.
 
 urlpatterns = patterns('',
+
+    url(r'^timeseries_stats/(?P<data_type>.*)$',     datalogging.views.monthly_stats,      name="caves"),    
     
     url(r'^$',              views_other.frontpage,      name="frontpage"),
     url(r'^testing/$',              views_other.frontpagetesting,      name="frontpagetesting"),
