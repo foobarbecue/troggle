@@ -5,6 +5,7 @@ import django.forms as forms
 from django.http import HttpResponse
 from django.core import serializers
 from core.views_other import downloadLogbook
+import export
 #from troggle.reversion.admin import VersionAdmin #django-reversion version control
 
 class TroggleModelAdmin(admin.ModelAdmin):
@@ -162,5 +163,12 @@ def export_as_xml(modeladmin, request, queryset):
     serializers.serialize("xml", queryset, stream=response)
     return response
 
+def export_as_kml(modeladmin, request, queryset):
+    response = HttpResponse(mimetype="text/xml")
+    response['Content-Disposition'] = 'attachment; filename=troggle_output.kml'
+    export.tokml(queryset, stream=response)
+    return response
+
 admin.site.add_action(export_as_xml)
 admin.site.add_action(export_as_json)
+admin.site.add_action(export_as_kml)

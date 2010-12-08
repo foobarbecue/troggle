@@ -505,6 +505,8 @@ class Entrance(TroggleModel):
             return unicode(CaveNEntrance[0])+' ('+name + ')'
         return unicode(CaveNEntrance) + ' (' +name+')'
 
+    def kmlPlacemark(self):
+        return "<Placemark><name>%s</name>%s</Placemark>\n" % (self.__unicode__(), self.location.kml)
 
     def coordsUtmZone58C(self):
         return self.location.transform(32758, clone=True)

@@ -59,6 +59,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ( "django.core.context_processors.auth", "core.con
 LOGIN_REDIRECT_URL = '/'
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
