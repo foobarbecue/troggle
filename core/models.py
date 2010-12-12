@@ -502,8 +502,8 @@ class Entrance(TroggleModel):
         if self.name:
             name = unicode(self.name)
         if len(CaveNEntrance) == 1:
-            return unicode(CaveNEntrance[0])+' ('+name + ')'
-        return unicode(CaveNEntrance) + ' (' +name+')'
+            return unicode(CaveNEntrance[0])+' '+name
+        return unicode(CaveNEntrance) + ' ' +name
 
     def kmlPlacemark(self):
         return "<Placemark><name>%s</name>%s</Placemark>\n" % (self.__unicode__(), self.location.kml)

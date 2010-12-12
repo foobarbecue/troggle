@@ -2,8 +2,7 @@ from datalogging.models import Timeseries, DataPoint
 import csv
 import datetime
 
-def export_to_csv(path, date_range, timeseries_set):
-    outfile=open(path,'w')
+def export_to_csv(outfile, date_range, timeseries_set):
     outwriter=csv.writer(outfile)
 
     for ts in timeseries_set:

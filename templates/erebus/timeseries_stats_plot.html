@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+{% load data_filters %}
+
+{% if overall_stats %}
+
+<h3>Data count by month</h3>
+<div id="count" style="margin-left:auto; margin-right: auto;width:60%;height:400px"></div>
+<script language="javascript">
+    $.plot($("#count"),
+        [{label: "Overall", data: [{% for month in overall_stats %} [{{month.0}}, {{month.1.value__count|none2nan}}]{% if not forloop.last %},{% endif %}{% endfor %}]},
+        
+        {% for ts in timeseries %}
+            {label: "{{ts}}", data: [{% for month in ts.monthly_stats %} [{{month.0}}, {{month.1.value__count|none2nan}}]{% if not forloop.last %},{% endif %}{% endfor %}]},
+        {% endfor %}],
+
+        {series: {bars:{show:true, barWidth:0.1, align:'center'}}, multiplebars:true});
+</script>
+
+<h3>Average value</h3>
+<div id="avg" style="margin-left:auto; margin-right: auto;width:60%;height:400px"></div>
+<script language="javascript">
+    $.plot($("#avg"),
+        [{label: "Overall", data: [{% for month in overall_stats %} [{{month.0}}, {{month.1.value__avg|none2nan}}]{% if not forloop.last %},{% endif %}{% endfor %}]},
+        
+        {% for ts in timeseries %}
+            {label: "{{ts}}", data: [{% for month in ts.monthly_stats %} [{{month.0}}, {{month.1.value__avg|none2nan}}]{% if not forloop.last %},{% endif %}{% endfor %}]},
+        {% endfor %}],
+
+        {series: {bars:{show:true, barWidth:0.1, align:'center'}}, multiplebars:true});
+</script>
+
+<h3>Standard deviation of means</h3>
+<div id="stddev" style="margin-left:auto; margin-right: auto;width:60%;height:400px"></div>
+<script language="javascript">
+    $.plot($("#stddev"),
+        [{label: "Overall", data: [{% for month in overall_stats %} [{{month.0}}, {{month.1.value__stddev|none2nan}}]{% if not forloop.last %},{% endif %}{% endfor %}]},
+        
+        {% for ts in timeseries %}
+            {label: "{{ts}}", data: [{% for month in ts.monthly_stats %} [{{month.0}}, {{month.1.value__stddev|none2nan}}]{% if not forloop.last %},{% endif %}{% endfor %}]},
+        {% endfor %}],
+
+        {series: {bars:{show:true, barWidth:0.1, align:'center'}}, multiplebars:true});
+</script>
+
+
+
+{% endif %}
+{% endblock %}

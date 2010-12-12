@@ -12,7 +12,7 @@ def make_mat(mat_file_path, ts_pk_list=ts_pk_list, date_range=date_range, sample
     for pk in ts_pk_list:
         ts=Timeseries.objects.get(pk=pk)
         out.append(ts.data_cropped_resampled(num_samples=samples_per_ts,time_range_crop=date_range)[0])
-        varnames.append('%d:%s%s' % (pk,ts.cave(),ts.data_type.replace('_',' ')))
+        varnames.append('%d:%s %s' % (pk,ts.cave(),ts.data_type.replace('_',' ')))
         #out.update({'timeseries_%d' % ts.pk : ts.data_cropped_resampled(num_samples=samples_per_ts,time_range_crop=date_range)[0]})
         print('Data for %s loaded' % ts)
     io.savemat(mat_file_path, {'timeserieses':out,'categories':varnames})

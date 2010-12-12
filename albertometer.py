@@ -47,6 +47,11 @@ if len(inp)>1:
         curfile=unicode(inp, errors='ignore')
         curtime=datetime.datetime.strptime(curfile[0:15], 'T%H:%MD%m/%d/%y')
         value=re.match(line[1], curfile).groups()[0]
+
+        #workaround for bug where co2 values put the decimal point one to the left of where it should be
+        if (line[0].pk==19 and float(value) < 75):
+            value=value*10
+
         dp, created = DataPoint.objects.get_or_create(time=curtime, value=value, parent_timeseries=line[0])
         print dp
         if created:
