@@ -11,6 +11,7 @@
             <th>Count</th>
             <th>Avg</th>
             <th>Stdev</th>
+            <th>CI</th>
             <th>Min</th>    
             <th>Max</th>
         </tr>
@@ -21,6 +22,7 @@
             <td>{{month.1.value__count}}</td>
             <td>{{month.1.value__avg}}</td>
             <td>{{month.1.value__stddev}}</td>
+            <td>{{month.confidence_interval}}</td>
             <td>{{month.1.value__min}}</td>
             <td>{{month.1.value__max}}</td>
         </tr>
@@ -32,9 +34,10 @@
 {% endif %}
 
 
-{% for ts in timeseries %}
+<p>{% for ts in timeseries %}</p>
 
 <h3>{{ts}}</h3>
+Data exists from {{ts.auto_date_range.0}} to {{ts.auto_date_range.1}}
 
 <table>
 <tr>
@@ -42,6 +45,7 @@
     <th>Count</th>
     <th>Avg</th>
     <th>Stdev</th>
+    <th>CI</th>
     <th>Min</th>    
     <th>Max</th>
 </tr>
@@ -52,6 +56,7 @@
         <td>{{month.1.value__count}}</td>
         <td>{{month.1.value__avg}}</td>
         <td>{{month.1.value__stddev}}</td>
+        <td>{{month.1.confidence_interval}}</td>
         <td>{{month.1.value__min}}</td>
         <td>{{month.1.value__max}}</td>
     </tr>

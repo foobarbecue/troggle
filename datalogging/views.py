@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from datalogging.models import Timeseries
 from datalogging import to_matlab, export_csv, processing
 from datetime import datetime
-from datalogging.forms import TimeseriesDataForm
+from datalogging.forms import TimeseriesDataForm, UnauthTimeseriesDataForm
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.db.models import Q
@@ -18,10 +18,13 @@ def ajax_timeseries_data(request):
 
     start_time=request.GET.get('start_time')
     end_time=request.GET.get('end_time')
-
+    if not request.user.is_authenticated():
+        form=UnauthTimeseriesDataForm
+    else:
+        form=TimeseriesDataForm
     
     if request.GET:
-        form=TimeseriesDataForm(request.GET)
+        form=form(request.GET)
         if form.is_valid():
             num_samples=form.cleaned_data['number_of_samples']
             start_time=form.cleaned_data['start_time']
@@ -56,7 +59,7 @@ def ajax_timeseries_data(request):
         elif form.is_bound:
             return render_with_context(request,'timeseries_browser.html',{'ts_form':form,})
     else:
-        form = TimeseriesDataForm()
+        form = form()
         return render_with_context(request,'timeseries_browser.html',{'ts_form':form,})
         
 def monthly_stats(request, data_type):

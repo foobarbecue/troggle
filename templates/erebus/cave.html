@@ -60,33 +60,34 @@
             <th>
                 Name
             </th>
-            <th>
-                Northing
+            <th colspan="2">
+            WGS84 decimal degrees (SRID:4326)
             </th>
-            <th>
-                Easting
-            </th>            
-
-            <th>
-                Northing
+            <th colspan="2">
+            WGS84 UTM Zone 58S meters (SRID:4326)
             </th>
-            <th>
-                Easting
-            </td>            
         </tr>
         <tr>
             <td>
             </td>
-            <td colspan="2">
-            WGS84 decimal degrees (SRID:4326)
+            <td>
+                Northing
             </td>
-            <td colspan="2">
-            WGS84 UTM Zone 58S meters (SRID:4326)
+            <td>
+                Easting
+            </td>            
+
+            <td>
+                Northing
             </td>
+            <td>
+                Easting
+            </td>            
         </tr>
 
-    {% for ent in cave.entrances %}
 
+    {% for ent in cave.entrances %}
+    {% if user.is_authenticated %}
         <tr>
             <td>
                 {{ ent }}
@@ -111,7 +112,14 @@
             </td>
                 {% endif %}
         </tr>
-    
+    {% else %}
+        <tr>
+            <td>
+                {{ ent }}
+            </td>    
+            <td colspan=6><a href="{% url auth_login %}">Log in</a>  to see coordinates.
+        </tr>
+    {% endif %}
     {% endfor %}
     </table>
 {% endif %}
@@ -162,12 +170,12 @@
 		<td>{{timeseries.auto_date_range.1}}</td>
 		<td>{{timeseries.datapoint_set.count}}</td>
 		<td>{{timeseries.data_type}}</td>
-		<td><a href='timeseries_stats/{{timeseries.data_type}}?ts={{cave.slug}}'>(view montly stats)</a> | <a href='{{timeseries.get_absolute_url}}'>view plot</a></td>
+		<td><a href='/timeseries_stats/{{timeseries.data_type}}?ts={{cave.slug}}'>(view montly stats)</a> | <a href='{{timeseries.get_absolute_url}}'>view plot</a></td>
 	</tr>
     {% endfor %}
 </table>
 {% else %}
-No timeseries data has been collected for this cave.
+<p>No timeseries data has been collected for this cave.</p>
 {% endif %}
 
 {% if cave.explorers %}
