@@ -20,11 +20,11 @@
         <tr>
             <td>{{month.0}}</td>        
             <td>{{month.1.value__count}}</td>
-            <td>{{month.1.value__avg}}</td>
-            <td>{{month.1.value__stddev}}</td>
-            <td>{{month.confidence_interval}}</td>
-            <td>{{month.1.value__min}}</td>
-            <td>{{month.1.value__max}}</td>
+            <td>{{month.1.value__avg|floatformat}}</td>
+            <td>{{month.1.value__stddev|floatformat}}</td>
+            <td>{{month.confidence_interval|floatformat}}</td>
+            <td>{{month.1.value__min|floatformat}}</td>
+            <td>{{month.1.value__max|floatformat}}</td>
         </tr>
         {% endfor %}    
     </td>
@@ -54,11 +54,11 @@ Data exists from {{ts.auto_date_range.0}} to {{ts.auto_date_range.1}}
     <tr>
         <td>{{month.0}}</td>        
         <td>{{month.1.value__count}}</td>
-        <td>{{month.1.value__avg}}</td>
-        <td>{{month.1.value__stddev}}</td>
-        <td>{{month.1.confidence_interval}}</td>
-        <td>{{month.1.value__min}}</td>
-        <td>{{month.1.value__max}}</td>
+        <td>{{month.1.value__avg|floatformat}}</td>
+        <td>{{month.1.value__stddev|floatformat}}</td>
+        <td>{{month.1.confidence_interval|floatformat}}</td>
+        <td>{{month.1.value__min|floatformat}}</td>
+        <td>{{month.1.value__max|floatformat}}</td>
     </tr>
     {% endfor %}    
 </table>
