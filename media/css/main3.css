@@ -648,7 +648,14 @@ div.entry_text {
 
 .big {
     height:400px;
-    width: 90%;
+    width: 70%;
+}
+
+.overviewPlot {
+    height:200px;
+    bottom:10;
+    left:10;
+    z-index:10000;
 }
 
 .center {

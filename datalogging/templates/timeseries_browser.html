@@ -6,7 +6,13 @@
 <script>
 $(document).ready(function () {
     var plottedData = [];
-
+    var overviewOptions = {
+        xaxis: {mode:'time',tickLength: 0},
+        yaxis: {tickLength: 0},
+        legend: {show:false},
+        selection: { mode: "xy" }
+        }
+    //an ajax request to get start time, end time, and number of samples
     getTsStats = function (ts_pk) {
         $.ajax({
           url: '/timeseries/',
@@ -28,10 +34,15 @@ $(document).ready(function () {
           complete: function() { $('#loading').fadeOut() },
           })
     };
-   
+
+    //function for adding new data
     plotNewData = function(series) {
         plottedData.push(series);
-        $.plot($('#graph'), plottedData, options);
+        plot=$.plot($('#graph'), plottedData, options);
+        //if overview is showing, then we re-plot it with the new data. If it's not showing then we can't because flot would have troubles.
+        if ($('#overview').is(":visible")){
+            overview=$.plot($('#overview'), plottedData, overviewOptions);};
+        $(this).remove();
         refreshRemoverButtons(plottedData);
     };
 
@@ -47,7 +58,8 @@ $(document).ready(function () {
         error: ajaxError,
         complete: function() { $('#loading').fadeOut() },
         xaxis: {mode:'time'},
-        selection: { mode: "xy" }
+        selection: { mode: "xy" },
+        legend: {show:true}
         }
 
 {% if auto_click_submit %}
@@ -55,6 +67,7 @@ $(document).ready(function () {
     $('#ts_form').ajaxSubmit(options);
 {% endif %}
 
+    //function for updating the "remove data" buttons
     refreshRemoverButtons = function(plottedData){
         // show the header for the remover buttons
         $('#removerLabel').attr('visibility','show')
@@ -63,13 +76,15 @@ $(document).ready(function () {
         $('#alreadyFetched').replaceWith("<div class='center alreadyFetched' id='alreadyFetched'></div>");
         // for each shown plot
         $.each(plottedData,
-            // create a remove button
             function(index, value){
 
                 $('#alreadyFetched').append("<p><input type='submit' class='alreadyFetched' value='Remove "+ value['label'] +"' id='remove"+ value['label'] +"'></p>");
                 $('input:last').click(function() {
                     plottedData.splice(index,1)
                     $.plot($('#graph'), plottedData, options);
+                    //if overview is showing, then we re-plot it with the new data. If it's not showing then we can't because flot would have troubles.
+                    if ($('#overview').is(":visible")){
+                        overview=$.plot($('#overview'), plottedData, overviewOptions);};
                     $(this).remove();
                     refreshRemoverButtons(plottedData);
                 });
@@ -77,6 +92,7 @@ $(document).ready(function () {
              });        
     };
 
+    //handling clicking on the button to get data, stats, etc
     $('#ts_form').submit(
         function() {
             if ($("option[value='matlab']").attr('selected') || $("option[value='csv']").attr('selected')){
@@ -97,16 +113,12 @@ $(document).ready(function () {
             getTsStats(this.value)
         })
 
-    var plot = $.plot($('#graph'),
-    plottedData,
-     {xaxis: {mode:"time"}, selection: { mode: "xy" }, points: { show: true}, lines: {show: true}, color: "Black", clickable: true, hoverable: true}
-     );
+//    var plot = $.plot($('#graph'),
+//    plottedData,
+//     {xaxis: {mode:"time"}, selection: { mode: "xy" }, points: { show: true}, lines: {show: true}, color: "Black", clickable: true, hoverable: true}
+//     );
 
     // setup overview
-    var overview = $.plot($("#{{timeseries.id}}_overview_graph_id"), [plottedData], {
-        selection: { mode: "xy" },  xaxis: { mode:'time'}
-    });
-
     $("#graph").bind("plotselected", function (event, ranges) {
         // clamp the zooming to prevent eternal zoom
         if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
@@ -115,18 +127,18 @@ $(document).ready(function () {
             ranges.yaxis.to = ranges.yaxis.from + 0.00001;
         
         // do the zooming
-        alert('zooming');
-        plot = $.plot($("#graph"), [plottedData],
-                      $.extend(true, {}, { title:'{{timeseries}}',  xaxis: { mode:'time'}, selection: { mode: "xy" }, points: { show: true}, lines: {show: true}, color: "Black", clickable: true, hoverable: true}, {
-                          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
-                          yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
-                      }));
+        $('#overview').show();
+        plot = $.plot($("#graph"), plottedData,
+                      $.extend(options,{xaxis: {mode:"time", min: ranges.xaxis.from, max: ranges.xaxis.to},
+                          yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to}})
+                      );
+        overview=$.plot($('#overview'), plottedData, overviewOptions);
         
         // don't fire event on the overview to prevent eternal loop
         overview.setSelection(ranges, true);
     });
 
-    $("#{{timeseries.id}}_overview_graph_id").bind("plotselected", function (event, ranges) {
+    $("#overview").bind("plotselected", function (event, ranges) {
         plot.setSelection(ranges);
     });
 
@@ -138,10 +150,10 @@ $(document).ready(function () {
 
 {% block content%}
 <h3>Timeseries browser</h3>
-
-<div id="graph" class="big center">
+<div style="width:70%;height:400px;position:relative;margin-left:auto;margin-right:auto">
+    <div id="graph" style="height:400px"></div>
+    <div id="overview" style="height:150px; width:200px;position:absolute;bottom:40px;left:40px;display:none;"></div>
 </div>
-
 <h2>Get data</h2>
 <form action="/timeseries/" method="GET" id="ts_form">
 <table class="center">
@@ -149,8 +161,7 @@ $(document).ready(function () {
 <tr><td colspan=2><input type="submit" value="Do it!" /></td></tr>
 </table>
 </form>
-
-<h2 id="removerLabel" style="display:hidden;">Remove data from the plot</h2>
+<h2 id="removerLabel" style="display:none;">Remove data from the plot</h2>
 <div class="center" id="alreadyFetched">
 </div>
 </form>
