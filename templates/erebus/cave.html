@@ -170,7 +170,7 @@
 		<td>{{timeseries.auto_date_range.1}}</td>
 		<td>{{timeseries.datapoint_set.count}}</td>
 		<td>{{timeseries.data_type}}</td>
-		<td><a href='/timeseries_stats/{{timeseries.data_type}}?ts={{cave.slug}}'>(view montly stats)</a> | <a href='{{timeseries.get_absolute_url}}'>view plot</a></td>
+		<td><a href='/timeseries_stats/{{timeseries.data_type}}?ts={{cave.slug}}&overall&plot'>view montly stats</a> | <a href='{{timeseries.get_absolute_url}}'>view plot</a></td>
 	</tr>
     {% endfor %}
 </table>

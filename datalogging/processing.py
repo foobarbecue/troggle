@@ -7,12 +7,14 @@ def monthly_stats_multiple(ts_list, data_type):
     outp=[]
     for month in range(1,13):
         outp.append([month,
-            DataPoint.objects.filter(time__month=month, parent_timeseries__logbook_entry__cave__official_name__in=ts_list, parent_timeseries__data_type=data_type).exclude(value=0.0).aggregate(Avg('value'), Max('value'), Min('value'), Count('value'), StdDev('value', sample=True)),])
+            DataPoint.objects.filter(time__month=month,
+            parent_timeseries__logbook_entry__cave__slug__in=ts_list,
+            parent_timeseries__data_type=data_type).exclude(value=0.0).aggregate(Avg('value'), Max('value'), Min('value'), Count('value'), StdDev('value', sample=True)),])
         try:
             outp[month-1][1].update({'confidence_interval':float(outp[month-1][1]['value__stddev'])/float(sqrt(outp[month-1][1]['value__count']))})
         except TypeError:
             outp[month-1][1].update({'confidence_interval':None})
-    return outp    
+    return outp
 
 def monthly_stats(ts):
     outp=[]

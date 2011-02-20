@@ -3,7 +3,8 @@
 {% load data_filters %}
 
 {% if overall_stats %}
-
+{% if plot %}
+<h2>Overall plots</h2>
 <h3>Data count by month</h3>
 <div id="count" style="margin-left:100px; width:60%;height:400px"></div>
 <script language="javascript">
@@ -42,8 +43,66 @@
 
         {series: {bars:{show:true, barWidth:0.1, align:'center'}}, multiplebars:true});
 </script>
+{% endif %}
+<h2>Overall</h2>
 
+<table>
+        <tr>
+            <th>Month</th>
+            <th>Count</th>
+            <th>Avg</th>
+            <th>Stdev</th>
+            <th>CI</th>
+            <th>Min</th>    
+            <th>Max</th>
+        </tr>
+
+        {% for month in overall_stats %}
+        <tr>
+            <td>{{month.0}}</td>        
+            <td>{{month.1.value__count}}</td>
+            <td>{{month.1.value__avg|floatformat}}</td>
+            <td>{{month.1.value__stddev|floatformat}}</td>
+            <td>{{month.confidence_interval|floatformat}}</td>
+            <td>{{month.1.value__min|floatformat}}</td>
+            <td>{{month.1.value__max|floatformat}}</td>
+        </tr>
+        {% endfor %}    
+    </td>
+</table>
 
 
 {% endif %}
-{% endblock %}
+
+
+<p>{% for ts in timeseries %}</p>
+
+<h3>{{ts}}</h3>
+<p>Data exists from {{ts.auto_date_range.0}} to {{ts.auto_date_range.1}}</p>
+
+<table>
+<tr>
+    <th>Month</th>
+    <th>Count</th>
+    <th>Avg</th>
+    <th>Stdev</th>
+    <th>CI</th>
+    <th>Min</th>    
+    <th>Max</th>
+</tr>
+
+    {% for month in ts.monthly_stats %}
+    <tr>
+        <td>{{month.0}}</td>        
+        <td>{{month.1.value__count}}</td>
+        <td>{{month.1.value__avg|floatformat}}</td>
+        <td>{{month.1.value__stddev|floatformat}}</td>
+        <td>{{month.1.confidence_interval|floatformat}}</td>
+        <td>{{month.1.value__min|floatformat}}</td>
+        <td>{{month.1.value__max|floatformat}}</td>
+    </tr>
+    {% endfor %}    
+</table>
+{% endfor %}
+
+{% endblock content %}

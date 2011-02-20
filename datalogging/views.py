@@ -65,14 +65,17 @@ def ajax_timeseries_data(request):
 def monthly_stats(request, data_type):
     tses=Timeseries.objects.filter(data_type=data_type)
     template_file='timeseries_stats.html'
+    #set the defaults
     overall_stats=None
+    plot=False
     if request.GET:
         pk_list=request.GET.getlist('ts')
+        print pk_list
         tses=tses.filter(logbook_entry__cave__slug__in=pk_list)
+        print tses
         if 'overall' in request.GET:
             overall_stats=processing.monthly_stats_multiple(pk_list, data_type=data_type)
-
         if 'plot' in request.GET:
-            template_file='timeseries_stats_plot.html'
+            plot=True
             
-    return render_with_context(request,template_file,{'timeseries': tses,'overall_stats':overall_stats})
+    return render_with_context(request,template_file,{'timeseries': tses,'overall_stats':overall_stats,'plot':plot})
