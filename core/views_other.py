@@ -261,7 +261,7 @@ def entrance_location_ajax(request):
     return HttpResponse(simplejson.dumps(response_dict), mimetype="application/javascript")
 
 def cave_stats_ajax(request):
-    cave_id = request.POST.get('cave_id')
+    cave_id = request.GET.get('cave_id')
     cave=Cave.objects.get(pk=cave_id)
     response_dict={
         'logbookentrycount':cave.logbookentry_set.all().count(),

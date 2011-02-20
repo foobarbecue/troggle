@@ -509,6 +509,19 @@ div#right_sidetable
 	z-index:2000;
 }
 
+div.left_sidetable
+{
+	border: thin solid black;
+	max-width:200px;
+	max-height:50%;
+	background:#EEEEEE;
+	color:#666666;
+	position:absolute;
+	right:20px;
+	bottom:20px;
+	z-index:2001;
+}
+
 div#right_sidetable div{
 	border: none;
 	width:200px;

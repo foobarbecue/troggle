@@ -90,7 +90,6 @@
             
 
             get_ent_coords = function(entrance_id, entrances, total) {
-                ent_list_ul=$('#entrance_list').find('ul')
                 $.ajax({
                     cache: false,
                     url:'/coords_ajax/',
@@ -101,22 +100,27 @@
                                    get_ent_coords(entrance_id,entrances,total);
                                }
                                else {
-                                   $('#loading').fadeOut()
+                                   $('#loading').fadeOut();
+                                   qs=$("#search").quicksearch($(".searchable li"));
                                }
 
                              },
                     success: function(data){
-                             entrancePoint=(add_point_from_JSON(data, entrance_id));
-                             entrances.addFeatures(add_point_from_JSON(data, entrance_id));
-                             ent_list_item=ent_list_ul.append("<li><a href='" + entrancePoint.attributes.href + "'>" + entrancePoint.attributes.cavename + "</a></li>");
-                             ent_list_item.hover(
-                                    function(entrancePoint) {
-                                        highlightCtrl.highlight(entrancePoint);
-                                    },
-                                    function(entrancePoint) {
-                                        highlightCtrl.unhighlight(entrancePoint);
-                                    }
-                             );
+                             entranceFeature=add_point_from_JSON(data, entrance_id);
+                             entrances.addFeatures(entranceFeature);
+                             $('#entrance_list ul').append("<li><a href='" + entranceFeature.attributes.href + "'>" + entranceFeature.attributes.cavename + "</a></li>");
+                             ent_list_item=$('#entrance_list ul li:last a')
+//                             ent_list_item.data(entFeat,entranceFeature)
+                             ent_list_item.mouseenter(
+                                    {entFeat:entranceFeature,},
+                                    function(evt) {
+                                        highlightCtrl.highlight(evt.data.entFeat);
+                                    });
+                             ent_list_item.mouseout(
+                                    {entFeat:entranceFeature},
+                                    function(evt) {
+                                        highlightCtrl.unhighlight(evt.data.entFeat);
+                                    });
                              res=$('#loading').replaceWith("<div id='loading'> " + entrance_id + " of " + total + " entrances loaded </div>");
                              
                     },
@@ -127,11 +131,11 @@
                 highlightCtrl.highlight(entrance);
             }
 
-            var get_cave_stats = function(evt) {
-                $.post('/ajax/',
+            get_cave_stats = function(evt) {
+                $.get('/ajax/',
                        { 'cave_id': evt.feature.attributes.pk },
                             function(data){
-                                    info='<h2 class=sidetable>'
+                                    info='<h2 class=left_sidetable>'
                                     info+=evt.feature.attributes.cavename
                                     info+='</h2>'
                                     
@@ -152,7 +156,8 @@
                                     info+='</td></tr>'
 
                                     info+='</td></table>'
-                                    document.getElementById("cave_stats").innerHTML = info;                                    
+                                    $("#cave_stats").html(info);
+                                    $("#cave_stats").show();                                  
                                     responsevariable=data
                                     
                                     $('#cave_stats table').css("background-repeat","no-repeat")
@@ -163,8 +168,8 @@
                             "json");
             };
 
-            var clear_cave_stats = function(evt) {
-                document.getElementById("cave_stats").innerHTML = '';
+            clear_cave_stats = function(evt) {
+                $("#cave_stats").fadeOut();
             };
 
             highlightCtrl = new OpenLayers.Control.SelectFeature(entrances, {
@@ -207,6 +212,9 @@
         {% block entrance_list %}
         <h2 class="collapse_head">Entrances by name</h2>
         <span class="collapse_body">
+        <form>
+            <input type="text" id="search">
+        </form>
         <ul class="searchable" style="padding:0">
         </ul>
         </span>
@@ -277,7 +285,7 @@
 {% block map %}
     <div id="map"></div>
     
-    <div id="cave_stats"></div>
+    <div id="cave_stats" class="left_sidetable" style="display:none"></div>
 
 
 {% endblock map %}
