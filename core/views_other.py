@@ -1,4 +1,5 @@
 from core.models import Cave, Expedition, Person, LogbookEntry, PersonExpedition, PersonTrip, Photo, QM
+from datalogging.models import Timeseries, DataPoint
 from django.conf import settings
 from django import forms
 from django.template import loader, Context
@@ -31,6 +32,8 @@ def stats(request):
     statsDict['caveCount'] = int(Cave.objects.count())
     statsDict['personCount'] = int(Person.objects.count())
     statsDict['logbookEntryCount'] = int(LogbookEntry.objects.count())
+    statsDict['dataPointCount'] = int(DataPoint.objects.count())
+    statsDict['timeseriesCount'] = int(Timeseries.objects.count())
     return render_with_context(request,'statistics.html', statsDict)
 
 def frontpage(request):
