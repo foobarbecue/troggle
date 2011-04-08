@@ -253,7 +253,7 @@ class LogbookEntry(TroggleModel):
         return reverse('logbookentry',kwargs={'date':self.date,'slug':self.slug})
 
     def __unicode__(self):
-        return "%s (%s)" % (self.title, self.date)
+        return "%s (%s) at %s" % (self.title, self.date, self.cave or self.place)
 
     def get_next_by_id(self):
         LogbookEntry.objects.get(id=self.id+1)

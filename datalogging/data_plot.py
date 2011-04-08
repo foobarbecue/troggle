@@ -20,7 +20,7 @@ all_temp_plots=Q(Timeseries.objects.filter(data_type='air_deg_c'))
 caves_with_timeseries=(
     Cave.objects.get(official_name__icontains='temp'),
     Cave.objects.get(slug__icontains='wind'),
-    Cave.objects.get(slug__icontains='mouse'),
+    Cave.objects.get(slug__startswith='mouse'),
     Cave.objects.get(slug__icontains='2009-02'),
     Cave.objects.get(slug='heroin'),
     Cave.objects.get(slug__icontains='heroine'),
