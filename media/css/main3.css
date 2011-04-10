@@ -684,3 +684,7 @@ div.entry_text {
     color: gray;
     font-style: italic;
 }
+
+.padded {
+	padding-left: 40px;
+}

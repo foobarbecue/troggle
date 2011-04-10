@@ -27,7 +27,7 @@ lastax=None
 
 for ts in dataset:
     tsnum+=1
-    tsls=ts.data()
+    tsls=ts.data_arr()
     if lastax:
         ax=fig.add_subplot(len(dataset),1,tsnum, sharex=(lastax or None))
     else:
@@ -45,11 +45,12 @@ for ts in dataset:
         ax.set_ylabel(unicode(ts.logbook_entry.cave), rotation='horizontal')
 
     if not datemin or datemin > min(tsls[0]):
-        datemin = min(tsls)
+        datemin = min(tsls[0])
     
     if not datemax or datemax < max(tsls[0]):
-        datemax = max(tsls)
-
+        datemax = max(tsls[0])
+    
+    tsls[1]=matplotlib.dates.date2num(tsls[1])
     ax.set_xlim(datemin, datemax)
     ax.plot(tsls[0], tsls[1])
     lastax=ax

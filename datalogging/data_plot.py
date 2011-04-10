@@ -8,7 +8,7 @@ from django.db.models import Count, Q
 from matplotlib.ticker import MaxNLocator
 
 default_time_range=(datetime(2009,12,8,0,0),datetime(2010,1,4,0,0))
-all_temp_plots=Q(Timeseries.objects.filter(data_type='air_deg_c'))
+all_temp_plots=Timeseries.objects.filter(data_type='air_deg_c')
 
 
 #remove 'bogus cave' which was used for testing

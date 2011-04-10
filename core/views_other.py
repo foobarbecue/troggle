@@ -241,11 +241,11 @@ def logbook_entry_suggestions(request):
         })
 
 map_icon_dict={
-    "tower":"/site_media/smokestack.png",
-    "cave":"/site_media/cave.png",
-    "cave_n_tower":"/site_media/cave.png",
-    "unknown":"/site_media/smokestack.png",
-    "":"/site_media/smokestack.png"}
+    "tower":settings.URL_ROOT+"site_media/smokestack.png",
+    "cave":settings.URL_ROOT+"site_media/cave.png",
+    "cave_n_tower":settings.URL_ROOT+"site_media/cave.png",
+    "unknown":settings.URL_ROOT+"site_media/smokestack.png",
+    "":settings.URL_ROOT+"site_media/smokestack.png"}
 
 def entrance_location_ajax(request):
     entrance_id = request.GET['entrance_id']

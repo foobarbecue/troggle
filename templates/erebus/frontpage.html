@@ -92,7 +92,7 @@
             get_ent_coords = function(entrance_id, entrances, total) {
                 $.ajax({
                     cache: false,
-                    url:'/coords_ajax/',
+                    url:'{{settings.URL_ROOT}}coords_ajax/',
                     data:{ 'entrance_id' : entrance_id },
                     complete:function(data,status){
                                entrance_id++;
@@ -100,8 +100,9 @@
                                    get_ent_coords(entrance_id,entrances,total);
                                }
                                else {
+				   qs=$("#search").quicksearch($(".searchable li"));
+				   qs.cache();
                                    $('#loading').fadeOut();
-                                   qs=$("#search").quicksearch($(".searchable li"));
                                }
 
                              },
@@ -132,7 +133,7 @@
             }
 
             get_cave_stats = function(evt) {
-                $.get('/ajax/',
+                $.get('{{settings.URL_ROOT}}ajax/',
                        { 'cave_id': evt.feature.attributes.pk },
                             function(data){
                                     info='<h2 class=left_sidetable>'
@@ -213,7 +214,7 @@
         <h2 class="collapse_head">Entrances by name</h2>
         <span class="collapse_body">
         <form>
-            <input type="text" id="search">
+            <input type="text" id="search" autocomplete="off">
         </form>
         <ul class="searchable" style="padding:0">
         </ul>

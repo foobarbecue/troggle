@@ -3,6 +3,7 @@ from django.db import models
 from core.models import TroggleModel, LogbookEntry
 from django.template.loader import render_to_string
 import datetime, time, csv, logging
+from django.contrib.sites.models import Site
 
 #ugly hack to avoid circular reference
 from datalogging.processing import monthly_stats as month_stats
@@ -257,7 +258,7 @@ class Timeseries(TroggleModel):
             logging.debug('imported data for:' + unicode(self))
 
     def get_absolute_url(self):
-        return '/timeseries/?action=newpage&timeseries=%s&number_of_samples=%d&start_time=%s&end_time=%s' % (self.pk, self.datapoint_set.count(), self.auto_date_range()[0], self.auto_date_range()[1])
+        return '%s/timeseries/?action=newpage&timeseries=%s&number_of_samples=%d&start_time=%s&end_time=%s' % (Site.objects.get_current().domain,self.pk, self.datapoint_set.count(), self.auto_date_range()[0], self.auto_date_range()[1])
 
     def cave(self):
         try:

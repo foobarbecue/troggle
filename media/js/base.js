@@ -1,3 +1,4 @@
+
 /* The following serves to stretch the content div to the bottom of the margin images, or vice versa
 
 function contentHeight(){
@@ -39,17 +40,6 @@ $(this).next(".collapse_body").slideToggle(600);
 $(this).toggleClass("plus_icon");
 $(".collapse_body").not($(this).next(".collapse_body")).slideUp();
 });
-
-$('.searchable li').quicksearch({
-  position: 'before',
-  attached: 'ul.searchable',
-  labelText: '',
-  loaderText: '',
-  delay: 100});
-
-$('table.searchable tr').quicksearch({
-  position: 'before',
-  attached: 'table.searchable:first'});
 
 $(".toggleMenu").click(function () {
 		  $("ul.dropdown li:not(.toggleMenu)").toggle();

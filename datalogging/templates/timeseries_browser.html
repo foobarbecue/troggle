@@ -15,7 +15,7 @@ $(document).ready(function () {
     //an ajax request to get start time, end time, and number of samples
     getTsStats = function (ts_pk) {
         $.ajax({
-          url: '/timeseries/',
+          url: '{{settings.URL_ROOT}}timeseries/',
           data: {'timeseries': ts_pk, 'action':'stats'},
           success: function (data){
                         $('#id_start_time').attr('value',data['start_time']);
@@ -155,7 +155,7 @@ $(document).ready(function () {
     <div id="overview" style="height:150px; width:200px;position:absolute;bottom:40px;left:40px;display:none;"></div>
 </div>
 <h2>Get data</h2>
-<form action="/timeseries/" method="GET" id="ts_form">
+<form action="{{settings.URL_ROOT}}timeseries/" method="GET" id="ts_form">
 <table class="center">
 {{ts_form.as_table}}
 <tr><td colspan=2><input type="submit" value="Do it!" /></td></tr>

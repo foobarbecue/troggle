@@ -11,3 +11,5 @@ media
 SBD/*
 *.csv
 log.txt
+*.wsgi
+*.orig
