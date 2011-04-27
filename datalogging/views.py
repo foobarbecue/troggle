@@ -105,4 +105,4 @@ def monthly_counts():
     return {'months':months, 'counts':monthly_counts, 'timeserieses':Timeseries.objects.all().values_list('pk',flat=True)}
 
 def availability(request):
-    return render_with_context(request,'timeseries_availability.html',monthly_counts)
+    return render_with_context(request,'timeseries_availability.html',monthly_counts())
