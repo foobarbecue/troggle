@@ -115,7 +115,7 @@ class CaveAdmin(TroggleModelAdmin):
     extra = 4
 
 class EntranceAdmin(admin.GeoModelAdmin):
-    search_fields = ('caveandentrance__cave__official_name','name')
+    search_fields = ('caveandentrance__cave__official_name','name','caveandentrance__cave__type')
     fields = ('entrance_description','name','location','equipment')
     display_wkt = True
     inlines = (CaveAndEntranceInlineNoLetter,)

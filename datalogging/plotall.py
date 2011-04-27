@@ -52,7 +52,7 @@ for ts in dataset:
     
     tsls[1]=matplotlib.dates.date2num(tsls[1])
     ax.set_xlim(datemin, datemax)
-    ax.plot(tsls[0], tsls[1])
+    ax.plot(tsls[1],tsls[0])
     lastax=ax
     
 

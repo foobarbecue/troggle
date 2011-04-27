@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     (r'^ajax/$',             views_other.cave_stats_ajax),
     (r'^coords_ajax/$',             views_other.entrance_location_ajax),
     (r'^timeseries/$',             datalogging.views.ajax_timeseries_data),
+    (r'^timeseries_chart/?$',             datalogging.views.availability,
     (r'^comments/', include('django.contrib.comments.urls')),
 
     url(r'^caves/$',     views_caves.caveindex,      name="caves"),

@@ -72,6 +72,23 @@ def crop_date_range(date_range_crop, ts):
       
     return date_range_crop
 
+def time_domain_simple_plot(ts_list, date_range, ax):
+    """
+    Handles the actual plotting for time domain data.
+    """
+    for ts in ts_list:
+        #Crop the data according to the start_time and end_time fields.
+        #This removes extraneous data, e.g. from travelling to location.
+        date_range_cropped=crop_date_range(date_range, ts)
+
+        times=ts.datapoint_set.filter(time__range=date_range_cropped).values_list('time',flat=True)
+        values=ts.datapoint_set.filter(time__range=date_range_cropped).values_list('value',flat=True)
+        label=unicode(ts.location_in_cave)
+
+        ax.set_xlim(date_range)
+        ax.plot(times, values, '.',label=label)
+        print u'Plotted timeseries: ' + unicode(ts)
+
 def time_domain_do_plot(ts_list, date_range, ax):
     """
     Handles the actual plotting for time domain data.
@@ -89,10 +106,10 @@ def time_domain_do_plot(ts_list, date_range, ax):
             a2=ax.twinx()
             for tlabel in a2.get_yticklabels():
                 tlabel.set_color('g')
-            a2.plot(times, values, label=label, color='g')
+            a2.plot(times, values, label=label, color='black')
 #            a2.legend(labels=('windspeed (m/s)','direction (degrees from true north)'))
         else:
-            ax.plot(times, values, label=label)
+            ax.plot(times, values, '.',label=label)
 
         ax.set_xlim(date_range)
         ax.legend(loc='best')
@@ -124,8 +141,8 @@ def hist_do_plot(ts_list, ax):
 
 def adjust(fig):
 #    fig.subplots_adjust(hspace=1)
-    for ax in fig.axes:
-        ax.yaxis.set_major_locator(MaxNLocator(4))
+#    for ax in fig.axes:
+#        ax.yaxis.set_major_locator(MaxNLocator(4))
     plt.setp(fig.axes[-1].get_xticklabels(), visible=True)
     fig.axes[2].set_yticks((90,180,270,360))
     fig.axes[2].set_yticklabels(('E','S','W','N'))
@@ -170,11 +187,52 @@ def time_domain_by_cave(cave_list=caves_with_timeseries, date_range=default_time
             plt.setp(ax.get_xticklabels(), visible=True)    
         time_domain_do_plot(cave.timeseries_set().filter(data_type__in=('air_deg_c','w_speed','w_azmth')).exclude(location_in_cave__icontains='panel'), date_range, ax)
         cave_number+=1
-
-    adjust(fig)
+    plt.show()
+    #adjust(fig)
 
     return ax
-    
+
+def subplots_generic(ts_list, date_range=default_time_range):
+    fig=plt.figure()
+    ts_number=0
+    ax=None
+    for ts in ts_list:
+
+        #Link every subplot to the xaxis of the first one
+        if ax is not None:
+            ax=fig.add_subplot(len(ts_list),1,ts_number+1,sharex=ax)
+        else:
+            ax=fig.add_subplot(len(ts_list),1,ts_number+1)
+        time_domain_do_plot((ts,),date_range,ax)
+        #Hide the x-axis lables, except for the last one
+        plt.setp(ax.get_xticklabels(), visible=False)
+#        if cave_number==(len(ts_list)-1):
+#            plt.setp(ax.get_xticklabels(), visible=True)
+        ts_number+=1
+    plt.setp(ax.get_xticklabels(), visible=True)
+    plt.show()
+
+
+def subplots_simple(ts_list, date_range=default_time_range):
+    fig=plt.figure()
+    ts_number=0
+    ax=None
+    for ts in ts_list:
+
+        #Link every subplot to the xaxis of the first one
+        if ax is not None:
+            ax=fig.add_subplot(len(ts_list),1,ts_number+1,sharex=ax)
+        else:
+            ax=fig.add_subplot(len(ts_list),1,ts_number+1)
+        time_domain_simple_plot((ts,),date_range,ax)
+        #Hide the x-axis lables, except for the last one
+        plt.setp(ax.get_xticklabels(), visible=False)
+#        if cave_number==(len(ts_list)-1):
+#            plt.setp(ax.get_xticklabels(), visible=True)
+        ts_number+=1
+    plt.setp(ax.get_xticklabels(), visible=True)
+    plt.show()
+
 
 def histograms_by_cave(cave_list=caves_with_timeseries):
     fig=plt.figure()

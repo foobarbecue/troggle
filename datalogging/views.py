@@ -1,13 +1,13 @@
 from utils import render_with_context
 from django.conf import settings
 from django.shortcuts import render_to_response
-from datalogging.models import Timeseries
+from datalogging.models import Timeseries, DataPoint
 from datalogging import to_matlab, export_csv, processing
-from datetime import datetime
 from datalogging.forms import TimeseriesDataForm, UnauthTimeseriesDataForm
 from django.http import HttpResponse
 from django.utils import simplejson
-from django.db.models import Q
+from django.db.models import Q, Count, Max, Min
+import numpy as np
 import os, datetime
 
 def ajax_timeseries_data(request):
@@ -70,9 +70,9 @@ def monthly_stats(request, data_type):
     plot=False
     if request.GET:
         pk_list=request.GET.getlist('ts')
-        #print pk_list
+        print pk_list
         tses=tses.filter(logbook_entry__cave__slug__in=pk_list)
-        #print tses
+        print tses
         if 'overall' in request.GET:
             overall_stats=processing.monthly_stats_multiple(pk_list, data_type=data_type)
         if 'plot' in request.GET:
@@ -84,16 +84,23 @@ def add_one_month(dt0):
     """
     Unfortunately required to add a month to a datetime.
     """
-    dt1 = dt0.replace(days=1)
+    dt1 = dt0.replace(day=1)
     dt2 = dt1 + datetime.timedelta(days=32)
-    dt3 = dt2.replace(days=1)
+    dt3 = dt2.replace(day=1)
     return dt3
 
 def availability(request):
-    monthly_counts={}
-    entireTimestampRange=date_range=DataPoint.objects.aggregate(Min('time'),Max('time'))
-    currentMonth=entireTimestampRange['time_min']
-    while currentMonth < entireTimestampRange['time_max']:
+    entireTimestampRange=DataPoint.objects.aggregate(Min('time'),Max('time'))
+    months=[]
+    monthly_counts=[]
+    currentMonth=entireTimestampRange['time__min']
+    x=0
+    while currentMonth < entireTimestampRange['time__max']:
         currentMonth=add_one_month(currentMonth)
-        monthly_counts[currentMonth]=Timeseries.objects.filter(time__month=currentMonth.month).annotate(dpcount=Count('datapoint')).values_list('dpcount', flat=True)
-    return monthly_counts
+        x+=1
+        res=DataPoint.objects.filter(time__month=currentMonth.month,time__year=currentMonth.year).order_by('parent_timeseries').annotate(dpcount=Count('parent_timeseries'))
+        res.query.group_by=['parent_timeseries_id']
+        monthly_counts.append(dict(zip(res.values_list('parent_timeseries_id',flat=True),res.values_list('dpcount',flat=True))))
+        months.append(currentMonth)
+    context_dict={'months':months, 'counts':monthly_counts, 'timeserieses':Timeseries.objects.all().values_list('pk',flat=True)}
+    return render_with_context(request,'timeseries_availability.html',context_dict)

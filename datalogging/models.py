@@ -128,6 +128,11 @@ class Timeseries(TroggleModel):
         else:
             return cropped_ts
 
+    def data_arr(self, start_time=start_time, end_time=end_time, max_samples=1000):
+        data=self.data(start_time=start_time, end_time=end_time, max_samples=max_samples)
+        data=list([data.values_list('value',flat=True),data.values_list('time',flat=True)])
+        return data
+
     def time_range_intersect(self, time_range_crop):
         """
         Finds the intersection of the input date range with the timeseries start_time and
