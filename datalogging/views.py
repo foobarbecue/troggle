@@ -89,7 +89,7 @@ def add_one_month(dt0):
     dt3 = dt2.replace(day=1)
     return dt3
 
-def availability(request):
+def monthly_counts():
     entireTimestampRange=DataPoint.objects.aggregate(Min('time'),Max('time'))
     months=[]
     monthly_counts=[]
@@ -102,5 +102,7 @@ def availability(request):
         res.query.group_by=['parent_timeseries_id']
         monthly_counts.append(dict(zip(res.values_list('parent_timeseries_id',flat=True),res.values_list('dpcount',flat=True))))
         months.append(currentMonth)
-    context_dict={'months':months, 'counts':monthly_counts, 'timeserieses':Timeseries.objects.all().values_list('pk',flat=True)}
-    return render_with_context(request,'timeseries_availability.html',context_dict)
+    return {'months':months, 'counts':monthly_counts, 'timeserieses':Timeseries.objects.all().values_list('pk',flat=True)}
+
+def availability(request):
+    return render_with_context(request,'timeseries_availability.html',monthly_counts)
