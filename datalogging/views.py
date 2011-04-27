@@ -8,7 +8,7 @@ from datalogging.forms import TimeseriesDataForm, UnauthTimeseriesDataForm
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.db.models import Q
-import os
+import os, datetime
 
 def ajax_timeseries_data(request):
     num_samples=request.GET.get('num_samples')
@@ -70,12 +70,30 @@ def monthly_stats(request, data_type):
     plot=False
     if request.GET:
         pk_list=request.GET.getlist('ts')
-        print pk_list
+        #print pk_list
         tses=tses.filter(logbook_entry__cave__slug__in=pk_list)
-        print tses
+        #print tses
         if 'overall' in request.GET:
             overall_stats=processing.monthly_stats_multiple(pk_list, data_type=data_type)
         if 'plot' in request.GET:
             plot=True
             
     return render_with_context(request,template_file,{'timeseries': tses,'overall_stats':overall_stats,'plot':plot})
+
+def add_one_month(dt0):
+    """
+    Unfortunately required to add a month to a datetime.
+    """
+    dt1 = dt0.replace(days=1)
+    dt2 = dt1 + datetime.timedelta(days=32)
+    dt3 = dt2.replace(days=1)
+    return dt3
+
+def availability(request):
+    monthly_counts={}
+    entireTimestampRange=date_range=DataPoint.objects.aggregate(Min('time'),Max('time'))
+    currentMonth=entireTimestampRange['time_min']
+    while currentMonth < entireTimestampRange['time_max']:
+        currentMonth=add_one_month(currentMonth)
+        monthly_counts[currentMonth]=Timeseries.objects.filter(time__month=currentMonth.month).annotate(dpcount=Count('datapoint')).values_list('dpcount', flat=True)
+    return monthly_counts

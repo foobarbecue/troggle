@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% load wiki_markup %}
 
-{% block title %}Mount Erebus Cave Database{% endblock %}
+{% block title %}Erebus Cave and Fumarole Database{% endblock %}
 
 {% block head %}
     <script src="{{ settings.MEDIA_URL }}js/OpenLayers.js"></script>
-    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key={{settings.GOOGLE_MAPS_KEY}}&amp;sensor=false'></script>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key={{settings.GOOGLE_MAPS_KEY}}&amp;sensor=false"></script>
+    <link rel="stylesheet" type="text/css" href="{{ settings.MEDIA_URL }}css/main3.css" title="eyeCandy"/>
     <script type="text/javascript">
         var map, selectCtrl, highlightCtrl;
         
@@ -19,7 +20,13 @@
         }
         
         function init(){
-            cavesmap = new OpenLayers.Map( 'map' );
+            cavesmap = new OpenLayers.Map( 'map', {
+                controls: [
+                    new OpenLayers.Control.Navigation(),
+                    new OpenLayers.Control.PanZoomBar(),
+                    new OpenLayers.Control.ScaleLine()
+                ]
+            });
             
             var gphy = new OpenLayers.Layer.Google(
                 "Google Physical",
@@ -86,9 +93,7 @@
                 entranceFeature.attributes = data;
                 return entranceFeature;
             };
-
-            
-
+          
             get_ent_coords = function(entrance_id, entrances, total) {
                 $.ajax({
                     cache: false,
@@ -113,7 +118,7 @@
                              ent_list_item=$('#entrance_list ul li:last a')
 //                             ent_list_item.data(entFeat,entranceFeature)
                              ent_list_item.mouseenter(
-                                    {entFeat:entranceFeature,},
+                                    {entFeat:entranceFeature},
                                     function(evt) {
                                         highlightCtrl.highlight(evt.data.entFeat);
                                     });
@@ -170,7 +175,7 @@
             };
 
             clear_cave_stats = function(evt) {
-                $("#cave_stats").fadeOut();
+                $("#cave_stats").hide();
             };
 
             highlightCtrl = new OpenLayers.Control.SelectFeature(entrances, {

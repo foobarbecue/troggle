@@ -10,7 +10,8 @@ $(document).ready(function () {
         xaxis: {mode:'time',tickLength: 0},
         yaxis: {tickLength: 0},
         legend: {show:false},
-        selection: { mode: "xy" }
+        selection: { mode: "xy" },
+	grid: {backgroundColor: "#F9F9F9"}
         }
     //an ajax request to get start time, end time, and number of samples
     getTsStats = function (ts_pk) {
@@ -49,6 +50,14 @@ $(document).ready(function () {
     ajaxError = function() {
         alert('There was a problem with your request. Make sure you are not requesting a higher sample rate than the original sample rate.');
     };
+    
+    // sqare symbol lifted from jquery.flot.symbol.js plugin
+	square = function (ctx, x, y, radius, shadow) {
+                // pi * r^2 = (2s)^2  =>  s = r * sqrt(pi)/2
+                var size = radius * Math.sqrt(Math.PI) / 2;
+                ctx.rect(x - size, y - size, size + size, size + size);
+            };
+
 
     //Due to my supreme laziness, this options object is for both the ajax form and the Flot graph! Maybe fix that...
     var options = {
@@ -59,7 +68,9 @@ $(document).ready(function () {
         complete: function() { $('#loading').fadeOut() },
         xaxis: {mode:'time'},
         selection: { mode: "xy" },
-        legend: {show:true}
+        legend: {show:true},
+	lines: {show:false},
+	points: {show:true, symbol:square, radius:1}
         }
 
 {% if auto_click_submit %}

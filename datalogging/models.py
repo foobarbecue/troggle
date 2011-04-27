@@ -113,7 +113,7 @@ class Timeseries(TroggleModel):
         return((start,end))
 
     def __unicode__(self):
-        return "%s: %s at %s" % (self.cave(),self.data_type,self.location_in_cave)
+        return "%s: %s at %s (%s)" % (self.cave(),self.data_type,self.location_in_cave,self.pk)
     
     def plot(self):
         return render_to_string('timeseries_plot.html',{'timeseries':self})

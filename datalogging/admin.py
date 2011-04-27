@@ -10,8 +10,8 @@ def timeseries_stats(ts):
 
 class TimeseriesAdmin(admin.ModelAdmin):
     actions=[import_datapoints_from_plain_csv]
-    list_display=('id', timeseries_stats, 'start_time', 'end_time', 'cave', 'data_type', 'location_in_cave', 'notes')
-    list_editable=('start_time', 'end_time', 'location_in_cave', 'notes')
+#    list_display=('id', timeseries_stats, 'start_time', 'end_time', 'cave', 'data_type', 'location_in_cave', 'notes')
+#    list_editable=('start_time', 'end_time', 'location_in_cave', 'notes')
 
 class DataPointAdmin(admin.ModelAdmin):
     date_hierarchy = 'time'

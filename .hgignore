@@ -13,3 +13,4 @@ SBD/*
 log.txt
 *.wsgi
 *.orig
+*.media

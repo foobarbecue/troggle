@@ -688,3 +688,10 @@ div.entry_text {
 .padded {
 	padding-left: 40px;
 }
+
+.olControlScaleLine {
+background: white;
+opacity: 0.8;
+top:300px !important;
+bottom: inherit !important;
+}

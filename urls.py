@@ -57,7 +57,7 @@ urlpatterns = patterns('',
     url(r'^jgtuploadfile$',     view_surveys.jgtuploadfile, name="jgtuploadfile"),
 
     
-    url(r'^photos/?$',      object_list,  {'queryset':Photo.objects.all(), 'template_name':'photo_list.html'}, name="photos" ),
+    url(r'^photo_gallery/?$',      object_list,  {'queryset':Photo.objects.all(), 'template_name':'photo_list.html'}, name="photos" ),
     
     url(r'^cave/(?P<cave_id>[^/]+)/?(?P<ent_letter>[^/])$', ent),
     #(r'^cave/(?P<cave_id>[^/]+)/edit/$', edit_cave),
