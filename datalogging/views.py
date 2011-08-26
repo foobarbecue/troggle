@@ -102,7 +102,7 @@ def monthly_counts():
         res.query.group_by=['parent_timeseries_id']
         monthly_counts.append(dict(zip(res.values_list('parent_timeseries_id',flat=True),res.values_list('dpcount',flat=True))))
         months.append(currentMonth)
-    return {'months':months, 'counts':monthly_counts, 'timeserieses':Timeseries.objects.all().values_list('pk',flat=True)}
+    return {'months':months, 'counts':monthly_counts, 'timeserieses':Timeseries.objects.all().values_list('pk',flat=True),'tstest':[1,2,3,4,5]}
 
 def availability(request):
     return render_with_context(request,'timeseries_availability.html',monthly_counts())

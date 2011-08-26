@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-
 <table>
-{% for ts in timeseries %}
-{% with ts.pk as tspk%}
+     <th>Timeseries pk</th>
+{% for tspk in tstest %}    
     <tr>
+        <td>
+            {{tspk}}
+        </td>
         {% for monthcount in counts %}
             <td>{{monthcount.tspk}}</td>
         {% endfor %}
     </tr>
-{% endwith %}
+
 {% endfor %}
 </table>
 
