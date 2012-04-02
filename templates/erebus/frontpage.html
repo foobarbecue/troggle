@@ -204,7 +204,7 @@
             cavesmap.addLayer(gphy);            
             cavesmap.addLayer(entrances);
             cavesmap.zoomToExtent(new OpenLayers.Bounds(18599368.165099,-14124250.106075,18616043.045581,-14110854.747819));
-            get_ent_coords(1,entrances,{{entrance.objects.count}});
+            get_ent_coords(1,entrances,{{lastentpk}});
             cavesmap.addControl(highlightCtrl);
             highlightCtrl.activate();
             cavesmap.addControl(selectCtrl);
@@ -230,7 +230,7 @@
         <h2 class="collapse_head">Browse expeditions</h2>
         <span class="collapse_body">
             {% for expedition in expeditions %}
-                <a href="{{expedition.get_absolute_url}}">{{expedition}}</a>
+                <a href="{{expedition.get_absolute_url}}">{{expedition}}</a><br />
             {% endfor %}
         </span>
         {% endblock browse_expeditions %}

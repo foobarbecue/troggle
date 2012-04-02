@@ -9,6 +9,7 @@ from django.utils import simplejson
 from django.db.models import Q, Count, Max, Min
 import numpy as np
 import os, datetime
+from time import strptime
 
 def ajax_timeseries_data(request):
     num_samples=request.GET.get('num_samples')
@@ -42,7 +43,7 @@ def ajax_timeseries_data(request):
                 return HttpResponse(simplejson.dumps({'ts':ts.pk,'start_time':str(start_time), 'end_time':str(end_time), 'number_of_samples':num_samples}), mimetype="application/javascript")
             elif form.cleaned_data['action']=='csv':
                 response=HttpResponse()
-                export_csv.export_to_csv(response, (start_time, end_time), (ts,)) #it expects a set of timeseries, not just one so we trick it
+                export_csv.export_to_csv(response, (start_time, end_time), (ts,), samples_per_ts=number_of_samples) #it expects a set of timeseries, not just one so we trick it
                 response['Content-Disposition']='attachment; filename=%s%s.csv' % ('erebus_caves_ts_',ts.pk)
                 return response
 
@@ -50,7 +51,8 @@ def ajax_timeseries_data(request):
                 # note: does not chop dates yet
                 response=HttpResponse()
                 response['Content-Disposition']='attachment; filename=%s%s.mat' % ('erebus_caves_ts_',ts.pk)
-                to_matlab.make_mat(response,ts_pk_list=[ts.pk],samples_per_ts=num_samples)
+                date_format='%Y-%m-%d %H:%M:%S'
+                to_matlab.make_mat(response,date_range=(start_time, end_time),ts_pk_list=[ts.pk],samples_per_ts=number_of_samples)
                 return response
             elif form.cleaned_data['action']=='newpage':
                 return render_with_context(request,'timeseries_browser.html',{'ts_form':form,'auto_click_submit':True})

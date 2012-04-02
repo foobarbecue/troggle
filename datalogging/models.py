@@ -192,7 +192,11 @@ class Timeseries(TroggleModel):
         try:
             sample_rate=(time_range[1]-time_range[0])/num_samples
         except TypeError:
-            sample_rate=(datetime.datetime(time_range[1])-datetime.datetime(time_range[0]))/num_samples
+            date_format="%Y-%m-%d %H:%M:%S"
+            for x in (0,1):
+                time_range[x]=datetime.datetime.strptime(time_range[x],date_format)
+            sample_rate=(time_range[1]-time_range[0])/num_samples	
+
         times=[time_range[0]+n*sample_rate for n in range(num_samples)]
 
         if style=='normal':

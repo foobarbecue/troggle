@@ -2,15 +2,16 @@ from datalogging.models import Timeseries, DataPoint
 import csv
 import datetime
 
-def export_to_csv(outfile, date_range, timeseries_set):
+def export_to_csv(outfile, date_range, timeseries_set, samples_per_ts=100):
     outwriter=csv.writer(outfile)
 
     for ts in timeseries_set:
-        out_line=ts.datapoint_set.filter(time__range=date_range).values_list('value',flat=True)
-        out_line=list(out_line)
-        print '%s has %s samples' % (ts, len(out_line))
-        out_line.insert(0, unicode(ts))
-        outwriter.writerow(out_line)
+        ts_data, ts_times=ts.data_cropped_resampled(num_samples=samples_per_ts,time_range_crop=date_range)
+        print '%s has %s samples' % (ts, len(ts_data))
+#        out_line.insert(0, unicode(ts))
+        outwriter.writerow(('Following lines are the %s samples for %s' % (ts, len(ts_data)),))
+        outwriter.writerow(ts_times)
+        outwriter.writerow(ts_data)
       
 
     return outwriter

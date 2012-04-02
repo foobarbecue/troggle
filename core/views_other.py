@@ -49,6 +49,7 @@ def frontpage(request):
                 'photo':Photo,
                 'entrances':Entrance.objects.filter(caveandentrance__cave__isnull=False),
                 'entrance':Entrance,
+                'lastentpk':max(Entrance.objects.all().values_list('pk',flat=True))
                 })
 
 def frontpagetesting(request):

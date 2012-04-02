@@ -3,7 +3,7 @@ import os
 import urlparse
 # Django settings for troggle project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
