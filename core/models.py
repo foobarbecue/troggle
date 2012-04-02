@@ -446,6 +446,31 @@ class Cave(TroggleModel):
 
     class Meta:
         ordering=['-official_name']
+        
+    def lat(self):
+        try:
+            return self.entrances()[0].location.y
+        except:
+            return None
+
+    def lon(self):
+        try:
+            return self.entrances()[0].location.x
+        except:
+            return None
+    
+    def firstVisit(self):
+        try:
+            return unicode(self.logbookentry_set.order_by('date')[0].date)
+        except:
+            return None
+        
+    def latestVisit(self):
+        try:
+            return unicode(self.logbookentry_set.order_by('-date')[0].date)
+        except:
+            return None
+    
 
 class OtherCaveName(TroggleModel):
     name = models.CharField(max_length=160)

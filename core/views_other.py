@@ -109,6 +109,16 @@ def downloadCavetab(request):
     response['Content-Disposition'] = 'attachment; filename=CAVETAB2.CSV'
     tocavetab.writeCaveTab(response)
     return response
+    
+def downloadHubetab(request):
+    from export import tocavetab
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=caves.csv'
+    if request.user.is_authenticated():
+        tocavetab.writeCaveTab(response,'hubeStyle')
+    else:
+        return HttpResponse('Cave coordinate information is protected. Please <a href="accounts/login/">login</a> and try again.')
+    return response
 
 def downloadSurveys(request):
     from export import tosurveys
