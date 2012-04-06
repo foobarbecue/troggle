@@ -144,7 +144,7 @@
                                     info='<h2 class=left_sidetable>'
                                     info+=evt.feature.attributes.cavename
                                     info+='</h2>'
-                                    
+
                                     info+='<table><tr><th>Logbook entries</th><td>'
                                     info+=data.logbookentrycount
                                     info+='</td></tr>'
@@ -160,8 +160,13 @@
                                     info+='<tr><th>Timeseries</th><td>'
                                     info+=data.dataseriescount
                                     info+='</td></tr>'
+                                    if (data.protectioncategory){
+                                    info+='<tr><td class="redtext" colspan=2>'
+                                    info+=data.protectioncategory
+                                    info+='</td></tr>'
+                                    }
+                                    info+='</table>'
 
-                                    info+='</td></table>'
                                     $("#cave_stats").html(info);
                                     $("#cave_stats").show();                                  
                                     responsevariable=data

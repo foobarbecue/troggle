@@ -342,7 +342,7 @@ class CaveAndEntrance(TroggleModel):
     entrance_letter = models.CharField(max_length=20,blank=True,null=True)
     def __unicode__(self):
         return unicode(self.cave) + ' ' + unicode(self.entrance_letter)
-        
+
 class Cave(TroggleModel):
     # too much here perhaps
     official_name = models.CharField(max_length=160, unique=True)
@@ -372,7 +372,13 @@ class Cave(TroggleModel):
     extent = models.CharField(max_length=100,blank=True,null=True)
     survex_file = models.CharField(max_length=100,blank=True,null=True)
     description_file = models.CharField(max_length=200,blank=True,null=True)
-    
+    PROTECTION_CATEGORY_CHOICES= (
+        ('A','A: Unrestricted access'),
+        ('B','B: Access for scientific purposes only'),
+        ('C','C: Biological refuge')
+    )
+    protection_category = models.CharField(max_length=1,blank=True,null=True,choices=PROTECTION_CATEGORY_CHOICES)
+
     #href    = models.CharField(max_length=100)
 
 

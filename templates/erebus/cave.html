@@ -21,6 +21,11 @@
 {% block content %}
 
 {% if cave.logbookentry_set.all %}
+  <h3>Protection category</h3>
+  <p>{{cave.get_protection_category_display}}</p>
+{% endif %}
+
+{% if cave.logbookentry_set.all %}
   <h3>Logbook entries (<a href="/admin/core/logbookentry/add/?cave={{cave.id}}">add new</a>)</h3>
   <table>
 

@@ -278,6 +278,7 @@ def cave_stats_ajax(request):
     cave_id = request.GET.get('cave_id')
     cave=Cave.objects.get(pk=cave_id)
     response_dict={
+        'protectioncategory':cave.get_protection_category_display(),
         'logbookentrycount':cave.logbookentry_set.all().count(),
         'photocount':Photo.objects.filter(contains_logbookentry__cave=cave).count(),
         'surveycount':Survey.objects.filter(logbook_entry__cave=cave).count(),
