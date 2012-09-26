@@ -15,7 +15,7 @@ registration_form.html | {{ block.super }}
 <p>Please sign up here so that you can add descriptions, coordinates, photos, etc.</p>
 <p>The password you type here is converted to a hash as soon as it hits our server and therefore will not be seen or stored by anyone including the administrators of erebuscaves.com . However, this is not an encrypted connection, so if someone is eavesdropping on your network it could be theoretically be intercepted before reaching erebuscaves.com . We may implement and https connection soon to deal with this. </p>
 
-<form action="{% url registration_register %}" method="POST">
+<form action="{% url registration_register %}" method="POST">{% csrf_token %}
         {% for error in form.non_field_errors %}
         <span style="color:red">{{ error }}</span>
         {% endfor %}
