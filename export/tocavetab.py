@@ -9,7 +9,7 @@ headers={'cavetab2':['KatasterNumber','KatStatusCode','Entrances','UnofficialNum
  'SurvexFile','Length','Depth','Extent','Notes','EntranceName','TagPoint','OtherPoint','DescriptionOfOtherPoint','ExactEntrance','TypeOfFix','GPSpreSA',
  'GPSpostSA','Northing','Easting','Altitude','Bearings','Map','Location','Approach','EntranceDescription','PhotoOfLocation','Marking','MarkingComment',
  'Findability','FindabilityComment'],
- 'hubeStyle':['Name','Latititude','Longitude','Description','First visit','Latest visit','Est visit frequency','Log count','Photo count','Survey count','Timeseries count']}
+ 'hubeStyle':['Name','Protection category','Latititude','Longitude','Description','First visit','Latest visit','Est visit frequency','Log count','Photo count','Survey count','Timeseries count']}
  
 def cavetabRow(cave, style):
     #mapping of troggle models to table columns is: (guess this could just be a tuple of tuples rather than a dictionary actually)
@@ -18,6 +18,7 @@ def cavetabRow(cave, style):
             'Name':cave.official_name,
             'Latititude':cave.lat(),
             'Longitude':cave.lon(),
+            'Protection category':cave.protection_category,
             'Description':cave.underground_description,
             'First visit':cave.firstVisit(),
             'Latest visit':cave.latestVisit(),

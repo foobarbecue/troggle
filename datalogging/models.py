@@ -180,7 +180,7 @@ class Timeseries(TroggleModel):
         if sample_rate and num_samples:
             raise Exception("You must specify either the sample rate or number of samples, not both.")
 
-        if num_samples:
+        if num_samples and (num_samples!=0):
             #resample to fixed number of samples
             print "resampling from %d samples to %d" % (len(data), num_samples)
             data=signal.resample(data, num_samples)
@@ -191,7 +191,7 @@ class Timeseries(TroggleModel):
             num_samples=len(data)
         try:
             sample_rate=(time_range[1]-time_range[0])/num_samples
-        except TypeError:
+        except:
             date_format="%Y-%m-%d %H:%M:%S"
             for x in (0,1):
                 time_range[x]=datetime.datetime.strptime(time_range[x],date_format)

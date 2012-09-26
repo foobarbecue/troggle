@@ -58,6 +58,7 @@ def import_env_summary(dat_path):
                     print '%s already existed' % new_dp
         except:
             print 'ignoring %s' % line
+    env_sum.close()
 
 def import_all_env_summaries():
     """
