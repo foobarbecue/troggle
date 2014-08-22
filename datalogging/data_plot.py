@@ -18,9 +18,9 @@ all_temp_plots=Timeseries.objects.filter(data_type='air_deg_c')
 #    ~Q(official_name__in=('Bogus Cave','LEH','Helo Cave')))
 
 caves_with_timeseries=(
-    Cave.objects.get(official_name__icontains='temp'),
-    Cave.objects.get(slug__icontains='wind'),
-    Cave.objects.get(slug__startswith='mouse'),
+    #Cave.objects.get(official_name__icontains='temp'),
+    #Cave.objects.get(slug__icontains='wind'),
+    #Cave.objects.get(slug__startswith='mouse'),
     Cave.objects.get(slug__icontains='2009-02'),
     Cave.objects.get(slug='heroin'),
     Cave.objects.get(slug__icontains='heroine'),
@@ -46,7 +46,7 @@ def time_domain(ts_list=all_temp_plots, date_range=default_time_range):
     time_domain_do_plot(ts_list, date_range, ax)
 
     plt.legend()
-    adjust(plt)
+    #adjust(fig)
     plt.show()
 
 def crop_date_range(date_range_crop, ts):

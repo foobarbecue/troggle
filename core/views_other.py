@@ -14,6 +14,7 @@ from django.utils import simplejson
 from core.models import *
 from datalogging.models import *
 
+
 def showrequest(request):
     return HttpResponse(request.GET)
 

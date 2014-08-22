@@ -44,7 +44,7 @@
         {% if logbookentry.persontrip_set.all %}
         {% for pt in logbookentry.persontrip_set.all %}
             {% if pt.author %}<td class='author'>{% else %}<td>{% endif %}
-            <a href="{{pt.personexpedition.person.get_absolute_url}}">{{pt.personexpedition.person}}</a>,
+            <a href="{{pt.personexpedition.person.get_absolute_url}}">{{pt.personexpedition.person}}</a>
         {% endfor %}</td>
         {% else %}
             <td> &nbsp </td>

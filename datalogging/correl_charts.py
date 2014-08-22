@@ -13,20 +13,20 @@ import scipy
 
 from datalogging.data_plot import crop_date_range
 
-caves_with_timeseries=(
-    Cave.objects.get(official_name__icontains='temp'),
-    Cave.objects.get(slug__icontains='wind'),
-    Cave.objects.get(slug__icontains='mouse'),
-    Cave.objects.get(slug__icontains='2009-02'),
-    Cave.objects.get(slug='heroin'),
-    Cave.objects.get(slug__icontains='heroine'),
-    Cave.objects.get(slug__icontains='shooting'),
-    Cave.objects.get(slug__icontains='derodome'),
-    Cave.objects.get(slug__icontains='kachina'),
-#    Cave.objects.get(slug_icontains='helo'),
-    Cave.objects.get(slug__icontains='hut'),
-    Cave.objects.get(slug__icontains='warren'),
-    )
+#caves_with_timeseries=(
+    ##Cave.objects.get(official_name__icontains='temp'),
+    ##Cave.objects.get(slug__icontains='wind'),
+    #Cave.objects.get(slug__icontains='mouse'),
+    #Cave.objects.get(slug__icontains='2009-02'),
+    #Cave.objects.get(slug='heroin'),
+    #Cave.objects.get(slug__icontains='heroine'),
+    #Cave.objects.get(slug__icontains='shooting'),
+    #Cave.objects.get(slug__icontains='derodome'),
+    #Cave.objects.get(slug__icontains='kachina'),
+##    Cave.objects.get(slug_icontains='helo'),
+    #Cave.objects.get(slug__icontains='hut'),
+    #Cave.objects.get(slug__icontains='warren'),
+    #)
 
 #tses=Timeseries.objects.filter(logbook_entry__cave__in=caves_with_timeseries,data_type__in=('air_deg_c','w_speed','w_azmth')).exclude(location_in_cave__icontains='panel').exclude(pk__in=[13,14,16,31,7])
 ts_pk_list=[34,33,35,4,11,9,8,3,12,6,29,30,37,38]

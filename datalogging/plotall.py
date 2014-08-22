@@ -37,7 +37,7 @@ for ts in dataset:
     #ax.xaxis.set_major_formatter(monthsFmt)
     ax.xaxis.set_major_locator(days)
     ax.xaxis.set_major_formatter(daysFmt)
-    ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(nbins=4,prune='top'))
+    ax.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(nbins=4,prune='upper'))
     print unicode(ts)
     if ts.location_in_cave:
         ax.set_ylabel(unicode(ts.logbook_entry.cave)+': '+ts.location_in_cave, rotation='horizontal')

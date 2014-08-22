@@ -1,6 +1,5 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
-
 from core.views import *  # flat import
 from core.views_other import *
 from core.views_caves import *
@@ -13,7 +12,6 @@ from django.views.generic.simple import direct_to_template
 from django.contrib import databrowse
 import datalogging.models
 import datalogging.views
-
 admin.autodiscover()
 
 

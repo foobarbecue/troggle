@@ -4,10 +4,10 @@ from core.models import TroggleModel, LogbookEntry
 from django.template.loader import render_to_string
 import datetime, time, csv, logging
 from django.contrib.sites.models import Site
-
 #ugly hack to avoid circular reference
 from datalogging.processing import monthly_stats as month_stats
-from scipy import signal
+
+#from scipy import signal
 from django.db.models import Avg, Max, Min, Count, StdDev
 logging.basicConfig(filename=settings.LOGFILE,level=logging.DEBUG)
 
@@ -111,7 +111,12 @@ class Timeseries(TroggleModel):
             end=self.datapoint_set.all().reverse()[0].time
 
         return((start,end))
-
+        
+    def auto_freq(self):
+        date_range=self.auto_date_range()
+        freq=(date_range[1]-date_range[0])/self.datapoint_set.count()
+        return freq
+    
     def __unicode__(self):
         return "%s: %s at %s (%s)" % (self.cave(),self.data_type,self.location_in_cave,self.pk)
     

@@ -27,7 +27,7 @@ def date_generator(startDate,reverse=False):
         else:
             from_date = from_date + datetime.timedelta(days=1)
 
-def import_env_summary(dat_path):
+def import_env_summary(dat_path, verbose=False):
     env_sum=open(dat_path, 'r')
 #    env_sum=csv.reader(env_sum, delimiter=' ')
     ts=0
@@ -52,9 +52,9 @@ def import_env_summary(dat_path):
                         ts=Timeseries(sensor=EquipmentItem.objects.get(pk=5), location_in_cave=line[0], data_type=data_type_dict[line[5]], logbook_entry=lbe)
                         ts.save()
                 new_dp, created=DataPoint.objects.get_or_create(parent_timeseries=ts, time='%s %s' % (line[1],line[2]), defaults={'value':line[4],})
-                if created:
+                if verbose and created:
                     print 'created %s' % new_dp
-                else:
+                elif verbose:
                     print '%s already existed' % new_dp
         except:
             print 'ignoring %s' % line
@@ -72,7 +72,7 @@ def import_all_env_summaries():
     for yearpath in yearpaths:
         import_daily_env_summaries(yearpath)
 
-def import_daily_env_summaries(startDate,numDays,reverse=False):
+def import_daily_env_summaries(startDate,numDays,reverse=False, verbose=False):
     """
     Reads in the env_summary.dat files for each day going backwards in time
     starting at startDate.
@@ -82,7 +82,7 @@ def import_daily_env_summaries(startDate,numDays,reverse=False):
         filepath=day.strftime('/data/Erebus/Erebus_%y/Archive/%Y%m%d/env_summary.dat')
         print 'About to process %s' % filepath
         try:
-            import_env_summary(filepath)
+            import_env_summary(filepath, verbose=verbose)
         except IOError:
             print day.strftime('No .dat file for %Y%m%d')
 
