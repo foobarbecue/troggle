@@ -223,10 +223,10 @@
 {% endblock head %}
 
         {% block entrance_list %}
-        <h2 class="collapse_head">Entrances by name</h2>
+        <h2 class="collapse_head">Caves</h2>
         <span class="collapse_body">
         <form>
-            <input type="text" id="search" autocomplete="off">
+            <input type="text" id="search" autocomplete="off" placeholder="type to search">
         </form>
         <ul class="searchable" style="padding:0">
         </ul>
@@ -234,7 +234,7 @@
         {% endblock %}
 
         {% block browse_expeditions %}
-        <h2 class="collapse_head">Browse expeditions</h2>
+        <h2 class="collapse_head">Field seasons</h2>
         <span class="collapse_body">
             {% for expedition in expeditions %}
                 <a href="{{expedition.get_absolute_url}}">{{expedition}}</a><br />

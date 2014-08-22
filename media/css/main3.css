@@ -307,7 +307,7 @@ div#editLinks {
 }
 
 div#editLinks a{
-	color:#FFF;
+	color:#3F3F3F;
 }
 
 
@@ -466,12 +466,14 @@ div#related
 
 div#right_sidetable h2, div#cave_stats h2, div.comments_container h2, div#related h2
 {
-	padding:0px;
+	padding:0px 0px 0px 5px;
 	font-size:100%;
 	text-align:left;
 	background:#EEEEEE url(../nav-bg.gif) repeat-x scroll left bottom;
-	color:#666666;
+	color:#3F3F3F;
 	margin: 0px;
+    left: 5px
+    
 }
 
 div#cave_stats table {
@@ -496,29 +498,42 @@ div#loading {
     margin-left:50%;
 }
 
-div#right_sidetable
+div#right_sidetable, div.left_sidetable{
+    border: thin solid black;
+    max-width:300px;
+    max-height:50%;
+    background:#EEEEEE;
+    color:#666666;
+    position:absolute;
+    right:20px;    
+    bottom:20px;
+    font-family: "Trebuchet", sans-serif;
+}
+
+#right_sidetable input{
+    left: 15px;
+    position: relative;
+}
+
+#right_sidetable a{
+    color: #153252;
+    left: 15px;
+    position: relative;
+    text-decoration: none;
+    font-size: smaller;
+}
+
+#right_sidetable a:hover{
+    text-decoration: underline;
+}
+
+#right_sidetable
 {
-	border: thin solid black;
-	max-width:200px;
-	max-height:50%;
-	background:#EEEEEE;
-	color:#666666;
-	position:absolute;
-	right:20px;
-	bottom:20px;
 	z-index:2000;
 }
 
 div.left_sidetable
 {
-	border: thin solid black;
-	max-width:200px;
-	max-height:50%;
-	background:#EEEEEE;
-	color:#666666;
-	position:absolute;
-	right:20px;
-	bottom:20px;
 	z-index:2001;
 }
 
