@@ -560,14 +560,17 @@ class Entrance(TroggleModel):
 
     def get_absolute_url(self):
         
-        ancestor_titles='/'.join([subcave.title for subcave in self.get_ancestors()])
-        if ancestor_titles:
-            res = '/'.join((self.get_root().cave.get_absolute_url(), ancestor_titles, self.title))
+        #ancestor_titles='/'.join([subcave.title for subcave in self.get_ancestors()])
+        #if ancestor_titles:
+            #res = '/'.join((self.get_root().cave.get_absolute_url(), ancestor_titles, self.title))
         
-        else:
-            res = '/'.join((self.get_root().cave.get_absolute_url(), self.title))
+        #else:
+            #res = '/'.join((self.get_root().cave.get_absolute_url(), self.title))
             
-        return res
+        try:
+            return res.caves()[0].get_absolute_url()
+        except:
+            return None
     
     class Meta:
         ordering=['caveandentrance__cave']

@@ -20,10 +20,11 @@
 
 {% block content %}
 
-{% if cave.logbookentry_set.all %}
-  <h3>Protection category</h3>
+<!--{% if cave.logbookentry_set.all %}
+  <h3>Suggested protection category</h3>
+  <p><i>Note that the <a href="http://www.ats.aq/documents/ATCM36/att/ATCM36_att110_e.pdf">interim code of conduct</a> does not categorize caves and states that caves may only be entered for research purposes.</i></p>
   <p>{{cave.get_protection_category_display}}</p>
-{% endif %}
+{% endif %}-->
 
 {% if cave.logbookentry_set.all %}
   <h3>Logbook entries (<a href="/admin/core/logbookentry/add/?cave={{cave.id}}">add new</a>)</h3>

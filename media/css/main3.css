@@ -500,7 +500,6 @@ div#loading {
 
 div#right_sidetable, div.left_sidetable{
     border: thin solid black;
-    max-width:300px;
     max-height:50%;
     background:#EEEEEE;
     color:#666666;
@@ -529,12 +528,14 @@ div#right_sidetable, div.left_sidetable{
 
 #right_sidetable
 {
+        max-width:300px;
 	z-index:2000;
 }
 
 div.left_sidetable
 {
-	z-index:2001;
+	max-width:200px;
+        z-index:2001;
 }
 
 div#right_sidetable div{
