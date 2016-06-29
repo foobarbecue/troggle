@@ -1,3 +1,5 @@
+UPDATE 29 June 2016: This repository hosts the Erebus branch of the Troggle database system. It was split off from the Cambridge version in 2010.
+
 Troggle is an application for caving expedition data management, originally created for use on Cambridge University Caving Club expeditions and licensed under the GNU Lesser General Public License.
 
 Troggle setup
