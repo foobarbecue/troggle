@@ -140,7 +140,7 @@ urlpatterns = patterns('',
     url(r'^experimental.*$',                         views_logbooks.experimental,  name="experimental"),
     
     (r'^photos/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': '/home/aaron/troggle_erebus/photos/'}),
+        {'document_root': settings.PHOTOS_ROOT}),
 
 )
 
